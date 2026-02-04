@@ -179,6 +179,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                     <AnimatePresence mode="wait">
                         {step === 'SELECT' ? (
                             <motion.div
+                                key="select"
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
@@ -248,12 +249,12 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                                                         whileTap={{ scale: 0.98 }}
                                                         onClick={() => handleInitiate('CLICK')}
                                                         disabled={loading}
-                                                        className="relative group h-28 rounded-3xl bg-slate-900/40 border border-slate-800/50 overflow-hidden transition-all hover:border-blue-400/50 hover:bg-slate-900/60"
+                                                        className="relative group h-28 rounded-3xl bg-slate-900/40 border border-slate-800/50 overflow-hidden transition-all hover:border-blue-500/50 hover:bg-slate-900/60"
                                                     >
-                                                        <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 to-blue-400/5 group-hover:to-blue-400/10 transition-colors" />
+                                                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-blue-600/5 group-hover:to-blue-600/10 transition-colors" />
                                                         <div className="relative flex flex-col items-center justify-center gap-3">
-                                                            <div className="w-12 h-12 rounded-2xl bg-blue-400/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                                                <Wallet className="w-6 h-6 text-blue-400" />
+                                                            <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                                <Wallet className="w-6 h-6 text-blue-500" />
                                                             </div>
                                                             <span className="font-bold text-slate-200 tracking-wide text-sm">CLICK</span>
                                                         </div>
@@ -263,26 +264,23 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
 
                                             {/* MANUAL MODE */}
                                             {activeType === 'MANUAL' && (
-                                                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 space-y-4">
-                                                    <h3 className="text-white font-bold">Qo'lda to'lov (Karta/QR)</h3>
-                                                    <p className="text-sm text-slate-400">
-                                                        Iltimos, ushbu raqamga to'lov qiling va chekni ma'muriyatga yuboring.
-                                                    </p>
-                                                    {manualProvider && (
-                                                        <div className="space-y-2 p-4 bg-slate-800/50 rounded-xl">
-                                                            <div className="text-sm text-slate-500">Karta raqami:</div>
-                                                            <div className="text-xl font-mono text-white tracking-widest">
-                                                                {manualProvider.config?.card_number || '.... .... .... ....'}
-                                                            </div>
-                                                            <div className="text-sm text-slate-400">
-                                                                {manualProvider.config?.holder_name}
-                                                            </div>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.02, y: -2 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    onClick={() => handleInitiate('MANUAL')}
+                                                    className="relative group h-32 rounded-3xl bg-slate-900/40 border border-slate-800/50 overflow-hidden transition-all hover:border-green-500/50 hover:bg-slate-900/60 w-full"
+                                                >
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-green-600/0 to-green-600/5 group-hover:to-green-600/10 transition-colors" />
+                                                    <div className="relative flex flex-col items-center justify-center gap-3 px-6">
+                                                        <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                                            <Smartphone className="w-6 h-6 text-green-500" />
                                                         </div>
-                                                    )}
-                                                    <Button className="w-full bg-slate-800" disabled>
-                                                        To'lovdan so'ng administratorga yozing
-                                                    </Button>
-                                                </div>
+                                                        <div className="text-center">
+                                                            <span className="font-bold text-slate-200 tracking-wide block text-sm">KARTA ORQALI O'TKAZMA</span>
+                                                            <span className="text-xs text-slate-500">Manual tasdiqlash</span>
+                                                        </div>
+                                                    </div>
+                                                </motion.button>
                                             )}
 
                                             {/* BOT MODE */}
@@ -295,8 +293,8 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                                                     }}
                                                     className="relative group h-32 rounded-3xl bg-slate-900/40 border border-slate-800/50 overflow-hidden transition-all hover:border-orange-500/50 hover:bg-slate-900/60 w-full"
                                                 >
-                                                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/5 group-hover:to-orange-500/10 transition-colors" />
-                                                    <div className="relative flex flex-col items-center justify-center gap-3">
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-orange-600/0 to-orange-600/5 group-hover:to-orange-600/10 transition-colors" />
+                                                    <div className="relative flex flex-col items-center justify-center gap-3 px-6">
                                                         <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                                                             <Smartphone className="w-6 h-6 text-orange-500" />
                                                         </div>
@@ -315,6 +313,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                             </motion.div>
                         ) : step === 'INSTRUCTION' ? (
                             <motion.div
+                                key="instruction"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
@@ -378,75 +377,71 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                                     </Button>
                                 </div>
                             </motion.div>
+                        ) : step === 'PENDING' ? (
+                            <motion.div
+                                key="pending"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="space-y-6 text-center py-4"
+                            >
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
+                                    <div className="relative w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center ring-4 ring-blue-500/10 mx-auto">
+                                        <Clock className="w-12 h-12 text-blue-500" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-2xl font-black text-white tracking-tight">Qabul qilindi!</h3>
+                                    <p className="text-slate-400 font-medium">To'lov administrator tomonidan tekshirilmoqda. Tasdiqlanganidan so'ng hisobingizga coinlar qo'shiladi.</p>
+                                </div>
+                                <Button onClick={reset} className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold border border-slate-800 transition-all">
+                                    Tushunarli
+                                </Button>
+                            </motion.div>
                         ) : (
                             <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                className="flex flex-col items-center justify-center py-10 text-center space-y-6"
-                             </motion.div>
-                    ) : step === 'PENDING' ? (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="space-y-6 text-center py-4"
-                    >
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 animate-pulse" />
-                            <div className="relative w-24 h-24 bg-blue-500/20 rounded-full flex items-center justify-center ring-4 ring-blue-500/10 mx-auto">
-                                <Clock className="w-12 h-12 text-blue-500" />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <h3 className="text-2xl font-black text-white tracking-tight">Qabul qilindi!</h3>
-                            <p className="text-slate-400 font-medium">To'lov administrator tomonidan tekshirilmoqda. Tasdiqlanganidan so'ng hisobingizga coinlar qo'shiladi.</p>
-                        </div>
-                        <Button onClick={reset} className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold border border-slate-800 transition-all">
-                            Tushunarli
-                        </Button>
-                    </motion.div>
-                    ) : (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="space-y-6 text-center py-4"
-                    >
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-green-500 blur-2xl opacity-20 animate-pulse" />
-                            <div className="relative w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center ring-4 ring-green-500/10 mx-auto">
-                                <CheckCircle className="w-12 h-12 text-green-500" />
-                            </div>
-                        </div>
-                        <div className="space-y-2 mx-auto">
-                            <h3 className="text-2xl font-black text-white tracking-tight">Muvaffaqiyatli!</h3>
-                            <p className="text-slate-400 font-medium">To'lov qabul qilindi va hisobingiz yangilandi.</p>
-                        </div>
-                        <Button onClick={reset} className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold border border-slate-800 transition-all">
-                            Yopish
-                        </Button>
-                    </motion.div>
+                                key="success"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="space-y-6 text-center py-4"
+                            >
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-green-500 blur-2xl opacity-20 animate-pulse" />
+                                    <div className="relative w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center ring-4 ring-green-500/10 mx-auto">
+                                        <CheckCircle className="w-12 h-12 text-green-500" />
+                                    </div>
+                                </div>
+                                <div className="space-y-2 mx-auto">
+                                    <h3 className="text-2xl font-black text-white tracking-tight">Muvaffaqiyatli!</h3>
+                                    <p className="text-slate-400 font-medium">To'lov qabul qilindi va hisobingiz yangilandi.</p>
+                                </div>
+                                <Button onClick={reset} className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold border border-slate-800 transition-all">
+                                    Yopish
+                                </Button>
+                            </motion.div>
                         )}
-                </AnimatePresence>
+                    </AnimatePresence>
 
-                {loading && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 rounded-[32px]"
-                    >
-                        <div className="text-center space-y-4">
-                            <div className="relative">
-                                <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-500 opacity-20" />
-                                <Zap className="w-8 h-8 text-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                    {loading && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="absolute inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 rounded-[32px]"
+                        >
+                            <div className="text-center space-y-4">
+                                <div className="relative">
+                                    <Loader2 className="w-16 h-16 animate-spin mx-auto text-blue-500 opacity-20" />
+                                    <Zap className="w-8 h-8 text-blue-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="font-black text-white text-lg tracking-tight">Bajarilmoqda...</p>
+                                    <p className="text-slate-500 text-sm">Bog'lanish o'rnatilmoqda</p>
+                                </div>
                             </div>
-                            <div className="space-y-1">
-                                <p className="font-black text-white text-lg tracking-tight">Bajarilmoqda...</p>
-                                <p className="text-slate-500 text-sm">Bog'lanish o'rnatilmoqda</p>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </div>
-        </DialogContent>
+                        </motion.div>
+                    )}
+                </div>
+            </DialogContent>
         </Dialog >
     );
 };
