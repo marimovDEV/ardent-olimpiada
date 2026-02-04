@@ -33,6 +33,7 @@ import {
     X
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 import {
     Tooltip,
     TooltipContent,
@@ -52,30 +53,35 @@ import { cn } from "@/lib/utils";
 import SupportAnalytics from "@/components/admin/support/SupportAnalytics";
 import TicketDetailDialog from "@/components/admin/support/TicketDetailDialog";
 
+import axios from "axios";
+import { API_URL, getAuthHeader } from "@/services/api";
+
 // Types
 interface Ticket {
     id: string;
-    user: string;
-    email: string;
+    ticket_number: string;
+    user: {
+        id: number;
+        username: string;
+        full_name: string;
+        email: string;
+    };
     subject: string;
     category: "Payment" | "Technical" | "Course" | "Olympiad";
-    priority: "Low" | "Medium" | "High";
-    status: "Open" | "In Progress" | "Resolved" | "Escalated" | "Pending";
-    date: string;
-    lastMessage: string;
+    priority: "LOW" | "MEDIUM" | "HIGH";
+    priority_display: string;
+    status: "OPEN" | "IN_PROGRESS" | "RESOLVED" | "ESCALATED" | "PENDING";
+    status_display: string;
+    created_at: string;
+    updated_at: string;
+    last_message: string;
+    messages_count: number;
     isNew?: boolean; // For animation
 }
 
-const initialTickets: Ticket[] = [
-    { id: "TCK-1024", user: "Azizbek T.", email: "aziz@gmail.com", subject: "To'lov o'tmadi", category: "Payment", priority: "High", status: "Open", date: "20 Jan, 10:30", lastMessage: "Payme orqali to'ladim, lekin kurs ochilmadi." },
-    { id: "TCK-1023", user: "Malika K.", email: "malika@gmail.com", subject: "Sertifikat yuklanmayapti", category: "Technical", priority: "Medium", status: "In Progress", date: "19 Jan, 14:15", lastMessage: "Tekshirib ko'rayapmiz, biroz kuting." },
-    { id: "TCK-1022", user: "Jamshid A.", email: "jamshid@edu.uz", subject: "Python kursida xatolik", category: "Course", priority: "Low", status: "Resolved", date: "18 Jan, 09:00", lastMessage: "Rahmat, muammo hal bo'ldi." },
-    { id: "TCK-1021", user: "Sardor B.", email: "sardor@mail.ru", subject: "Olimpiada natijasi noto'g'ri", category: "Olympiad", priority: "High", status: "Escalated", date: "17 Jan, 16:20", lastMessage: "Natijamni qaydadan tekshirib bering!" },
-    { id: "TCK-1020", user: "Shahlo M.", email: "shahlo@gmail.com", subject: "Video ochilmayapti", category: "Technical", priority: "Medium", status: "Pending", date: "17 Jan, 11:00", lastMessage: "Internetim yaxshi lekin player qotyapti" },
-];
-
 const AdminSupportPage = () => {
-    const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
+    const [tickets, setTickets] = useState<Ticket[]>([]);
+    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
 
     // Advanced Filters
@@ -89,74 +95,102 @@ const AdminSupportPage = () => {
     const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([]);
 
     const { toast } = useToast();
+    const { t } = useTranslation();
 
-    // SIMULATED REAL-TIME UPDATES
+    const [stats, setStats] = useState({
+        categories: [],
+        performance: [],
+        responseTime: []
+    });
+    const [statsLoading, setStatsLoading] = useState(true);
+
     useEffect(() => {
+        fetchTickets();
+        fetchStats();
         const interval = setInterval(() => {
-            // 20% chance to duplicate a random ticket as "New"
-            if (Math.random() > 0.8) {
-                const randomId = Math.floor(Math.random() * 1000);
-                const newTicket: Ticket = {
-                    id: `TCK-${2000 + randomId}`,
-                    user: "Mehmon Foydalanuvchi",
-                    email: `user${randomId}@gmail.com`,
-                    subject: "Yangi savol (Real-time)",
-                    category: "Course",
-                    priority: "Medium",
-                    status: "Open",
-                    date: "Hozirgina",
-                    lastMessage: "Salom, kursni qanday sotib olsam bo'ladi?",
-                    isNew: true
-                };
-
-                setTickets(prev => [newTicket, ...prev]);
-                toast({
-                    title: "🔔 Yangi Ticket!",
-                    description: `${newTicket.user} yangi murojaat qoldirdi.`,
-                    duration: 3000,
-                });
-            }
-        }, 15000); // Check every 15 seconds
-
+            fetchTickets();
+            fetchStats();
+        }, 30000);
         return () => clearInterval(interval);
     }, []);
 
+    const fetchTickets = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/support/`, { headers: getAuthHeader() });
+            // Handle pagination if results is wrapped
+            const data = res.data.results || res.data;
+            setTickets(data);
+        } catch (error) {
+            console.error("Fetch tickets error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchStats = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/support/stats/`, { headers: getAuthHeader() });
+            if (res.data.success) {
+                setStats({
+                    categories: res.data.categories,
+                    performance: res.data.performance,
+                    responseTime: res.data.response_time
+                });
+            }
+        } catch (error) {
+            console.error("Fetch support stats error:", error);
+        } finally {
+            setStatsLoading(false);
+        }
+    };
+
     // FILTER LOGIC
     const filteredTickets = tickets.filter(ticket => {
-        const matchesSearch = ticket.user.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        const matchesSearch = ticket.user.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            ticket.user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
             ticket.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            ticket.id.toLowerCase().includes(searchQuery.toLowerCase());
+            ticket.ticket_number.toLowerCase().includes(searchQuery.toLowerCase());
 
         const matchesStatus = statusFilter === "all" || ticket.status === statusFilter;
         const matchesPriority = priorityFilter === "all" || ticket.priority === priorityFilter;
         const matchesCategory = categoryFilter === "all" || ticket.category === categoryFilter;
-        // Mock Date Check - in real app would use date-fns isWithinInterval
-        const matchesDate = !dateRange || true;
 
-        return matchesSearch && matchesStatus && matchesPriority && matchesCategory && matchesDate;
+        return matchesSearch && matchesStatus && matchesPriority && matchesCategory;
     });
 
     // HANDLERS
-    const handleStatusChange = (newStatus: string) => {
+    const handleStatusChange = async (newStatus: string) => {
         if (!selectedTicket) return;
 
-        const updatedTickets = tickets.map(t =>
-            t.id === selectedTicket.id ? { ...t, status: newStatus as any } : t
-        );
-        setTickets(updatedTickets);
+        try {
+            await axios.patch(`${API_URL}/support/${selectedTicket.id}/`, {
+                status: newStatus
+            }, { headers: getAuthHeader() });
 
-        toast({ title: "Status o'zgardi", description: `Ticket #${selectedTicket.id} statusi ${newStatus} ga o'zgartirildi.` });
+            toast({ title: t('admin.statusChanged'), description: t('admin.ticketStatusChanged', { number: selectedTicket.ticket_number }) });
+            fetchTickets();
 
-        // Simulating Escalation Alert
-        if (newStatus === "Escalated") {
-            toast({ title: "Escalation Sent", description: "Super Admin xabardor qilindi.", variant: "destructive" });
+            // Update selected ticket in place to show in dialog
+            setSelectedTicket(prev => prev ? { ...prev, status: newStatus as any } : null);
+        } catch (error) {
+            toast({ title: t('common.error'), description: t('admin.statusUpdateError'), variant: "destructive" });
         }
-
-        setSelectedTicket({ ...selectedTicket, status: newStatus as any });
     };
 
-    const handleReply = (message: string) => {
-        toast({ title: "Javob yuborildi", description: "Mijozga xabaringiz yetkazildi." });
+    const handleReply = async (message: string, isInternal: boolean = false) => {
+        if (!selectedTicket) return;
+
+        try {
+            await axios.post(`${API_URL}/support/${selectedTicket.id}/reply/`, {
+                message,
+                is_internal: isInternal
+            }, { headers: getAuthHeader() });
+
+            toast({ title: t('admin.replySent'), description: isInternal ? t('admin.internalNoteSaved') : t('admin.replyDelivered') });
+            fetchTickets();
+        } catch (error) {
+            toast({ title: t('common.error'), description: t('admin.replySendError'), variant: "destructive" });
+        }
     };
 
     const toggleSelect = (id: string) => {
@@ -167,12 +201,29 @@ const AdminSupportPage = () => {
         }
     };
 
-    const handleBulkAction = (action: string) => {
+    const handleBulkAction = async (action: string) => {
         if (selectedTicketIds.length === 0) return;
 
         if (action === "resolve") {
-            setTickets(tickets.map(t => selectedTicketIds.includes(t.id) ? { ...t, status: "Resolved" } : t));
-            toast({ title: "Bulk Action", description: `${selectedTicketIds.length} ta ticket yopildi.` });
+            try {
+                const res = await axios.post(`${API_URL}/support/bulk_resolve/`, {
+                    ids: selectedTicketIds
+                }, { headers: getAuthHeader() });
+
+                if (res.data.success) {
+                    toast({
+                        title: "Bulk Action",
+                        description: t('admin.ticketsClosed')
+                    });
+                    fetchTickets();
+                }
+            } catch (error) {
+                toast({
+                    title: t('common.error'),
+                    description: t('admin.bulkResolveError'),
+                    variant: "destructive"
+                });
+            }
         }
 
         setSelectedTicketIds([]);
@@ -181,20 +232,20 @@ const AdminSupportPage = () => {
     // Render Helpers
     const getPriorityBadge = (priority: string) => {
         switch (priority) {
-            case 'High': return <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">High</Badge>;
-            case 'Medium': return <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border-yellow-200">Medium</Badge>;
-            case 'Low': return <Badge variant="outline" className="text-gray-500">Low</Badge>;
+            case 'HIGH': return <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">{t('admin.priorityHigh')}</Badge>;
+            case 'MEDIUM': return <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100 border-yellow-200">{t('admin.priorityMedium')}</Badge>;
+            case 'LOW': return <Badge variant="outline" className="text-gray-500">{t('admin.priorityLow')}</Badge>;
             default: return <Badge variant="outline">{priority}</Badge>;
         }
     };
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case 'Open': return <Badge className="bg-green-100 text-green-700 border-green-200 animate-pulse">Open</Badge>;
-            case 'In Progress': return <Badge className="bg-blue-50 text-blue-700 border-blue-200">In Progress</Badge>;
-            case 'Resolved': return <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-200"><CheckCircle2 className="w-3 h-3 mr-1" />Resolved</Badge>;
-            case 'Escalated': return <Badge variant="destructive" className="bg-orange-100 text-orange-800 border-orange-200">Escalated</Badge>;
-            case 'Pending': return <Badge variant="secondary" className="bg-gray-100 text-gray-600 border-gray-200">Pending</Badge>;
+            case 'OPEN': return <Badge className="bg-green-100 text-green-700 border-green-200 animate-pulse">{t('admin.statusOpen')}</Badge>;
+            case 'IN_PROGRESS': return <Badge className="bg-blue-50 text-blue-700 border-blue-200">{t('admin.statusInProgress')}</Badge>;
+            case 'RESOLVED': return <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-200"><CheckCircle2 className="w-3 h-3 mr-1" />{t('admin.statusResolved')}</Badge>;
+            case 'ESCALATED': return <Badge variant="destructive" className="bg-orange-100 text-orange-800 border-orange-200">{t('admin.statusEscalated')}</Badge>;
+            case 'PENDING': return <Badge variant="secondary" className="bg-gray-100 text-gray-600 border-gray-200">{t('admin.statusPending')}</Badge>;
             default: return <Badge variant="outline">{status}</Badge>;
         }
     };
@@ -204,34 +255,39 @@ const AdminSupportPage = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-gray-900">Yordam Markazi</h1>
-                    <p className="text-gray-500">Murojaatlar boshqaruvi va mijozlar xizmati</p>
+                    <h1 className="text-2xl font-black text-foreground">{t('admin.supportSection.title')}</h1>
+                    <p className="text-muted-foreground">{t('admin.supportSubtitle')}</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => { toast({ title: "Refresh", description: "Ma'lumotlar yangilandi" }) }}>
+                    <Button variant="outline" onClick={() => { toast({ title: t('common.refresh'), description: t('admin.dataRefreshed') }) }}>
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        Yangilash
+                        {t('admin.refresh')}
                     </Button>
                     <Button variant="hero" className="shadow-lg shadow-blue-200">
                         <FileText className="w-4 h-4 mr-2" />
-                        Hisobot (PDF)
+                        {t('admin.reportPdf')}
                     </Button>
                 </div>
             </div>
 
             {/* Analytics Section */}
-            <SupportAnalytics />
+            <SupportAnalytics
+                categoryData={stats.categories}
+                performanceData={stats.performance}
+                responseTimeData={stats.responseTime}
+                isLoading={statsLoading}
+            />
 
             {/* Main Table Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden min-h-[600px] flex flex-col">
+            <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden min-h-[600px] flex flex-col">
                 {/* Advanced Toolbar */}
-                <div className="p-4 border-b border-gray-100 flex flex-col gap-4 bg-gray-50/50">
+                <div className="p-4 border-b border-border flex flex-col gap-4 bg-muted/30">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="relative w-full md:w-96">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
-                                placeholder="ID, Mavzu yoki Foydalanuvchi qidirish..."
-                                className="pl-9 bg-white border-gray-200"
+                                placeholder={t('admin.searchSupportPlaceholder')}
+                                className="pl-9 bg-card border-border"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -239,42 +295,43 @@ const AdminSupportPage = () => {
 
                         {/* Filtering */}
                         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                            <Filter className="w-4 h-4 text-gray-400 mr-1" />
+                            <Filter className="w-4 h-4 text-muted-foreground mr-1" />
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-[130px] bg-white text-xs h-9">
-                                    <SelectValue placeholder="Status" />
+                                <SelectTrigger className="w-[130px] bg-card text-xs h-9 border-border">
+                                    <SelectValue placeholder={t('admin.status')} />
                                 </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Barchasi</SelectItem>
-                                    <SelectItem value="Open">Open</SelectItem>
-                                    <SelectItem value="In Progress">In Progress</SelectItem>
-                                    <SelectItem value="Pending">Pending</SelectItem>
-                                    <SelectItem value="Resolved">Resolved</SelectItem>
-                                    <SelectItem value="Escalated">Escalated</SelectItem>
+                                <SelectContent className="bg-card border-border">
+                                    <SelectItem value="all">{t('common.all')}</SelectItem>
+                                    <SelectItem value="OPEN">{t('admin.statusOpen')}</SelectItem>
+                                    <SelectItem value="IN_PROGRESS">{t('admin.statusInProgress')}</SelectItem>
+                                    <SelectItem value="PENDING">{t('admin.statusPending')}</SelectItem>
+                                    <SelectItem value="RESOLVED">{t('admin.statusResolved')}</SelectItem>
+                                    <SelectItem value="ESCALATED">{t('admin.statusEscalated')}</SelectItem>
                                 </SelectContent>
                             </Select>
 
                             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-                                <SelectTrigger className="w-[130px] bg-white text-xs h-9">
-                                    <SelectValue placeholder="Muhimlik" />
+                                <SelectTrigger className="w-[130px] bg-card text-xs h-9 border-border">
+                                    <SelectValue placeholder={t('admin.priority')} />
                                 </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Barchasi</SelectItem>
-                                    <SelectItem value="High">High Priority</SelectItem>
-                                    <SelectItem value="Medium">Medium</SelectItem>
-                                    <SelectItem value="Low">Low</SelectItem>
+                                <SelectContent className="bg-card border-border">
+                                    <SelectItem value="all">{t('common.all')}</SelectItem>
+                                    <SelectItem value="HIGH">{t('admin.priorityHigh')}</SelectItem>
+                                    <SelectItem value="MEDIUM">{t('admin.priorityMedium')}</SelectItem>
+                                    <SelectItem value="LOW">{t('admin.priorityLow')}</SelectItem>
                                 </SelectContent>
                             </Select>
 
                             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                                <SelectTrigger className="w-[130px] bg-white text-xs h-9">
-                                    <SelectValue placeholder="Kategoriya" />
+                                <SelectTrigger className="w-[130px] bg-card text-xs h-9 border-border">
+                                    <SelectValue placeholder={t('admin.category')} />
                                 </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Barchasi</SelectItem>
-                                    <SelectItem value="Payment">Payment</SelectItem>
-                                    <SelectItem value="Technical">Technical</SelectItem>
-                                    <SelectItem value="Course">Course</SelectItem>
+                                <SelectContent className="bg-card border-border">
+                                    <SelectItem value="all">{t('common.all')}</SelectItem>
+                                    <SelectItem value="Payment">{t('admin.ticketCategories.Payment')}</SelectItem>
+                                    <SelectItem value="Technical">{t('admin.ticketCategories.Technical')}</SelectItem>
+                                    <SelectItem value="Course">{t('admin.ticketCategories.Course')}</SelectItem>
+                                    <SelectItem value="Olympiad">{t('admin.ticketCategories.Olympiad')}</SelectItem>
                                 </SelectContent>
                             </Select>
 
@@ -284,12 +341,12 @@ const AdminSupportPage = () => {
                                     <Button
                                         variant={"outline"}
                                         className={cn(
-                                            "w-[140px] justify-start text-left font-normal text-xs h-9 bg-white",
+                                            "w-[140px] justify-start text-left font-normal text-xs h-9 bg-card border-border",
                                             !dateRange && "text-muted-foreground"
                                         )}
                                     >
                                         <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {dateRange ? format(dateRange, "PPP") : <span>Sana</span>}
+                                        {dateRange ? format(dateRange, "PPP") : <span>{t('common.date')}</span>}
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0">
@@ -308,13 +365,13 @@ const AdminSupportPage = () => {
                     {/* Bulk Selection Actions */}
                     {selectedTicketIds.length > 0 && (
                         <div className="flex items-center gap-4 bg-blue-50 p-2 rounded-lg border border-blue-100 animate-in fade-in slide-in-from-top-2">
-                            <span className="text-sm font-bold text-blue-700 ml-2">{selectedTicketIds.length} ta tanlandi</span>
+                            <span className="text-sm font-bold text-blue-700 ml-2">{t('admin.selectedTickets', { count: selectedTicketIds.length })}</span>
                             <div className="h-4 w-px bg-blue-200" />
                             <Button size="sm" variant="ghost" className="text-blue-700 hover:text-blue-800 hover:bg-blue-100" onClick={() => handleBulkAction("resolve")}>
-                                <CheckCircle2 className="w-4 h-4 mr-2" /> Hal qilindi
+                                <CheckCircle2 className="w-4 h-4 mr-2" /> {t('admin.resolved')}
                             </Button>
                             <Button size="sm" variant="ghost" className="text-blue-700 hover:text-blue-800 hover:bg-blue-100">
-                                <Mail className="w-4 h-4 mr-2" /> Email yuborish
+                                <Mail className="w-4 h-4 mr-2" /> {t('admin.sendEmail')}
                             </Button>
                         </div>
                     )}
@@ -323,7 +380,7 @@ const AdminSupportPage = () => {
                 {/* Ticket List */}
                 <div className="flex-1 overflow-auto">
                     <Table>
-                        <TableHeader className="bg-gray-50/50 sticky top-0 z-10 shadow-sm">
+                        <TableHeader className="bg-muted/50 sticky top-0 z-10 shadow-sm border-b border-border">
                             <TableRow>
                                 <TableHead className="w-[50px]">
                                     <Checkbox
@@ -334,20 +391,20 @@ const AdminSupportPage = () => {
                                         }}
                                     />
                                 </TableHead>
-                                <TableHead className="w-[100px]">ID</TableHead>
-                                <TableHead>Foydalanuvchi</TableHead>
-                                <TableHead>Mavzu & Kategoriya</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Sana</TableHead>
-                                <TableHead>Prioritet</TableHead>
-                                <TableHead className="text-right">Amal</TableHead>
+                                <TableHead className="w-[100px]">{t('admin.id')}</TableHead>
+                                <TableHead>{t('admin.user')}</TableHead>
+                                <TableHead>{t('admin.subjectCategory')}</TableHead>
+                                <TableHead>{t('admin.status')}</TableHead>
+                                <TableHead>{t('common.date')}</TableHead>
+                                <TableHead>{t('admin.priority')}</TableHead>
+                                <TableHead className="text-right">{t('admin.actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {filteredTickets.map((ticket) => (
                                 <TableRow
                                     key={ticket.id}
-                                    className={`cursor-pointer group transition-colors ${selectedTicketIds.includes(ticket.id) ? "bg-blue-50/50 hover:bg-blue-50" : "hover:bg-gray-50"} ${ticket.isNew ? "animate-pulse bg-green-50" : ""}`}
+                                    className={`cursor-pointer group transition-colors ${selectedTicketIds.includes(ticket.id) ? "bg-blue-500/10 hover:bg-blue-500/20" : "hover:bg-muted/50"} ${ticket.isNew ? "animate-pulse bg-green-500/10" : ""}`}
                                     onClick={(e) => {
                                         // Prevent opening dialog if clicking checkbox or buttons
                                         if ((e.target as HTMLElement).closest('[role="checkbox"]') || (e.target as HTMLElement).closest('button')) return;
@@ -362,23 +419,23 @@ const AdminSupportPage = () => {
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <span className="font-mono text-xs text-gray-500 group-hover:text-blue-600 font-medium">{ticket.id}</span>
-                                        {ticket.isNew && <Badge className="ml-2 bg-green-500 text-[10px] px-1 py-0 h-4">New</Badge>}
+                                        <span className="font-mono text-xs text-muted-foreground group-hover:text-blue-500 font-medium">{ticket.ticket_number}</span>
+                                        {ticket.isNew && <Badge className="ml-2 bg-green-500 text-[10px] px-1 py-0 h-4">{t('common.new')}</Badge>}
                                     </TableCell>
                                     <TableCell>
-                                        <div className="font-bold text-gray-900">{ticket.user}</div>
-                                        <div className="text-xs text-gray-500">{ticket.email}</div>
+                                        <div className="font-bold text-foreground">{ticket.user.full_name || ticket.user.username}</div>
+                                        <div className="text-xs text-muted-foreground">{ticket.user.email}</div>
                                     </TableCell>
                                     <TableCell>
-                                        <div className="font-medium text-gray-800">{ticket.subject}</div>
-                                        <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
-                                            <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 border border-gray-200">{ticket.category}</span>
+                                        <div className="font-medium text-foreground/90">{t(ticket.subject as any)}</div>
+                                        <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                                            <span className="bg-muted px-1.5 py-0.5 rounded text-muted-foreground border border-border">{t(`admin.ticketCategories.${ticket.category}` as any)}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell>
                                         {getStatusBadge(ticket.status)}
                                     </TableCell>
-                                    <TableCell className="text-xs text-gray-500">{ticket.date}</TableCell>
+                                    <TableCell className="text-xs text-muted-foreground">{new Date(ticket.created_at).toLocaleDateString()}</TableCell>
                                     <TableCell>
                                         {getPriorityBadge(ticket.priority)}
                                     </TableCell>
@@ -391,7 +448,7 @@ const AdminSupportPage = () => {
                                                             <Eye className="w-4 h-4" />
                                                         </Button>
                                                     </TooltipTrigger>
-                                                    <TooltipContent>Ko'rish</TooltipContent>
+                                                    <TooltipContent>{t('common.view')}</TooltipContent>
                                                 </Tooltip>
 
                                                 <Tooltip>
@@ -400,16 +457,16 @@ const AdminSupportPage = () => {
                                                             <Pencil className="w-4 h-4" />
                                                         </Button>
                                                     </TooltipTrigger>
-                                                    <TooltipContent>Tahrirlash</TooltipContent>
+                                                    <TooltipContent>{t('admin.edit')}</TooltipContent>
                                                 </Tooltip>
 
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50" onClick={(e) => { e.stopPropagation(); toast({ title: "Closed", description: "Ticket yopildi" }) }}>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50" onClick={(e) => { e.stopPropagation(); toast({ title: t('admin.closed'), description: t('admin.ticketClosed') }) }}>
                                                             <Lock className="w-4 h-4" />
                                                         </Button>
                                                     </TooltipTrigger>
-                                                    <TooltipContent>Yopish</TooltipContent>
+                                                    <TooltipContent>{t('common.close')}</TooltipContent>
                                                 </Tooltip>
                                             </div>
                                         </TooltipProvider>

@@ -1,154 +1,142 @@
-import { Calculator, Atom, Code, Brain, BookOpen, Globe, Trophy, Users, Zap, Award } from "lucide-react";
+import { Calculator, Atom, Code, Brain, BookOpen, Globe, Trophy, Users, Zap, Award, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { homepageService } from "@/services/homepageService";
+import * as Icons from "lucide-react";
 
-const subjects = [
-  {
-    icon: Calculator,
-    name: "Matematika",
-    desc: "Olimpiada va maktab uchun chuqur tayyorgarlik",
-    stats: { students: "3.2k", courses: 45, olympiads: 12 },
-    color: "bg-blue-600",
-    lightColor: "bg-blue-50 text-blue-600",
-    badges: ["olympiad", "popular"],
-    xp: 100
-  },
-  {
-    icon: Code,
-    name: "Informatika",
-    desc: "Python, C++ va IT kasblarni noldan o'rganing",
-    stats: { students: "2.8k", courses: 52, olympiads: 8 },
-    color: "bg-green-600",
-    lightColor: "bg-green-50 text-green-600",
-    badges: ["skill", "free"],
-    xp: 120
-  },
-  {
-    icon: Atom,
-    name: "Fizika",
-    desc: "Tabiat qonunlarini tajribalar orqali tushuning",
-    stats: { students: "2.1k", courses: 38, olympiads: 6 },
-    color: "bg-purple-600",
-    lightColor: "bg-purple-50 text-purple-600",
-    badges: ["olympiad"],
-    xp: 110
-  },
-  {
-    icon: Brain,
-    name: "Mantiq",
-    desc: "Kritik fikrlash va IQ darajasini oshiring",
-    stats: { students: "1.5k", courses: 28, olympiads: 4 },
-    color: "bg-yellow-500",
-    lightColor: "bg-yellow-50 text-yellow-600",
-    badges: ["brain"],
-    xp: 90
-  },
-  {
-    icon: Globe,
-    name: "Ingliz tili",
-    desc: "IELTS va CEFR uchun maxsus kurslar",
-    stats: { students: "2.4k", courses: 40, olympiads: 5 },
-    color: "bg-red-500",
-    lightColor: "bg-red-50 text-red-600",
-    badges: ["popular"],
-    xp: 80
-  },
-  {
-    icon: BookOpen,
-    name: "Ona tili",
-    desc: "Grammatika va adabiyotni mukammal biling",
-    stats: { students: "1.9k", courses: 32, olympiads: 3 },
-    color: "bg-teal-500",
-    lightColor: "bg-teal-50 text-teal-600",
-    badges: [],
-    xp: 80
-  },
-];
-
-const getBadgeContent = (badge: string) => {
-  switch (badge) {
-    case 'olympiad': return { icon: <Trophy className="w-3 h-3" />, text: "Olimpiada" };
-    case 'popular': return { icon: <Zap className="w-3 h-3" />, text: "Mashhur" };
-    case 'free': return { icon: <Award className="w-3 h-3" />, text: "Bepul darslar" };
-    case 'skill': return { icon: <Code className="w-3 h-3" />, text: "IT Kasb" };
-    default: return null;
-  }
+// Helper for dynamic icons
+const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
+  const Icon = (Icons as any)[name] || BookOpen;
+  return <Icon className={className} />;
 };
 
 const SubjectsSection = () => {
+  const { t } = useTranslation();
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const data = await homepageService.getFeaturedSubjects();
+        if (data && Array.isArray(data)) {
+          setSubjects(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch subjects", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSubjects();
+  }, []);
+
+  // Fallback subjects if API returns empty (for demo)
+  const defaultSubjects = [
+    {
+      id: 1,
+      name: t('subjects.matematika'),
+      description: t('subjectsSection.matematika_desc', "Olimpiada va maktab uchun chuqur tayyorgarlik"),
+      icon: "Calculator",
+      color: "bg-blue-600",
+      lightColor: "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
+      badges: ["olympiad", "popular"],
+      xp_reward: 100,
+      stats: { students: "3.2k", olympiads: 12 }
+    },
+    // ... add more mocked if needed, but for now relying on backend or empty state
+  ];
+
+  const displaySubjects = subjects.length > 0 ? subjects : []; // Don't show default if we want to enforce CMS, or use defaultEntities for transition
+
+  const getBadgeContent = (badge: string) => {
+    switch (badge) {
+      case 'olympiad': return { icon: <Trophy className="w-3 h-3" />, text: t('subjectsSection.olympiad') };
+      case 'popular': return { icon: <Zap className="w-3 h-3" />, text: t('subjectsSection.popular') };
+      case 'free': return { icon: <Award className="w-3 h-3" />, text: t('subjectsSection.free') };
+      case 'skill': return { icon: <Code className="w-3 h-3" />, text: t('subjectsSection.it') };
+      default: return null;
+    }
+  };
+
   return (
-    <section id="subjects" className="py-16 md:py-24 relative bg-white">
+    <section id="subjects" className="py-16 md:py-24 relative bg-background transition-colors duration-300 font-sans">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <span className="inline-block px-4 py-2 rounded-full bg-blue-50 text-blue-600 text-sm font-bold mb-4 uppercase tracking-wider">
-            Yo'nalishlar
+          <span className="inline-block px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-bold mb-4 uppercase tracking-wider">
+            {t('subjectsSection.badge')}
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-gray-900">
-            Kelajagingizni <span className="text-blue-600">tanalang</span>
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-foreground">
+            {t('subjectsSection.title')}
+            <span className="text-blue-600 dark:text-blue-400">{t('subjectsSection.titleAccent')}</span>
           </h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Qaysi fan sizga ko'proq yoqadi? O'zingizga mos yo'nalishni tanlab, birinchi qadamni tashlang.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            {t('subjectsSection.description')}
           </p>
         </div>
 
         {/* Subjects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {subjects.map((subject, index) => (
-            <Link to="/all-courses" key={subject.name}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+          {displaySubjects.map((subject, index) => (
+            <Link to={`/courses?subject=${subject.id}`} key={subject.id || index}>
               <div
-                className="group bg-white rounded-3xl border border-gray-100 p-6 md:p-8 hover:shadow-2xl hover:shadow-blue-100/50 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden h-full flex flex-col"
+                className="group bg-card rounded-3xl border border-border p-6 md:p-8 hover:shadow-2xl hover:shadow-blue-100/50 dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300 relative overflow-hidden h-full flex flex-col items-start"
               >
                 {/* Decoration Circle */}
-                <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity ${subject.color}`} />
+                <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity ${subject.color || "bg-blue-600"}`} />
 
                 {/* Header */}
-                <div className="flex justify-between items-start mb-6">
-                  <div className={`w-16 h-16 rounded-2xl ${subject.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <subject.icon className="w-8 h-8 text-white" />
+                <div className="flex justify-between items-start w-full mb-6">
+                  <div className={`w-16 h-16 rounded-2xl ${subject.color || "bg-blue-600"} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    {/* Assuming icon is string name from backend */}
+                    <DynamicIcon name={subject.icon} className="w-8 h-8 text-white" />
                   </div>
                   {/* XP Badge */}
-                  <div className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                  <div className="bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                     <Zap className="w-3 h-3 fill-current" />
-                    +{subject.xp} XP
+                    +{subject.xp_reward || 50} XP
                   </div>
                 </div>
 
                 {/* Content */}
-                <h3 className="text-2xl font-bold mb-2 text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-2xl font-bold mb-2 text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {subject.name}
                 </h3>
-                <p className="text-gray-500 mb-6 line-clamp-2 text-sm">
-                  {subject.desc}
+                <p className="text-muted-foreground mb-6 line-clamp-2 text-sm text-left">
+                  {subject.description || subject.desc}
                 </p>
 
-                {/* Badges */}
+                {/* Badges - Mocking or using backend tags */}
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {subject.badges.map(b => {
-                    const badge = getBadgeContent(b);
-                    if (!badge) return null;
-                    return (
-                      <span key={b} className={`${subject.lightColor} px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5`}>
-                        {badge.icon} {badge.text}
-                      </span>
-                    )
-                  })}
+                  {/* Hardcoded logic for now as backend doesn't have badges field yet */}
+                  <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                    <Trophy className="w-3 h-3" /> {t('subjectsSection.badge_olympiad', 'Olimpiada')}
+                  </span>
                 </div>
 
                 {/* Stats Footer */}
-                <div className="mt-auto pt-6 border-t border-gray-100 grid grid-cols-2 gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-lg font-black text-gray-900">{subject.stats.students}</span>
-                    <span className="text-xs font-medium text-gray-400 uppercase">O'quvchi</span>
+                <div className="mt-auto pt-6 border-t border-border w-full grid grid-cols-2 gap-4">
+                  <div className="flex flex-col text-left">
+                    <span className="text-lg font-black text-foreground">{subject.stats?.students || "1k+"}</span>
+                    <span className="text-xs font-medium text-muted-foreground uppercase">{t('subjectsSection.student')}</span>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-lg font-black text-gray-900">{subject.stats.olympiads}</span>
-                    <span className="text-xs font-medium text-gray-400 uppercase">Olimpiada</span>
+                  <div className="flex flex-col text-left">
+                    <span className="text-lg font-black text-foreground">{subject.stats?.olympiads || "5+"}</span>
+                    <span className="text-xs font-medium text-muted-foreground uppercase">{t('subjectsSection.olympiad')}</span>
                   </div>
                 </div>
 
               </div>
             </Link>
           ))}
+
+          {displaySubjects.length === 0 && !loading && (
+            <div className="col-span-3 text-center py-12 text-muted-foreground">
+              {t('subjectsSection.empty', 'Fanlar topilmadi. Admin panel orqali qo\'shing.')}
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -257,6 +257,23 @@
   }
 }
 
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+    will-change: transform;
+}
+
+.carousel-text {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+.carousel-item-active .carousel-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 @keyframes gradient-xy {
 
   0%,

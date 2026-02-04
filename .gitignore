@@ -1,4 +1,46 @@
-node_modules
-.DS_Store
-dist
+# Common
+node_modules/
+dist/
+build/
 .env
+.env.*
+.DS_Store
+*.log
+*.tmp
+temp_*/
+*.json
+!package.json
+!uz.json
+!ru.json
+!package-lock.json
+!tsconfig.json
+
+# Python
+venv/
+.venv/
+temp_venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+.pytest_cache/
+.coverage
+htmlcov/
+media/
+static/
+!static/README.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary Scripts
+check_json.py
+check_jsx.py
+clean_code.tsx
+normalize_json.py
+reload_i18n.sh
+temp_olympiad_response.json

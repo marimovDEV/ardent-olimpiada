@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 const data = [
     { name: 'Matematika', value: 4500000, color: '#2563eb' }, // Blue
@@ -9,9 +10,11 @@ const data = [
 ];
 
 const RevenueChart = () => {
+    const { t } = useTranslation();
+
     return (
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-full flex flex-col">
-            <h3 className="font-bold text-lg mb-4 text-gray-900">Daromad manbalari (Fanlar kesimida)</h3>
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm h-full flex flex-col">
+            <h3 className="font-bold text-lg mb-4 text-foreground">{t('admin.revenueSourcesTitle')}</h3>
             <div className="flex-1 w-full min-h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -28,13 +31,17 @@ const RevenueChart = () => {
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
                         </Pie>
-                        <Tooltip formatter={(value) => `${(Number(value) / 1000000).toFixed(1)}M so'm`} />
+                        <Tooltip
+                            contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                            itemStyle={{ color: 'hsl(var(--foreground))' }}
+                            formatter={(value) => [`${(Number(value) / 1000000).toFixed(1)}M ${t('olympiadsSection.currency')}`, t('admin.charts.revenue')]}
+                        />
                         <Legend verticalAlign="bottom" height={36} />
                     </PieChart>
                 </ResponsiveContainer>
             </div>
-            <div className="mt-4 text-center text-sm text-gray-400">
-                Jami daromad: <span className="text-gray-900 font-bold">10.5M so'm</span>
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+                {t('admin.totalRevenueLabel')}: <span className="text-foreground font-bold">10.5M {t('olympiadsSection.currency')}</span>
             </div>
         </div>
     );

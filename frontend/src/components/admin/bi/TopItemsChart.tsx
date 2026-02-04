@@ -1,32 +1,67 @@
+import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-
-const data = [
-    { name: 'Matematika Pro', revenue: 12500000, color: '#3b82f6' },
-    { name: 'Fizika Olympiad', revenue: 8400000, color: '#8b5cf6' },
-    { name: 'Python Start', revenue: 6200000, color: '#10b981' },
-    { name: 'Ingliz tili', revenue: 4100000, color: '#f59e0b' },
-    { name: 'Mantiq', revenue: 1500000, color: '#64748b' },
-];
+import { useTranslation } from 'react-i18next';
+import api from '@/services/api';
 
 const TopItemsChart = () => {
-    return (
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm h-full">
-            <h3 className="font-bold text-lg mb-2 text-gray-900">Eng Foydali Mahsulotlar</h3>
-            <p className="text-xs text-gray-500 mb-6">Jami daromad bo'yicha TOP 5</p>
+    const { t } = useTranslation();
+    const [data, setData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-            <div className="w-full h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-                        <XAxis type="number" hide />
-                        <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 11 }} />
-                        <Tooltip cursor={{ fill: 'transparent' }} formatter={(value: number) => [`${value.toLocaleString()} so'm`, "Daromad"]} />
-                        <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={20}>
-                            {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const res = await api.get('/analytics/top-products/');
+            setData(res.data);
+        } catch (error) {
+            console.error("Failed to fetch top products", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="bg-card p-6 rounded-2xl border border-border shadow-sm h-full flex flex-col">
+            <h3 className="font-bold text-lg mb-2 text-foreground">{t('admin.topItemsTitle')}</h3>
+            <p className="text-xs text-muted-foreground mb-6">{t('admin.topItemsDesc')}</p>
+
+            <div className="w-full h-[250px] flex-1">
+                {loading ? (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                        Loading...
+                    </div>
+                ) : data.length === 0 ? (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
+                        No data available
+                    </div>
+                ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                            <XAxis type="number" hide />
+                            <YAxis
+                                dataKey="name"
+                                type="category"
+                                width={160}
+                                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                            />
+                            <Tooltip
+                                cursor={{ fill: 'transparent' }}
+                                contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                                itemStyle={{ color: 'hsl(var(--popover-foreground))' }}
+                                formatter={(value: number) => [`${value.toLocaleString()} ${t('olympiadsSection.currency')}`, t('admin.charts.revenue')]}
+                            />
+                            <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={20}>
+                                {data.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color || '#3b82f6'} />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                )}
             </div>
         </div>
     );

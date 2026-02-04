@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -13,144 +13,124 @@ import {
     Gift,
     Zap,
     CheckCircle2,
-    Filter
+    Filter,
+    Loader2
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
-// Rich Mock Data
-const courses = [
-    {
-        id: 1,
-        title: "Matematika Asoslari",
-        level: "Boshlang'ich",
-        grade: "5-6 Sinf",
-        outcome: "Maktab dasturini mustahkamlash",
-        lessons: 12,
-        students: 1200,
-        rating: 4.8,
-        color: "bg-blue-500",
-        tags: ["popular", "free"],
-        xp: 50
-    },
-    {
-        id: 2,
-        title: "Fizika: Mexanika",
-        level: "O'rta",
-        grade: "7-9 Sinf",
-        outcome: "Olimpiada masalalarini yechish",
-        lessons: 18,
-        students: 850,
-        rating: 4.7,
-        color: "bg-green-500",
-        tags: ["olympiad"],
-        xp: 100
-    },
-    {
-        id: 3,
-        title: "Python Dasturlash",
-        level: "Boshlang'ich",
-        grade: "Barcha uchun",
-        outcome: "Ilk o'yin va botlarni yaratish",
-        lessons: 24,
-        students: 2100,
-        rating: 4.9,
-        color: "bg-purple-500",
-        tags: ["popular", "new"],
-        xp: 75
-    },
-    {
-        id: 4,
-        title: "Ingliz tili: Grammatika",
-        level: "Barcha uchun",
-        grade: "5-11 Sinf",
-        outcome: "IELTS ga tayyorgarlik",
-        lessons: 30,
-        students: 3000,
-        rating: 4.6,
-        color: "bg-orange-500",
-        tags: [],
-        xp: 50
-    },
-    {
-        id: 5,
-        title: "Kimyo: Organik",
-        level: "Oliy",
-        grade: "10-11 Sinf",
-        outcome: "Universitetga kirish",
-        lessons: 15,
-        students: 500,
-        rating: 4.8,
-        color: "bg-red-500",
-        tags: ["olympiad"],
-        xp: 150
-    },
-    {
-        id: 6,
-        title: "Biologiya",
-        level: "O'rta",
-        grade: "8-9 Sinf",
-        outcome: "Anatomiya asoslari",
-        lessons: 20,
-        students: 900,
-        rating: 4.5,
-        color: "bg-cyan-500",
-        tags: ["free"],
-        xp: 60
-    },
-];
-
-const subjects = ["Barcha fanlar", "Matematika", "Fizika", "Informatika", "Ingliz tili", "Kimyo", "Biologiya"];
-const grades = ["Barcha sinflar", "5-6 Sinf", "7-9 Sinf", "10-11 Sinf"];
+import { useTranslation, Trans } from "react-i18next";
+import { getSubjectTheme } from "@/lib/course-themes";
+import * as Icons from "lucide-react";
 
 const PublicCoursesPage = () => {
-    const [selectedSubject, setSelectedSubject] = useState("Barcha fanlar");
-    const [selectedGrade, setSelectedGrade] = useState("Barcha sinflar");
-    const [showFilters, setShowFilters] = useState(false);
+    const { t } = useTranslation();
+    const [courses, setCourses] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const filteredCourses = courses.filter(course => {
-        const matchesSubject = selectedSubject === "Barcha fanlar" || course.title.includes(selectedSubject.split(" ")[0]); // Simple matching
-        const matchesGrade = selectedGrade === "Barcha sinflar" || course.grade.includes(selectedGrade.split(" ")[0]); // Simple matching
-        return matchesSubject && matchesGrade;
-    });
+    const [selectedSubject, setSelectedSubject] = useState("all_subjects");
+    const [selectedGrade, setSelectedGrade] = useState("all_grades");
 
-    const getBadge = (tag: string) => {
-        switch (tag) {
-            case 'olympiad': return { icon: <Trophy className="w-3 h-3" />, text: "Olimpiada", color: "bg-yellow-400 text-yellow-900" };
-            case 'popular': return { icon: <Flame className="w-3 h-3" />, text: "Mashhur", color: "bg-red-500 text-white" };
-            case 'free': return { icon: <Gift className="w-3 h-3" />, text: "Bepul", color: "bg-green-500 text-white" };
-            case 'new': return { icon: <Zap className="w-3 h-3" />, text: "Yangi", color: "bg-blue-500 text-white" };
-            default: return null;
-        }
+    const API_BASE = 'http://localhost:8000/api';
+
+    // Map subject names to filter keys
+    const subjectKeyMap: Record<string, string> = {
+        'matematika': 'math',
+        'math': 'math',
+        'fizika': 'physics',
+        'physics': 'physics',
+        'informatika': 'informatics',
+        'informatics': 'informatics',
+        'ingliz': 'english',
+        'english': 'english',
+        'kimyo': 'chemistry',
+        'chemistry': 'chemistry',
+        'biologiya': 'biology',
+        'biology': 'biology',
+        'dasturlash': 'informatics',
+        'programming': 'informatics',
+        'dizayn': 'informatics',
+        'design': 'informatics',
+        'marketing': 'informatics',
     };
 
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                // Fetch only active and approved courses
+                const res = await fetch(`${API_BASE}/courses/?is_active=true&status=APPROVED`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setCourses(data.results || data);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchCourses();
+    }, []);
+
+    const filteredCourses = courses.filter(course => {
+        // Handle subject as object or string
+        const subjectName = typeof course.subject === 'object' && course.subject?.name
+            ? course.subject.name
+            : course.subject_name || course.subject || "";
+
+        const courseSubjectKey = subjectKeyMap[subjectName.toLowerCase()] || 'informatics';
+
+        const subjectMatch = selectedSubject === "all_subjects" || courseSubjectKey === selectedSubject;
+
+        return subjectMatch;
+    });
+
+
+    // Get unique subjects from courses
+    const availableSubjects = Array.from(new Set(
+        courses.map(course => {
+            const subjectName = typeof course.subject === 'object' && course.subject?.name
+                ? course.subject.name
+                : course.subject_name || course.subject || "";
+            return subjectName.toLowerCase();
+        }).filter(Boolean)
+    ));
+
+    // Create dynamic subject keys - only show subjects that have courses
+    const subjectKeys = ['all_subjects', ...availableSubjects.map(subject => {
+        // Only map if it exists in the map, otherwise use the subject name itself (cleaned) to avoid 'informatics' default for everything
+        const key = subjectKeyMap[subject];
+        return key || null;
+    }).filter(Boolean).filter((value, index, self) => self.indexOf(value) === index)]; // Remove duplicates and nulls
+
+    const gradeKeys = ["all_grades", "grades_5_6", "grades_7_9", "grades_10_11"];
+
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-background flex flex-col">
             <Header />
             <main className="flex-1 pt-24 pb-16 container mx-auto px-4">
 
                 {/* Header Section */}
                 <div className="text-center mb-12 animate-slide-up">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-                        Bilim olishni <span className="text-blue-600">shu yerdan</span> boshlang
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+                        <Trans i18nKey="publicCourses.title" components={{ 1: <span className="text-primary" /> }} />
                     </h1>
-                    <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                        Olimpiadalarga tayyorlaning, maktab baholarini yaxshilang va yangi kasblarni o'rganing.
+                    <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                        {t('publicCourses.subtitle')}
                     </p>
                 </div>
 
                 {/* Filter Bar */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 items-center justify-between sticky top-20 z-20">
+                <div className="bg-card p-4 rounded-2xl shadow-sm border border-border mb-8 flex flex-col md:flex-row gap-4 items-center justify-between sticky top-20 z-20">
                     <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                        {subjects.map(subject => (
+                        {subjectKeys.map(key => (
                             <button
-                                key={subject}
-                                onClick={() => setSelectedSubject(subject)}
-                                className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${selectedSubject === subject
-                                        ? "bg-gray-900 text-white shadow-md"
-                                        : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                                key={key}
+                                onClick={() => setSelectedSubject(key)}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${selectedSubject === key
+                                    ? "bg-primary text-primary-foreground shadow-md"
+                                    : "bg-muted text-muted-foreground hover:bg-muted/80"
                                     }`}
                             >
-                                {subject}
+                                {t(`filters.${key}`)}
                             </button>
                         ))}
                     </div>
@@ -160,88 +140,108 @@ const PublicCoursesPage = () => {
                             <select
                                 value={selectedGrade}
                                 onChange={(e) => setSelectedGrade(e.target.value)}
-                                className="w-full h-10 pl-4 pr-8 rounded-xl bg-gray-50 border border-gray-200 text-sm font-medium appearance-none outline-none focus:border-blue-500"
+                                className="w-full h-10 pl-4 pr-8 rounded-xl bg-muted border border-border text-sm font-medium appearance-none outline-none focus:border-primary text-foreground"
                             >
-                                {grades.map(g => <option key={g} value={g}>{g}</option>)}
+                                {gradeKeys.map(key => <option key={key} value={key} className="bg-card">{t(`filters.${key}`)}</option>)}
                             </select>
-                            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                            <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                         </div>
                     </div>
                 </div>
 
                 {/* Courses Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredCourses.map((course, index) => (
-                        <div
-                            key={course.id}
-                            className="group bg-white rounded-[2rem] border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
-                        >
-                            {/* Card Image */}
-                            <div className={`h-52 ${course.color} relative flex items-center justify-center overflow-hidden`}>
-                                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                                <BookOpen className="w-16 h-16 text-white/40 transform group-hover:scale-110 transition-transform duration-500" />
+                {isLoading ? (
+                    <div className="flex items-center justify-center py-24">
+                        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {filteredCourses.map((course) => {
+                            const theme = getSubjectTheme(course.subject_name || course.subject || "");
+                            const DynamicIcon = (Icons as any)[theme.icon] || Icons.BookOpen;
+                            const isFree = course.price === 0 || course.is_free;
 
-                                {/* Badges */}
-                                <div className="absolute top-4 left-4 flex flex-col gap-2 items-start">
-                                    {course.tags.map(tag => {
-                                        const badge = getBadge(tag);
-                                        return badge ? (
-                                            <span key={tag} className={`${badge.color} px-3 py-1 rounded-full text-[10px] font-bold uppercase shadow-sm flex items-center gap-1`}>
-                                                {badge.icon} {badge.text}
-                                            </span>
-                                        ) : null;
-                                    })}
-                                </div>
+                            return (
+                                <div
+                                    key={course.id}
+                                    className="group bg-card rounded-[2rem] border border-border overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
+                                >
+                                    {/* Card Image */}
+                                    <div className="h-52 relative flex items-center justify-center overflow-hidden">
+                                        <img
+                                            src={course.thumbnail || theme.fallbackImage}
+                                            alt={course.title}
+                                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors" />
+                                        <DynamicIcon className="w-16 h-16 text-white/40 transform group-hover:scale-110 transition-transform duration-500 relative z-10" />
 
-                                <div className="absolute bottom-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-white text-xs font-bold border border-white/20">
-                                    {course.grade}
-                                </div>
-                            </div>
+                                        {/* Badges */}
+                                        <div className="absolute top-4 left-4 flex flex-col gap-2 items-start z-20">
+                                            {course.students_count > 100 && (
+                                                <span className="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase shadow-sm flex items-center gap-1">
+                                                    <Flame className="w-3 h-3" /> {t('badges.popular')}
+                                                </span>
+                                            )}
+                                            {isFree && (
+                                                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase shadow-sm flex items-center gap-1">
+                                                    <Gift className="w-3 h-3" /> {t('badges.free')}
+                                                </span>
+                                            )}
+                                        </div>
 
-                            {/* Card Content */}
-                            <div className="p-6 flex-1 flex flex-col">
-                                <div className="mb-4">
-                                    <h3 className="font-bold text-xl leading-tight mb-2 group-hover:text-blue-600 transition-colors">{course.title}</h3>
-                                    <p className="text-sm text-gray-500 flex items-start gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                                        {course.outcome}
-                                    </p>
-                                </div>
-
-                                <div className="flex items-center justify-between text-sm text-gray-500 mb-6 bg-gray-50 p-3 rounded-xl">
-                                    <div className="flex items-center gap-1.5 font-medium">
-                                        <Play className="w-4 h-4 fill-gray-400" />
-                                        {course.lessons} dars
-                                    </div>
-                                    <div className="w-px h-4 bg-gray-300" />
-                                    <div className="flex items-center gap-1.5 font-medium">
-                                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                        {course.rating}
-                                    </div>
-                                    <div className="w-px h-4 bg-gray-300" />
-                                    <div className="flex items-center gap-1.5 font-medium">
-                                        <Users className="w-4 h-4" />
-                                        {course.students}
-                                    </div>
-                                </div>
-
-                                <div className="mt-auto flex items-center justify-between gap-4">
-                                    <div className="text-xs font-bold text-orange-500 flex items-center gap-1 bg-orange-50 px-2 py-1 rounded-lg">
-                                        <Zap className="w-3 h-3 fill-orange-500" />
-                                        +{course.xp} XP
+                                        <div className="absolute bottom-4 right-4 bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-white text-[10px] font-bold border border-white/20 z-20">
+                                            {t(`levels.${course.level}`) || course.level}
+                                        </div>
                                     </div>
 
-                                    <Link to="/auth" className="flex-1">
-                                        <Button className="w-full bg-gray-900 hover:bg-blue-600 text-white font-bold rounded-xl transition-all duration-300 shadow-lg shadow-gray-200 hover:shadow-blue-200">
-                                            Boshlash
-                                            <ArrowRight className="w-4 h-4 ml-2" />
-                                        </Button>
-                                    </Link>
+                                    {/* Card Content */}
+                                    <div className="p-6 flex-1 flex flex-col">
+                                        <div className="mb-4">
+                                            <h3 className="font-bold text-xl leading-tight mb-2 text-foreground group-hover:text-primary transition-colors">
+                                                {t(course.title)}
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground line-clamp-2">
+                                                {t(course.description)}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-6 bg-muted p-3 rounded-xl">
+                                            <div className="flex items-center gap-1.5 font-medium">
+                                                <Play className="w-4 h-4 text-primary" />
+                                                {course.lessons_count || 0} {t('publicCourses.lessons')}
+                                            </div>
+                                            <div className="w-px h-4 bg-border" />
+                                            <div className="flex items-center gap-1.5 font-medium">
+                                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                                                {Number(course.rating || 0).toFixed(1)}
+                                            </div>
+                                            <div className="w-px h-4 bg-border" />
+                                            <div className="flex items-center gap-1.5 font-medium">
+                                                <Users className="w-4 h-4 text-primary" />
+                                                {course.students_count || 0}
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-auto flex items-center justify-between gap-4">
+                                            <div className="text-xs font-bold text-orange-500 flex items-center gap-1 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded-lg">
+                                                <Zap className="w-3 h-3 fill-orange-500" />
+                                                +{course.xp_reward || 50} XP
+                                            </div>
+
+                                            <Link to={`/course/${course.id}`} className="flex-1">
+                                                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl transition-all duration-300 shadow-lg shadow-primary/20">
+                                                    {t('publicCourses.details') || "Batafsil"}
+                                                    <ArrowRight className="w-4 h-4 ml-2" />
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </main>
             <Footer />
         </div>
