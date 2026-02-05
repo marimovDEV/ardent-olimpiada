@@ -12,7 +12,7 @@ import ArdCoin from "@/components/ArdCoin";
 import PaymentModal from "@/components/payment/PaymentModal";
 
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 // Fallback translations for backend data that doesn't have keys
 const BACKEND_TRANSLATIONS: Record<string, Record<string, string>> = {

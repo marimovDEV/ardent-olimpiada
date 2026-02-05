@@ -9,7 +9,7 @@ interface UserData {
     streak?: number;
 }
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 // Level titles based on level number
 const LEVEL_TITLES: Record<number, string> = {

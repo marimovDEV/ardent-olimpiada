@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 const StreakStats = () => {
     const [streakData, setStreakData] = useState<any>(null);

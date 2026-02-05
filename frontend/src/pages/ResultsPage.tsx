@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 // Enhanced Mock Data helper
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 const ResultsPage = () => {
     const { t, i18n } = useTranslation();

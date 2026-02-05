@@ -17,7 +17,7 @@ interface AuthPageProps {
   mode: 'login' | 'register' | 'recover';
 }
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 const AuthPage = ({ mode }: AuthPageProps) => {
   const { t } = useTranslation();

@@ -31,7 +31,7 @@ const TeachersSection = () => {
                 const lang = i18n.language === 'ru' ? 'ru' : 'uz';
                 const mapped = data.map((item: any) => {
                     // Media files are served from root, not /api/
-                    const baseUrl = 'http://localhost:8000';
+                    const baseUrl = 'https://test.api.ardentsoft.uz';
                     const imageUrl = item.image?.startsWith('http') ? item.image : `${baseUrl}${item.image}`;
                     console.log('Teacher image URL:', imageUrl, 'Original:', item.image);
                     return {

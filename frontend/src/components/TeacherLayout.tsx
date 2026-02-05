@@ -190,7 +190,7 @@ const TeacherLayout = () => {
                                         ? user.avatar_url
                                         : user.avatar?.startsWith('http')
                                             ? user.avatar
-                                            : `http://localhost:8000${user.avatar_url || user.avatar}`
+                                            : `https://test.api.ardentsoft.uz${user.avatar_url || user.avatar}`
                                 }
                                 alt={user.first_name || 'Teacher'}
                                 className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100"

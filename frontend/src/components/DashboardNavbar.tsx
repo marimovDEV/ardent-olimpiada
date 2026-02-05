@@ -26,7 +26,7 @@ import NotificationBell from './NotificationBell';
 import PaymentModal from './payment/PaymentModal';
 import LevelProgressModal from './dashboard/LevelProgressModal';
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 interface NavbarProps {
     onMobileMenuClick?: () => void;

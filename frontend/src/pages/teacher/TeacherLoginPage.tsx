@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import { AuthGuideSide } from "@/components/auth/AuthGuideSide";
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 const TeacherLoginPage = () => {
     const { t } = useTranslation();

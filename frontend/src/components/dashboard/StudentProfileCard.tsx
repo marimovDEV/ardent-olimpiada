@@ -30,7 +30,7 @@ interface UserData {
     };
 }
 
-const API_BASE = 'http://localhost:8000/api';
+import { API_URL as API_BASE } from "@/services/api";
 
 import { useTranslation } from 'react-i18next';
 // ...
