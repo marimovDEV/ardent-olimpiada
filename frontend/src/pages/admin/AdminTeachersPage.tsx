@@ -206,6 +206,7 @@ const AdminTeachersPage = () => {
                 // Create
                 const userData = {
                     ...formData,
+                    password_confirm: formData.password, // Required by serializer
                     phone: formData.phone ? (formData.phone.startsWith('+') ? formData.phone : `+998${formData.phone}`) : "",
                     role: 'TEACHER'
                 };
