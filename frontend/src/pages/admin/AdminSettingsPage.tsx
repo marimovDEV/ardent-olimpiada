@@ -26,7 +26,6 @@ import {
 import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
-import AdminPaymentSettings from "./settings/AdminPaymentSettings";
 
 interface PlatformSettings {
     id?: number;
@@ -350,10 +349,6 @@ const AdminSettingsPage = () => {
                     <TabsTrigger value="notifications" className="gap-2">
                         <Bell className="w-4 h-4" />
                         {i18n.language === 'ru' ? 'Уведомления' : 'Bildirishnomalar'}
-                    </TabsTrigger>
-                    <TabsTrigger value="payments" className="gap-2">
-                        <CreditCard className="w-4 h-4" />
-                        {i18n.language === 'ru' ? 'Платежи' : "To'lovlar"}
                     </TabsTrigger>
                     <TabsTrigger value="roles" className="gap-2">
                         <Users className="w-4 h-4" />
@@ -855,18 +850,6 @@ const AdminSettingsPage = () => {
                     </div>
                 </TabsContent>
 
-                {/* PAYMENTS TAB */}
-                <TabsContent value="payments" className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('admin.paymentProviders')}</CardTitle>
-                            <CardDescription>{t('admin.paymentProvidersSubtitle')}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <AdminPaymentSettings />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
 
                 {/* ROLES TAB */}
                 <TabsContent value="roles" className="space-y-6">
