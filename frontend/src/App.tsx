@@ -119,7 +119,23 @@ const App = () => {
             <Sonner />
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Routes>
-                <Route path="/" element={<Index />} />
+                {/* Public Routes with Global Layout */}
+                <Route element={<PublicLayout />}>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/winners" element={<PublicWinnersPage />} />
+                  <Route path="/all-olympiads" element={<PublicOlympiadsPage />} />
+                  <Route path="/subjects" element={<SubjectsPage />} />
+                  <Route path="/subject/:slug" element={<SubjectDetailPage />} />
+                  <Route path="/all-courses" element={<PublicCoursesPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/guide" element={<GuidePage />} />
+                  <Route path="/course/:id" element={<CourseDetailPage />} />
+                  <Route path="/profession/:id" element={<ProfessionDetailPage />} />
+                  <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
+                  <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
+                  <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
+                </Route>
+
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />
                 <Route path="/auth/register" element={<AuthPage mode="register" />} />
                 <Route path="/auth/recover" element={<AuthPage mode="recover" />} />
@@ -128,21 +144,6 @@ const App = () => {
                 {/* Shortcuts */}
                 <Route path="/login" element={<Navigate to="/auth/login" replace />} />
                 <Route path="/register" element={<Navigate to="/auth/register" replace />} />
-
-
-                <Route path="/winners" element={<PublicWinnersPage />} />
-                <Route path="/all-olympiads" element={<PublicOlympiadsPage />} />
-                <Route path="/subjects" element={<SubjectsPage />} />
-                <Route path="/subject/:slug" element={<SubjectDetailPage />} />
-                <Route path="/all-courses" element={<PublicCoursesPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/guide" element={<GuidePage />} />
-
-                <Route path="/course/:id" element={<CourseDetailPage />} />
-                <Route path="/profession/:id" element={<ProfessionDetailPage />} />
-                <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
-                <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
-                <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
 
                 {/* Dashboard Layout Routes */}
                 <Route element={<DashboardLayout />}>
@@ -159,10 +160,7 @@ const App = () => {
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/olympiad/:id/test" element={<OlympiadTestPage />} />
 
-                {/* Public Layout Routes */}
-                <Route element={<PublicLayout />}>
-                  <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
-                </Route>
+                <Route path="/course/:id/lesson/:lessonId?" element={<LessonView />} />
 
                 {/* Olympiad Mode Layout */}
                 <Route element={<OlympiadLayout />}>

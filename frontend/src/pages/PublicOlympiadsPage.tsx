@@ -70,16 +70,14 @@ const PublicOlympiadsPage = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+        <div className="relative overflow-hidden">
             {/* Ambient Background */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl animate-blob opacity-50" />
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-3xl animate-blob animation-delay-4000 opacity-50" />
             </div>
 
-
-
-            <main className="flex-1 pt-28 pb-20 container mx-auto px-4 relative z-10">
+            <main className="pb-20 container mx-auto px-4 relative z-10">
                 <div className="text-center mb-16 animate-slide-up">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 backdrop-blur border border-border shadow-sm mb-6">
                         <Sparkles className="w-4 h-4 text-warning animate-pulse" />

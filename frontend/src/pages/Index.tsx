@@ -34,7 +34,7 @@ const Index = () => {
   const { t, i18n } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background font-sans selection:bg-primary/20 flex flex-col">
+    <>
       <Helmet>
         <title>{config ? (config as any)[`title_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_title : "Ardent Olimpiada - Kelajagingizni quring"}</title>
         <meta name="description" content={config ? (config as any)[`subtitle_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_subtitle : "O'zbekistonning eng nufuzli olimpiadalar portali"} />
@@ -42,9 +42,8 @@ const Index = () => {
         <meta property="og:description" content="Bilimingizni sinang va yutib oling!" />
         <meta property="og:image" content="/og-image.jpg" />
       </Helmet>
-      <Header />
 
-      <main className="flex-1">
+      <main>
         <HeroSection />
 
         {(!config || config.show_stats) && <StatsBlock />}
@@ -72,11 +71,7 @@ const Index = () => {
           {(!config || config.show_cta) && <LeadForm />}
         </Suspense>
       </main>
-
-      <Footer />
-
-      <AIChatWidget />
-    </div>
+    </>
   );
 };
 

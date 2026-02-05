@@ -58,10 +58,9 @@ const GuidePage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-background">
-
+        <>
             {/* Hero Section */}
-            <section className="relative pt-32 pb-20 overflow-hidden bg-primary/5">
+            <section className="relative pt-12 pb-20 overflow-hidden bg-primary/5">
                 <div className="absolute inset-0 bg-grid-white/10 [mask-image:radial-gradient(white,transparent_70%)] pointer-events-none" />
                 <div className="container relative z-10 text-center">
                     <motion.div
@@ -212,7 +211,7 @@ const GuidePage = () => {
                     </motion.div>
                 </div>
             </section>
-        </div>
+        </div >
     );
 };
 
