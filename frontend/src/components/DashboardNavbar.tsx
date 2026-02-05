@@ -212,10 +212,6 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                                 <UserIcon className="w-4 h-4 mr-2" />
                                 {t('dashboard.navbar.profile')}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate('/settings')}>
-                                <Settings className="w-4 h-4 mr-2" />
-                                {t('dashboard.navbar.settings')}
-                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-500/10 cursor-pointer">
                                 <LogOut className="w-4 h-4 mr-2" />
