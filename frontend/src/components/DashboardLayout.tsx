@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import SupportWidget from '@/components/support/SupportWidget';
 import DashboardNavbar from "./DashboardNavbar";
+import TelegramBotBanner from "./dashboard/TelegramBotBanner";
 import { useTranslation } from "react-i18next";
 
 const DashboardLayout = () => {
