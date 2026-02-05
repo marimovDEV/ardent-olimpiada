@@ -337,13 +337,13 @@ const MyOlympiadsTab = () => {
                     </h3>
                     <div className="grid gap-4">
                         {results.map(res => (
-                            <div key={res.id} className="bg-card p-5 rounded-xl border border-border flex flex-col sm:flex-row sm:items-center justify-between shadow-sm gap-4">
+                            <div key={res.id} className="bg-card p-4 sm:p-5 rounded-xl border border-border flex flex-col gap-4 shadow-sm">
                                 <div>
-                                    <h4 className="font-bold text-lg text-foreground">{res.olympiad.title}</h4>
+                                    <h4 className="font-bold text-base sm:text-lg text-foreground">{res.olympiad.title}</h4>
                                     <p className="text-sm text-muted-foreground">{new Date(res.submitted_at).toLocaleDateString()}</p>
                                 </div>
 
-                                <div className="flex items-center gap-6">
+                                <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                                     <div className="text-center">
                                         <div className="text-2xl font-black text-blue-600">{res.score}%</div>
                                         <div className="text-xs text-muted-foreground">{t('dashboard.profile.olympiads.result')}</div>
@@ -352,7 +352,7 @@ const MyOlympiadsTab = () => {
                                         <div className="text-lg font-bold text-green-600">{res.correct_answers} / {res.total_questions}</div>
                                         <div className="text-xs text-muted-foreground">{t('dashboard.profile.olympiads.correct')}</div>
                                     </div>
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col sm:flex-row gap-2 ml-auto">
                                         <Button variant="outline" size="sm" asChild>
                                             <Link to={`/olympiad/${res.olympiad.id}/result`}>
                                                 <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
@@ -859,9 +859,9 @@ const ProfilePage = () => {
             </div>
 
             {/* Profile Header Card */}
-            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-8 text-white mb-8 relative overflow-hidden shadow-xl">
+            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-5 md:p-8 text-white mb-8 relative overflow-hidden shadow-xl">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
                     {/* Avatar */}
                     <div className="relative group">
                         {displayAvatar ? (
@@ -886,46 +886,50 @@ const ProfilePage = () => {
                         <h1 className="text-3xl md:text-4xl font-bold mb-2">{fullName}</h1>
                         <p className="text-blue-200 mb-6 font-medium">@{user.username}</p>
 
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
-                            <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-sm">
-                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-4xl">
+                            <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm">
+                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
                                     <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                                 </div>
-                                <div>
-                                    <p className="text-xl font-bold">{user.level || 1}</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.level')}</p>
+                                <div className="min-w-0">
+                                    <p className="text-lg sm:text-xl font-bold truncate">{user.level || 1}</p>
+                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.level')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-sm">
-                                <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                            <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm">
+                                <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
                                     <Zap className="w-5 h-5 text-green-400 fill-green-400" />
                                 </div>
-                                <div>
-                                    <p className="text-xl font-bold">{user.xp || 0}</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.xp')}</p>
+                                <div className="min-w-0">
+                                    <p className="text-lg sm:text-xl font-bold truncate">{user.xp || 0}</p>
+                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.xp')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-sm">
-                                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                            <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm">
+                                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
                                     <Trophy className="w-5 h-5 text-purple-400 fill-purple-400" />
                                 </div>
-                                <div>
-                                    <p className="text-xl font-bold">0</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.achievements')}</p>
+                                <div className="min-w-0">
+                                    <p className="text-lg sm:text-xl font-bold truncate">0</p>
+                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.achievements')}</p>
                                 </div>
                             </div>
 
                             {/* Balance Card */}
-                            <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl backdrop-blur-sm ring-2 ring-yellow-400/50">
-                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                            <div className="col-span-2 sm:col-span-1 flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm ring-2 ring-yellow-400/50">
+                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
                                     <CreditCard className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                                 </div>
-                                <div className="mr-2">
-                                    <p className="text-xl font-bold">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.balance')}</p>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm sm:text-base font-bold truncate">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
+                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.balance')}</p>
                                 </div>
-                                <TopUpDialog onSuccess={() => loadUser()} />
                             </div>
+                        </div>
+
+                        {/* Top Up Button - Separate row on mobile */}
+                        <div className="w-full sm:w-auto mt-4 sm:mt-0">
+                            <TopUpDialog onSuccess={() => loadUser()} />
                         </div>
 
                         {/* Level Progress Bar (Dynamic) */}
@@ -969,12 +973,12 @@ const ProfilePage = () => {
 
             {/* TABS CONTENT */}
             <Tabs defaultValue="profile" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-5 mb-8 bg-card p-1 rounded-2xl border border-border h-auto">
-                    <TabsTrigger value="profile" className="py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">{t('dashboard.profile.tabs.info')}</TabsTrigger>
-                    <TabsTrigger value="courses" className="py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">{t('dashboard.profile.tabs.courses')}</TabsTrigger>
-                    <TabsTrigger value="olympiads" className="py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">{t('dashboard.profile.tabs.olympiads')}</TabsTrigger>
-                    <TabsTrigger value="certificates" className="py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">{t('dashboard.profile.tabs.certificates') || "Sertifikatlar"}</TabsTrigger>
-                    <TabsTrigger value="payments" className="py-3 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium">{t('dashboard.profile.tabs.payments')}</TabsTrigger>
+                <TabsList className="flex overflow-x-auto mb-8 bg-card p-1 rounded-2xl border border-border h-auto gap-1 snap-x snap-mandatory scrollbar-hide">
+                    <TabsTrigger value="profile" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.info')}</TabsTrigger>
+                    <TabsTrigger value="courses" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.courses')}</TabsTrigger>
+                    <TabsTrigger value="olympiads" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.olympiads')}</TabsTrigger>
+                    <TabsTrigger value="certificates" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.certificates') || "Sertifikatlar"}</TabsTrigger>
+                    <TabsTrigger value="payments" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.payments')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile" className="space-y-6 focus-visible:outline-none">
