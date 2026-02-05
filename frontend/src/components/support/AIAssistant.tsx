@@ -31,9 +31,10 @@ interface Message {
 
 interface AIAssistantProps {
     onTalkToAdmin: () => void;
+    onClose?: () => void;
 }
 
-const AIAssistant = ({ onTalkToAdmin }: AIAssistantProps) => {
+const AIAssistant = ({ onTalkToAdmin, onClose }: AIAssistantProps) => {
     const [faqs, setFaqs] = useState<AIAssistantFAQ[]>([]);
     const [history, setHistory] = useState<Message[]>([]);
     const [language, setLanguage] = useState<'uz' | 'ru'>('uz');
@@ -137,23 +138,38 @@ const AIAssistant = ({ onTalkToAdmin }: AIAssistantProps) => {
     return (
         <div className="flex flex-col h-full bg-card dark:bg-slate-900 transition-colors">
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-900 p-4 text-white flex items-center gap-3 shadow-md">
-                <div className="w-10 h-10 rounded-full bg-white/20 dark:bg-black/20 flex items-center justify-center border border-white/30 dark:border-white/10">
-                    <Sparkles className="w-6 h-6 text-yellow-200" />
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-900 p-5 text-white flex items-center justify-between shadow-lg">
+                <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-white/20 dark:bg-black/20 flex items-center justify-center border border-white/30 dark:border-white/10 backdrop-blur-sm shadow-inner">
+                        <Sparkles className="w-7 h-7 text-yellow-200" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-lg leading-tight">Ardent AI</h3>
+                        <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                            <p className="text-[10px] text-blue-100 dark:text-blue-200 uppercase tracking-widest font-bold">Online Assistant</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h3 className="font-bold text-sm">Ardent AI</h3>
-                    <p className="text-[10px] text-blue-100 dark:text-blue-200 uppercase tracking-widest font-bold">Smart Assistant v2.0</p>
-                </div>
+                {onClose && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onClose}
+                        className="sm:hidden text-white hover:bg-white/10 rounded-full"
+                    >
+                        <X className="w-6 h-6" />
+                    </Button>
+                )}
             </div>
 
             {/* Chat History */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/20 dark:bg-slate-950/20">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-5 bg-slate-50/50 dark:bg-slate-950/40">
                 {history.map((msg, i) => (
                     <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
-                        <div className={`max-w-[85%] shadow-sm rounded-2xl p-3 text-sm relative group ${msg.type === 'user'
+                        <div className={`max-w-[88%] shadow-sm rounded-2xl p-4 text-sm relative group ${msg.type === 'user'
                             ? 'bg-blue-600 text-white rounded-tr-none'
-                            : 'bg-card dark:bg-slate-800 text-foreground dark:text-slate-100 rounded-tl-none border border-border dark:border-slate-700'
+                            : 'bg-white dark:bg-slate-800 text-foreground dark:text-slate-100 rounded-tl-none border border-border dark:border-slate-700'
                             }`}>
                             {msg.content}
 
@@ -200,33 +216,51 @@ const AIAssistant = ({ onTalkToAdmin }: AIAssistantProps) => {
                 ))}
                 {loading && (
                     <div className="flex justify-start">
-                        <div className="bg-card dark:bg-slate-800 border border-border dark:border-slate-700 rounded-2xl rounded-tl-none p-3 shadow-sm">
-                            <Loader2 className="w-4 h-4 animate-spin text-primary dark:text-blue-400" />
+                        <div className="bg-white dark:bg-slate-800 border border-border dark:border-slate-700 rounded-2xl rounded-tl-none p-4 shadow-sm">
+                            <Loader2 className="w-5 h-5 animate-spin text-primary dark:text-blue-400" />
                         </div>
                     </div>
                 )}
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-card dark:bg-slate-900 border-t border-border dark:border-slate-800 space-y-3">
-                <div className="flex flex-wrap gap-2">
+            <div className="p-5 bg-card dark:bg-slate-900 border-t border-border dark:border-slate-800 space-y-4">
+                <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto no-scrollbar">
                     {faqs.map(faq => (
                         <button
                             key={faq.id}
                             onClick={() => handleSelectQuestion(faq)}
-                            className="bg-muted dark:bg-slate-800 border border-border dark:border-slate-700 px-3 py-2 rounded-lg text-xs font-medium text-foreground dark:text-slate-200 hover:bg-primary/10 dark:hover:bg-blue-900/40 hover:border-primary/40 dark:hover:border-blue-500/50 hover:text-primary dark:hover:text-blue-400 transition-all shadow-sm active:scale-95"
+                            className="bg-slate-100 dark:bg-slate-800 border border-border dark:border-slate-700 px-3 py-1.5 rounded-full text-xs font-medium text-foreground dark:text-slate-200 hover:bg-primary hover:text-white dark:hover:bg-blue-600 transition-all shadow-sm active:scale-95 text-left"
                         >
                             {language === 'uz' ? faq.question_uz : faq.question_ru}
                         </button>
                     ))}
                 </div>
 
+                <div className="flex gap-2">
+                    <Input
+                        placeholder={language === 'uz' ? "Savolingizni yozing..." : "Напишите ваш вопрос..."}
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleQuery(input)}
+                        className="rounded-full bg-slate-50 dark:bg-slate-950 border-border dark:border-slate-700 focus-visible:ring-blue-500"
+                    />
+                    <Button
+                        size="icon"
+                        onClick={() => handleQuery(input)}
+                        disabled={loading || !input.trim()}
+                        className="rounded-full shrink-0 bg-blue-600 hover:bg-blue-700 shadow-md"
+                    >
+                        <Send className="w-5 h-5" />
+                    </Button>
+                </div>
+
                 <Button
                     variant="ghost"
-                    className="w-full text-[10px] text-muted-foreground hover:text-primary hover:bg-primary/10 h-7"
+                    className="w-full text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 h-8 mt-2"
                     onClick={onTalkToAdmin}
                 >
-                    <User className="w-3 h-3 mr-2" />
+                    <User className="w-3.5 h-3.5 mr-2" />
                     {language === 'uz' ? "Admin bilan bog'lanish" : "Связаться с админом"}
                 </Button>
             </div>

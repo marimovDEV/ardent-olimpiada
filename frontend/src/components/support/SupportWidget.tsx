@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X, Sparkles } from "lucide-react";
+import { X, Sparkles, Bot } from "lucide-react";
 import TicketWizard from "./TicketWizard";
 import ChatWindow from "./ChatWindow";
 import AIAssistant from "./AIAssistant";
+import { AnimatePresence, motion } from "framer-motion";
 
 const SupportWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,9 +24,7 @@ const SupportWidget = () => {
 
     const reset = () => {
         setIsOpen(false);
-        // Optional: reset view after delay 
         setTimeout(() => {
-            // Only reset to AI if there's no active ticket
             if (!activeTicketId) {
                 setView('ai');
                 setActiveTopic(null);
@@ -39,10 +38,10 @@ const SupportWidget = () => {
             <div className="fixed bottom-6 right-6 z-50">
                 <Button
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`h-14 w-14 rounded-full shadow-2xl transition-all duration-300 ${isOpen ? 'bg-gray-900 rotate-90 scale-90' : 'bg-blue-600 hover:bg-blue-700 hover:scale-110 animate-pulse-soft'}`}
+                    className={`h-14 w-14 rounded-full shadow-2xl transition-all duration-300 ${isOpen ? 'bg-gray-900 rotate-90 scale-90' : 'bg-blue-600 hover:bg-blue-700 hover:scale-110'} z-50`}
                 >
                     {isOpen ? <X className="w-6 h-6" /> : (
-                        activeTicketId ? <Sparkles className="w-6 h-6 text-yellow-200 fill-current" /> : <MessageSquare className="w-6 h-6 fill-current" />
+                        activeTicketId ? <Sparkles className="w-6 h-6 text-yellow-200 fill-current" /> : <Bot className="w-7 h-7 fill-current" />
                     )}
                 </Button>
 
@@ -56,50 +55,55 @@ const SupportWidget = () => {
             </div>
 
             {/* Main Window */}
-            {isOpen && (
-                <div className="fixed bottom-24 right-6 w-[90vw] md:w-[380px] h-[600px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden z-50 animate-slide-up flex flex-col">
-                    {view === 'ai' && !activeTicketId ? (
-                        <AIAssistant onTalkToAdmin={() => setView('wizard')} />
-                    ) : (view === 'ai' || view === 'chat') && activeTicketId ? (
-                        <ChatWindow
-                            ticketId={activeTicketId}
-                            topic={activeTopic || 'general'}
-                            onClose={reset}
-                            onBack={() => {
-                                if (activeTicketId) {
-                                    // if ticket exists, back goes to AI or just close? 
-                                    // Let's go back to AI but keeping the ticket tab
-                                    setView('wizard');
-                                } else {
-                                    setView('ai');
-                                }
-                            }}
-                            onTicketCreated={handleTicketCreated}
-                        />
-                    ) : view === 'wizard' ? (
-                        <div className="p-6 h-full">
-                            <TicketWizard onSelectTopic={handleTopicSelect} />
-                            {activeTicketId && (
-                                <Button
-                                    variant="link"
-                                    className="w-full mt-2 text-xs text-blue-600"
-                                    onClick={() => setView('chat')}
-                                >
-                                    Faol murojaatga qaytish (#{activeTicketId})
-                                </Button>
-                            )}
-                        </div>
-                    ) : (
-                        <ChatWindow
-                            ticketId={null}
-                            topic={activeTopic || 'general'}
-                            onClose={reset}
-                            onBack={() => setView('wizard')}
-                            onTicketCreated={handleTicketCreated}
-                        />
-                    )}
-                </div>
-            )}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-full sm:h-[600px] bg-white dark:bg-slate-900 sm:rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden z-40 flex flex-col"
+                    >
+                        {view === 'ai' && !activeTicketId ? (
+                            <AIAssistant onTalkToAdmin={() => setView('wizard')} onClose={reset} />
+                        ) : (view === 'ai' || view === 'chat') && activeTicketId ? (
+                            <ChatWindow
+                                ticketId={activeTicketId}
+                                topic={activeTopic || 'general'}
+                                onClose={reset}
+                                onBack={() => {
+                                    if (activeTicketId) {
+                                        setView('wizard');
+                                    } else {
+                                        setView('ai');
+                                    }
+                                }}
+                                onTicketCreated={handleTicketCreated}
+                            />
+                        ) : view === 'wizard' ? (
+                            <div className="p-6 h-full overflow-y-auto">
+                                <TicketWizard onSelectTopic={handleTopicSelect} />
+                                {activeTicketId && (
+                                    <Button
+                                        variant="link"
+                                        className="w-full mt-2 text-xs text-blue-600"
+                                        onClick={() => setView('chat')}
+                                    >
+                                        Faol murojaatga qaytish (#{activeTicketId})
+                                    </Button>
+                                )}
+                            </div>
+                        ) : (
+                            <ChatWindow
+                                ticketId={null}
+                                topic={activeTopic || 'general'}
+                                onClose={reset}
+                                onBack={() => setView('wizard')}
+                                onTicketCreated={handleTicketCreated}
+                            />
+                        )}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </>
     );
 };
