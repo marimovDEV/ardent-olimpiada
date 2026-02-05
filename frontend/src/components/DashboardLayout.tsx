@@ -155,6 +155,9 @@ const DashboardLayout = () => {
                 {/* Fixed Premium Navbar */}
                 <DashboardNavbar onMobileMenuClick={() => setIsMobileMenuOpen(true)} />
 
+                {/* Telegram Bot Connection Prompt */}
+                <TelegramBotBanner />
+
                 {/* Page Content */}
                 <main className="flex-1 overflow-y-auto w-full relative">
                     <Outlet />

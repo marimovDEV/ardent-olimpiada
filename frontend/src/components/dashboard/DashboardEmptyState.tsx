@@ -210,7 +210,7 @@ const DashboardEmptyState = ({
                                 className="group p-4 bg-card border border-border rounded-2xl hover:border-primary/30 hover:shadow-md transition-all cursor-pointer text-center"
                             >
                                 <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${subject.color || 'bg-primary/10 text-primary'}`}>
-                                    {subject.icon ? <img src={subject.icon} alt="" className="w-6 h-6" /> : <BookOpen className="w-6 h-6" />}
+                                    {subject.icon ? <DynamicIcon name={subject.icon} className="w-6 h-6" /> : <BookOpen className="w-6 h-6" />}
                                 </div>
                                 <h3 className="font-bold text-foreground group-hover:text-primary transition-colors">{subject.name}</h3>
                                 <p className="text-xs text-muted-foreground mt-1">{subject.courses_count} kurslar</p>
@@ -241,7 +241,7 @@ const DashboardEmptyState = ({
                             >
                                 <div className="flex items-center gap-4 mb-4">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${prof.color || 'bg-blue-500/10 text-blue-500'}`}>
-                                        <Zap className="w-6 h-6" />
+                                        {prof.icon ? <DynamicIcon name={prof.icon} className="w-6 h-6" /> : <Zap className="w-6 h-6" />}
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">{prof.name}</h3>
