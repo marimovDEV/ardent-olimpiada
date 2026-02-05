@@ -858,74 +858,75 @@ const ProfilePage = () => {
                 </button>
             </div>
 
+
             {/* Profile Header Card */}
-            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-5 md:p-8 text-white mb-8 relative overflow-hidden shadow-xl">
+            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-6 md:p-10 text-white mb-8 relative overflow-hidden shadow-xl">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                    {/* Avatar */}
+                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-10">
+                    {/* Avatar - Larger on mobile */}
                     <div className="relative group">
                         {displayAvatar ? (
-                            <img src={displayAvatar} alt={fullName} className="w-32 h-32 rounded-3xl object-cover border-4 border-white/20 shadow-2xl" />
+                            <img src={displayAvatar} alt={fullName} className="w-40 h-40 md:w-48 md:h-48 rounded-3xl object-cover border-4 border-white/20 shadow-2xl" />
                         ) : (
-                            <div className="w-32 h-32 rounded-3xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-5xl font-bold border-4 border-white/20 shadow-2xl">
+                            <div className="w-40 h-40 md:w-48 md:h-48 rounded-3xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-6xl md:text-7xl font-bold border-4 border-white/20 shadow-2xl">
                                 {initials}
                             </div>
                         )}
                         {isEditing && (
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="absolute -bottom-2 -right-2 w-10 h-10 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer"
+                                className="absolute -bottom-2 -right-2 w-12 h-12 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer"
                             >
-                                <Camera className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                <Camera className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                             </button>
                         )}
                     </div>
 
                     {/* Info */}
-                    <div className="text-center md:text-left flex-1">
-                        <h1 className="text-3xl md:text-4xl font-bold mb-2">{fullName}</h1>
-                        <p className="text-blue-200 mb-6 font-medium">@{user.username}</p>
+                    <div className="text-center md:text-left flex-1 w-full">
+                        <h1 className="text-4xl md:text-5xl font-bold mb-2">{fullName}</h1>
+                        <p className="text-lg text-blue-100 mb-8 font-medium">@{user.username}</p>
 
-                        {/* Gamification Stats */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-6">
-                            <div className="flex items-center gap-4 bg-white/10 px-5 py-4 rounded-2xl backdrop-blur-sm min-w-0">
-                                <div className="w-14 h-14 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Star className="w-7 h-7 text-yellow-400 fill-yellow-400" />
+                        {/* Gamification Stats - More spacing */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full mb-8">
+                            <div className="flex items-center gap-5 bg-white/10 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/15 transition-colors">
+                                <div className="w-16 h-16 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                                    <Star className="w-8 h-8 text-yellow-400 fill-yellow-400" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-2xl font-bold whitespace-nowrap">{user.level || 1}</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wide">{t('dashboard.profile.level')}</p>
+                                    <p className="text-3xl font-bold whitespace-nowrap">{user.level || 1}</p>
+                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mt-1">{t('dashboard.profile.level')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 bg-white/10 px-5 py-4 rounded-2xl backdrop-blur-sm min-w-0">
-                                <div className="w-14 h-14 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Zap className="w-7 h-7 text-green-400 fill-green-400" />
+                            <div className="flex items-center gap-5 bg-white/10 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/15 transition-colors">
+                                <div className="w-16 h-16 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                    <Zap className="w-8 h-8 text-green-400 fill-green-400" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-2xl font-bold whitespace-nowrap">{user.xp || 0}</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wide">{t('dashboard.profile.xp')}</p>
+                                    <p className="text-3xl font-bold whitespace-nowrap">{user.xp || 0}</p>
+                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mt-1">{t('dashboard.profile.xp')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 bg-white/10 px-5 py-4 rounded-2xl backdrop-blur-sm min-w-0">
-                                <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Trophy className="w-7 h-7 text-purple-400 fill-purple-400" />
+                            <div className="flex items-center gap-5 bg-white/10 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/15 transition-colors">
+                                <div className="w-16 h-16 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                    <Trophy className="w-8 h-8 text-purple-400 fill-purple-400" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-2xl font-bold whitespace-nowrap">0</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wide">{t('dashboard.profile.achievements')}</p>
+                                    <p className="text-3xl font-bold whitespace-nowrap">0</p>
+                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mt-1">{t('dashboard.profile.achievements')}</p>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Financial Section */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+                        {/* Financial Section - Improved */}
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-white/5 p-5 rounded-2xl border border-white/10">
                             <div className="flex items-center gap-4 flex-1 min-w-0">
-                                <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                    <CreditCard className="w-6 h-6 text-blue-300" />
+                                <div className="w-14 h-14 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                    <CreditCard className="w-7 h-7 text-blue-300" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-xs text-blue-200 uppercase font-semibold tracking-wide mb-1">{t('dashboard.profile.balance')}</p>
-                                    <p className="text-2xl font-bold whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
+                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mb-1">{t('dashboard.profile.balance')}</p>
+                                    <p className="text-3xl font-bold whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
                                 </div>
                             </div>
                             <div className="flex-shrink-0">
@@ -935,14 +936,14 @@ const ProfilePage = () => {
 
                         {/* Level Progress Bar (Dynamic) */}
                         <div
-                            className="mt-6 w-full max-w-lg cursor-pointer group/xp transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            className="mt-8 w-full max-w-lg cursor-pointer group/xp transition-all hover:scale-[1.02] active:scale-[0.98]"
                             onClick={() => setIsProgressModalOpen(true)}
                         >
-                            <div className="flex justify-between text-xs font-bold text-blue-200 mb-2 uppercase tracking-widest group-hover/xp:text-white transition-colors">
+                            <div className="flex justify-between text-sm font-bold text-blue-100 mb-3 uppercase tracking-wide group-hover/xp:text-white transition-colors">
                                 <span>{t('dashboard.widgets.xpLeft', { xp: user.level_progress?.xp_left || 0 })}</span>
                                 <span>{user.level_progress?.progress_percent || 0}%</span>
                             </div>
-                            <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5 ring-1 ring-white/0 group-hover/xp:ring-white/20 transition-all">
+                            <div className="h-4 w-full bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5 ring-1 ring-white/0 group-hover/xp:ring-white/20 transition-all">
                                 <div
                                     className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(251,191,36,0.5)]"
                                     style={{ width: `${user.level_progress?.progress_percent || 0}%` }}
