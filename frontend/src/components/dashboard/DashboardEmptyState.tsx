@@ -2,7 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { BookOpen, Zap, Award, Trophy, ArrowRight, Sparkles } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
+    const Icon = (LucideIcons as any)[name];
+    if (!Icon) return <Zap className={className} />;
+    return <Icon className={className} />;
+};
 
 interface Course {
     id: number;

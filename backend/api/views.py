@@ -3550,7 +3550,12 @@ class BotConfigViewSet(viewsets.ModelViewSet):
     """Admin-only viewset for Bot Configuration"""
     queryset = BotConfig.objects.all()
     serializer_class = BotConfigSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
+    # permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        return [IsAuthenticated(), IsAdmin()]
 
     def list(self, request, *args, **kwargs):
         config = BotConfig.objects.first()
