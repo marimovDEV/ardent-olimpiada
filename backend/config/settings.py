@@ -110,6 +110,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://test.api.ardentsoft.uz",
     "https://test.api.ardentsoft.uz",
+    "https://ardent-olimpiada-course.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
