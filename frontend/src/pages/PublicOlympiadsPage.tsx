@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Trophy, ChevronRight, Zap, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -79,7 +77,7 @@ const PublicOlympiadsPage = () => {
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-3xl animate-blob animation-delay-4000 opacity-50" />
             </div>
 
-            <Header />
+
 
             <main className="flex-1 pt-28 pb-20 container mx-auto px-4 relative z-10">
                 <div className="text-center mb-16 animate-slide-up">
@@ -152,7 +150,6 @@ const PublicOlympiadsPage = () => {
                     ))}
                 </div>
             </main>
-            <Footer />
         </div>
     );
 };

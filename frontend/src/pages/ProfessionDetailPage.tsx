@@ -18,8 +18,7 @@ import {
     Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { API_URL } from "@/services/api";
 import api from "@/services/api";
 import { toast } from "sonner";
 import * as Icons from "lucide-react";
@@ -127,8 +126,6 @@ const ProfessionDetailPage = () => {
 
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
-            <Header />
-
             <main className="flex-grow pt-28 pb-20">
                 <div className="container mx-auto px-4">
                     {/* Back Button */}
@@ -336,7 +333,6 @@ const ProfessionDetailPage = () => {
                 </div>
             </main>
 
-            <Footer />
         </div>
     );
 };

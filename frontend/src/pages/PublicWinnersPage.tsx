@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Award, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -15,7 +13,6 @@ const PublicWinnersPage = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
             <main className="pt-24 pb-16 container mx-auto px-4">
                 <div className="text-center mb-16">
                     <span className="inline-block px-4 py-2 rounded-full bg-warning/10 text-warning text-sm font-medium mb-4">
@@ -66,7 +63,6 @@ const PublicWinnersPage = () => {
                     ))}
                 </div>
             </main>
-            <Footer />
         </div>
     );
 };

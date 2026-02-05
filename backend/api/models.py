@@ -1003,6 +1003,16 @@ class HomePageConfig(models.Model):
     cta_subtitle = models.TextField(default="Minglab o'quvchilar safida bo'ling va o'z bilimingizni sinovdan o'tkazing")
     cta_button_text = models.CharField(max_length=50, default="Ro'yxatdan o'tish")
     cta_button_link = models.CharField(max_length=200, default="/register")
+
+    # Teaser Section Configuration
+    teaser_title_uz = models.CharField(max_length=200, default="Sun'iy Intellekt va Data Science")
+    teaser_title_ru = models.CharField(max_length=200, default="Искусственный Интеллект и Data Science")
+    teaser_subtitle_uz = models.TextField(default="Zamonaviy kasblarni o'rganing. Yangi kurslarimiz ustida qizg'in ish olib boryapmiz.")
+    teaser_subtitle_ru = models.TextField(default="Изучайте современные профессии. Мы активно работаем над нашими новыми курсами.")
+    teaser_image = models.ImageField(upload_to='homepage/teaser/', blank=True, null=True, help_text="Tavsiya etilgan o'lcham: 1200x400px. Format: JPG, PNG.")
+    teaser_button_text_uz = models.CharField(max_length=50, default="Xabardor bo'lish")
+    teaser_button_text_ru = models.CharField(max_length=50, default="Узнать больше")
+    teaser_button_link = models.CharField(max_length=200, default="/auth/register")
     
     # Section Toggles
     show_stats = models.BooleanField(default=True)

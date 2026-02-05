@@ -23,6 +23,14 @@ export interface HomePageConfig {
     show_steps: boolean;
     show_cta: boolean;
     show_faq: boolean;
+    teaser_title_uz: string;
+    teaser_title_ru: string;
+    teaser_subtitle_uz: string;
+    teaser_subtitle_ru: string;
+    teaser_image: string | null;
+    teaser_button_text_uz: string;
+    teaser_button_text_ru: string;
+    teaser_button_link: string;
 }
 
 export interface StatsConfig {

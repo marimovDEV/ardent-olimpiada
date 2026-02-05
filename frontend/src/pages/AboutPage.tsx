@@ -1,5 +1,3 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import MissionHero from "@/components/about/MissionHero";
 import SecurityBlock from "@/components/about/SecurityBlock";
 import TrustSection from "@/components/landing/TrustSection"; // Reusing TrustSection as it fits perfectly
@@ -12,7 +10,6 @@ const AboutPage = () => {
     const { t } = useTranslation();
     return (
         <div className="min-h-screen bg-background">
-            <Header />
             <main>
                 <MissionHero />
 
@@ -91,7 +88,6 @@ const AboutPage = () => {
                 </section>
 
             </main>
-            <Footer />
         </div>
     );
 };

@@ -144,6 +144,79 @@ const AdminHomeCMSPage = () => {
                                         </div>
                                     </div>
 
+                                    <div className="pt-6 border-t mt-4">
+                                        <h3 className="text-lg font-semibold mb-4">{t('admin.teaserSection', 'Teaser bo\'limi (Tez kunda)')}</h3>
+                                        <div className="space-y-6">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid gap-2">
+                                                    <Label>{t('common.titleUz', 'Sarlavha (UZ)')}</Label>
+                                                    <Input value={config.teaser_title_uz} onChange={(e) => setConfig({ ...config, teaser_title_uz: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label>{t('common.titleRu', 'Sarlavha (RU)')}</Label>
+                                                    <Input value={config.teaser_title_ru} onChange={(e) => setConfig({ ...config, teaser_title_ru: e.target.value })} />
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid gap-2">
+                                                    <Label>{t('common.subtitleUz', 'Tavsif (UZ)')}</Label>
+                                                    <Textarea value={config.teaser_subtitle_uz} onChange={(e) => setConfig({ ...config, teaser_subtitle_uz: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label>{t('common.subtitleRu', 'Tavsif (RU)')}</Label>
+                                                    <Textarea value={config.teaser_subtitle_ru} onChange={(e) => setConfig({ ...config, teaser_subtitle_ru: e.target.value })} />
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="grid gap-2">
+                                                    <Label>{t('admin.buttonTextUz', 'Tugma matni (UZ)')}</Label>
+                                                    <Input value={config.teaser_button_text_uz} onChange={(e) => setConfig({ ...config, teaser_button_text_uz: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label>{t('admin.buttonTextRu', 'Tugma matni (RU)')}</Label>
+                                                    <Input value={config.teaser_button_text_ru} onChange={(e) => setConfig({ ...config, teaser_button_text_ru: e.target.value })} />
+                                                </div>
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label>{t('admin.buttonLink', 'Tugma havolasi')}</Label>
+                                                <Input value={config.teaser_button_link} onChange={(e) => setConfig({ ...config, teaser_button_link: e.target.value })} />
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label>{t('admin.teaserImage', 'Fon rasmi')}</Label>
+                                                <div className="flex items-center gap-4">
+                                                    {config.teaser_image && (
+                                                        <img
+                                                            src={config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${config.teaser_image}`}
+                                                            className="w-20 h-20 object-cover rounded-lg border"
+                                                        />
+                                                    )}
+                                                    <div className="flex-1">
+                                                        <Input
+                                                            type="file"
+                                                            onChange={async (e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file) {
+                                                                    const formData = new FormData();
+                                                                    formData.append('teaser_image', file);
+                                                                    try {
+                                                                        const res = await homepageService.updateConfig(formData);
+                                                                        setConfig(res.config);
+                                                                        toast.success(t('admin.imageUploaded'));
+                                                                    } catch (err) {
+                                                                        toast.error(t('admin.errorUploading'));
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                        <p className="text-xs text-muted-foreground mt-1">
+                                                            {t('admin.teaserImageHint', 'Tavsiya etilgan o\'lcham: 1200x400px. Format: JPG, PNG.')}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <Button onClick={handleUpdateConfig} className="w-full mt-4 gap-2">
                                         <Save className="w-4 h-4" /> {t('admin.save')}
                                     </Button>

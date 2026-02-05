@@ -11,8 +11,7 @@ import ArdCoin from "@/components/ArdCoin";
 import PaymentModal from "@/components/payment/PaymentModal";
 import { toast } from "sonner";
 import api from "@/services/api";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { API_URL } from "@/services/api";
 import { getSubjectTheme as getTheme } from "@/lib/course-themes";
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000/api';
@@ -237,7 +236,6 @@ const CourseDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col">
-      <Header />
       <div className="flex-1 pt-16">
         {/* Hero Section */}
         <div className={`bg-gradient-to-br ${courseTheme.bg} text-white relative overflow-hidden`}>
@@ -583,7 +581,6 @@ const CourseDetailPage = () => {
             }}
           />
         </div>
-        <Footer />
       </div>
     </div>
   );

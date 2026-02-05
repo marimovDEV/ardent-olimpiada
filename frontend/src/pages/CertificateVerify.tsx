@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Award, Download, Share2, XCircle } from "lucide-react";
-import Header from "@/components/Header";
 
 const CertificateVerify = () => {
     const { id } = useParams();
@@ -21,7 +20,6 @@ const CertificateVerify = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
             <main className="pt-24 container mx-auto px-4 flex flex-col items-center justify-center min-h-[80vh]">
                 {status === "loading" && (
                     <div className="flex flex-col items-center animate-pulse">

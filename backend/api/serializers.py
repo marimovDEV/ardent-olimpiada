@@ -258,7 +258,10 @@ class HomePageConfigSerializer(serializers.ModelSerializer):
         model = HomePageConfig
         fields = ['id', 'hero_title', 'hero_subtitle', 'hero_button_text', 
                   'hero_button_link', 'hero_image', 'cta_title', 'cta_subtitle', 
-                  'cta_button_text', 'cta_button_link', 'updated_at',
+                  'cta_button_text', 'cta_button_link', 
+                  'teaser_title_uz', 'teaser_title_ru', 'teaser_subtitle_uz', 'teaser_subtitle_ru',
+                  'teaser_image', 'teaser_button_text_uz', 'teaser_button_text_ru', 'teaser_button_link',
+                  'updated_at',
                   'show_stats', 'show_olympiads', 'show_courses', 'show_professions',
                   'show_testimonials', 'show_mentors', 'show_winners', 'show_steps', 'show_cta', 'show_faq']
         read_only_fields = ['id', 'updated_at']

@@ -117,7 +117,8 @@ const OlympiadSection = () => {
               level: translateStatus(item.status_display),
               is_registered: item.is_registered,
               is_completed: item.is_completed,
-              featured: item.participants_count > 500
+              featured: item.participants_count > 500,
+              thumbnail: item.thumbnail
             };
           });
           setUpcomingOlympiads(mapped);
@@ -212,34 +213,54 @@ const OlympiadSection = () => {
                   )}
 
                   {/* Header */}
-                  <div className={`p-6 ${olympiad.featured ? 'gradient-accent' : 'gradient-primary'}`}>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                        <Trophy className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <span className="text-white/80 text-sm">{olympiad.subject}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-xs font-medium">
-                            {olympiad.level}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{olympiad.title}</h3>
-
-                    {/* Countdown for featured olympiad */}
-                    {olympiad.featured && (
-                      <div className="mt-4 pt-4 border-t border-white/20">
-                        <div className="text-white/80 text-xs mb-2 flex items-center gap-1">
-                          <Timer className="w-3 h-3" />
-                          {t('olympiadsSection.startIn')}
-                        </div>
-                        <div className="text-white">
-                          <CountdownTimer />
-                        </div>
-                      </div>
+                  <div className="relative h-64 overflow-hidden group">
+                    {olympiad.thumbnail ? (
+                      <img
+                        src={olympiad.thumbnail.startsWith('http') ? olympiad.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${olympiad.thumbnail}`}
+                        alt={olympiad.title}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className={`absolute inset-0 ${olympiad.featured ? 'gradient-accent' : 'gradient-primary'}`} />
                     )}
+
+                    {/* Overlay for better text legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                    {/* Header Content */}
+                    <div className="relative z-10 p-6 flex flex-col h-full justify-between">
+                      <div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <Trophy className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <span className="text-white/80 text-sm font-medium">{olympiad.subject}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold uppercase tracking-wider">
+                                {olympiad.level}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <h3 className="text-2xl font-black text-white leading-tight line-clamp-2 drop-shadow-md">
+                          {olympiad.title}
+                        </h3>
+                      </div>
+
+                      {/* Countdown for featured olympiad */}
+                      {olympiad.featured && (
+                        <div className="mt-4 pt-4 border-t border-white/20">
+                          <div className="text-white/80 text-xs mb-2 flex items-center gap-1 font-bold">
+                            <Timer className="w-3 h-3 text-warning" />
+                            {t('olympiadsSection.startIn')}
+                          </div>
+                          <div className="text-white">
+                            <CountdownTimer />
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Content */}

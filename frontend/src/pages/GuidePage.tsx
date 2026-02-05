@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     BookOpen, Trophy, Award, Gift, Zap, HelpCircle, ChevronRight, Menu, X
 } from "lucide-react";
-import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import PlatformOverview from "@/components/guide/PlatformOverview";
 import GettingStartedSteps from "@/components/guide/GettingStartedSteps";
@@ -60,7 +59,6 @@ const GuidePage = () => {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
 
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 overflow-hidden bg-primary/5">

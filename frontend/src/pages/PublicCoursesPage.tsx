@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+
 import { Button } from "@/components/ui/button";
 import {
     BookOpen,
@@ -105,7 +104,6 @@ const PublicCoursesPage = () => {
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            <Header />
             <main className="flex-1 pt-24 pb-16 container mx-auto px-4">
 
                 {/* Header Section */}
@@ -243,7 +241,6 @@ const PublicCoursesPage = () => {
                     </div>
                 )}
             </main>
-            <Footer />
         </div>
     );
 };
