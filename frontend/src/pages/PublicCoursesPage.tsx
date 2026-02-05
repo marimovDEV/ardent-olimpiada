@@ -240,7 +240,6 @@ const PublicCoursesPage = () => {
                 </div>
             )}
         </main>
-        </div >
     );
 };
 
