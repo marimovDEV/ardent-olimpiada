@@ -886,7 +886,8 @@ const ProfilePage = () => {
                         <h1 className="text-3xl md:text-4xl font-bold mb-2">{fullName}</h1>
                         <p className="text-blue-200 mb-6 font-medium">@{user.username}</p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                        {/* Gamification Stats */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-6">
                             <div className="flex items-center gap-4 bg-white/10 px-5 py-4 rounded-2xl backdrop-blur-sm min-w-0">
                                 <div className="w-14 h-14 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
                                     <Star className="w-7 h-7 text-yellow-400 fill-yellow-400" />
@@ -914,22 +915,22 @@ const ProfilePage = () => {
                                     <p className="text-xs text-blue-200 uppercase font-bold tracking-wide">{t('dashboard.profile.achievements')}</p>
                                 </div>
                             </div>
-
-                            {/* Balance Card */}
-                            <div className="flex items-center gap-4 bg-white/10 px-5 py-4 rounded-2xl backdrop-blur-sm ring-2 ring-yellow-400/50 min-w-0">
-                                <div className="w-14 h-14 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <CreditCard className="w-7 h-7 text-yellow-400 fill-yellow-400" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-lg font-bold whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
-                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wide">{t('dashboard.profile.balance')}</p>
-                                </div>
-                            </div>
                         </div>
 
-                        {/* Top Up Button - Separate row on mobile */}
-                        <div className="w-full sm:w-auto mt-4 sm:mt-0">
-                            <TopUpDialog onSuccess={() => loadUser()} />
+                        {/* Financial Section */}
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white/5 p-4 rounded-2xl border border-white/10">
+                            <div className="flex items-center gap-4 flex-1 min-w-0">
+                                <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                    <CreditCard className="w-6 h-6 text-blue-300" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs text-blue-200 uppercase font-semibold tracking-wide mb-1">{t('dashboard.profile.balance')}</p>
+                                    <p className="text-2xl font-bold whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
+                                </div>
+                            </div>
+                            <div className="flex-shrink-0">
+                                <TopUpDialog onSuccess={() => loadUser()} />
+                            </div>
                         </div>
 
                         {/* Level Progress Bar (Dynamic) */}
