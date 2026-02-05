@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { User, MapPin, School, GraduationCap, Calendar, Phone, Trophy, Star, Zap, Edit3, Smartphone, Check, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -30,7 +31,6 @@ interface UserData {
     };
 }
 
-import { API_URL as API_BASE } from "@/services/api";
 
 import { useTranslation } from 'react-i18next';
 // ...

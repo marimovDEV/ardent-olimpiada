@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import { AuthGuideSide } from "@/components/auth/AuthGuideSide";
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const TeacherLoginPage = () => {
     const { t } = useTranslation();

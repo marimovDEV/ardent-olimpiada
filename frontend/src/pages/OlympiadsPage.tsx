@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,6 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const OlympiadsPage = () => {
   const { t, i18n } = useTranslation();

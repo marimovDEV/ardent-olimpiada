@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Minus, Trophy, Loader2, Target } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -21,7 +22,6 @@ interface SubjectStat {
     count: number;
 }
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const AnalyticsResults = () => {
     const { t } = useTranslation();

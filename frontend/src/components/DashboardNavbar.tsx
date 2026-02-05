@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -26,7 +27,6 @@ import NotificationBell from './NotificationBell';
 import PaymentModal from './payment/PaymentModal';
 import LevelProgressModal from './dashboard/LevelProgressModal';
 
-import { API_URL as API_BASE } from "@/services/api";
 
 interface NavbarProps {
     onMobileMenuClick?: () => void;

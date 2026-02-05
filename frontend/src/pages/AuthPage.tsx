@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ interface AuthPageProps {
   mode: 'login' | 'register' | 'recover';
 }
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const AuthPage = ({ mode }: AuthPageProps) => {
   const { t } = useTranslation();

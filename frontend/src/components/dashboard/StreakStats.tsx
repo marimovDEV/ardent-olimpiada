@@ -1,10 +1,10 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
 import { Flame, Snowflake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const StreakStats = () => {
     const [streakData, setStreakData] = useState<any>(null);

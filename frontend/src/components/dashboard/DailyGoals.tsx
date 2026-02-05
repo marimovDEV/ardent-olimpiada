@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Circle, ArrowRight, Loader2, Target, BookOpen, FileQuestion, Trophy } from "lucide-react";
@@ -28,7 +29,6 @@ interface Olympiad {
     subject: string;
 }
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const DailyGoals = () => {
     const [goals, setGoals] = useState<Goal[]>([]);

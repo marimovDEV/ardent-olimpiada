@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Trophy, Star, Zap, Loader2 } from "lucide-react";
 
@@ -9,7 +10,6 @@ interface UserData {
     streak?: number;
 }
 
-import { API_URL as API_BASE } from "@/services/api";
 
 // Level titles based on level number
 const LEVEL_TITLES: Record<number, string> = {

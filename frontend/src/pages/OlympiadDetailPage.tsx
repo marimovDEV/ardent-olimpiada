@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import ArdCoin from "@/components/ArdCoin";
 import PaymentModal from "@/components/payment/PaymentModal";
 
 
-import { API_URL as API_BASE } from "@/services/api";
 
 // Fallback translations for backend data that doesn't have keys
 const BACKEND_TRANSLATIONS: Record<string, Record<string, string>> = {

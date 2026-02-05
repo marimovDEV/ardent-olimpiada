@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,6 @@ const PublicCoursesPage = () => {
     const [selectedSubject, setSelectedSubject] = useState("all_subjects");
     const [selectedGrade, setSelectedGrade] = useState("all_grades");
 
-    import { API_URL as API_BASE } from "@/services/api";
 
     // Map subject names to filter keys
     const subjectKeyMap: Record<string, string> = {

@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,6 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const OlympiadTestPage = () => {
     const { id } = useParams();

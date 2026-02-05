@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,6 @@ import { cn } from '@/lib/utils';
 import Confetti from 'react-confetti';
 import { toast } from 'sonner';
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const OlympiadResultPage = () => {
     const { id } = useParams();

@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,6 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { API_URL as API_BASE } from "@/services/api";
 
 interface Participant {
     id: number;

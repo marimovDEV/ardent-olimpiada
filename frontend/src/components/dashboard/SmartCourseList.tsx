@@ -1,3 +1,4 @@
+import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, Clock, BookOpen, Loader2 } from "lucide-react";
@@ -21,7 +22,6 @@ interface Enrollment {
     total_xp_available?: number;
 }
 
-import { API_URL as API_BASE } from "@/services/api";
 
 const SmartCourseList = ({ courses }: { courses?: Enrollment[] }) => {
     const { t } = useTranslation();
