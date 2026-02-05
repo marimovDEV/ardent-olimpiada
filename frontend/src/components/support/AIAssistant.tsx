@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ChevronRight, User, Send, ThumbsUp, ThumbsDown, Loader2 } from "lucide-react";
+import { Sparkles, ChevronRight, User, Send, ThumbsUp, ThumbsDown, Loader2, X } from "lucide-react";
 import axios from "axios";
 import { API_URL } from "@/services/api";
 import { Input } from "@/components/ui/input";
