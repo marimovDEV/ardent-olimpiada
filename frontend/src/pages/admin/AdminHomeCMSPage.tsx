@@ -388,14 +388,13 @@ const AdminHomeCMSPage = () => {
                             </div>
                         ))}
                     </div>
-                </TabsContent >
-
+                </TabsContent>
                 {/* FREE COURSES SECTION */}
                 <TabsContent value="free-courses">
                     <AdminFreeCourseCMS />
                 </TabsContent>
-            </Tabs >
-        </div >
+            </Tabs>
+        </div>
     );
 };
 

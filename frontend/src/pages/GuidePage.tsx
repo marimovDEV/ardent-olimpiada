@@ -211,7 +211,7 @@ const GuidePage = () => {
                     </motion.div>
                 </div>
             </section>
-        </div >
+        </>
     );
 };
 

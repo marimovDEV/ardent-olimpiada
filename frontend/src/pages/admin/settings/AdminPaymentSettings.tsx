@@ -552,7 +552,7 @@ const AdminPaymentSettings = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </div >
+        </div>
     );
 };
 
