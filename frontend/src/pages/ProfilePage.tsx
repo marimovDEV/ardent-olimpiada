@@ -886,43 +886,43 @@ const ProfilePage = () => {
                         <h1 className="text-3xl md:text-4xl font-bold mb-2">{fullName}</h1>
                         <p className="text-blue-200 mb-6 font-medium">@{user.username}</p>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 w-full max-w-4xl">
-                            <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm">
-                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full">
+                            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-2xl backdrop-blur-sm">
+                                <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                                    <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
                                 </div>
-                                <div className="min-w-0">
-                                    <p className="text-lg sm:text-xl font-bold truncate">{user.level || 1}</p>
-                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.level')}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm">
-                                <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Zap className="w-5 h-5 text-green-400 fill-green-400" />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-lg sm:text-xl font-bold truncate">{user.xp || 0}</p>
-                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.xp')}</p>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-xl sm:text-2xl font-bold">{user.level || 1}</p>
+                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.level')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm">
-                                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Trophy className="w-5 h-5 text-purple-400 fill-purple-400" />
+                            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-2xl backdrop-blur-sm">
+                                <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                                    <Zap className="w-6 h-6 text-green-400 fill-green-400" />
                                 </div>
-                                <div className="min-w-0">
-                                    <p className="text-lg sm:text-xl font-bold truncate">0</p>
-                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider truncate">{t('dashboard.profile.achievements')}</p>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-xl sm:text-2xl font-bold">{user.xp || 0}</p>
+                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.xp')}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-2xl backdrop-blur-sm">
+                                <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                    <Trophy className="w-6 h-6 text-purple-400 fill-purple-400" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-xl sm:text-2xl font-bold">0</p>
+                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.achievements')}</p>
                                 </div>
                             </div>
 
-                            {/* Balance Card - Full width on mobile */}
-                            <div className="col-span-2 lg:col-span-2 flex items-center gap-2 bg-white/10 px-3 py-2 rounded-2xl backdrop-blur-sm ring-2 ring-yellow-400/50">
-                                <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <CreditCard className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            {/* Balance Card */}
+                            <div className="flex items-center gap-3 bg-white/10 px-4 py-3 rounded-2xl backdrop-blur-sm ring-2 ring-yellow-400/50">
+                                <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
+                                    <CreditCard className="w-6 h-6 text-yellow-400 fill-yellow-400" />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-sm sm:text-base font-bold">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
-                                    <p className="text-[10px] sm:text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.balance')}</p>
+                                    <p className="text-base sm:text-lg font-bold">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
+                                    <p className="text-xs text-blue-200 uppercase font-bold tracking-wider">{t('dashboard.profile.balance')}</p>
                                 </div>
                             </div>
                         </div>
