@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-olimpiada-platform-secret-key-change-in-production
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['test.api.ardentsoft.uz', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -44,7 +44,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -107,7 +107,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = True  # For development only
+CORS_ALLOWED_ORIGINS = [
+    "http://test.api.ardentsoft.uz",
+    "https://test.api.ardentsoft.uz",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # Security Settings
@@ -120,11 +125,19 @@ REST_FRAMEWORK = {
         'api.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    }
 }
 
 
@@ -133,7 +146,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API documentation for Ardent Olimpiada platform',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
 }
 
 # JWT Settings
@@ -159,3 +172,12 @@ PLATFORM_COMMISSION_RATE = 0.30  # 30% platform commission
 TEACHER_COMMISSION_RATE = 0.70  # 70% teacher share
 PENDING_BALANCE_DAYS = 7  # Days before funds become available
 MIN_PAYOUT_AMOUNT = 100000  # Minimum withdrawal amount (100k so'm)
+
+# Security Headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+# SECURE_SSL_REDIRECT = True # Enable in production with SSL
+# SECURE_HSTS_SECONDS = 31536000
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
