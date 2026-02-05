@@ -3561,8 +3561,19 @@ class BotConfigViewSet(viewsets.ModelViewSet):
                 admin_chat_id="0",
                 is_active=False
             )
+        # Get real-time stats
+        bot_users_count = User.objects.filter(telegram_id__isnull=False).exclude(telegram_id=0).count()
+        total_users_count = User.objects.filter(role='STUDENT').count()
+        
         serializer = self.get_serializer(config)
-        return Response({'success': True, 'config': serializer.data})
+        return Response({
+            'success': True, 
+            'config': serializer.data,
+            'stats': {
+                'bot_users_count': bot_users_count,
+                'total_users_count': total_users_count
+            }
+        })
 
     @action(detail=False, methods=['post'])
     def save_config(self, request):

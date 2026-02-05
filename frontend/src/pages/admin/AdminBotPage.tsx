@@ -29,6 +29,8 @@ const AdminBotPage = () => {
         humoBotUrl: "",
         clickMerchantId: "",
         botActive: true,
+        botUsersCount: 0,
+        totalUsersCount: 0,
     });
 
     // Broadcast State
@@ -49,7 +51,9 @@ const AdminBotPage = () => {
                     adminChatId: res.data.config.admin_chat_id || "",
                     humoBotUrl: res.data.config.humo_bot_url || "",
                     clickMerchantId: res.data.config.click_merchant_id || "",
-                    botActive: res.data.config.is_active
+                    botActive: res.data.config.is_active,
+                    botUsersCount: res.data.stats?.bot_users_count || 0,
+                    totalUsersCount: res.data.stats?.total_users_count || 0,
                 });
             } else if (Array.isArray(res.data) && res.data.length > 0) {
                 // Fallback if standard ModelViewSet list behavior
@@ -238,8 +242,13 @@ const AdminBotPage = () => {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-black">1,248</div>
-                            <p className="text-[10px] text-gray-400 mt-1">{t('admin.botUsersStatsDesc')}</p>
+                            <div className="text-3xl font-black">
+                                {botConfig.botUsersCount.toLocaleString()}
+                            </div>
+                            <p className="text-[10px] text-gray-400 mt-1">
+                                {t('admin.botUsersStatsDesc')}
+                                ({botConfig.totalUsersCount > 0 ? Math.round((botConfig.botUsersCount / botConfig.totalUsersCount) * 100) : 0}%)
+                            </p>
                         </CardContent>
                     </Card>
 
