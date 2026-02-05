@@ -3555,7 +3555,12 @@ class BotConfigViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         config = BotConfig.objects.first()
         if not config:
-            return Response({'success': False, 'error': 'Bot sozlamalari topilmadi'}, status=status.HTTP_404_NOT_FOUND)
+            # Create a default config if it doesn't exist
+            config = BotConfig.objects.create(
+                bot_token="YOUR_TOKEN_HERE",
+                admin_chat_id="0",
+                is_active=False
+            )
         serializer = self.get_serializer(config)
         return Response({'success': True, 'config': serializer.data})
 

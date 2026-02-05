@@ -37,7 +37,7 @@ class PlatformSettingsViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         # Ensure at least one settings object exists
         if not PlatformSettings.objects.exists():
-            PlatformSettings.objects.create(site_name="Ardent Olimpiada")
+            PlatformSettings.objects.create(platform_name="Ardent Olimpiada")
             
         return super().list(request, *args, **kwargs)
     
@@ -74,6 +74,11 @@ class SecuritySettingsViewSet(viewsets.ModelViewSet):
     serializer_class = SecuritySettingsSerializer
     permission_classes = [IsAdminUser]
     
+    def list(self, request, *args, **kwargs):
+        if not SecuritySettings.objects.exists():
+            SecuritySettings.objects.create()
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         return SecuritySettings.objects.all()[:1]
 
@@ -84,6 +89,11 @@ class NotificationSettingsViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSettingsSerializer
     permission_classes = [IsAdminUser]
     
+    def list(self, request, *args, **kwargs):
+        if not NotificationSettings.objects.exists():
+            NotificationSettings.objects.create()
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         return NotificationSettings.objects.all()[:1]
     
