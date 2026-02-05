@@ -955,16 +955,16 @@ const ProfilePage = () => {
                     {/* Edit Actions */}
                     <div className="self-start">
                         {!isEditing ? (
-                            <Button onClick={() => setIsEditing(true)} variant="secondary" className="gap-2 bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-md">
-                                <Edit3 className="w-4 h-4" /> {t('dashboard.profile.edit')}
+                            <Button onClick={() => setIsEditing(true)} size="lg" className="gap-2 bg-white hover:bg-white/90 text-blue-600 border-0 backdrop-blur-md shadow-lg hover:shadow-xl transition-all font-semibold px-6 py-6 text-base min-h-[48px]">
+                                <Edit3 className="w-5 h-5" /> {t('dashboard.profile.edit')}
                             </Button>
                         ) : (
-                            <div className="flex gap-2">
-                                <Button onClick={handleCancel} variant="ghost" className="text-white hover:bg-white/20">
-                                    <X className="w-4 h-4 mr-2" /> {t('dashboard.profile.cancel')}
+                            <div className="flex gap-3">
+                                <Button onClick={handleCancel} variant="ghost" size="lg" className="text-white hover:bg-white/20 px-5 py-6 min-h-[48px]">
+                                    <X className="w-5 h-5 mr-2" /> {t('dashboard.profile.cancel')}
                                 </Button>
-                                <Button onClick={handleSave} disabled={isLoading || usernameStatus === 'taken'} className="bg-green-500 hover:bg-green-600 border-0">
-                                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                                <Button onClick={handleSave} disabled={isLoading || usernameStatus === 'taken'} size="lg" className="bg-green-500 hover:bg-green-600 border-0 px-6 py-6 font-semibold shadow-lg min-h-[48px]">
+                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
                                     {t('dashboard.profile.save')}
                                 </Button>
                             </div>
