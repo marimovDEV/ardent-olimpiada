@@ -1027,6 +1027,13 @@ class BotConfigSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'updated_at']
 
 
+class PublicBotConfigSerializer(serializers.ModelSerializer):
+    """Safe serializer for public/student use"""
+    class Meta:
+        model = BotConfig
+        fields = ['humo_bot_url', 'is_active']
+
+
 class LevelRewardSerializer(serializers.ModelSerializer):
     class Meta:
         model = LevelReward

@@ -40,7 +40,7 @@ from .serializers import (
     OlympiadRegistrationSerializer, TestResultSerializer, TestSubmitSerializer,
     CertificateSerializer, CertificateVerifySerializer,
     SupportTicketSerializer, CreateTicketSerializer, TicketMessageSerializer,
-    PaymentSerializer, BotConfigSerializer, LevelRewardSerializer,
+    PaymentSerializer, BotConfigSerializer, PublicBotConfigSerializer, LevelRewardSerializer,
     HomePageConfigSerializer, HomeStatSerializer, HomeStepSerializer, HomeAdvantageSerializer, FreeCourseSectionSerializer, FreeCourseLessonCardSerializer,
     SubjectSerializer, SubjectDetailSerializer, CourseCreateSerializer, LessonCreateSerializer, OlympiadCreateSerializer,
     NotificationSerializer, ProfessionSerializer, UserProfessionProgressSerializer,
@@ -3556,6 +3556,11 @@ class BotConfigViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return [IsAuthenticated()]
         return [IsAuthenticated(), IsAdmin()]
+
+    def get_serializer_class(self):
+        if self.request.user and self.request.user.role == 'ADMIN':
+            return BotConfigSerializer
+        return PublicBotConfigSerializer
 
     def list(self, request, *args, **kwargs):
         config = BotConfig.objects.first()
