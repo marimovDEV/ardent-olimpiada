@@ -16,6 +16,7 @@ import { API_URL, getAuthHeader } from "@/services/api";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import LevelProgressModal from "@/components/dashboard/LevelProgressModal";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // --- Types ---
 interface UserData {

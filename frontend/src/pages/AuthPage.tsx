@@ -13,6 +13,7 @@ import i18n from "@/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AuthGuideSide } from "@/components/auth/AuthGuideSide";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AuthPageProps {
   mode: 'login' | 'register' | 'recover';
