@@ -626,28 +626,57 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
+                  {/* Region Selection */}
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-400 ml-1">{t('auth.region')}</label>
-                    <select value={region} onChange={(e) => setRegion(e.target.value)} required
-                      className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-white appearance-none">
-                      <option value="" className="bg-black text-gray-500">{t('common.select')}...</option>
-                      {REGIONS.map(r => <option key={r} value={r} className="bg-[#111114]">{r}</option>)}
-                    </select>
+                    <label className="text-xs text-gray-400 ml-1 font-medium">{t('auth.region')}</label>
+                    <Select value={region} onValueChange={setRegion}>
+                      <SelectTrigger className="h-12 bg-white/5 border-white/10 text-white rounded-xl focus:ring-blue-500/50">
+                        <SelectValue placeholder={t('common.select') + "..."} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#111114] border-white/10 text-white">
+                        {REGIONS.map(r => (
+                          <SelectItem key={r} value={r} className="focus:bg-white/10 focus:text-white">
+                            {r}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+
+                  {/* Grade Selection */}
                   <div className="space-y-1">
-                    <label className="text-xs text-gray-400 ml-1">{t('auth.grade')}</label>
-                    <select value={grade} onChange={(e) => setGrade(e.target.value)} required
-                      className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-white appearance-none">
-                      <option value="" className="bg-black text-gray-500">{t('common.select')}...</option>
-                      {GRADES.map(g => <option key={g.value} value={g.value} className="bg-[#111114]">{g.label}</option>)}
-                    </select>
+                    <label className="text-xs text-gray-400 ml-1 font-medium">{t('auth.grade')}</label>
+                    <Select value={grade} onValueChange={setGrade}>
+                      <SelectTrigger className="h-12 bg-white/5 border-white/10 text-white rounded-xl focus:ring-blue-500/50">
+                        <SelectValue placeholder={t('common.select') + "..."} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#111114] border-white/10 text-white">
+                        {GRADES.map(g => (
+                          <SelectItem key={g.value} value={g.value} className="focus:bg-white/10 focus:text-white">
+                            {g.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
+                {/* School/University Selection */}
                 <div className="space-y-1">
-                  <label className="text-xs text-gray-400 ml-1">{t('auth.school')}</label>
-                  <input type="text" value={school} onChange={(e) => setSchool(e.target.value)} placeholder={t('auth.placeholders.school')} required
-                    className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-white" />
+                  <label className="text-xs text-gray-400 ml-1 font-medium">
+                    {grade === 'STUDENT' ? t('auth.university') : t('auth.school')}
+                  </label>
+                  <div className="relative group">
+                    <School className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <input
+                      type="text"
+                      placeholder={grade === 'STUDENT' ? t('auth.placeholders.university', 'OTM nomini kiriting') : t('auth.placeholders.school')}
+                      value={school}
+                      onChange={(e) => setSchool(e.target.value)}
+                      required
+                      className="w-full h-12 pl-12 pr-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 outline-none text-white placeholder:text-gray-500 transition-all focus:bg-white/10"
+                    />
+                  </div>
                 </div>
 
                 <div className="pt-2 flex gap-3">

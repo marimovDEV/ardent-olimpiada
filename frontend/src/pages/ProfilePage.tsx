@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     User, MapPin, School, GraduationCap, Calendar, Phone, Trophy, Star,
     Zap, Edit3, Save, X, Camera, ArrowLeft, AtSign, Loader2, CheckCircle, XCircle,
-    BookOpen, CreditCard, Award, Download, CheckCircle2
+    BookOpen, CreditCard, Award, Download, CheckCircle2, ChevronDown
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import {
@@ -47,6 +47,13 @@ interface UserData {
 import {
     Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -1081,10 +1088,18 @@ const ProfilePage = () => {
                                 <div>
                                     <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.region')}</label>
                                     {isEditing ? (
-                                        <select value={region} onChange={(e) => setRegion(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground">
-                                            <option value="">{t('dashboard.profile.info.region')}</option>
-                                            {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                                        </select>
+                                        <Select value={region} onValueChange={setRegion}>
+                                            <SelectTrigger className="w-full h-12 bg-muted/50 border-border focus:ring-primary rounded-xl">
+                                                <SelectValue placeholder={t('dashboard.profile.info.region')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {REGIONS.map(r => (
+                                                    <SelectItem key={r} value={r}>
+                                                        {r}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     ) : (
                                         <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border flex items-center gap-2">
                                             <MapPin className="w-4 h-4 text-muted-foreground" />
@@ -1093,9 +1108,17 @@ const ProfilePage = () => {
                                     )}
                                 </div>
                                 <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.school')}</label>
+                                    <label className="text-sm text-muted-foreground mb-1 block">
+                                        {grade === 'STUDENT' ? t('auth.university') : t('dashboard.profile.info.school')}
+                                    </label>
                                     {isEditing ? (
-                                        <input type="text" value={school} onChange={(e) => setSchool(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground" placeholder={t('dashboard.profile.info.school')} />
+                                        <input
+                                            type="text"
+                                            value={school}
+                                            onChange={(e) => setSchool(e.target.value)}
+                                            className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground"
+                                            placeholder={grade === 'STUDENT' ? t('auth.placeholders.university', 'OTM nomini kiriting') : t('dashboard.profile.info.school')}
+                                        />
                                     ) : (
                                         <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border flex items-center gap-2">
                                             <School className="w-4 h-4 text-muted-foreground" />
@@ -1106,10 +1129,18 @@ const ProfilePage = () => {
                                 <div>
                                     <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.grade')}</label>
                                     {isEditing ? (
-                                        <select value={grade} onChange={(e) => setGrade(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground">
-                                            <option value="">{t('dashboard.profile.info.grade')}</option>
-                                            {GRADES.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
-                                        </select>
+                                        <Select value={grade} onValueChange={setGrade}>
+                                            <SelectTrigger className="w-full h-12 bg-muted/50 border-border focus:ring-primary rounded-xl">
+                                                <SelectValue placeholder={t('dashboard.profile.info.grade')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {GRADES.map(g => (
+                                                    <SelectItem key={g.value} value={g.value}>
+                                                        {g.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     ) : (
                                         <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border flex items-center gap-2">
                                             <GraduationCap className="w-4 h-4 text-muted-foreground" />

@@ -8,7 +8,8 @@
     "cta_secondary": "Tayyorgarlik Kurslari",
     "stats_students": "O'quvchilar",
     "stats_olympiads": "Olimpiadalar",
-    "stats_transparency": "Shaffoflik"
+    "stats_transparency": "Shaffoflik",
+    "student": "Talaba"
   },
   "global": {
     "updated": "Muvaffaqiyatli yangilandi",
@@ -339,6 +340,7 @@
     "birthDate": "Tug'ilgan sana",
     "region": "Viloyat/Shahar",
     "school": "Maktab nomi",
+    "university": "Universitet nomi",
     "grade": "Sinf",
     "code": "Kod",
     "verify": "Tasdiqlash",

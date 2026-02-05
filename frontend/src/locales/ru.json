@@ -274,7 +274,8 @@
     "cta_secondary": "Подготовительные курсы",
     "stats_students": "Учеников",
     "stats_olympiads": "Олимпиад",
-    "stats_transparency": "Прозрачность"
+    "stats_transparency": "Прозрачность",
+    "student": "Студент"
   },
   "aiChat": {
     "title": "Ardent AI",
@@ -336,6 +337,7 @@
     "birthDate": "Дата рождения",
     "region": "Регион/Город",
     "school": "Название школы",
+    "university": "Название университета",
     "grade": "Класс",
     "code": "Код",
     "verify": "Подтвердить",

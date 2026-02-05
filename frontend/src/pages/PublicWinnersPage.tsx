@@ -62,7 +62,6 @@ const PublicWinnersPage = () => {
                 ))}
             </div>
         </main>
-        </div >
     );
 };
 
