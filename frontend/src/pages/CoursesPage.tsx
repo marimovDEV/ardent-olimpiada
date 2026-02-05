@@ -102,9 +102,9 @@ const CoursesPage = () => {
     return matchesSearch && matchesSubject;
   });
 
-  const formatPrice = (price: number, isFree: boolean) => {
-    if (isFree || price === 0) return t('badges.free');
-    return `${Number(price).toLocaleString()} ${t('olympiadsSection.currency')}`;
+  const formatPrice = (price: any, isFree: boolean) => {
+    if (isFree || Number(price) === 0) return t('badges.free');
+    return `${Number(price).toLocaleString()} ${t('common.currency')}`;
   };
 
   // Removed local getSubjectTheme in favor of centralized utility
@@ -198,7 +198,7 @@ const CoursesPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         {filteredCourses.map((course) => {
           const theme = getSubjectTheme(course.subject);
-          const isFree = course.is_free || course.price === 0;
+          const isFree = course.is_free || Number(course.price) === 0;
 
           return (
             <Link

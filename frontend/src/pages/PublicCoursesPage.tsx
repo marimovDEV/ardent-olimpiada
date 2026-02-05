@@ -159,7 +159,7 @@ const PublicCoursesPage = () => {
                         {filteredCourses.map((course) => {
                             const theme = getSubjectTheme(course.subject_name || course.subject || "");
                             const DynamicIcon = (Icons as any)[theme.icon] || Icons.BookOpen;
-                            const isFree = course.price === 0 || course.is_free;
+                            const isFree = Number(course.price) === 0 || course.is_free;
 
                             return (
                                 <div

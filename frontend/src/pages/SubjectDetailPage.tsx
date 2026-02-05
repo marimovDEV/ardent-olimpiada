@@ -162,8 +162,8 @@ const SubjectDetailPage = () => {
                                                     <BookOpen className="w-12 h-12 text-slate-400" />
                                                 </div>
                                             )}
-                                            <Badge className="absolute top-3 right-3">
-                                                {course.price === 0 ? "Bepul" : `${course.price} AC`}
+                                            <Badge className="absolute top-3 right-3 text-[10px] font-black uppercase tracking-wider">
+                                                {Number(course.price) === 0 ? "Tekin" : `${course.price} AC`}
                                             </Badge>
                                         </div>
                                         <CardContent className="p-4">
@@ -217,8 +217,8 @@ const SubjectDetailPage = () => {
                                             })}
                                         </div>
                                         <div className="mt-3">
-                                            <Badge variant={olympiad.price === 0 ? "secondary" : "default"}>
-                                                {olympiad.price === 0 ? "Bepul" : `${olympiad.price} AC`}
+                                            <Badge variant={Number(olympiad.price) === 0 ? "secondary" : "default"} className="font-black uppercase tracking-wider">
+                                                {Number(olympiad.price) === 0 ? "Tekin" : `${olympiad.price} AC`}
                                             </Badge>
                                         </div>
                                     </Card>
