@@ -354,8 +354,22 @@ const AdminOlympiadWizard = () => {
             }
         } catch (error: any) {
             console.error(error);
-            const msg = error.response?.data?.status || "Saqlashda xatolik yuz berdi";
-            toast.error(typeof msg === 'string' ? msg : "Xatolik");
+            const errData = error.response?.data;
+            let msg = "Saqlashda xatolik yuz berdi";
+
+            if (errData) {
+                if (typeof errData === 'string') {
+                    msg = errData;
+                } else if (errData.detail) {
+                    msg = errData.detail;
+                } else {
+                    // Collect field errors
+                    const fields = Object.keys(errData).map(key => `${key}: ${errData[key]}`).join(', ');
+                    msg = `Xatolik: ${fields}`;
+                }
+            }
+
+            toast.error(msg);
             return false;
         } finally {
             setLoading(false);

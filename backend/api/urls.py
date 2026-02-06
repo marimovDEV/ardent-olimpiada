@@ -6,6 +6,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 router = DefaultRouter()
 router.register(r'courses', views.CourseViewSet)
 router.register(r'olympiads', views.OlympiadViewSet, basename='olympiads')
+router.register(r'questions', views.QuestionViewSet, basename='questions')
 router.register(r'olympiad-prizes', views.OlympiadPrizeViewSet, basename='olympiad-prizes')
 router.register(r'subjects', views.SubjectViewSet)
 router.register(r'lessons', views.LessonViewSet)

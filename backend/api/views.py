@@ -1494,6 +1494,23 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         questions = olympiad.questions.all().order_by('order')
         return Response({
             'success': True,
+            'questions': QuestionSerializer(questions, many=True).data,
+            'duration': olympiad.duration
+        })
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    """
+    Question API for Admins (CRUD)
+    """
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+    
+    def get_queryset(self):
+        # Optional: Filter by olympiad if needed, but for CRUD logic ID is enough
+        return super().get_queryset()
+            'success': True,
             'olympiad': {
                 'id': olympiad.id,
                 'title': olympiad.title,

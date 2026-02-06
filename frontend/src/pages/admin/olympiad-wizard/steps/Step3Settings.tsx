@@ -87,19 +87,20 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                 {data.is_paid && (
                     <div className="grid grid-cols-2 gap-6 animate-in slide-in-from-top-2">
                         <div className="space-y-2">
-                            <Label>Narxi (UZS)</Label>
+                            <Label>Narxi (ArdCoin)</Label>
                             <Input
                                 type="number"
-                                value={data.price}
-                                onChange={(e) => update({ price: Number(e.target.value) })}
+                                value={data.price ?? 0}
+                                onChange={(e) => update({ price: e.target.value === '' ? 0 : Number(e.target.value) })}
+                                min={0}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label>Chegirma (%)</Label>
                             <Input
                                 type="number"
-                                value={data.discount_percent}
-                                onChange={(e) => update({ discount_percent: Number(e.target.value) })}
+                                value={data.discount_percent ?? 0}
+                                onChange={(e) => update({ discount_percent: e.target.value === '' ? 0 : Number(e.target.value) })}
                                 max={100}
                                 min={0}
                             />

@@ -49,6 +49,24 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
         if (olympiadId) fetchQuestions();
     }, [olympiadId]);
 
+    const [olympiadSettings, setOlympiadSettings] = useState<any>(null);
+
+    useEffect(() => {
+        if (olympiadId) {
+            fetchQuestions();
+            fetchOlympiadSettings();
+        }
+    }, [olympiadId]);
+
+    const fetchOlympiadSettings = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/olympiads/${olympiadId}/`, { headers: getAuthHeader() });
+            setOlympiadSettings(res.data);
+        } catch (error) {
+            console.error("Failed to fetch settings");
+        }
+    };
+
     const fetchQuestions = async () => {
         setLoading(true);
         try {
@@ -312,20 +330,37 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                         )}
 
                         {/* Common Meta */}
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Ball</Label>
                                 <Input type="number" value={qForm.points} onChange={(e) => setQForm({ ...qForm, points: Number(e.target.value) })} />
                             </div>
+
+                            {/* Hide Time if global time limit is set (fetched via context or prop logic) 
+                                For now, we unfortunately don't have the full Olympiad object in this component easily without fetching.
+                                But we can check our fetched questions list or just keep it simple.
+                                
+                                Wait, the user specifically asked: "hafsizlikda tasodifiy savollar belgilab qoyibman vaqtni ham... shunga qarab logika qilib ishlagin"
+                                We need to know the Olympiad settings here.
+                            */}
+
+                            {/* We will fetch Olympiad details in Step4Questions to know settings */}
+                        </div>
+
+                        {/* Order & Time Conditional */}
+                        {(olympiadSettings?.time_limit_per_question === 0) && (
                             <div className="space-y-2">
                                 <Label>Vaqt (sekund)</Label>
                                 <Input type="number" placeholder="0 = Cheklovsiz" value={qForm.time_limit} onChange={(e) => setQForm({ ...qForm, time_limit: Number(e.target.value) })} />
                             </div>
+                        )}
+
+                        {(!olympiadSettings?.is_random) && (
                             <div className="space-y-2">
                                 <Label>Tartib (Order)</Label>
                                 <Input type="number" value={qForm.order} onChange={(e) => setQForm({ ...qForm, order: Number(e.target.value) })} />
                             </div>
-                        </div>
+                        )}
 
                         <div className="space-y-2">
                             <Label>Izoh (Explanation)</Label>
