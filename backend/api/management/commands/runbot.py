@@ -525,12 +525,25 @@ class Command(BaseCommand):
             new_caption = msg.get('caption', '') + "\n\n"
 
             if action == 'confirm':
-                payment.status = 'COMPLETED'
-                payment.save()
-                
-                # Add Balance
-                user.balance += coins_amount
-                user.save()
+                from django.db import transaction
+                with transaction.atomic():
+                    payment.refresh_from_db()
+                    if payment.status != 'PENDING':
+                         self.send_request("answerCallbackQuery", {"callback_query_id": callback['id'], "text": "Bu to'lov allaqachon yakunlangan."})
+                         return
+
+                    payment.status = 'COMPLETED'
+                    payment.save()
+                    
+                    # Add Balance
+                    user = payment.user
+                    user.refresh_from_db() # Ensure latest balance
+                    old_balance = user.balance
+                    
+                    user.balance += coins_amount
+                    user.save()
+                    
+                    logger.info(f"💰 Balance Updated: User {user.id} ({user.phone}) | {old_balance} -> {user.balance} (+{coins_amount})")
                 
                 new_caption += "✅ <b>TASDIQLANDI</b>"
                 
