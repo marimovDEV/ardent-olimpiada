@@ -93,6 +93,7 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
             return;
         }
 
+        setLoading(true);
         try {
             const payload = {
                 ...qForm,
@@ -126,6 +127,8 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                 }
                 toast.error(`Xatolik: ${msg}`);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -392,7 +395,7 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
 
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Bekor qilish</Button>
-                        <Button onClick={handleSaveQuestion}>Saqlash</Button>
+                        <Button onClick={handleSaveQuestion} disabled={loading}>{loading ? "Saqlanmoqda..." : "Saqlash"}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
