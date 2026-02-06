@@ -276,80 +276,33 @@ class Command(BaseCommand):
         if 'photo' in message:
             state_data = self.user_states.get(chat_id, {})
             if state_data.get("state") == STATE_WAIT_RECEIPT:
-                payment_id = state_data['data'].get('payment_id')
-                photo = message['photo'][-1] # Get largest
-                file_id = photo['file_id']
-                
-                # Get file path
                 try:
-                    file_info = self.send_request("getFile", {"file_id": file_id})
-                    if not file_info or not file_info.get('ok'):
-                         error_msg = f"❌ getFile Failed: {file_info}"
-                         self.stdout.write(self.style.ERROR(error_msg))
-                         self.send_message(chat_id, f"⚠️ {error_msg}")
-                         return
-
-                    file_path = file_info['result']['file_path']
-                    download_url = f"https://api.telegram.org/file/bot{self.bot_token}/{file_path}"
+                    # Get data from state
+                    coins = state_data['data'].get("amount")
+                    total_sum = state_data['data'].get("sum")
                     
-                    # Download and Save
-                    r = requests.get(download_url, timeout=10)
-                    if r.status_code != 200:
-                        error_msg = f"❌ Download Failed: {r.status_code}"
-                        self.stdout.write(self.style.ERROR(error_msg))
-                        self.send_message(chat_id, f"⚠️ {error_msg}")
+                    if not coins or not total_sum:
+                        self.send_message(chat_id, "❌ Ma'lumotlar eskirgan. Iltimos qaytadan /start bosib urinib ko'ring.")
+                        self.user_states[chat_id] = {"state": STATE_NONE}
                         return
-                        
-                    img_content = r.content
-                    
-                    payment = Payment.objects.get(id=payment_id)
-                    payment.receipt_image.save(f"receipt_{payment.id}.jpg", ContentFile(img_content))
-                    
-                    # Notify Admin (Send Photo to admin)
-                    admin_msg = (
-                        f"🆕 <b>Yangi To'lov (Chek)</b>\n\n"
-                        f"👤 <b>User:</b> {payment.user.first_name} {payment.user.last_name} ({payment.user.phone})\n"
-                        f"💰 <b>Summa:</b> {int(payment.amount):,} UZS\n"
-                        f"🆔 <b>Pay ID:</b> #{payment.id}"
-                    )
-                    
-                    # Inline Keyboard for Admin
-                    keyboard = {
-                        "inline_keyboard": [
-                            [
-                                {"text": "✅ Tasdiqlash", "callback_data": f"confirm_{payment.id}"},
-                                {"text": "❌ Rad etish", "callback_data": f"reject_{payment.id}"}
-                            ]
-                        ]
-                    }
 
-                    # Fetch active admins dynamically
-                    admin_chat_ids = self.get_admin_ids()
+                    # Get User
+                    user = User.objects.filter(telegram_id=chat_id).first()
+                    if not user:
+                        self.send_message(chat_id, "⚠️ Iltimos, avval ro'yxatdan o'ting (/start).")
+                        return
 
-                    admin_messages = []
-                    for admin_id in admin_chat_ids:
-                         try:
-                             res = self.send_photo(admin_id, file_id, caption=admin_msg, reply_markup=keyboard)
-                             if res and res.get('ok'):
-                                 admin_messages.append({
-                                     'chat_id': admin_id,
-                                     'message_id': res['result']['message_id']
-                                 })
-                         except Exception as e:
-                             logger.error(f"Admin send error: {e}")
+                    photo = message['photo'][-1] # Get largest
+                    file_id = photo['file_id']
                     
-                    if admin_messages:
-                        payment.admin_message_ids = admin_messages
-                        payment.save()
-
-                    self.send_message(chat_id, "✅ <b>Chek qabul qilindi!</b>\n\nAdministrator tekshirib chiqqandan so'ng hisobingiz to'ldiriladi.")
-                    self.user_states[chat_id] = {"state": STATE_NONE, "data": {}}
+                    # Delegate to common method
+                    self.create_payment_request(chat_id, user, coins, total_sum, file_id)
+                    return
 
                 except Exception as e:
-                    self.stdout.write(self.style.ERROR(f"❌ Photo Exception: {e}"))
-                    self.send_message(chat_id, f"❌ Xatolik yuz berdi: {str(e)[:100]}")
-                    logger.error(f"Photo Upload Error: {e}")
-                
+                    self.stdout.write(self.style.ERROR(f"❌ Photo Handler Error: {e}"))
+                    self.send_message(chat_id, "❌ Tizim xatosi. Qaytadan urinib ko'ring.")
+            
             return
 
         # --- LOGGED IN USER MENU ---
