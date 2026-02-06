@@ -464,12 +464,11 @@ class Command(BaseCommand):
         return []
 
     def notify_admins(self, payment, coins, total_sum, file_id, user):
-        msg = (
             f"🔔 <b>Yangi To'lov!</b>\n\n"
             f"👤 <b>User:</b> {user.first_name} ({user.phone})\n"
             f"🪙 <b>Coin:</b> {coins} AC\n"
             f"💵 <b>Summa:</b> {total_sum:,.0f} so'm\n"
-            f"📅 <b>Sana:</b> {payment.created_at.strftime('%d.%m.%Y %H:%M')}\n"
+            f"📅 <b>Sana:</b> {timezone.localtime(payment.created_at).strftime('%d.%m.%Y %H:%M')}\n"
         )
         
         keyboard = {
