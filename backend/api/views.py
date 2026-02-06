@@ -1510,18 +1510,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Optional: Filter by olympiad if needed, but for CRUD logic ID is enough
         return super().get_queryset()
-            'success': True,
-            'olympiad': {
-                'id': olympiad.id,
-                'title': olympiad.title,
-                'duration': olympiad.duration,
-                'end_time': olympiad.end_date,
-                'tab_switch_limit': olympiad.tab_switch_limit,
-                'required_full_screen': olympiad.required_full_screen,
-                'disable_copy_paste': olympiad.disable_copy_paste
-            },
-            'questions': QuestionSerializer(questions, many=True).data
-        })
     
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def get_questions(self, request, pk=None):
