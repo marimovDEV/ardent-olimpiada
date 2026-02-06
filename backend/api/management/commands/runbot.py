@@ -533,6 +533,7 @@ class Command(BaseCommand):
                          return
 
                     payment.status = 'COMPLETED'
+                    payment.completed_at = timezone.now()
                     payment.save()
                     
                     # Add Balance

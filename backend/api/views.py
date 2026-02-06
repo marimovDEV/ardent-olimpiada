@@ -4968,7 +4968,7 @@ class AdminDashboardViewSet(viewsets.ViewSet):
                 'type': 'PAYMENT',
                 'title': f"To'lov muvaffaqiyatli: {p.amount:,.0f} so'm",
                 'subtitle': f"{p.user.username} - {p.type}",
-                'time': p.completed_at,
+                'time': p.completed_at or p.created_at, # Fallback to created_at
                 'icon': 'CreditCard'
             })
             
@@ -4982,8 +4982,8 @@ class AdminDashboardViewSet(viewsets.ViewSet):
                 'icon': 'Trophy'
             })
 
-        # Sort all by time desc
-        activities.sort(key=lambda x: x['time'], reverse=True)
+        # Sort all by time desc (handle None safely)
+        activities.sort(key=lambda x: x['time'] or timezone.now(), reverse=True)
         activities = activities[:15] # Keep top 15 total
 
         return Response({
