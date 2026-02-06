@@ -9,7 +9,7 @@ import { API_URL, getAuthHeader } from '@/services/api';
 const TelegramBotBanner = () => {
     const { t } = useTranslation();
     const [isVisible, setIsVisible] = useState(false);
-    const [botUrl, setBotUrl] = useState('https://t.me/ArdentOlimpiadaBot');
+    const [botUrl, setBotUrl] = useState('https://t.me/ardentsoft_olimpiada_bot');
     const [user, setUser] = useState<any>(null);
 
     useEffect(() => {

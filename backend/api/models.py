@@ -858,7 +858,7 @@ class BotConfig(models.Model):
     """Configuration for Telegram Bot"""
     bot_token = models.CharField(max_length=255)
     admin_chat_id = models.CharField(max_length=50, default="0")
-    humo_bot_url = models.CharField(max_length=255, blank=True, null=True)
+    humo_bot_url = models.CharField(max_length=255, default="https://t.me/ardentsoft_olimpiada_bot", blank=True, null=True)
     click_merchant_id = models.CharField(max_length=50, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
