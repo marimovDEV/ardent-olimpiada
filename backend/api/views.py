@@ -26,7 +26,7 @@ from .models import (
     OlympiadRegistration, TestResult, Certificate, SupportTicket,
     TicketMessage, Payment, VerificationCode, BotConfig, LevelReward, UserStreak, ActivityLog,
     HomePageConfig, HomeStat, HomeStep, HomeAdvantage, FreeCourseSection, FreeCourseLessonCard, Subject, TeacherProfile, Notification, Profession,
-    ProfessionRoadmapStep, UserProfessionProgress,
+    ProfessionRoadmapStep, UserProfessionProgress, PaymentProviderConfig,
     Module, LessonPractice, LessonTest, Lead, LessonProgress,
     Testimonial, Winner, Banner, AIAssistantFAQ,
     NotificationBroadcast, NotificationTemplate,
