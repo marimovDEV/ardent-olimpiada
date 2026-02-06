@@ -242,99 +242,98 @@ const AdminBotPage = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </CardContent>
-                <CardFooter className="border-t dark:border-white/5 p-4 px-6 bg-gray-50/50 dark:bg-white/5 flex justify-end gap-3">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-xs dark:bg-[#111114] dark:border-white/10"
-                        onClick={() => fetchBotConfig()}
-                    >
-                        <RefreshCw className="w-3 h-3 mr-2" /> {t('admin.reload')}
-                    </Button>
-                    <Button
-                        onClick={handleSaveConfig}
-                        disabled={isLoading}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700 h-9 px-6"
-                    >
-                        {isLoading && <RefreshCw className="w-3 h-3 mr-2 animate-spin" />}
-                        {t('admin.save')}
-                    </Button>
-                </CardFooter>
-            </Card>
-
-            {/* STATS & QUICK INFO */}
-            <div className="space-y-6">
-                <Card className="dark:bg-[#111114] dark:border-white/10">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-bold flex items-center gap-2">
-                            <Users className="w-4 h-4 text-green-600" />
-                            {t('admin.botUsers')}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-3xl font-black">
-                            {botConfig.botUsersCount.toLocaleString()}
-                        </div>
-                        <p className="text-[10px] text-gray-400 mt-1">
-                            {t('admin.botUsersStatsDesc')}
-                            ({botConfig.totalUsersCount > 0 ? Math.round((botConfig.botUsersCount / botConfig.totalUsersCount) * 100) : 0}%)
-                        </p>
                     </CardContent>
+                    <CardFooter className="border-t dark:border-white/5 p-4 px-6 bg-gray-50/50 dark:bg-white/5 flex justify-end gap-3">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs dark:bg-[#111114] dark:border-white/10"
+                            onClick={() => fetchBotConfig()}
+                        >
+                            <RefreshCw className="w-3 h-3 mr-2" /> {t('admin.reload')}
+                        </Button>
+                        <Button
+                            onClick={handleSaveConfig}
+                            disabled={isLoading}
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 h-9 px-6"
+                        >
+                            {isLoading && <RefreshCw className="w-3 h-3 mr-2 animate-spin" />}
+                            {t('admin.save')}
+                        </Button>
+                    </CardFooter>
                 </Card>
 
-                <Card className="bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/20">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-bold text-orange-900 dark:text-orange-400 flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-orange-600" />
-                            {t('admin.guide')}
+                {/* STATS & QUICK INFO */}
+                <div className="space-y-6">
+                    <Card className="dark:bg-[#111114] dark:border-white/10">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <Users className="w-4 h-4 text-green-600" />
+                                {t('admin.botUsers')}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-3xl font-black">
+                                {botConfig.botUsersCount.toLocaleString()}
+                            </div>
+                            <p className="text-[10px] text-gray-400 mt-1">
+                                {t('admin.botUsersStatsDesc')}
+                                ({botConfig.totalUsersCount > 0 ? Math.round((botConfig.botUsersCount / botConfig.totalUsersCount) * 100) : 0}%)
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/20">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-bold text-orange-900 dark:text-orange-400 flex items-center gap-2">
+                                <AlertCircle className="w-4 h-4 text-orange-600" />
+                                {t('admin.guide')}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-[11px] space-y-2 text-orange-800 dark:text-orange-500 leading-relaxed">
+                            <p>{t('admin.guideStep1')}</p>
+                            <p>{t('admin.guideStep2')}</p>
+                            <p>{t('admin.guideStep3')}</p>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* BROADCAST SECTION */}
+                <Card className="lg:col-span-3 dark:bg-[#111114] dark:border-white/10">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Bell className="w-5 h-5 text-purple-600" />
+                            {t('admin.broadcast')}
                         </CardTitle>
+                        <CardDescription>{t('admin.broadcastDesc')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="text-[11px] space-y-2 text-orange-800 dark:text-orange-500 leading-relaxed">
-                        <p>{t('admin.guideStep1')}</p>
-                        <p>{t('admin.guideStep2')}</p>
-                        <p>{t('admin.guideStep3')}</p>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">{t('admin.broadcastDesc')}</label>
+                            <textarea
+                                className="w-full min-h-[120px] p-3 rounded-xl border border-input dark:border-white/10 bg-background dark:bg-[#0a0a0b] focus:ring-2 focus:ring-primary outline-none transition-all"
+                                placeholder={t('admin.broadcastPlaceholder')}
+                                value={broadcastMessage}
+                                onChange={(e) => setBroadcastMessage(e.target.value)}
+                            />
+                        </div>
                     </CardContent>
+                    <CardFooter className="border-t dark:border-white/5 p-4 px-6 flex justify-between items-center bg-gray-50/50 dark:bg-white/5">
+                        <div className="text-[11px] text-gray-500 max-w-lg italic">
+                            {t('admin.broadcastDisclaimer')}
+                        </div>
+                        <Button
+                            onClick={handleBroadcast}
+                            disabled={isBroadcasting || !broadcastMessage}
+                            className="bg-purple-600 hover:bg-purple-700 h-10 px-8"
+                        >
+                            {isBroadcasting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+                            {t('admin.send')}
+                        </Button>
+                    </CardFooter>
                 </Card>
             </div>
-
-            {/* BROADCAST SECTION */}
-            <Card className="lg:col-span-3 dark:bg-[#111114] dark:border-white/10">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Bell className="w-5 h-5 text-purple-600" />
-                        {t('admin.broadcast')}
-                    </CardTitle>
-                    <CardDescription>{t('admin.broadcastDesc')}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">{t('admin.broadcastDesc')}</label>
-                        <textarea
-                            className="w-full min-h-[120px] p-3 rounded-xl border border-input dark:border-white/10 bg-background dark:bg-[#0a0a0b] focus:ring-2 focus:ring-primary outline-none transition-all"
-                            placeholder={t('admin.broadcastPlaceholder')}
-                            value={broadcastMessage}
-                            onChange={(e) => setBroadcastMessage(e.target.value)}
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter className="border-t dark:border-white/5 p-4 px-6 flex justify-between items-center bg-gray-50/50 dark:bg-white/5">
-                    <div className="text-[11px] text-gray-500 max-w-lg italic">
-                        {t('admin.broadcastDisclaimer')}
-                    </div>
-                    <Button
-                        onClick={handleBroadcast}
-                        disabled={isBroadcasting || !broadcastMessage}
-                        className="bg-purple-600 hover:bg-purple-700 h-10 px-8"
-                    >
-                        {isBroadcasting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-                        {t('admin.send')}
-                    </Button>
-                </CardFooter>
-            </Card>
-        </div>
         </div >
     );
 };
