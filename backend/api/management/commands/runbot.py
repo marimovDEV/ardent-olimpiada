@@ -182,9 +182,57 @@ class Command(BaseCommand):
                 self.user_states[chat_id] = {"state": STATE_WAIT_RECEIPT, "data": {"payment_id": payment.id}}
                 return
 
+                return
             except Exception as e:
                 self.send_message(chat_id, "❌ Xatolik yuz berdi.")
                 logger.error(f"Pay Start Error: {e}")
+                return
+
+        elif text.startswith('/start topup_'):
+            try:
+                # Format: /start topup_50000
+                amount_uzs = int(text.split('topup_')[1])
+                
+                rate = self.get_rate()
+                coins = int(amount_uzs / rate)
+                
+                if coins < 10:
+                    self.send_message(chat_id, "⚠️ Minimal miqdor: 10 Coin")
+                    return
+
+                # Check Manual Provider
+                manual_config = PaymentProviderConfig.objects.filter(type='MANUAL', is_active=True).first()
+                if not manual_config:
+                    self.send_message(chat_id, "⚠️ Tachim to'lov tizimida xatolik. Admin bilan bog'laning.")
+                    return
+
+                card_number = manual_config.config.get('card_number', '----')
+                card_holder = manual_config.config.get('holder_name', '')
+                
+                msg = (
+                    f"💳 <b>To'lov uchun ma'lumot:</b>\n\n"
+                    f"🪙 <b>Miqdor:</b> {coins} AC\n"
+                    f"💵 <b>To'lanadigan summa:</b> {amount_uzs:,.0f} so'm\n\n"
+                    f"🏦 <b>Karta:</b> <code>{card_number}</code>\n"
+                    f"👤 <b>Ega:</b> {card_holder}\n\n"
+                    f"❗️ Iltimos, to'lovni amalga oshirib, <b>CHEK RASMINI</b> shu yerga yuboring."
+                )
+                
+                # Set State
+                self.user_states[chat_id] = {
+                    "state": STATE_WAIT_RECEIPT, 
+                    "data": {
+                        "amount": coins,
+                        "sum": amount_uzs
+                    }
+                }
+                
+                self.send_message(chat_id, msg)
+                return
+
+            except Exception as e:
+                self.send_message(chat_id, "❌ Noto'g'ri summa formati.")
+                logger.error(f"Topup Start Error: {e}")
                 return
 
         elif text == '/start':

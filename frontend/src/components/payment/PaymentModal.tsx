@@ -62,7 +62,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
         let url = botUrl;
         // If we wanted to pass amount: 
         if (!url.includes('?start=')) {
-            url += `?start=pay_${amount}`;
+            url += `?start=topup_${amount}`;
         }
         window.open(url, '_blank');
         setStep('SUCCESS');
