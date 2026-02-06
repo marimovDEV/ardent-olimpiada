@@ -179,10 +179,21 @@ MIN_PAYOUT_AMOUNT = 100000  # Minimum withdrawal amount (100k so'm)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-# SECURE_SSL_REDIRECT = True # Enable in production with SSL
-# SECURE_HSTS_SECONDS = 31536000
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = True # Enable in production with SSL
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Proxy Configuration (Fix for Mixed Content / localhost URLs)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+# USE_X_FORWARDED_PORT = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://ardent-olimpiada-course.vercel.app",
+    "https://course.ardentsoft.uz",
+    "https://api.ardentsoft.uz",
+]
 
 # Proxy Configuration (Fix for Mixed Content / localhost URLs)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
