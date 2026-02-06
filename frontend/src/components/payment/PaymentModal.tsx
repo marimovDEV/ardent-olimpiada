@@ -21,7 +21,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
     const [loading, setLoading] = useState(false);
 
     // Simplifed state: Just show bot prompt
-    const [botUrl, setBotUrl] = useState('https://t.me/ArdentOlimpiadaBot');
+    const [botUrl, setBotUrl] = useState('https://t.me/ardentsoft_olimpiada_bot');
     const [step, setStep] = useState<'SELECT' | 'SUCCESS'>('SELECT');
 
     // Update amount if requiredAmount changes
@@ -44,7 +44,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
             if (res.data.success && res.data.config && res.data.config.humo_bot_url) {
                 setBotUrl(res.data.config.humo_bot_url);
             } else if (res.data.results && res.data.results.length > 0) {
-                setBotUrl(res.data.results[0].humo_bot_url || 'https://t.me/ArdentOlimpiadaBot');
+                setBotUrl(res.data.results[0].humo_bot_url || 'https://t.me/ardentsoft_olimpiada_bot');
             }
         } catch (err) {
             console.error("Error fetching bot config", err);
