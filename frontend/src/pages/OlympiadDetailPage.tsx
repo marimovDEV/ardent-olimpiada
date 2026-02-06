@@ -354,6 +354,7 @@ const OlympiadDetailPage = () => {
                         <>
                           <div className="flex items-center gap-2">
                             <ArdCoin amount={olympiad.price} size="xl" />
+                            <span className="text-xl font-bold">{Number(olympiad.price).toLocaleString('uz-UZ', { maximumFractionDigits: 0 })} AC</span>
                           </div>
                           <p className="text-sm text-muted-foreground">{t('dashboard.olympiadDetail.priceLabel')}</p>
                         </>
@@ -377,7 +378,7 @@ const OlympiadDetailPage = () => {
                   </div>
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">{t('dashboard.olympiadDetail.maxScore')}</span>
-                    <span className="font-medium text-green-600 dark:text-green-400 font-bold">100 {t('dashboard.olympiadDetail.scoreUnit')}</span>
+                    <span className="font-medium text-green-600 dark:text-green-400 font-bold">{olympiad.total_score || 0} {t('dashboard.olympiadDetail.scoreUnit')}</span>
                   </div>
                 </div>
 

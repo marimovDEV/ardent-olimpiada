@@ -762,7 +762,7 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'slug', 'description', 'subject', 'subject_id', 'thumbnail',
                   'start_date', 'end_date', 'duration', 'price', 'status', 'questions',
                   'rules', 'prizes', 'evaluation_criteria', 'max_attempts', 'tab_switch_limit', 'disable_copy_paste',
-                  'is_registered', 'is_completed']
+                  'is_registered', 'is_completed', 'total_score']
 
     def get_is_registered(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None
