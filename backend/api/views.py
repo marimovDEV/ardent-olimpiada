@@ -1499,17 +1499,6 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         })
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
-    """
-    Question API for Admins (CRUD)
-    """
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
-    
-    def get_queryset(self):
-        # Optional: Filter by olympiad if needed, but for CRUD logic ID is enough
-        return super().get_queryset()
     
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def get_questions(self, request, pk=None):
@@ -5197,3 +5186,14 @@ def upcoming_olympiads(request):
             'success': False,
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    """
+    Question API for Admins (CRUD)
+    """
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    
+    def get_queryset(self):
+        return super().get_queryset()
