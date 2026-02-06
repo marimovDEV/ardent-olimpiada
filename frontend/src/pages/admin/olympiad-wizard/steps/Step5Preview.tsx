@@ -1,9 +1,33 @@
-
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, DollarSign, Shield, BookOpen, AlertCircle } from "lucide-react";
+import { Calendar, Clock, DollarSign, Shield, BookOpen, AlertCircle, HelpCircle } from "lucide-react";
+import axios from "axios";
+import { API_URL, getAuthHeader } from "@/services/api";
 
-const Step5Preview = ({ data }: { data: any }) => {
+const Step5Preview = ({ data, olympiadId }: { data: any, olympiadId?: number }) => {
+    const [stats, setStats] = useState({ count: 0, totalPoints: 0 });
+
+    useEffect(() => {
+        if (olympiadId) {
+            const fetchStats = async () => {
+                try {
+                    // Start fetching all questions to calculate
+                    const res = await axios.get(`${API_URL}/questions/?olympiad=${olympiadId}`, { headers: getAuthHeader() });
+                    const questions = res.data.results || res.data || [];
+
+                    const count = questions.length;
+                    const points = questions.reduce((sum: number, q: any) => sum + (q.points || 1), 0);
+
+                    setStats({ count, totalPoints: points });
+                } catch (e) {
+                    console.error("Failed to fetch questions stats", e);
+                }
+            };
+            fetchStats();
+        }
+    }, [olympiadId]);
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
             <div className="flex items-center gap-2 p-4 bg-blue-50 text-blue-800 rounded-lg border border-blue-200">
@@ -43,6 +67,23 @@ const Step5Preview = ({ data }: { data: any }) => {
                                 <Badge variant="outline">{data.difficulty}</Badge>
                             </div>
                         </div>
+
+                        {/* Questions Stats - Dynamic */}
+                        <div className="flex gap-4 pt-2 border-t mt-2">
+                            <div>
+                                <span className="text-muted-foreground text-sm">Savollar:</span>
+                                <p className="font-bold flex items-center gap-1">
+                                    <HelpCircle className="w-4 h-4 text-primary" />
+                                    {stats.count} ta
+                                </p>
+                            </div>
+                            <div>
+                                <span className="text-muted-foreground text-sm">Maksimal Ball:</span>
+                                <p className="font-bold flex items-center gap-1 text-green-600">
+                                    {stats.totalPoints} ball
+                                </p>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -74,7 +115,7 @@ const Step5Preview = ({ data }: { data: any }) => {
                                 {data.is_paid ? (
                                     <>
                                         <DollarSign className="w-5 h-5 text-green-600" />
-                                        {Number(data.price).toLocaleString()} {data.currency}
+                                        {Number(data.price).toLocaleString('uz-UZ', { maximumFractionDigits: 0 })} {data.currency}
                                         {data.discount_percent > 0 && (
                                             <Badge variant="destructive" className="ml-2">-{data.discount_percent}%</Badge>
                                         )}

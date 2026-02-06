@@ -427,7 +427,7 @@ const AdminOlympiadWizard = () => {
                 {currentStep === 3 && <Step3Settings data={formData} update={updateData} />}
                 {currentStep === 4 && <Step4Questions olympiadId={Number(id)} isEdit={isEdit} />}
                 {currentStep === 5 && <Step5Rewards data={formData} update={updateData} olympiadId={Number(id)} />}
-                {currentStep === 6 && <Step5Preview data={formData} />}
+                {currentStep === 6 && <Step5Preview data={formData} olympiadId={Number(id)} />}
 
             </div>
 
