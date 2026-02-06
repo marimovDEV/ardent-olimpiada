@@ -473,17 +473,21 @@ class Command(BaseCommand):
                     self.notify_admins(payment, coins, total_sum, file_id, user)
                     return
                 else:
-                    self.stdout.write(self.style.ERROR(f"❌ Image Download Failed. Status: {r.status_code}, URL: {download_url}"))
+                    error_msg = f"❌ Image Download Failed. Status: {r.status_code}"
+                    self.stdout.write(self.style.ERROR(error_msg))
+                    self.send_message(chat_id, f"⚠️ {error_msg}")
+                    return
             
             else:
-                 self.stdout.write(self.style.ERROR(f"❌ getFile Failed. Info: {file_info}"))
+                 error_msg = f"❌ getFile Failed. Info: {file_info}"
+                 self.stdout.write(self.style.ERROR(error_msg))
+                 self.send_message(chat_id, "⚠️ Telegram fayl ma'lumotlarini bermadi. Qaytadan urinib ko'ring.")
+                 return
 
-            self.send_message(chat_id, "⚠️ Rasmni yuklab olishda xatolik. Qaytadan urinib ko'ring.")
-            
         except Exception as e:
             logger.error(f"Payment Creation Error: {e}")
             self.stdout.write(self.style.ERROR(f"❌ Payment Creation Exception: {e}"))
-            self.send_message(chat_id, "❌ Tizim xatosi. Keyinroq urinib ko'ring.")
+            self.send_message(chat_id, f"❌ Tizim xatosi: {str(e)[:50]}")
 
 
     def get_admin_ids(self):
