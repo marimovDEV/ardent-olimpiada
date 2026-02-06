@@ -240,6 +240,8 @@ const OlympiadDetailPage = () => {
 
   const isFree = olympiad.price === 0;
 
+  const totalScore = olympiad.total_score || (olympiad.questions?.reduce((acc: number, q: any) => acc + (q.points || 0), 0)) || 0;
+
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col">
       <div className="flex-1 animate-fade-in">
@@ -353,8 +355,7 @@ const OlympiadDetailPage = () => {
                       ) : (
                         <>
                           <div className="flex items-center gap-2">
-                            <ArdCoin amount={olympiad.price} size="xl" showAmount={false} />
-                            <span className="text-xl font-bold">{Number(olympiad.price).toLocaleString('uz-UZ', { maximumFractionDigits: 0 })} AC</span>
+                            <ArdCoin amount={olympiad.price} size="xl" />
                           </div>
                           <p className="text-sm text-muted-foreground">{t('dashboard.olympiadDetail.priceLabel')}</p>
                         </>
@@ -378,7 +379,7 @@ const OlympiadDetailPage = () => {
                   </div>
                   <div className="flex items-center justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">{t('dashboard.olympiadDetail.maxScore')}</span>
-                    <span className="font-medium text-green-600 dark:text-green-400 font-bold">{olympiad.total_score || 0} {t('dashboard.olympiadDetail.scoreUnit')}</span>
+                    <span className="font-medium text-green-600 dark:text-green-400 font-bold">{totalScore} {t('dashboard.olympiadDetail.scoreUnit')}</span>
                   </div>
                 </div>
 
