@@ -40,7 +40,9 @@ const ArdCoin = ({ amount, className, showAmount = true, size = 'md' }: ArdCoinP
 
             {showAmount && amount !== undefined && (
                 <span className={cn(sizeClasses[size].split(' ').slice(2).join(' '))}>
-                    {amount.toLocaleString('uz-UZ', { maximumFractionDigits: 0 })} <span className="text-yellow-600 dark:text-yellow-400 text-[0.8em]">AC</span>
+                    <span className={cn(sizeClasses[size].split(' ').slice(2).join(' '))}>
+                        {Number(amount).toLocaleString('uz-UZ', { maximumFractionDigits: 0 })} <span className="text-yellow-600 dark:text-yellow-400 text-[0.8em]">AC</span>
+                    </span>
                 </span>
             )}
         </div>

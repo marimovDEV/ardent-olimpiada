@@ -1336,6 +1336,11 @@ class OlympiadViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'subject']
     ordering_fields = ['start_date', 'created_at']
     ordering = ['-start_date']
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return OlympiadDetailSerializer
+        return OlympiadSerializer
     
     def get_queryset(self):
         queryset = Olympiad.objects.filter(is_active=True)
