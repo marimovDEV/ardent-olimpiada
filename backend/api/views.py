@@ -5192,7 +5192,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     Question API for Admins (CRUD)
     """
     queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
+    serializer_class = QuestionAdminSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
     
     def get_queryset(self):
