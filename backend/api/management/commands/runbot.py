@@ -465,6 +465,7 @@ class Command(BaseCommand):
         return []
 
     def notify_admins(self, payment, coins, total_sum, file_id, user):
+        msg = (
             f"🔔 <b>Yangi To'lov!</b>\n\n"
             f"👤 <b>User:</b> {user.first_name} ({user.phone})\n"
             f"🪙 <b>Coin:</b> {coins} AC\n"
