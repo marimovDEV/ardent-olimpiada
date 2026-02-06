@@ -195,7 +195,5 @@ CSRF_TRUSTED_ORIGINS = [
     "https://api.ardentsoft.uz",
 ]
 
-# Proxy Configuration (Fix for Mixed Content / localhost URLs)
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-USE_X_FORWARDED_HOST = True
+
 # USE_X_FORWARDED_PORT = True

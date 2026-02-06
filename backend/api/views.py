@@ -1503,6 +1503,23 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             'duration': olympiad.duration
         })
 
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def my_registrations(self, request):
+        """List olympiads the user has registered for"""
+        registrations = OlympiadRegistration.objects.filter(user=self.request.user).select_related('olympiad')
+        
+        data = []
+        for reg in registrations:
+            # Manually construct response to match frontend expectation
+            data.append({
+                'id': reg.id,
+                'olympiad': OlympiadSerializer(reg.olympiad, context={'request': request}).data,
+                'registered_at': reg.registered_at,
+                'status': reg.olympiad.status
+            })
+            
+        return Response({'success': True, 'registrations': data})
+
 
     
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
