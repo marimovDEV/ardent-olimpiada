@@ -756,6 +756,7 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
     questions = QuestionSerializer(many=True, read_only=True)
     is_registered = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
+    total_score = serializers.SerializerMethodField()
     
     class Meta:
         model = Olympiad
@@ -775,6 +776,9 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
         if user and user.is_authenticated:
             return TestResult.objects.filter(user=user, olympiad=obj, status='COMPLETED').exists()
         return False
+
+    def get_total_score(self, obj):
+        return sum(q.points for q in obj.questions.all())
 
 
 class OlympiadCreateSerializer(serializers.ModelSerializer):
