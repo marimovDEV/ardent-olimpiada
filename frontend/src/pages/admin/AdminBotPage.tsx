@@ -10,7 +10,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Smartphone, Shield, RefreshCw, Send, Users, Bell, AlertCircle, Settings as SettingsIcon } from "lucide-react";
+import { Smartphone, Shield, RefreshCw, Send, Users, Bell, AlertCircle, Settings as SettingsIcon, CreditCard } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
@@ -28,6 +28,8 @@ const AdminBotPage = () => {
         adminChatId: "",
         humoBotUrl: "",
         clickMerchantId: "",
+        cardNumber: "",
+        cardHolder: "",
         botActive: true,
         botUsersCount: 0,
         totalUsersCount: 0,
@@ -51,6 +53,8 @@ const AdminBotPage = () => {
                     adminChatId: res.data.config.admin_chat_id || "",
                     humoBotUrl: res.data.config.humo_bot_url || "",
                     clickMerchantId: res.data.config.click_merchant_id || "",
+                    cardNumber: res.data.config.card_number || "",
+                    cardHolder: res.data.config.card_holder || "",
                     botActive: res.data.config.is_active,
                     botUsersCount: res.data.stats?.bot_users_count || 0,
                     totalUsersCount: res.data.stats?.total_users_count || 0,
@@ -79,6 +83,8 @@ const AdminBotPage = () => {
                 admin_chat_id: botConfig.adminChatId,
                 humo_bot_url: botConfig.humoBotUrl,
                 click_merchant_id: botConfig.clickMerchantId,
+                card_number: botConfig.cardNumber,
+                card_holder: botConfig.cardHolder,
                 is_active: botConfig.botActive
             }, { headers: getAuthHeader() });
 
@@ -210,99 +216,126 @@ const AdminBotPage = () => {
                                 </div>
                             </div>
                         </div>
+
+                        <div className="pt-4 border-t dark:border-white/10 space-y-4">
+                            <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                <CreditCard className="w-4 h-4 text-blue-600" /> Karta Sozlamalari (Manual To'lov)
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-gray-500">Karta Raqami</label>
+                                    <Input
+                                        placeholder="8600 0000 0000 0000"
+                                        value={botConfig.cardNumber}
+                                        onChange={(e) => setBotConfig({ ...botConfig, cardNumber: e.target.value })}
+                                        className="font-mono dark:bg-[#0a0a0b] dark:border-white/10"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-gray-500">Karta Egasi</label>
+                                    <Input
+                                        placeholder="ARDENT OLYMPIAD LLC"
+                                        value={botConfig.cardHolder}
+                                        onChange={(e) => setBotConfig({ ...botConfig, cardHolder: e.target.value })}
+                                        className="font-mono dark:bg-[#0a0a0b] dark:border-white/10"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+                <CardFooter className="border-t dark:border-white/5 p-4 px-6 bg-gray-50/50 dark:bg-white/5 flex justify-end gap-3">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs dark:bg-[#111114] dark:border-white/10"
+                        onClick={() => fetchBotConfig()}
+                    >
+                        <RefreshCw className="w-3 h-3 mr-2" /> {t('admin.reload')}
+                    </Button>
+                    <Button
+                        onClick={handleSaveConfig}
+                        disabled={isLoading}
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 h-9 px-6"
+                    >
+                        {isLoading && <RefreshCw className="w-3 h-3 mr-2 animate-spin" />}
+                        {t('admin.save')}
+                    </Button>
+                </CardFooter>
+            </Card>
+
+            {/* STATS & QUICK INFO */}
+            <div className="space-y-6">
+                <Card className="dark:bg-[#111114] dark:border-white/10">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-bold flex items-center gap-2">
+                            <Users className="w-4 h-4 text-green-600" />
+                            {t('admin.botUsers')}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-3xl font-black">
+                            {botConfig.botUsersCount.toLocaleString()}
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-1">
+                            {t('admin.botUsersStatsDesc')}
+                            ({botConfig.totalUsersCount > 0 ? Math.round((botConfig.botUsersCount / botConfig.totalUsersCount) * 100) : 0}%)
+                        </p>
                     </CardContent>
-                    <CardFooter className="border-t dark:border-white/5 p-4 px-6 bg-gray-50/50 dark:bg-white/5 flex justify-end gap-3">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs dark:bg-[#111114] dark:border-white/10"
-                            onClick={() => fetchBotConfig()}
-                        >
-                            <RefreshCw className="w-3 h-3 mr-2" /> {t('admin.reload')}
-                        </Button>
-                        <Button
-                            onClick={handleSaveConfig}
-                            disabled={isLoading}
-                            size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 h-9 px-6"
-                        >
-                            {isLoading && <RefreshCw className="w-3 h-3 mr-2 animate-spin" />}
-                            {t('admin.save')}
-                        </Button>
-                    </CardFooter>
                 </Card>
 
-                {/* STATS & QUICK INFO */}
-                <div className="space-y-6">
-                    <Card className="dark:bg-[#111114] dark:border-white/10">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                                <Users className="w-4 h-4 text-green-600" />
-                                {t('admin.botUsers')}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-3xl font-black">
-                                {botConfig.botUsersCount.toLocaleString()}
-                            </div>
-                            <p className="text-[10px] text-gray-400 mt-1">
-                                {t('admin.botUsersStatsDesc')}
-                                ({botConfig.totalUsersCount > 0 ? Math.round((botConfig.botUsersCount / botConfig.totalUsersCount) * 100) : 0}%)
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/20">
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-bold text-orange-900 dark:text-orange-400 flex items-center gap-2">
-                                <AlertCircle className="w-4 h-4 text-orange-600" />
-                                {t('admin.guide')}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="text-[11px] space-y-2 text-orange-800 dark:text-orange-500 leading-relaxed">
-                            <p>{t('admin.guideStep1')}</p>
-                            <p>{t('admin.guideStep2')}</p>
-                            <p>{t('admin.guideStep3')}</p>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* BROADCAST SECTION */}
-                <Card className="lg:col-span-3 dark:bg-[#111114] dark:border-white/10">
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Bell className="w-5 h-5 text-purple-600" />
-                            {t('admin.broadcast')}
+                <Card className="bg-orange-50 dark:bg-orange-950/20 border-orange-100 dark:border-orange-900/20">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-bold text-orange-900 dark:text-orange-400 flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 text-orange-600" />
+                            {t('admin.guide')}
                         </CardTitle>
-                        <CardDescription>{t('admin.broadcastDesc')}</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">{t('admin.broadcastDesc')}</label>
-                            <textarea
-                                className="w-full min-h-[120px] p-3 rounded-xl border border-input dark:border-white/10 bg-background dark:bg-[#0a0a0b] focus:ring-2 focus:ring-primary outline-none transition-all"
-                                placeholder={t('admin.broadcastPlaceholder')}
-                                value={broadcastMessage}
-                                onChange={(e) => setBroadcastMessage(e.target.value)}
-                            />
-                        </div>
+                    <CardContent className="text-[11px] space-y-2 text-orange-800 dark:text-orange-500 leading-relaxed">
+                        <p>{t('admin.guideStep1')}</p>
+                        <p>{t('admin.guideStep2')}</p>
+                        <p>{t('admin.guideStep3')}</p>
                     </CardContent>
-                    <CardFooter className="border-t dark:border-white/5 p-4 px-6 flex justify-between items-center bg-gray-50/50 dark:bg-white/5">
-                        <div className="text-[11px] text-gray-500 max-w-lg italic">
-                            {t('admin.broadcastDisclaimer')}
-                        </div>
-                        <Button
-                            onClick={handleBroadcast}
-                            disabled={isBroadcasting || !broadcastMessage}
-                            className="bg-purple-600 hover:bg-purple-700 h-10 px-8"
-                        >
-                            {isBroadcasting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
-                            {t('admin.send')}
-                        </Button>
-                    </CardFooter>
                 </Card>
             </div>
+
+            {/* BROADCAST SECTION */}
+            <Card className="lg:col-span-3 dark:bg-[#111114] dark:border-white/10">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Bell className="w-5 h-5 text-purple-600" />
+                        {t('admin.broadcast')}
+                    </CardTitle>
+                    <CardDescription>{t('admin.broadcastDesc')}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">{t('admin.broadcastDesc')}</label>
+                        <textarea
+                            className="w-full min-h-[120px] p-3 rounded-xl border border-input dark:border-white/10 bg-background dark:bg-[#0a0a0b] focus:ring-2 focus:ring-primary outline-none transition-all"
+                            placeholder={t('admin.broadcastPlaceholder')}
+                            value={broadcastMessage}
+                            onChange={(e) => setBroadcastMessage(e.target.value)}
+                        />
+                    </div>
+                </CardContent>
+                <CardFooter className="border-t dark:border-white/5 p-4 px-6 flex justify-between items-center bg-gray-50/50 dark:bg-white/5">
+                    <div className="text-[11px] text-gray-500 max-w-lg italic">
+                        {t('admin.broadcastDisclaimer')}
+                    </div>
+                    <Button
+                        onClick={handleBroadcast}
+                        disabled={isBroadcasting || !broadcastMessage}
+                        className="bg-purple-600 hover:bg-purple-700 h-10 px-8"
+                    >
+                        {isBroadcasting ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+                        {t('admin.send')}
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
+        </div >
     );
 };
 

@@ -1,0 +1,7 @@
+cd test
+
+git pull origin main
+
+sudo systemctl restart gunicorn_test
+sudo systemctl restart ardenttest
+sudo systemctl restart ardent-bot

@@ -480,6 +480,13 @@ class Command(BaseCommand):
             self.send_message(chat_id, "❌ Tizim xatosi. Keyinroq urinib ko'ring.")
 
 
+    def get_admin_ids(self):
+        """Fetch current admin IDs from DB to ensure hot-reload"""
+        config = BotConfig.objects.filter(is_active=True).first()
+        if config and config.admin_chat_id:
+            return [chat_id.strip() for chat_id in config.admin_chat_id.split(',') if chat_id.strip()]
+        return []
+
     def notify_admins(self, payment, coins, total_sum, file_id, user):
         msg = (
             f"🔔 <b>Yangi To'lov!</b>\n\n"
@@ -498,10 +505,11 @@ class Command(BaseCommand):
             ]
         }
         
-        # Send to all connected admins (usually configured in BotConfig or env)
-        # Using configured admin_chat_id
+        # Send to all connected admins (fetch fresh list)
+        admin_chat_ids = self.get_admin_ids()
+        
         admin_messages = []
-        for admin_id in self.admin_chat_ids:
+        for admin_id in admin_chat_ids:
             try:
                 sent_msg = self.send_photo(admin_id, file_id, caption=msg, reply_markup=keyboard)
                 if sent_msg and sent_msg.get('ok'):

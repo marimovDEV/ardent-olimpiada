@@ -3575,10 +3575,22 @@ class BotConfigViewSet(viewsets.ModelViewSet):
         bot_users_count = User.objects.filter(telegram_id__isnull=False).exclude(telegram_id=0).count()
         total_users_count = User.objects.filter(role='STUDENT').count()
         
+        # Get Manual Payment Config
+        manual_config = PaymentProviderConfig.objects.filter(type='MANUAL').first()
+        card_number = ""
+        card_holder = ""
+        if manual_config and manual_config.config:
+            card_number = manual_config.config.get('card_number', "")
+            card_holder = manual_config.config.get('holder_name', "")
+
         serializer = self.get_serializer(config)
+        data = serializer.data
+        data['card_number'] = card_number
+        data['card_holder'] = card_holder
+        
         return Response({
             'success': True, 
-            'config': serializer.data,
+            'config': data,
             'stats': {
                 'bot_users_count': bot_users_count,
                 'total_users_count': total_users_count
@@ -3595,6 +3607,31 @@ class BotConfigViewSet(viewsets.ModelViewSet):
         
         if serializer.is_valid():
             serializer.save()
+            
+            # Save Card Config
+            card_number = request.data.get('card_number')
+            card_holder = request.data.get('card_holder')
+            
+            if card_number is not None or card_holder is not None:
+                manual_config = PaymentProviderConfig.objects.filter(type='MANUAL').first()
+                if not manual_config:
+                    manual_config = PaymentProviderConfig.objects.create(
+                        name="Bank Karta (Manual)",
+                        type='MANUAL',
+                        provider='CARD',
+                        is_active=True,
+                        config={}
+                    )
+                
+                new_config = manual_config.config or {}
+                if card_number is not None:
+                    new_config['card_number'] = card_number
+                if card_holder is not None:
+                    new_config['holder_name'] = card_holder
+                
+                manual_config.config = new_config
+                manual_config.save()
+
             return Response({
                 'success': True,
                 'message': 'Bot sozlamalari saqlandi',
