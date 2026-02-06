@@ -129,24 +129,34 @@ const Step1Info = ({ data, update }: { data: any, update: (d: any) => void }) =>
             // We'll try with minimal, assuming backend allows defaults or nulls.
             const payload = {
                 title: newCourseTitle,
-                description: "Yangi kurs", // Default
+                description: "Yangi kurs (Olimpiada uchun yaratildi)", // Better default description
                 is_active: false // Created as draft
             };
-            const res = await axios.post(`${API_URL}/courses/`, payload, { headers: getAuthHeader() }); // Fixed URL
+            const res = await axios.post(`${API_URL}/courses/`, payload, { headers: getAuthHeader() });
             const newCourse = res.data;
-            setCourses([...courses, newCourse]);
+
+            // Add to list and select it
+            setCourses(prev => [...prev, newCourse]);
+
+            // Update parent state
             update({
                 course: String(newCourse.id),
-                profession: null,
+                profession: null, // Clear others
                 subject_id: null,
                 subject: null
             });
+
             setIsCreatingCourse(false);
             setNewCourseTitle("");
-            toast.success("Kurs yaratildi (Qoralama)!");
-        } catch (err) {
+
+            // Clearer message
+            toast.success("Kurs yaratildi (Qoralama)!", {
+                description: "To'liq aktivlashtirish uchun 'Kurslar' bo'limida tahrirlang."
+            });
+        } catch (err: any) {
             console.error(err);
-            toast.error("Xatolik: Kurs yaratish uchun ko'proq ma'lumot kerak bo'lishi mumkin.");
+            const msg = err.response?.data?.detail || "Xatolik yuz berdi";
+            toast.error("Xatolik: " + msg);
         } finally {
             setIsSavingCourse(false);
         }
