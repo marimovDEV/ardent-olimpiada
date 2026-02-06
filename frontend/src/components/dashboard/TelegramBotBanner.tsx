@@ -18,13 +18,35 @@ const TelegramBotBanner = () => {
             const userData = JSON.parse(storedUser);
             setUser(userData);
 
-            // Show only for students who haven't connected Telegram
-            if (userData.role === 'STUDENT' && !userData.telegram_id) {
+            // Initial check with stored data
+            const shouldShow = userData.role === 'STUDENT' && !userData.telegram_id;
+            if (shouldShow) {
                 setIsVisible(true);
                 fetchBotConfig();
+
+                // Fetch fresh user data to verify status
+                verifyUserStatus();
             }
         }
     }, []);
+
+    const verifyUserStatus = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/auth/me/`, { headers: getAuthHeader() });
+            if (res.data.success && res.data.user) {
+                const freshUser = res.data.user;
+                setUser(freshUser);
+                localStorage.setItem('user', JSON.stringify(freshUser));
+
+                // Hide if now connected
+                if (freshUser.telegram_id) {
+                    setIsVisible(false);
+                }
+            }
+        } catch (err) {
+            console.error("Error verifying user status", err);
+        }
+    };
 
     const fetchBotConfig = async () => {
         try {
