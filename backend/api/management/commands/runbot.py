@@ -9,6 +9,7 @@ from api.models_settings import PlatformSettings, PaymentProviderConfig
 from api.bot_service import BotService
 from django.core.files.base import ContentFile
 from django.db.models import Q
+from django.utils import timezone
 
 # Configure logging
 logging.basicConfig(
