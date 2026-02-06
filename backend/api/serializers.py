@@ -471,6 +471,9 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class QuestionAdminSerializer(serializers.ModelSerializer):
     """Question serializer for admins (includes correct_answer)"""
+    correct_answer = serializers.CharField(required=False, allow_blank=True)
+    options = serializers.JSONField(required=False, allow_null=True)
+    
     class Meta:
         model = Question
         fields = ['id', 'olympiad', 'text', 'options', 'correct_answer', 'explanation', 'points', 'order', 'time_limit', 'code_template'] # Full admin fields
