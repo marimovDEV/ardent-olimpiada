@@ -284,14 +284,23 @@ class Command(BaseCommand):
                 try:
                     file_info = self.send_request("getFile", {"file_id": file_id})
                     if not file_info or not file_info.get('ok'):
-                         self.send_message(chat_id, "❌ Rasmni yuklashda xatolik.")
+                         error_msg = f"❌ getFile Failed: {file_info}"
+                         self.stdout.write(self.style.ERROR(error_msg))
+                         self.send_message(chat_id, f"⚠️ {error_msg}")
                          return
 
                     file_path = file_info['result']['file_path']
                     download_url = f"https://api.telegram.org/file/bot{self.bot_token}/{file_path}"
                     
                     # Download and Save
-                    img_content = requests.get(download_url).content
+                    r = requests.get(download_url, timeout=10)
+                    if r.status_code != 200:
+                        error_msg = f"❌ Download Failed: {r.status_code}"
+                        self.stdout.write(self.style.ERROR(error_msg))
+                        self.send_message(chat_id, f"⚠️ {error_msg}")
+                        return
+                        
+                    img_content = r.content
                     
                     payment = Payment.objects.get(id=payment_id)
                     payment.receipt_image.save(f"receipt_{payment.id}.jpg", ContentFile(img_content))
@@ -314,8 +323,11 @@ class Command(BaseCommand):
                         ]
                     }
 
+                    # Fetch active admins dynamically
+                    admin_chat_ids = self.get_admin_ids()
+
                     admin_messages = []
-                    for admin_id in self.admin_chat_ids:
+                    for admin_id in admin_chat_ids:
                          try:
                              res = self.send_photo(admin_id, file_id, caption=admin_msg, reply_markup=keyboard)
                              if res and res.get('ok'):
@@ -334,7 +346,8 @@ class Command(BaseCommand):
                     self.user_states[chat_id] = {"state": STATE_NONE, "data": {}}
 
                 except Exception as e:
-                    self.send_message(chat_id, "❌ Rasmni yuklashda xatolik. Qaytadan urinib ko'ring.")
+                    self.stdout.write(self.style.ERROR(f"❌ Photo Exception: {e}"))
+                    self.send_message(chat_id, f"❌ Xatolik yuz berdi: {str(e)[:100]}")
                     logger.error(f"Photo Upload Error: {e}")
                 
             return
