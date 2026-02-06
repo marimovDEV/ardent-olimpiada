@@ -262,6 +262,9 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                 <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>{editingQ ? "Savolni Tahrirlash" : "Yangi Savol"}</DialogTitle>
+                        <div className="text-sm text-muted-foreground">
+                            Olimpiada uchun savol ma'lumotlarini kiriting. * bilan belgilangan maydonlar majburiy.
+                        </div>
                     </DialogHeader>
 
                     <div className="grid grid-cols-1 gap-6 py-4">
