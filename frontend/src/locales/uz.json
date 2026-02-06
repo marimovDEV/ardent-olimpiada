@@ -127,7 +127,9 @@
     "added": "Qo'shildi",
     "error": "Xatolik",
     "deleted": "O'chirildi",
-    "deleteConfirm": "Haqiqatan ham o'chirmoqchimisiz?"
+    "deleteConfirm": "Haqiqatan ham o'chirmoqchimisiz?",
+    "noResults": "Natijalar topilmadi",
+    "tryDifferentFilter": "Boshqa filtrlar yordamida qidirib ko'ring"
   },
   "success": {
     "purchase_completed": "Muvaffaqiyatli sotib olindi",
