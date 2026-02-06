@@ -353,7 +353,7 @@ const OlympiadDetailPage = () => {
                       ) : (
                         <>
                           <div className="flex items-center gap-2">
-                            <ArdCoin amount={olympiad.price} size="xl" />
+                            <ArdCoin amount={olympiad.price} size="xl" showAmount={false} />
                             <span className="text-xl font-bold">{Number(olympiad.price).toLocaleString('uz-UZ', { maximumFractionDigits: 0 })} AC</span>
                           </div>
                           <p className="text-sm text-muted-foreground">{t('dashboard.olympiadDetail.priceLabel')}</p>
