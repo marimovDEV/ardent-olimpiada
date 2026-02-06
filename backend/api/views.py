@@ -5197,3 +5197,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         return super().get_queryset()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'success': False,
+                'error': str(e),
+                'detail': traceback.format_exc()
+            }, status=status.HTTP_400_BAD_REQUEST)

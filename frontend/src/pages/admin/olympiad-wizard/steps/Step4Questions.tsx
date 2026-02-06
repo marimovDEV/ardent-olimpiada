@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2, Edit2, GripVertical, Check, Clock, HelpCircle, Upload, FileSpreadsheet, Download } from "lucide-react";
 import { toast } from "sonner";
@@ -110,9 +110,18 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
             }
             setIsDialogOpen(false);
             fetchQuestions();
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            toast.error("Xatolik yuz berdi");
+            const msg = error.response?.data?.error || error.response?.data?.detail || "Xatolik yuz berdi";
+            if (error.response?.data?.errors) {
+                // Validation errors
+                const errors = error.response.data.errors;
+                Object.keys(errors).forEach(key => {
+                    toast.error(`${key}: ${errors[key]}`);
+                });
+            } else {
+                toast.error(`Xatolik: ${msg}`);
+            }
         }
     };
 
@@ -262,9 +271,9 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                 <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>{editingQ ? "Savolni Tahrirlash" : "Yangi Savol"}</DialogTitle>
-                        <div className="text-sm text-muted-foreground">
+                        <DialogDescription>
                             Olimpiada uchun savol ma'lumotlarini kiriting. * bilan belgilangan maydonlar majburiy.
-                        </div>
+                        </DialogDescription>
                     </DialogHeader>
 
                     <div className="grid grid-cols-1 gap-6 py-4">
