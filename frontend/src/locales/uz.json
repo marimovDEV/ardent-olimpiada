@@ -268,7 +268,7 @@
     "register": "Ro'yxatdan o'tish",
     "about": "Biz haqimizda",
     "guide": "Qo'llanma",
-    "dashboard": "Dashboard",
+    "dashboard": "Shaxsiy kabinet",
     "profile": "Profil",
     "messages": "Xabarlar"
   },
@@ -461,7 +461,7 @@
       }
     },
     "menu": {
-      "home": "Asosiy",
+      "home": "Shaxsiy kabinet",
       "allCourses": "Barcha Kurslar",
       "myCourses": "Mening Kurslarim",
       "olympiads": "Olimpiadalar",

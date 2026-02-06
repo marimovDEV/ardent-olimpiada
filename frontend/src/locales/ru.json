@@ -253,7 +253,7 @@
     "register": "Регистрация",
     "about": "О нас",
     "guide": "Инструкция",
-    "dashboard": "Дашборд",
+    "dashboard": "Личный кабинет",
     "profile": "Профиль",
     "messages": "Сообщения"
   },
@@ -443,7 +443,7 @@
   },
   "dashboard": {
     "menu": {
-      "home": "Главная",
+      "home": "Личный кабинет",
       "allCourses": "Все курсы",
       "myCourses": "Мои курсы",
       "olympiads": "Олимпиады",
