@@ -217,9 +217,17 @@ const AdminTeachersPage = () => {
             setDialogOpen(false);
             fetchTeachers();
             resetForm();
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            toast.error("Xatolik yuz berdi");
+            const data = error.response?.data;
+            const errorMsg = data?.error ||
+                data?.errors?.username?.[0] ||
+                data?.errors?.phone?.[0] ||
+                data?.errors?.password?.[0] ||
+                data?.errors?.non_field_errors?.[0] ||
+                (typeof data?.errors === 'object' ? Object.values(data.errors).flat().join(', ') : data?.errors) ||
+                "Xatolik yuz berdi";
+            toast.error(errorMsg);
         } finally {
             setIsSubmitting(false);
         }
