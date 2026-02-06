@@ -38,12 +38,18 @@ class TelegramService:
     @classmethod
     def send_to_admin(cls, message: str) -> bool:
         """
-        Send message to admin chat (registration notifications)
+        Send message to all configured admin chats (supports multiple IDs)
         """
         config = cls.get_config()
         if not config or not config.admin_chat_id:
             return False
-        return cls.send_message(config.admin_chat_id, message)
+        
+        admin_ids = [id.strip() for id in str(config.admin_chat_id).split(',') if id.strip()]
+        success = True
+        for admin_id in admin_ids:
+            if not cls.send_message(admin_id, message):
+                success = False
+        return success
 
 
     @classmethod
