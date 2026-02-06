@@ -472,11 +472,17 @@ class Command(BaseCommand):
                     # Notify Admins
                     self.notify_admins(payment, coins, total_sum, file_id, user)
                     return
+                else:
+                    self.stdout.write(self.style.ERROR(f"❌ Image Download Failed. Status: {r.status_code}, URL: {download_url}"))
             
+            else:
+                 self.stdout.write(self.style.ERROR(f"❌ getFile Failed. Info: {file_info}"))
+
             self.send_message(chat_id, "⚠️ Rasmni yuklab olishda xatolik. Qaytadan urinib ko'ring.")
             
         except Exception as e:
             logger.error(f"Payment Creation Error: {e}")
+            self.stdout.write(self.style.ERROR(f"❌ Payment Creation Exception: {e}"))
             self.send_message(chat_id, "❌ Tizim xatosi. Keyinroq urinib ko'ring.")
 
 
