@@ -5207,5 +5207,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
             return Response({
                 'success': False,
                 'error': str(e),
-                'detail': traceback.format_exc()
+                'detail': traceback.format_exc(),
+                'request_data': self.request.data  # Return payload for debugging
             }, status=status.HTTP_400_BAD_REQUEST)

@@ -97,6 +97,7 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
             const payload = {
                 ...qForm,
                 olympiad: olympiadId,
+                olympiad_id: olympiadId, // Send both to be sure
                 // Ensure options is a valid array for MCQ
                 options: qForm.type === 'MCQ' ? qForm.options.filter(o => o.trim() !== "") : null
             };
@@ -120,6 +121,9 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                     toast.error(`${key}: ${errors[key]}`);
                 });
             } else {
+                if (error.response?.data?.request_data) {
+                    console.log("Request Data:", error.response.data.request_data);
+                }
                 toast.error(`Xatolik: ${msg}`);
             }
         }
