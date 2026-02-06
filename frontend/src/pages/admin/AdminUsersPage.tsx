@@ -280,7 +280,7 @@ const AdminUsersPage = () => {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t('common.role')}</label>
-                                    <Select value={newUser.role} onValueChange={val => setNewUser({ ...newUser, role: val as any })}>
+                                    <Select value={newUser.role || ""} onValueChange={val => setNewUser({ ...newUser, role: val as any })}>
                                         <SelectTrigger className="rounded-xl h-11">
                                             <SelectValue />
                                         </SelectTrigger>
@@ -343,7 +343,7 @@ const AdminUsersPage = () => {
                         </Button>
                     </div>
 
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <Select value={statusFilter || ""} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-[140px] h-10 rounded-xl border-border bg-card">
                             <SelectValue placeholder={t('common.status')} />
                         </SelectTrigger>
@@ -590,7 +590,7 @@ const AdminUsersPage = () => {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t('common.role')}</label>
-                                <Select value={editingUser.role} onValueChange={(val: any) => setEditingUser({ ...editingUser, role: val })}>
+                                <Select value={editingUser.role || ""} onValueChange={(val: any) => setEditingUser({ ...editingUser, role: val })}>
                                     <SelectTrigger className="rounded-xl h-11">
                                         <SelectValue />
                                     </SelectTrigger>

@@ -683,7 +683,10 @@ class OlympiadSerializer(serializers.ModelSerializer):
                   'grade_range', 'level', 'difficulty', 'format',
                   'max_attempts', 'tab_switch_limit', 'required_camera', 'required_full_screen', 'disable_copy_paste',
                   'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'created_at',
-                  'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config']
+                  'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time']
+    
+    def get_start_time(self, obj):
+        return obj.start_date
     
     def validate(self, data):
         """
@@ -763,7 +766,10 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'slug', 'description', 'subject', 'subject_id', 'thumbnail',
                   'start_date', 'end_date', 'duration', 'price', 'status', 'questions',
                   'rules', 'prizes', 'evaluation_criteria', 'max_attempts', 'tab_switch_limit', 'disable_copy_paste',
-                  'is_registered', 'is_completed', 'total_score']
+                  'is_registered', 'is_completed', 'total_score', 'start_time']
+
+    def get_start_time(self, obj):
+        return obj.start_date
 
     def get_is_registered(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None

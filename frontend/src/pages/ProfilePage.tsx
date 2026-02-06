@@ -45,16 +45,6 @@ interface UserData {
     };
 }
 
-import {
-    Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -1089,7 +1079,7 @@ const ProfilePage = () => {
                                 <div>
                                     <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.region')}</label>
                                     {isEditing ? (
-                                        <Select value={region} onValueChange={setRegion}>
+                                        <Select value={region || ""} onValueChange={setRegion}>
                                             <SelectTrigger className="w-full h-12 bg-muted/50 border-border focus:ring-primary rounded-xl">
                                                 <SelectValue placeholder={t('dashboard.profile.info.region')} />
                                             </SelectTrigger>
@@ -1130,7 +1120,7 @@ const ProfilePage = () => {
                                 <div>
                                     <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.grade')}</label>
                                     {isEditing ? (
-                                        <Select value={grade} onValueChange={setGrade}>
+                                        <Select value={grade || ""} onValueChange={setGrade}>
                                             <SelectTrigger className="w-full h-12 bg-muted/50 border-border focus:ring-primary rounded-xl">
                                                 <SelectValue placeholder={t('dashboard.profile.info.grade')} />
                                             </SelectTrigger>
