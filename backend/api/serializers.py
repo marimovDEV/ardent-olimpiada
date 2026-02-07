@@ -672,6 +672,7 @@ class OlympiadSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
     prizes = OlympiadPrizeSerializer(many=True, read_only=True)
+    start_time = serializers.SerializerMethodField()
     
     class Meta:
         model = Olympiad
@@ -760,6 +761,7 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
     total_score = serializers.SerializerMethodField()
+    start_time = serializers.SerializerMethodField()
     
     class Meta:
         model = Olympiad
