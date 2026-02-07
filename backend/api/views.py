@@ -5182,7 +5182,7 @@ def featured_courses(request):
             is_featured=True
         ).select_related('teacher', 'subject')[:6]
         
-        serializer = CourseSerializer(courses, many=True)
+        serializer = CourseSerializer(courses, many=True, context={'request': request})
         return Response({
             'success': True,
             'courses': serializer.data
@@ -5206,7 +5206,7 @@ def upcoming_olympiads(request):
             status__in=['UPCOMING', 'ONGOING']
         ).select_related('subject_id').order_by('start_date')[:8]
         
-        serializer = OlympiadSerializer(olympiads, many=True)
+        serializer = OlympiadSerializer(olympiads, many=True, context={'request': request})
         return Response({
             'success': True,
             'olympiads': serializer.data
