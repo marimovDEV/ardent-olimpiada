@@ -289,8 +289,10 @@ const LessonView = () => {
                             <iframe
                                 className="w-full h-full"
                                 src={currentLesson.youtube_id
-                                    ? `https://www.youtube.com/embed/${currentLesson.youtube_id}?modestbranding=1&rel=0&iv_load_policy=3`
-                                    : (currentLesson.video_url?.replace('watch?v=', 'embed/') || '') + (currentLesson.video_url?.includes('?') ? '&' : '?') + 'rel=0&modestbranding=1'}
+                                    ? `https://www.youtube.com/embed/${currentLesson.youtube_id}?modestbranding=1&rel=0&iv_load_policy=3&autoplay=1`
+                                    : (currentLesson.video_url?.includes('youtube.com') || currentLesson.video_url?.includes('youtu.be'))
+                                        ? currentLesson.video_url.replace('watch?v=', 'embed/').split('&')[0] + '?modestbranding=1&rel=0&autoplay=1'
+                                        : currentLesson.video_url || ''}
                                 title={currentLesson.title}
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen

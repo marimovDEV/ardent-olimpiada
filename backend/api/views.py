@@ -1234,7 +1234,7 @@ class LessonViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         lesson = serializer.save()
         # Trigger notification for enrolled students
-        course = lesson.module.course
+        course = lesson.course
         from .services.notification_service import NotificationService
         from .models import Enrollment
         

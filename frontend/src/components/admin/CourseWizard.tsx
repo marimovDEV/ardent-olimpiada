@@ -328,7 +328,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                         {/* Thumbnail Upload */}
                         <section className="space-y-4">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                <ImageIcon className="w-4 h-4" /> Kurs Muqovasi (Cover Image)
+                                <ImageIcon className="w-4 h-4" /> {t('admin.courseCover')}
                             </h4>
                             <div className="flex flex-col gap-4">
                                 <div
@@ -340,7 +340,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                             <img src={thumbnailPreview} className="w-full h-full object-cover" alt="Preview" />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                 <Button variant="secondary" size="sm">
-                                                    <Upload className="w-4 h-4 mr-2" /> O'zgartirish
+                                                    <Upload className="w-4 h-4 mr-2" /> {t('admin.change')}
                                                 </Button>
                                             </div>
                                         </>
@@ -349,8 +349,8 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                             <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
                                                 <Upload className="w-6 h-6" />
                                             </div>
-                                            <p className="text-sm font-bold">Rasm yuklash</p>
-                                            <p className="text-xs text-muted-foreground mt-1">Tavsiya etiladi: 1200x675 (16:9)</p>
+                                            <p className="text-sm font-bold">{t('admin.uploadImage')}</p>
+                                            <p className="text-xs text-muted-foreground mt-1">{t('admin.recommendedSize')}</p>
                                         </div>
                                     )}
                                 </div>
@@ -429,9 +429,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                             </div>
                             <div className="grid grid-cols-2 gap-4 pt-2">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">O'qituvchi</label>
+                                    <label className="text-sm font-medium">{t('admin.teacher')}</label>
                                     <Select value={formData.teacher} onValueChange={(val) => setFormData({ ...formData, teacher: val })}>
-                                        <SelectTrigger><SelectValue placeholder="O'qituvchini tanlang" /></SelectTrigger>
+                                        <SelectTrigger><SelectValue placeholder={t('admin.selectTeacher')} /></SelectTrigger>
                                         <SelectContent>
                                             {teachers.map(t => (
                                                 <SelectItem key={t.id} value={t.id.toString()}>{t.full_name}</SelectItem>
@@ -440,7 +440,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Sertifikat</label>
+                                    <label className="text-sm font-medium">{t('admin.certificate')}</label>
                                     <div className="flex items-center gap-2 h-10 px-3 border border-input rounded-md">
                                         <input
                                             type="checkbox"
@@ -448,16 +448,16 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                             onChange={(e) => setFormData({ ...formData, is_certificate_enabled: e.target.checked })}
                                             className="w-4 h-4"
                                         />
-                                        <span className="text-sm">Yoqish</span>
+                                        <span className="text-sm">{t('admin.enable')}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {formData.is_certificate_enabled && (
                                 <div className="space-y-2 animate-in fade-in duration-300">
-                                    <label className="text-sm font-medium">Sertifikat Templati</label>
+                                    <label className="text-sm font-medium">{t('admin.certificateTemplate')}</label>
                                     <Input
-                                        placeholder="Masalan: modern_gold"
+                                        placeholder={t('admin.templatePlaceholder')}
                                         value={formData.certificate_template}
                                         onChange={(e) => setFormData({ ...formData, certificate_template: e.target.value })}
                                     />

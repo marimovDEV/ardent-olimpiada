@@ -2,7 +2,7 @@
 Certificate Signals - Auto-generate certificates
 Triggers when course is completed or olympiad ends
 """
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 
@@ -177,3 +177,22 @@ def olympiad_status_change(sender, instance, **kwargs):
     elif instance.status == 'COMPLETED':
         # Rare case of creating as completed
         create_olympiad_certificates(instance)
+
+
+@receiver(post_save, sender='api.Lesson')
+@receiver(post_delete, sender='api.Lesson')
+def update_course_stats(sender, instance, **kwargs):
+    """
+    Update lessons_count and duration for a Course when a Lesson is added/deleted
+    """
+    course = instance.course
+    # Count lessons
+    course.lessons_count = course.lessons.all().count()
+    
+    # Calculate duration
+    from django.db.models import Sum
+    total_sec = course.lessons.aggregate(total=Sum('video_duration'))['total'] or 0
+    minutes = total_sec // 60
+    course.duration = f"{minutes} min"
+    
+    course.save(update_fields=['lessons_count', 'duration'])

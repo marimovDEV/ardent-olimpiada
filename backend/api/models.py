@@ -340,7 +340,17 @@ class Lesson(models.Model):
     is_published = models.BooleanField(default=True)
     xp_amount = models.IntegerField(default=10, help_text="XP awarded for completing this lesson")
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+    def save(self, *args, **kwargs):
+        from .utils import extract_youtube_id
+        # Automatically extract youtube_id if not present but video_url is
+        if self.video_url and not self.youtube_id:
+            y_id = extract_youtube_id(self.video_url)
+            if y_id:
+                self.youtube_id = y_id
+                self.video_type = 'YOUTUBE'
+        super().save(*args, **kwargs)
+
     class Meta:
         db_table = 'lessons'
         ordering = ['module__order', 'order']

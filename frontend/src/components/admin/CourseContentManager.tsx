@@ -130,12 +130,19 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
 
     const handleSaveLesson = async () => {
         try {
+            // Convert minutes to seconds if needed, but model says seconds. 
+            // User requested minutes in UI.
+            const lessonToSave = {
+                ...currentLesson,
+                video_duration: (currentLesson?.video_duration || 0) * 60 // UI uses minutes
+            };
+
             if (currentLesson?.id) {
-                await axios.put(`${API_URL}/lessons/${currentLesson.id}/`, currentLesson, { headers: getAuthHeader() });
+                await axios.put(`${API_URL}/lessons/${currentLesson.id}/`, lessonToSave, { headers: getAuthHeader() });
                 toast.success(t('admin.curriculum.saveSuccess'));
             } else {
                 await axios.post(`${API_URL}/lessons/`, {
-                    ...currentLesson,
+                    ...lessonToSave,
                     course: courseId,
                     module: targetModuleId,
                     order: (modules.find(m => m.id === targetModuleId)?.lessons.length || 0) + 1
@@ -240,7 +247,14 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2 opacity-0 group-hover/lesson:opacity-100 transition-opacity">
-                                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary" onClick={() => { setCurrentLesson(lesson); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}>
+                                                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary" onClick={() => {
+                                                    setCurrentLesson({
+                                                        ...lesson,
+                                                        video_duration: Math.round(lesson.video_duration / 60) // Show in minutes
+                                                    });
+                                                    setTargetModuleId(module.id);
+                                                    setIsLessonDialogOpen(true);
+                                                }}>
                                                     <Edit2 className="w-4 h-4" />
                                                 </Button>
                                                 <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-destructive" onClick={() => handleDeleteLesson(lesson.id)}>
@@ -249,7 +263,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                             </div>
                                         </div>
                                     ))}
-                                    <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 hover:bg-primary/5 hover:border-primary/30 transition-all font-bold group" onClick={() => { setCurrentLesson({ title: "", is_free: false, video_duration: 600 }); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}>
+                                    <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 hover:bg-primary/5 hover:border-primary/30 transition-all font-bold group" onClick={() => { setCurrentLesson({ title: "", is_free: false, video_duration: 10 }); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}>
                                         <Plus className="w-5 h-5 mr-3 text-primary group-hover:scale-125 transition-transform" />
                                         {t('admin.curriculum.addLesson')}
                                     </Button>
@@ -341,9 +355,21 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                         className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
                                     />
                                 </div>
+
+                                {currentLesson?.video_url && currentLesson.video_url.includes('youtube') && (
+                                    <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border mt-2">
+                                        <iframe
+                                            className="w-full h-full"
+                                            src={currentLesson.video_url.replace('watch?v=', 'embed/')}
+                                            title="YouTube preview"
+                                            allowFullScreen
+                                        ></iframe>
+                                    </div>
+                                )}
+
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.duration')}</label>
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.duration')} ({t('common.minutes')})</label>
                                         <Input
                                             type="number"
                                             value={currentLesson?.video_duration || 0}

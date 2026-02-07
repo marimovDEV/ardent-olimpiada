@@ -302,7 +302,7 @@ class LessonSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'description', 'video_url', 'pdf_url', 
+        fields = ['id', 'course', 'module', 'title', 'description', 'video_url', 'pdf_url', 
                   'video_duration', 'duration', 'order', 'is_free', 'created_at']
         read_only_fields = ['id', 'created_at']
 
@@ -315,7 +315,7 @@ class LessonSerializer(serializers.ModelSerializer):
 class LessonCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ['title', 'description', 'video_url', 'pdf_url', 
+        fields = ['course', 'module', 'title', 'description', 'video_url', 'pdf_url', 
                   'video_duration', 'order', 'is_free']
 
 
