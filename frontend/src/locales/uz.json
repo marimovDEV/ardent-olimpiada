@@ -405,7 +405,60 @@
     "lessonsCountLabel": "{{count}} dars",
     "hoursCountLabel": "{{count}} soat",
     "tryChangingSearch": "Qidiruv so'zini o'zgartirib ko'ring yoki filtrlarni tozalang",
-    "clearFilters": "Filtrlarni tozalash"
+    "clearFilters": "Filtrlarni tozalash",
+    "totalUsers": "Jami foydalanuvchilar",
+    "revenue": "Tushum",
+    "pendingCourses": "Kutilayotgan kurslar",
+    "openTickets": "Ochiq murojaatlar",
+    "pendingCertificates": "Kutilayotgan sertifikatlar",
+    "users": "Foydalanuvchilar",
+    "teachers": "O'qituvchilar",
+    "finance": "Moliya va To'lovlar",
+    "botPayments": "Bot To'lovlari",
+    "cms": "Sayt Tahriri",
+    "professions": "Kasblar",
+    "subjects": "Fanlar",
+    "certificates": "Sertifikatlar",
+    "supportSection": {
+      "title": "Yordam va Murajaatlar"
+    },
+    "notifications": {
+      "title": "Xabarnomalar"
+    },
+    "ai": {
+      "title": "AI Yordamchi"
+    },
+    "settings": "Sozlamalar",
+    "darkMode": "Tungi rejim",
+    "logout": "Chiqish",
+    "reports": "Hisobotlar",
+    "newCourse": "Yangi Kurs",
+    "olympiads": {
+      "title": "Olimpiadalar",
+      "loadError": "Olimpiadalarni yuklashda xatolik",
+      "publishError": "Nashr qilishda xatolik",
+      "deleteSuccess": "Olimpiada muvaffaqiyatli o'chirildi",
+      "deleteError": "Olimpiadani o'chirishda xatolik"
+    },
+    "upcoming": "Kutilayotgan",
+    "checking": "Tekshirilmoqda",
+    "completed": "Tugallangan",
+    "olympiadsManagement": "Olimpiadalar boshqaruvi",
+    "olympiadsManagementSubtitle": "Barcha olimpiadalar ro'yxati va ularni boshqarish",
+    "newOlympiad": "Yangi olimpiada",
+    "totalParticipants": "Jami ishtirokchilar",
+    "subjectsCount": "Fanlar soni",
+    "activeOlympiads": "Faol olimpiadalar",
+    "olympiadSearchPlaceholder": "Olimpiada qidirish...",
+    "allSubjects": "Barcha fanlar",
+    "math": "Matematika",
+    "physics": "Fizika",
+    "past": "O'tgan",
+    "deleteCourse": "Kursni o'chirish",
+    "deleteConfirmText": "Haqiqatan ham '{{title}}' kursini o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.",
+    "edit": "Tahrirlash",
+    "content": "Kontent",
+    "free": "Tekin"
   },
   "aiChat": {
     "title": "Ardent AI",

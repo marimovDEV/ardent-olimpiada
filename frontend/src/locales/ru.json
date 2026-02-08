@@ -403,10 +403,58 @@
     "hoursCountLabel": "{{count}} часов",
     "tryChangingSearch": "Попробуйте изменить поисковый запрос или очистить фильтры",
     "clearFilters": "Очистить фильтры",
+    "totalUsers": "Всего пользователей",
+    "revenue": "Выручка",
+    "pendingCourses": "Курсы на модерации",
+    "openTickets": "Открытые тикеты",
+    "pendingCertificates": "Ожидающие сертификаты",
+    "users": "Пользователи",
+    "teachers": "Учителя",
+    "finance": "Финансы и Платежи",
+    "botPayments": "Платежи через бот",
+    "cms": "Редактирование сайта",
+    "professions": "Профессии",
+    "subjects": "Предметы",
+    "certificates": "Сертификаты",
+    "supportSection": {
+      "title": "Помощь и Обращения"
+    },
+    "notifications": {
+      "title": "Уведомления"
+    },
+    "ai": {
+      "title": "AI Помощник"
+    },
+    "settings": "Настройки",
+    "darkMode": "Темный режим",
+    "logout": "Выход",
+    "reports": "Отчеты",
+    "newCourse": "Новый курс",
+    "olympiads": {
+      "title": "Олимпиады",
+      "loadError": "Ошибка загрузки олимпиад",
+      "publishError": "Ошибка публикации",
+      "deleteSuccess": "Олимпиада успешно удалена",
+      "deleteError": "Ошибка при удалении олимпиады"
+    },
+    "upcoming": "Ожидаемые",
+    "checking": "Проверка",
+    "completed": "Завершено",
+    "olympiadsManagement": "Управление олимпиадами",
+    "olympiadsManagementSubtitle": "Список всех олимпиаад и управление ими",
+    "newOlympiad": "Новая олимпиада",
+    "totalParticipants": "Всего участников",
+    "subjectsCount": "Количество предметов",
+    "activeOlympiads": "Активные олимпиады",
+    "olympiadSearchPlaceholder": "Поиск олимпиады...",
+    "allSubjects": "Все предметы",
+    "math": "Математика",
+    "physics": "Физика",
+    "past": "Прошедшие",
     "deleteCourse": "Удалить курс",
-    "deleteConfirmText": "Вы действительно хотите удалить курс \"{{title}}\"? Это действие необратимо.",
-    "cancel": "Отмена",
-    "delete": "Удалить"
+    "edit": "Редактировать",
+    "content": "Контент",
+    "free": "Бесплатно"
   },
   "aiChat": {
     "title": "Ardent AI",

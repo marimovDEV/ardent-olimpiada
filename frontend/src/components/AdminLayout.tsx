@@ -77,7 +77,7 @@ const AdminLayout = () => {
         { icon: GraduationCap, label: t('admin.teachers'), path: "/admin/teachers" },
         { icon: BookOpen, label: t('admin.courses'), path: "/admin/courses" },
         { icon: Trophy, label: t('admin.olympiads.title'), path: "/admin/olympiads" },
-        { icon: DollarSign, label: "Moliya va To'lovlar", path: "/admin/finance" },
+        { icon: DollarSign, label: t('admin.finance'), path: "/admin/finance" },
         { icon: PanelTop, label: t('admin.cms'), path: "/admin/cms" },
         { icon: Briefcase, label: t('admin.professions'), path: "/admin/professions" },
         { icon: Book, label: t('admin.subjects'), path: "/admin/subjects" },
@@ -86,7 +86,7 @@ const AdminLayout = () => {
         { icon: Bell, label: t('admin.notifications.title'), path: "/admin/notifications" },
         { icon: MessageSquare, label: t('admin.ai.title'), path: "/admin/ai-assistant" },
         { icon: Bot, label: t('admin.botSettings', { defaultValue: "Bot Settings" }), path: "/admin/bot" },
-        { icon: Smartphone, label: "Bot To'lovlari", path: "/admin/bot-payments" },
+        { icon: Smartphone, label: t('admin.botPayments'), path: "/admin/bot-payments" },
         { icon: Settings, label: t('admin.settings'), path: "/admin/settings" },
     ];
 
