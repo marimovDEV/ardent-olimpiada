@@ -3237,14 +3237,6 @@ class UserViewSet(viewsets.ModelViewSet):
         
         if role:
             queryset = queryset.filter(role=role.upper())
-            # For teachers, ensure they have a profile and names
-            if role.upper() == 'TEACHER':
-                queryset = queryset.exclude(first_name='').exclude(last_name='')
-                # Also ensure they have a teacher profile with some data if needed, 
-                # but valid teachers should have it created
-                queryset = queryset.filter(
-                    teacher_profile__isnull=False,
-                ).exclude(teacher_profile__bio='').exclude(teacher_profile__specialization='')
         if is_active:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         

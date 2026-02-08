@@ -810,7 +810,13 @@
       "insufficientFunds": "Недостаточно средств на счету (Баланс: {{balance}})",
       "lifetimeAccess": "Пожизненный доступ",
       "certificateIncluded": "Сертификат включен",
-      "curriculum": "Учебный план",
+      "curriculum": {
+        "title": "Учебный план",
+        "subtitle": "Управление уроками и модулями курса",
+        "addModule": "Добавить модуль",
+        "addLesson": "Добавить урок",
+        "saveChanges": "Сохранить изменения"
+      },
       "noContent": "Контент пока не добавлен",
       "requirements": "Требования",
       "noRequirements": "Особых требований нет",
@@ -2157,9 +2163,6 @@
   "disqualifyUser": "Дисквалифицировать ученика",
   "disqualifyReasonLabel": "Укажите причину отстранения {{name}}.",
   "disqualifyReasonPlaceholder": "Причина...",
-  "studentsCountLabel": "{{count}} учеников",
-  "lessonsCountLabel": "{{count}} уроков",
-  "hoursCountLabel": "{{count}} часов",
   "courseUpdated": "Курс обновлен",
   "courseApproved": "Курс подтвержден",
   "courseRejected": "Курс отклонен",
@@ -2584,6 +2587,20 @@
       "newPass": "Новый пароль",
       "updateBtn": "Обновить пароль"
     }
+  },
+  "months": {
+    "jan": "Янв",
+    "feb": "Фев",
+    "mar": "Мар",
+    "apr": "Апр",
+    "may": "Май",
+    "jun": "Июн",
+    "jul": "Июл",
+    "aug": "Авг",
+    "sep": "Сен",
+    "oct": "Окт",
+    "nov": "Ноя",
+    "dec": "Дек"
   },
   "settings": {
     "displayName": "Отображаемое имя",
