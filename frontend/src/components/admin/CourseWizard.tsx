@@ -507,9 +507,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                         <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl flex items-start gap-3">
                             <Layers className="w-5 h-5 text-primary mt-0.5" />
                             <div>
-                                <h4 className="font-bold text-sm">{t('admin.curriculum')}</h4>
+                                <h4 className="font-bold text-sm">{t('admin.curriculum.title')}</h4>
                                 <p className="text-xs text-muted-foreground">
-                                    {t('admin.curriculumDesc')}
+                                    {t('admin.curriculum.subtitle')}
                                 </p>
                             </div>
                         </div>
@@ -520,13 +520,13 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                         <Settings className="w-8 h-8" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold">{t('admin.lessonsMgmt')}</h3>
+                                        <h3 className="font-bold">{t('admin.curriculum.noModules')}</h3>
                                         <p className="text-sm text-muted-foreground">
-                                            {t('admin.lessonsMgmtDesc')}
+                                            {t('admin.curriculum.startAdding')}
                                         </p>
                                     </div>
                                     <Button variant="outline" size="sm" onClick={handleAddModule}>
-                                        <Plus className="w-4 h-4 mr-2" /> {t('admin.addModule')}
+                                        <Plus className="w-4 h-4 mr-2" /> {t('admin.curriculum.addModule')}
                                     </Button>
                                 </div>
                             ) : (
@@ -552,7 +552,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                         ))}
                                     </div>
                                     <Button variant="outline" className="w-full border-dashed" onClick={handleAddModule}>
-                                        <Plus className="w-4 h-4 mr-2" /> {t('admin.addModule')}
+                                        <Plus className="w-4 h-4 mr-2" /> {t('admin.curriculum.addModule')}
                                     </Button>
                                 </>
                             )}
