@@ -346,8 +346,8 @@ const AdminCertificatesPage = () => {
             });
         } catch (error: any) {
             const errorMsg = error.response?.data?.error ||
-                Object.values(error.response?.data || {}).flat()[0] ||
-                toast.error(errorMsg as string || t('admin.certificates.createError'));
+                (error.response?.data ? Object.values(error.response.data || {}).flat()[0] : null);
+            toast.error(errorMsg as string || t('admin.certificates.createError'));
         } finally {
             setActionLoading(false);
         }
@@ -403,11 +403,11 @@ const AdminCertificatesPage = () => {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-card p-5 rounded-2xl border border-border shadow-sm">
-                    <div className="text-sm text-muted-foreground font-medium mb-1">{t('admin.totalIssued')}</div>
+                    <div className="text-sm text-muted-foreground font-medium mb-1">{t('admin.certificates.totalIssued')}</div>
                     <div className="text-2xl font-black text-foreground">{stats.total}</div>
                 </div>
                 <div className="bg-card p-5 rounded-2xl border border-border shadow-sm">
-                    <div className="text-sm text-muted-foreground font-medium mb-1">{t('admin.thisMonth')}</div>
+                    <div className="text-sm text-muted-foreground font-medium mb-1">{t('admin.certificates.thisMonth')}</div>
                     <div className="text-2xl font-black text-green-600">
                         +{stats.thisMonth}
                     </div>
