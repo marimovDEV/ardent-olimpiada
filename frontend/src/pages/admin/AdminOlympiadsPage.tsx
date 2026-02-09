@@ -114,12 +114,12 @@ const AdminOlympiadsPage = () => {
         try {
             const res = await axios.post(`${API_URL}/olympiads/${id}/force_start/`, {}, { headers: getAuthHeader() });
             if (res.data.success) {
-                toast({ title: t('common.success'), description: "Olimpiada muvaffaqiyatli boshlandi!" });
+                toast({ title: t('common.success'), description: t('admin.forceStartSuccess') });
                 fetchOlympiads();
             }
         } catch (error) {
             console.error(error);
-            toast({ title: t('common.error'), description: "Olimpiadani boshlashda xatolik", variant: "destructive" });
+            toast({ title: t('common.error'), description: t('admin.forceStartError'), variant: "destructive" });
         }
     };
 
@@ -152,11 +152,11 @@ const AdminOlympiadsPage = () => {
             // Update local state
             setOlympiads(olympiads.map(o => o.id === statusDialog.id ? { ...o, status: statusDialog.status as any } : o));
 
-            toast({ title: t('common.success'), description: "Status muvaffaqiyatli o'zgartirildi" });
+            toast({ title: t('common.success'), description: t('admin.statusChangeSuccess') });
             setStatusDialog(null);
         } catch (error) {
             console.error(error);
-            toast({ title: t('common.error'), description: "Statusni o'zgartirishda xatolik", variant: "destructive" });
+            toast({ title: t('common.error'), description: t('admin.statusChangeError'), variant: "destructive" });
         }
     };
 
@@ -334,7 +334,7 @@ const AdminOlympiadsPage = () => {
 
                                             {['DRAFT', 'UPCOMING', 'PAUSED'].includes(oly.status) && (
                                                 <DropdownMenuItem className="cursor-pointer text-green-600 font-bold" onClick={() => handleForceStart(oly.id)}>
-                                                    <span className="w-4 h-4 mr-2 flex items-center justify-center bg-green-600 rounded-full text-white text-[10px]">▶</span> Olimpiadani Boshlash
+                                                    <span className="w-4 h-4 mr-2 flex items-center justify-center bg-green-600 rounded-full text-white text-[10px]">▶</span> {t('admin.startOlympiad')}
                                                 </DropdownMenuItem>
                                             )}
 
@@ -347,7 +347,7 @@ const AdminOlympiadsPage = () => {
                                             <DropdownMenuSeparator className="bg-border" />
 
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => setStatusDialog({ id: oly.id, status: oly.status })}>
-                                                <Activity className="w-4 h-4 mr-2" /> Statusni o'zgartirish
+                                                <Activity className="w-4 h-4 mr-2" /> {t('admin.changeStatus')}
                                             </DropdownMenuItem>
 
                                             <DropdownMenuSeparator className="bg-border" />
@@ -403,9 +403,9 @@ const AdminOlympiadsPage = () => {
             <Dialog open={!!statusDialog} onOpenChange={(open) => !open && setStatusDialog(null)}>
                 <DialogContent className="bg-card border-border sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Statusni o'zgartirish</DialogTitle>
+                        <DialogTitle>{t('admin.changeStatus')}</DialogTitle>
                         <DialogDescription>
-                            Olimpiada holatini o'zgartiring. Bu foydalanuvchilar va tizim logikasiga ta'sir qiladi.
+                            {t('admin.changeStatusDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -415,24 +415,24 @@ const AdminOlympiadsPage = () => {
                                 onValueChange={(val) => setStatusDialog(prev => prev ? ({ ...prev, status: val }) : null)}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Statusni tanlang" />
+                                    <SelectValue placeholder={t('admin.selectStatus')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="DRAFT">DRAFT (Qoralama)</SelectItem>
-                                    <SelectItem value="UPCOMING">UPCOMING (Kutilmoqda - Sana bo'yicha)</SelectItem>
-                                    <SelectItem value="ONGOING">ONGOING (Jarayonda - Aktiv)</SelectItem>
-                                    <SelectItem value="PAUSED">PAUSED (Vaqtinchalik to'xtatilgan)</SelectItem>
-                                    <SelectItem value="CHECKING">CHECKING (Tekshirilmoqda - Natijalar yopiq)</SelectItem>
-                                    <SelectItem value="PUBLISHED">PUBLISHED (Natijalar e'lon qilingan)</SelectItem>
-                                    <SelectItem value="COMPLETED">COMPLETED (Arxiv)</SelectItem>
-                                    <SelectItem value="CANCELED">CANCELED (Bekor qilingan)</SelectItem>
+                                    <SelectItem value="DRAFT">DRAFT ({t('admin.draft')})</SelectItem>
+                                    <SelectItem value="UPCOMING">UPCOMING ({t('admin.upcoming')} - {t('admin.time')})</SelectItem>
+                                    <SelectItem value="ONGOING">ONGOING ({t('admin.active')} - Live)</SelectItem>
+                                    <SelectItem value="PAUSED">PAUSED ({t('admin.paused') || 'Vaqtinchalik to\'xtatilgan'})</SelectItem>
+                                    <SelectItem value="CHECKING">CHECKING ({t('admin.checking')})</SelectItem>
+                                    <SelectItem value="PUBLISHED">PUBLISHED ({t('admin.published')})</SelectItem>
+                                    <SelectItem value="COMPLETED">COMPLETED ({t('admin.completed')})</SelectItem>
+                                    <SelectItem value="CANCELED">CANCELED ({t('admin.canceled') || 'Bekor qilingan'})</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setStatusDialog(null)}>Bekor qilish</Button>
-                        <Button onClick={handleSaveStatus}>Saqlash</Button>
+                        <Button variant="outline" onClick={() => setStatusDialog(null)}>{t('common.cancel')}</Button>
+                        <Button onClick={handleSaveStatus}>{t('admin.save')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
