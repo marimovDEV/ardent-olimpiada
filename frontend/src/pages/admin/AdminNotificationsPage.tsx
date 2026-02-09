@@ -108,7 +108,7 @@ const AdminNotificationsPage = () => {
             link: template.link || ''
         });
         setActiveTab('send');
-        toast.info("Andoza qo'llanildi");
+        toast.info(t('admin.notifications.templateApplied'));
     };
 
     return (
@@ -192,7 +192,7 @@ const AdminNotificationsPage = () => {
                                             <Select value={formData.channel} onValueChange={(v) => handleChange('channel', v)}>
                                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="WEB">{t('admin.notifications.type') === 'WEB' ? 'Web' : 'Site'}</SelectItem>
+                                                    <SelectItem value="WEB">Web</SelectItem>
                                                     <SelectItem value="TELEGRAM">Telegram</SelectItem>
                                                     <SelectItem value="ALL">{t('admin.notifications.all')}</SelectItem>
                                                 </SelectContent>

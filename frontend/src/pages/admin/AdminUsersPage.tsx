@@ -257,7 +257,7 @@ const AdminUsersPage = () => {
                             </DialogHeader>
                             <div className="space-y-4 py-4">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Username</label>
+                                    <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t('admin.username')}</label>
                                     <Input placeholder="example_user" value={newUser.username} onChange={e => setNewUser({ ...newUser, username: e.target.value })} className="rounded-xl h-11" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
@@ -285,9 +285,9 @@ const AdminUsersPage = () => {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="STUDENT">Student</SelectItem>
-                                            <SelectItem value="TEACHER">Teacher</SelectItem>
-                                            <SelectItem value="ADMIN">Admin</SelectItem>
+                                            <SelectItem value="STUDENT">{t('admin.role_student')}</SelectItem>
+                                            <SelectItem value="TEACHER">{t('admin.role_teacher')}</SelectItem>
+                                            <SelectItem value="ADMIN">{t('admin.role_admin')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -556,9 +556,9 @@ const AdminUsersPage = () => {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="p-2 rounded-xl">
-                                <DropdownMenuItem className="cursor-pointer gap-2 rounded-lg" onClick={() => handleBulkRoleChange('STUDENT')}>Student</DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer gap-2 rounded-lg" onClick={() => handleBulkRoleChange('TEACHER')}>Teacher</DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer gap-2 rounded-lg text-red-600 font-bold" onClick={() => handleBulkRoleChange('ADMIN')}>Admin</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer gap-2 rounded-lg" onClick={() => handleBulkRoleChange('STUDENT')}>{t('admin.role_student')}</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer gap-2 rounded-lg" onClick={() => handleBulkRoleChange('TEACHER')}>{t('admin.role_teacher')}</DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer gap-2 rounded-lg text-red-600 font-bold" onClick={() => handleBulkRoleChange('ADMIN')}>{t('admin.role_admin')}</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -595,9 +595,9 @@ const AdminUsersPage = () => {
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="STUDENT">Student</SelectItem>
-                                        <SelectItem value="TEACHER">Teacher</SelectItem>
-                                        <SelectItem value="ADMIN">Admin</SelectItem>
+                                        <SelectItem value="STUDENT">{t('admin.role_student')}</SelectItem>
+                                        <SelectItem value="TEACHER">{t('admin.role_teacher')}</SelectItem>
+                                        <SelectItem value="ADMIN">{t('admin.role_admin')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

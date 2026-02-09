@@ -219,11 +219,11 @@ const AdminBotPage = () => {
 
                         <div className="pt-4 border-t dark:border-white/10 space-y-4">
                             <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                                <CreditCard className="w-4 h-4 text-blue-600" /> Karta Sozlamalari (Manual To'lov)
+                                <CreditCard className="w-4 h-4 text-blue-600" /> {t('admin.cardSettings')}
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-medium text-gray-500">Karta Raqami</label>
+                                    <label className="text-xs font-medium text-gray-500">{t('admin.cardNumber')}</label>
                                     <Input
                                         placeholder="8600 0000 0000 0000"
                                         value={botConfig.cardNumber}
@@ -232,9 +232,9 @@ const AdminBotPage = () => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-medium text-gray-500">Karta Egasi</label>
+                                    <label className="text-xs font-medium text-gray-500">{t('admin.cardHolder')}</label>
                                     <Input
-                                        placeholder="ARDENT OLYMPIAD LLC"
+                                        placeholder={t('admin.cardHolderPlaceholder')}
                                         value={botConfig.cardHolder}
                                         onChange={(e) => setBotConfig({ ...botConfig, cardHolder: e.target.value })}
                                         className="font-mono dark:bg-[#0a0a0b] dark:border-white/10"

@@ -105,7 +105,7 @@ const AdminOlympiadResultsPage = () => {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
         const s = seconds % 60;
-        return `${h > 0 ? h + 's ' : ''}${m}d ${s}s`;
+        return `${h > 0 ? h + ' ' + t('common.hours_short') + ' ' : ''}${m}${t('common.minutes_short')} ${s}${t('common.seconds_short')}`;
     };
 
     if (loading) {
@@ -185,7 +185,7 @@ const AdminOlympiadResultsPage = () => {
                             <Filter className="w-3.5 h-3.5 mr-2" /> {t('common.filter')}
                         </Button>
                         <Button variant="outline" size="sm" className="h-8">
-                            <Download className="w-3.5 h-3.5 mr-2" /> Excel
+                            <Download className="w-3.5 h-3.5 mr-2" /> {t('admin.export')}
                         </Button>
                     </div>
                 </div>

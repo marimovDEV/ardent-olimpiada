@@ -169,7 +169,7 @@ const AdminCoursesPage = () => {
         try {
             await axios.delete(`${API_URL}/courses/${deleteId}/`, { headers: getAuthHeader() });
             setCourses(courses.filter(c => c.id !== deleteId));
-            toast({ title: t('admin.delete'), description: t('admin.courseDeleted') || "Kurs o'chirildi", variant: "destructive" });
+            toast({ title: t('admin.delete'), description: t('admin.courseDeleted'), variant: "destructive" });
             setDeleteId(null);
         } catch (error) {
             console.error(error);
@@ -183,7 +183,7 @@ const AdminCoursesPage = () => {
             setCourses(courses.map(c => c.id === id ? { ...c, status: 'APPROVED' } : c));
             toast({ title: t('common.success'), description: t('admin.courseApproved') });
         } catch (error) {
-            toast({ title: t('common.error'), description: t('admin.approveError') || "Tasdiqlashda xatolik", variant: "destructive" });
+            toast({ title: t('common.error'), description: t('admin.approveError'), variant: "destructive" });
         }
     };
 
@@ -193,7 +193,7 @@ const AdminCoursesPage = () => {
             setCourses(courses.map(c => c.id === id ? { ...c, status: 'REJECTED', is_active: false } : c));
             toast({ title: t('common.success'), description: t('admin.courseRejected') });
         } catch (error) {
-            toast({ title: t('common.error'), description: t('admin.rejectError') || "Rad etishda xatolik", variant: "destructive" });
+            toast({ title: t('common.error'), description: t('admin.rejectError'), variant: "destructive" });
         }
     };
 

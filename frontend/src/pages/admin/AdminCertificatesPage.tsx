@@ -188,7 +188,7 @@ const AdminCertificatesPage = () => {
             toast.success(t('admin.certificateVerified', { number: cert.cert_number }));
             fetchCertificates();
         } catch (error) {
-            toast.error(t('admin.verifyError') || "Tasdiqlashda xatolik yuz berdi");
+            toast.error(t('admin.certificates.verifyError'));
         } finally {
             setActionLoading(false);
         }
@@ -217,7 +217,7 @@ const AdminCertificatesPage = () => {
             setRejectDialogOpen(false);
             fetchCertificates();
         } catch (error: any) {
-            toast.error(error.response?.data?.error || "Rad etishda xatolik");
+            toast.error(error.response?.data?.error || t('admin.certificates.rejectError'));
         } finally {
             setActionLoading(false);
         }
@@ -235,7 +235,7 @@ const AdminCertificatesPage = () => {
             setSelectedCertIds([]);
             fetchCertificates();
         } catch (error) {
-            toast.error("Batch tasdiqlashda xatolik");
+            toast.error(t('admin.certificates.batchVerifyError'));
         } finally {
             setActionLoading(false);
         }
@@ -248,19 +248,19 @@ const AdminCertificatesPage = () => {
         }
 
         try {
-            toast.loading("PDF tayyorlanmoqda...", { id: 'pdf-loading' });
+            toast.loading(t('admin.certificates.pdfPreparing'), { id: 'pdf-loading' });
             const res = await axios.get(`${API_URL}/certificates/${cert.id}/download/`, { headers: getAuthHeader() });
             toast.dismiss('pdf-loading');
 
             if (res.data.success && res.data.pdf_url) {
                 window.open(res.data.pdf_url, '_blank');
-                toast.success(t('common.pdfReady') || "PDF tayyor!");
+                toast.success(t('admin.certificates.pdfReady'));
             } else {
-                toast.error(t('common.pdfNotFound') || "PDF topilmadi");
+                toast.error(t('admin.certificates.pdfNotFound'));
             }
         } catch (error: any) {
             toast.dismiss('pdf-loading');
-            toast.error(error.response?.data?.error || "PDF yuklashda xatolik");
+            toast.error(error.response?.data?.error || t('admin.certificates.pdfLoadError'));
         }
     };
 
@@ -289,7 +289,7 @@ const AdminCertificatesPage = () => {
         } catch (error: any) {
             setVerifyResult({
                 success: false,
-                error: error.response?.data?.error || "Sertifikat topilmadi yoki xatolik yuz berdi"
+                error: error.response?.data?.error || t('admin.certificates.certNotFoundOrError')
             });
         } finally {
             setActionLoading(false);
@@ -310,13 +310,13 @@ const AdminCertificatesPage = () => {
             setOlympiads(olympiadsRes.data.results || olympiadsRes.data);
         } catch (error) {
             console.error("Data fetch error:", error);
-            toast.error("Ma'lumotlarni yuklashda xatolik");
+            toast.error(t('admin.certificates.loadError') || t('admin.loadError'));
         }
     };
 
     const handleCreateCertificate = async () => {
         if (!newCert.user_id || !newCert.cert_type || !newCert.grade) {
-            toast.error(t('common.fillRequiredFields') || "Barcha majburiy maydonlarni to'ldiring");
+            toast.error(t('common.fillRequiredFields'));
             return;
         }
 
@@ -332,7 +332,7 @@ const AdminCertificatesPage = () => {
                 status: 'VERIFIED' // Manual issuance usually implies verified
             };
             await axios.post(`${API_URL}/certificates/`, payload, { headers: getAuthHeader() });
-            toast.success(t('admin.certCreatedSuccess'));
+            toast.success(t('admin.certificates.certCreatedSuccess'));
             setCreateDialogOpen(false);
             fetchCertificates();
             // Reset form
@@ -347,8 +347,7 @@ const AdminCertificatesPage = () => {
         } catch (error: any) {
             const errorMsg = error.response?.data?.error ||
                 Object.values(error.response?.data || {}).flat()[0] ||
-                "Sertifikat yaratishda xatolik";
-            toast.error(errorMsg as string);
+                toast.error(errorMsg as string || t('admin.certificates.createError'));
         } finally {
             setActionLoading(false);
         }
@@ -368,13 +367,13 @@ const AdminCertificatesPage = () => {
         switch (type) {
             case 'COURSE': return <Badge variant="secondary" className="text-xs"><GraduationCap className="w-3 h-3 mr-1" />{t('admin.course')}</Badge>;
             case 'OLYMPIAD': return <Badge variant="secondary" className="text-xs bg-amber-500/10 text-amber-500 border-amber-500/20"><Trophy className="w-3 h-3 mr-1" />{t('admin.olympiad')}</Badge>;
-            case 'DIPLOMA': return <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-500 border-purple-500/20"><Award className="w-3 h-3 mr-1" />{t('admin.diploma')}</Badge>;
+            case 'DIPLOMA': return <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-500 border-purple-500/20"><Award className="w-3 h-3 mr-1" />{t('admin.certificates.diplomaCert')}</Badge>;
             default: return <Badge variant="outline" className="text-xs">{type}</Badge>;
         }
     };
 
     const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('uz-UZ', {
+        return new Date(dateStr).toLocaleDateString(t('common.locale') === 'ru' ? 'ru-RU' : 'uz-UZ', {
             day: 'numeric',
             month: 'short',
             year: 'numeric'
@@ -387,7 +386,7 @@ const AdminCertificatesPage = () => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-black text-foreground">{t('admin.certificates')}</h1>
-                    <p className="text-muted-foreground">{t('admin.certificatesSubtitle')}</p>
+                    <p className="text-muted-foreground">{t('admin.certificates.certificatesSubtitle')}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" onClick={() => fetchCertificates()} disabled={loading}>
@@ -396,7 +395,7 @@ const AdminCertificatesPage = () => {
                     </Button>
                     <Button className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-200" onClick={prepareCreateDialog}>
                         <Award className="w-4 h-4 mr-2" />
-                        {t('admin.newCertificate')}
+                        {t('admin.certificates.newCertificate')}
                     </Button>
                 </div>
             </div>
@@ -426,8 +425,8 @@ const AdminCertificatesPage = () => {
                             <QrCode className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <div className="font-bold">{t('admin.quickVerify')}</div>
-                            <div className="text-xs text-purple-200">{t('admin.byIdOrQr')}</div>
+                            <div className="font-bold">{t('admin.certificates.quickVerify')}</div>
+                            <div className="text-xs text-purple-200">{t('admin.certificates.byIdOrQr')}</div>
                         </div>
                     </div>
                 </div>
@@ -442,7 +441,7 @@ const AdminCertificatesPage = () => {
                         <div className="relative w-full md:w-96">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
-                                placeholder={t('admin.searchCertPlaceholder')}
+                                placeholder={t('admin.certificates.searchCertPlaceholder')}
                                 className="pl-9 bg-card border-border"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -458,7 +457,7 @@ const AdminCertificatesPage = () => {
                                     <SelectValue placeholder={t('admin.status')} />
                                 </SelectTrigger>
                                 <SelectContent className="bg-card border-border">
-                                    <SelectItem value="all">{t('admin.allStatuses')}</SelectItem>
+                                    <SelectItem value="all">{t('admin.certificates.allStatuses')}</SelectItem>
                                     <SelectItem value="PENDING">{t('admin.pending')}</SelectItem>
                                     <SelectItem value="VERIFIED">{t('admin.verified')}</SelectItem>
                                     <SelectItem value="REJECTED">{t('admin.rejected')}</SelectItem>
@@ -470,7 +469,7 @@ const AdminCertificatesPage = () => {
                                     <SelectValue placeholder={t('common.type')} />
                                 </SelectTrigger>
                                 <SelectContent className="bg-card border-border">
-                                    <SelectItem value="all">{t('admin.allTypes')}</SelectItem>
+                                    <SelectItem value="all">{t('admin.certificates.allTypes')}</SelectItem>
                                     <SelectItem value="COURSE">{t('admin.course')}</SelectItem>
                                     <SelectItem value="OLYMPIAD">{t('admin.olympiad')}</SelectItem>
                                     <SelectItem value="DIPLOMA">{t('admin.diploma')}</SelectItem>
@@ -498,7 +497,6 @@ const AdminCertificatesPage = () => {
                         </div>
                     )}
                 </div>
-
                 <div className="flex-1 overflow-auto">
                     {loading ? (
                         <div className="flex items-center justify-center h-64">
@@ -507,7 +505,7 @@ const AdminCertificatesPage = () => {
                     ) : filteredCerts.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
                             <Award className="w-12 h-12 mb-4 opacity-30" />
-                            <p>{t('admin.noCertificates')}</p>
+                            <p>{t('admin.certificates.noCertificates')}</p>
                         </div>
                     ) : (
                         <Table>
@@ -522,14 +520,14 @@ const AdminCertificatesPage = () => {
                                             }}
                                         />
                                     </TableHead>
-                                    <TableHead>{t('admin.certId')}</TableHead>
+                                    <TableHead>{t('admin.certificates.certId')}</TableHead>
                                     <TableHead>{t('common.type')}</TableHead>
                                     <TableHead>{t('admin.student')}</TableHead>
-                                    <TableHead>{t('admin.source')}</TableHead>
-                                    <TableHead>{t('admin.result')}</TableHead>
+                                    <TableHead>{t('admin.certificates.source')}</TableHead>
+                                    <TableHead>{t('admin.certificates.result')}</TableHead>
                                     <TableHead>{t('common.date')}</TableHead>
                                     <TableHead>{t('admin.status')}</TableHead>
-                                    <TableHead className="text-right">{t('admin.actions')}</TableHead>
+                                    <TableHead className="text-right">{t('admin.certificates.actions')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -551,9 +549,9 @@ const AdminCertificatesPage = () => {
                                         <TableCell>{getTypeBadge(cert.cert_type)}</TableCell>
                                         <TableCell>
                                             <div className="font-bold text-foreground">
-                                                {cert.user?.first_name || t('admin.unknownUser')} {cert.user?.last_name || ""}
+                                                {cert.user?.first_name || t('admin.certificates.unknownUser')} {cert.user?.last_name || ""}
                                             </div>
-                                            <div className="text-xs text-muted-foreground">{cert.user?.email || t('admin.noEmail')}</div>
+                                            <div className="text-xs text-muted-foreground">{cert.user?.email || t('admin.certificates.noEmail')}</div>
                                         </TableCell>
                                         <TableCell className="text-foreground/80 font-medium max-w-[200px] truncate">
                                             {cert.title}
@@ -636,10 +634,10 @@ const AdminCertificatesPage = () => {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-red-600">
                             <XCircle className="w-5 h-5" />
-                            {t('admin.rejectCertificate')}
+                            {t('admin.certificates.rejectCertificate')}
                         </DialogTitle>
                         <DialogDescription>
-                            {t('admin.rejectCertDesc')}
+                            {t('admin.certificates.rejectCertDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
@@ -652,9 +650,9 @@ const AdminCertificatesPage = () => {
                             </div>
                         )}
                         <div className="space-y-2">
-                            <Label>{t('admin.rejectReasonLabel')}</Label>
+                            <Label>{t('admin.certificates.rejectReasonLabel')}</Label>
                             <Textarea
-                                placeholder={t('admin.rejectReasonPlaceholder')}
+                                placeholder={t('admin.certificates.rejectReasonPlaceholder')}
                                 value={rejectReason}
                                 onChange={(e) => setRejectReason(e.target.value)}
                                 className="min-h-[100px]"
@@ -678,10 +676,10 @@ const AdminCertificatesPage = () => {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-blue-600">
                             <Award className="w-5 h-5" />
-                            {t('admin.certDetails')}
+                            {t('admin.certificates.certDetails')}
                         </DialogTitle>
                         <DialogDescription>
-                            {t('admin.certDetailsDesc')}
+                            {t('admin.certificates.certDetailsDesc')}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -691,7 +689,7 @@ const AdminCertificatesPage = () => {
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label className="text-xs text-muted-foreground">{t('admin.certNumber')}</Label>
+                                        <Label className="text-xs text-muted-foreground">{t('admin.certificates.certNumber')}</Label>
                                         <p className="font-mono font-bold text-foreground">{previewCert.cert_number}</p>
                                     </div>
                                     <div>
@@ -702,23 +700,23 @@ const AdminCertificatesPage = () => {
 
                                 <div>
                                     <Label className="text-xs text-muted-foreground">{t('admin.student')}</Label>
-                                    <p className="font-bold text-foreground">{previewCert.user?.first_name || t('admin.unknownUser')} {previewCert.user?.last_name || ""}</p>
-                                    <p className="text-xs text-muted-foreground">{previewCert.user?.email || t('admin.noEmail')}</p>
+                                    <p className="font-bold text-foreground">{previewCert.user?.first_name || t('admin.certificates.unknownUser')} {previewCert.user?.last_name || ""}</p>
+                                    <p className="text-xs text-muted-foreground">{previewCert.user?.email || t('admin.certificates.noEmail')}</p>
                                 </div>
 
                                 <div>
-                                    <Label className="text-xs text-muted-foreground">{t('admin.source')}</Label>
+                                    <Label className="text-xs text-muted-foreground">{t('admin.certificates.source')}</Label>
                                     <p className="font-bold text-foreground">{previewCert.title}</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <Label className="text-xs text-muted-foreground">{t('admin.result')}</Label>
+                                        <Label className="text-xs text-muted-foreground">{t('admin.certificates.result')}</Label>
                                         <p className="text-lg font-black text-purple-600 dark:text-purple-400">{previewCert.grade}</p>
                                     </div>
                                     <div>
-                                        <Label className="text-xs text-muted-foreground">{t('admin.issuedDate')}</Label>
-                                        <p className="text-sm font-medium text-foreground">{new Date(previewCert.issued_at).toLocaleDateString()}</p>
+                                        <Label className="text-xs text-muted-foreground">{t('admin.certificates.issuedDate')}</Label>
+                                        <p className="text-sm font-medium text-foreground">{new Date(previewCert.issued_at).toLocaleDateString(t('common.locale') === 'ru' ? 'ru-RU' : 'uz-UZ')}</p>
                                     </div>
                                 </div>
 
@@ -729,15 +727,15 @@ const AdminCertificatesPage = () => {
 
                                 {previewCert.verified_at && (
                                     <div className="bg-green-500/10 p-3 rounded-lg border border-green-500/20">
-                                        <p className="text-xs text-green-700 dark:text-green-500 font-bold uppercase mb-1">{t('admin.verifyInfo')}</p>
-                                        <p className="text-sm text-green-800 dark:text-green-400">{t('admin.verifiedBy')} <b>{previewCert.verified_by_name}</b></p>
-                                        <p className="text-xs text-green-600 dark:text-green-600/80">{t('admin.dateColon')} {new Date(previewCert.verified_at).toLocaleString()}</p>
+                                        <p className="text-xs text-green-700 dark:text-green-500 font-bold uppercase mb-1">{t('admin.certificates.verifyInfo')}</p>
+                                        <p className="text-sm text-green-800 dark:text-green-400">{t('admin.certificates.verifiedBy')} <b>{previewCert.verified_by_name}</b></p>
+                                        <p className="text-xs text-green-600 dark:text-green-600/80">{t('admin.certificates.dateColon')} {new Date(previewCert.verified_at).toLocaleString(t('common.locale') === 'ru' ? 'ru-RU' : 'uz-UZ')}</p>
                                     </div>
                                 ) || null}
 
                                 {previewCert.status === 'REJECTED' && previewCert.rejection_reason && (
                                     <div className="bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-                                        <p className="text-xs text-red-700 dark:text-red-500 font-bold uppercase mb-1">{t('admin.rejectReasonTitle')}</p>
+                                        <p className="text-xs text-red-700 dark:text-red-500 font-bold uppercase mb-1">{t('admin.certificates.rejectReasonTitle')}</p>
                                         <p className="text-sm text-red-800 dark:text-red-400">{previewCert.rejection_reason}</p>
                                     </div>
                                 ) || null}
@@ -745,7 +743,7 @@ const AdminCertificatesPage = () => {
 
                             {/* Right Side: PDF Preview */}
                             <div className="flex flex-col gap-3">
-                                <Label className="text-xs text-muted-foreground">{t('admin.certCopyPdf')}</Label>
+                                <Label className="text-xs text-muted-foreground">{t('admin.certificates.certCopyPdf')}</Label>
                                 {previewCert.pdf_file ? (
                                     <div className="border rounded-lg overflow-hidden bg-muted aspect-[1.414/1] relative group">
                                         <iframe
@@ -758,8 +756,8 @@ const AdminCertificatesPage = () => {
                                 ) : (
                                     <div className="border-2 border-dashed rounded-lg aspect-[1.414/1] flex flex-col items-center justify-center text-muted-foreground bg-muted/30">
                                         <Award className="w-12 h-12 mb-2 opacity-20" />
-                                        <p className="text-sm font-medium">{t('admin.pdfNotCreated')}</p>
-                                        <p className="text-xs">{t('admin.willBeCreatedAfterVerify')}</p>
+                                        <p className="text-sm font-medium">{t('admin.certificates.pdfNotCreated')}</p>
+                                        <p className="text-xs">{t('admin.certificates.willBeCreatedAfterVerify')}</p>
                                     </div>
                                 )}
 
@@ -796,10 +794,10 @@ const AdminCertificatesPage = () => {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-primary">
                             <QrCode className="w-5 h-5" />
-                            {t('admin.quickVerifyTitle')}
+                            {t('admin.certificates.quickVerifyTitle')}
                         </DialogTitle>
                         <DialogDescription>
-                            {t('admin.quickVerifyDesc')}
+                            {t('admin.certificates.quickVerifyDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
@@ -811,7 +809,7 @@ const AdminCertificatesPage = () => {
                                 onKeyDown={(e) => e.key === 'Enter' && handleQuickVerify()}
                             />
                             <Button onClick={handleQuickVerify} disabled={actionLoading}>
-                                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Tekshirish"}
+                                {actionLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.certificates.check')}
                             </Button>
                         </div>
 
@@ -821,14 +819,13 @@ const AdminCertificatesPage = () => {
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-2 text-green-500 font-bold">
                                             <CheckCircle className="w-5 h-5" />
-                                            Sertifikat haqiqiy!
+                                            {t('admin.certificates.certIsValide')}
                                         </div>
                                         <div className="text-sm space-y-1 mt-3">
-                                            <p className="text-foreground"><b>Ega:</b> {verifyResult.certificate.user_name}</p>
-                                            <p className="text-foreground"><b>Nomi:</b> {verifyResult.certificate.source}</p>
-                                            <p className="text-foreground"><b>Turi:</b> {verifyResult.certificate.type_display}</p>
-                                            <p className="text-foreground"><b>Natija:</b> {verifyResult.certificate.grade}</p>
-                                            <p className="text-foreground"><b>Sana:</b> {new Date(verifyResult.certificate.issued_at).toLocaleDateString()}</p>
+                                            <p className="text-foreground"><b>{t('admin.certificates.owner')}</b> {verifyResult.certificate.user_name}</p>
+                                            <p className="text-foreground"><b>{t('admin.certificates.name')}</b> {verifyResult.certificate.source}</p>
+                                            <p className="text-foreground"><b>{t('admin.certificates.grade')}</b> {verifyResult.certificate.grade}</p>
+                                            <p className="text-foreground"><b>{t('admin.certificates.date')}</b> {new Date(verifyResult.certificate.issued_at).toLocaleDateString(t('common.locale') === 'ru' ? 'ru-RU' : 'uz-UZ')}</p>
                                         </div>
                                     </div>
                                 ) : (
@@ -849,18 +846,18 @@ const AdminCertificatesPage = () => {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-purple-600">
                             <Award className="w-5 h-5" />
-                            Yangi Sertifikat Yaratish
+                            {t('admin.certificates.createNewCert')}
                         </DialogTitle>
                         <DialogDescription>
-                            O'quvchi uchun qo'lda sertifikat rasmiylashtirish
+                            {t('admin.certificates.certManualDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
                         <div className="space-y-2">
-                            <Label>O'quvchi *</Label>
+                            <Label>{t('admin.student')} *</Label>
                             <Select value={newCert.user_id} onValueChange={(v) => setNewCert({ ...newCert, user_id: v })}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="O'quvchini tanlang" />
+                                    <SelectValue placeholder={t('admin.certificates.selectStudent')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {users.map(u => (
@@ -873,25 +870,25 @@ const AdminCertificatesPage = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Sertifikat Turi *</Label>
+                            <Label>{t('admin.certificates.certType')} *</Label>
                             <Select value={newCert.cert_type} onValueChange={(v) => setNewCert({ ...newCert, cert_type: v })}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Turini tanlang" />
+                                    <SelectValue placeholder={t('admin.certificates.selectType')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="COURSE">Kurs sertifikati</SelectItem>
-                                    <SelectItem value="OLYMPIAD">Olimpiada sertifikati</SelectItem>
-                                    <SelectItem value="DIPLOMA">Faxriy yorliq / Diplom</SelectItem>
+                                    <SelectItem value="COURSE">{t('admin.certificates.courseCert')}</SelectItem>
+                                    <SelectItem value="OLYMPIAD">{t('admin.certificates.olympiadCert')}</SelectItem>
+                                    <SelectItem value="DIPLOMA">{t('admin.certificates.diplomaCert')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
                         {newCert.cert_type === 'COURSE' ? (
                             <div className="space-y-2">
-                                <Label>Kurs *</Label>
+                                <Label>{t('admin.course')} *</Label>
                                 <Select value={newCert.course_id} onValueChange={(v) => setNewCert({ ...newCert, course_id: v })}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Kursni tanlang" />
+                                        <SelectValue placeholder={t('admin.notifications.selectCourse')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {courses.map(c => (
@@ -902,10 +899,10 @@ const AdminCertificatesPage = () => {
                             </div>
                         ) : (
                             <div className="space-y-2">
-                                <Label>Olimpiada *</Label>
+                                <Label>{t('admin.olympiad')} *</Label>
                                 <Select value={newCert.olympiad_id} onValueChange={(v) => setNewCert({ ...newCert, olympiad_id: v })}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Olimpiadani tanlang" />
+                                        <SelectValue placeholder={t('admin.notifications.selectOlympiad')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {olympiads.map(o => (
@@ -917,16 +914,16 @@ const AdminCertificatesPage = () => {
                         )}
 
                         <div className="space-y-2">
-                            <Label>Natija (%) / O'rin *</Label>
+                            <Label>{t('admin.certificates.resultInPercent')} *</Label>
                             <Input
-                                placeholder="Masalan: 95% yoki 1-o'rin"
+                                placeholder={t('admin.certificates.resultPlaceholder')}
                                 value={newCert.grade}
                                 onChange={(e) => setNewCert({ ...newCert, grade: e.target.value })}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Umumiy Ball (ixtiyoriy)</Label>
+                            <Label>{t('admin.certificates.totalBallOptional')}</Label>
                             <Input
                                 type="number"
                                 placeholder="0"
@@ -936,10 +933,10 @@ const AdminCertificatesPage = () => {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>Bekor qilish</Button>
+                        <Button variant="outline" onClick={() => setCreateDialogOpen(false)}>{t('common.cancel')}</Button>
                         <Button onClick={handleCreateCertificate} disabled={actionLoading} className="bg-purple-600 hover:bg-purple-700">
                             {actionLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Yaratish va Tasdiqlash
+                            {t('admin.certificates.createAndApprove')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

@@ -103,7 +103,7 @@ const AdminAIAssistantPage = () => {
             setUnanswered(unansweredRes.data.results || unansweredRes.data);
         } catch (error) {
             console.error(error);
-            toast.error("Ma'lumotlarni yuklashda xatolik");
+            toast.error(t('admin.ai.loadError'));
         } finally {
             setLoading(false);
         }
@@ -170,7 +170,7 @@ const AdminAIAssistantPage = () => {
 
     const handleSubmit = async () => {
         if (!formData.question_uz || !formData.answer_uz) {
-            toast.error("Savol va javob (UZ) kiritilishi shart");
+            toast.error(t('admin.ai.fillRequired'));
             return;
         }
 
@@ -199,7 +199,7 @@ const AdminAIAssistantPage = () => {
     const handleResolveUnanswered = async (id: number) => {
         try {
             await axios.patch(`${API_URL}/ai-unanswered/${id}/`, { is_resolved: true }, { headers: getAuthHeader() });
-            toast.success("Yopildi");
+            toast.success(t('admin.ai.close'));
             fetchData();
         } catch (error) {
             toast.error(t('admin.ai.error'));
@@ -207,10 +207,10 @@ const AdminAIAssistantPage = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm("Haqiqatan ham o'chirmoqchimisiz?")) return;
+        if (!confirm(t('admin.confirmDelete'))) return;
         try {
             await axios.delete(`${API_URL}/ai-assistant-faq/${id}/`, { headers: getAuthHeader() });
-            toast.success("O'chirildi");
+            toast.success(t('admin.delete'));
             fetchData();
         } catch (error) {
             toast.error(t('admin.ai.deleteError'));
@@ -229,10 +229,10 @@ const AdminAIAssistantPage = () => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-                        Ardent AI Control Center
+                        {t('admin.ai.controlCenter')}
                         <Badge className="bg-gradient-to-r from-blue-600 to-indigo-600 border-none">v2.0 PRO</Badge>
                     </h1>
-                    <p className="text-muted-foreground">Analitika, FAQ boshqaruvi va AI sinov maydoni</p>
+                    <p className="text-muted-foreground">{t('admin.ai.analyticsSubtitle')}</p>
                 </div>
                 <Button className="bg-indigo-600 hover:bg-indigo-700 h-10 shadow-lg shadow-indigo-500/20" onClick={() => handleOpenDialog()}>
                     <Plus className="w-4 h-4 mr-2" />
@@ -245,11 +245,11 @@ const AdminAIAssistantPage = () => {
                     <Tabs defaultValue="knowledge" className="w-full">
                         <TabsList className="bg-muted/50 p-1 mb-6">
                             <TabsTrigger value="knowledge" className="gap-2">
-                                <MessageCircle className="w-4 h-4" /> Bilimlar Bazasi
+                                <MessageCircle className="w-4 h-4" /> {t('admin.ai.knowledgeBase')}
                             </TabsTrigger>
                             <TabsTrigger value="unanswered" className="gap-2">
                                 <HelpCircle className="w-4 h-4" />
-                                Javobsiz Savollar
+                                {t('admin.ai.unansweredQuestions')}
                                 {unanswered.filter(u => !u.is_resolved).length > 0 && (
                                     <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center rounded-full text-[10px]">
                                         {unanswered.filter(u => !u.is_resolved).length}
@@ -257,7 +257,7 @@ const AdminAIAssistantPage = () => {
                                 )}
                             </TabsTrigger>
                             <TabsTrigger value="analytics" className="gap-2">
-                                <BarChart3 className="w-4 h-4" /> Analitika
+                                <BarChart3 className="w-4 h-4" /> {t('admin.ai.analytics')}
                             </TabsTrigger>
                         </TabsList>
 
@@ -266,7 +266,7 @@ const AdminAIAssistantPage = () => {
                                 <div className="relative flex-1">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
-                                        placeholder="Savol yoki teglar bo'yicha qidirish..."
+                                        placeholder={t('admin.ai.searchPlaceholder')}
                                         className="pl-10 h-10 bg-muted/30 border-border"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -274,14 +274,14 @@ const AdminAIAssistantPage = () => {
                                 </div>
                                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                                     <SelectTrigger className="w-[180px] h-10">
-                                        <SelectValue placeholder="Kategoriya" />
+                                        <SelectValue placeholder={t('admin.ai.category')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="ALL">Barcha kategoriyalar</SelectItem>
-                                        <SelectItem value="GENERAL">Umumiy</SelectItem>
-                                        <SelectItem value="COURSES">Kurslar</SelectItem>
-                                        <SelectItem value="OLYMPIADS">Olimpiadalar</SelectItem>
-                                        <SelectItem value="PAYMENTS">To'lovlar</SelectItem>
+                                        <SelectItem value="ALL">{t('admin.ai.allCategories')}</SelectItem>
+                                        <SelectItem value="GENERAL">{t('admin.ai.categoryGeneral')}</SelectItem>
+                                        <SelectItem value="COURSES">{t('admin.ai.categoryCourses')}</SelectItem>
+                                        <SelectItem value="OLYMPIADS">{t('admin.ai.categoryOlympiads')}</SelectItem>
+                                        <SelectItem value="PAYMENTS">{t('admin.ai.categoryPayments')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -291,18 +291,18 @@ const AdminAIAssistantPage = () => {
                                     <Table>
                                         <TableHeader className="bg-muted/30">
                                             <TableRow className="hover:bg-transparent">
-                                                <TableHead className="w-[80px]">Prioritet</TableHead>
-                                                <TableHead>Savol & Javob</TableHead>
-                                                <TableHead>Kategoriya</TableHead>
-                                                <TableHead>Status</TableHead>
-                                                <TableHead className="text-right">Amallar</TableHead>
+                                                <TableHead className="w-[80px]">{t('admin.ai.priority')}</TableHead>
+                                                <TableHead>{t('admin.ai.questionAnswer')}</TableHead>
+                                                <TableHead>{t('admin.ai.category')}</TableHead>
+                                                <TableHead>{t('admin.ai.status')}</TableHead>
+                                                <TableHead className="text-right">{t('admin.ai.actions')}</TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
                                             {loading ? (
                                                 <TableRow><TableCell colSpan={5} className="text-center py-20"><Loader2 className="w-8 h-8 animate-spin mx-auto text-indigo-500" /></TableCell></TableRow>
                                             ) : filteredFaqs.length === 0 ? (
-                                                <TableRow><TableCell colSpan={5} className="text-center py-20 text-muted-foreground">Hech narsa topilmadi</TableCell></TableRow>
+                                                <TableRow><TableCell colSpan={5} className="text-center py-20 text-muted-foreground">{t('admin.ai.noResults')}</TableCell></TableRow>
                                             ) : filteredFaqs.map((faq) => (
                                                 <TableRow key={faq.id} className="group hover:bg-indigo-50/30 transition-colors">
                                                     <TableCell>
@@ -325,10 +325,10 @@ const AdminAIAssistantPage = () => {
                                                     <TableCell>
                                                         {faq.is_active ?
                                                             <div className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Faol
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> {t('admin.ai.active')}
                                                             </div> :
                                                             <div className="flex items-center gap-1.5 text-xs text-gray-400 font-medium">
-                                                                <div className="w-1.5 h-1.5 rounded-full bg-gray-300" /> Nofaol
+                                                                <div className="w-1.5 h-1.5 rounded-full bg-gray-300" /> {t('admin.ai.inactive')}
                                                             </div>
                                                         }
                                                     </TableCell>
@@ -353,8 +353,8 @@ const AdminAIAssistantPage = () => {
                         <TabsContent value="unanswered" className="space-y-4">
                             <Card className="border-indigo-100 bg-indigo-50/20">
                                 <CardHeader>
-                                    <CardTitle className="text-lg">Javobsiz qolgan savollar</CardTitle>
-                                    <CardDescription>Ushbu savollarga AI javob topa olmagan. Ularni FAQ ga qo'shish orqali AIni aqlliroq qiling.</CardDescription>
+                                    <CardTitle className="text-lg">{t('admin.ai.unansweredTitle')}</CardTitle>
+                                    <CardDescription>{t('admin.ai.unansweredDesc')}</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
@@ -364,16 +364,16 @@ const AdminAIAssistantPage = () => {
                                                     <div className="font-bold text-indigo-900">"{q.question}"</div>
                                                     <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                                                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {format(new Date(q.created_at), 'dd.MM HH:mm')}</span>
-                                                        <span className="flex items-center gap-1"><ExternalLink className="w-3 h-3" /> {q.context_url || 'Noma\'lum sahifa'}</span>
+                                                        <span className="flex items-center gap-1"><ExternalLink className="w-3 h-3" /> {q.context_url || t('admin.ai.unknownPage')}</span>
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <Button size="sm" variant="ghost" className="text-gray-400 hover:text-green-600 h-8" onClick={() => handleResolveUnanswered(q.id)}>
                                                         <CheckCircle className="w-4 h-4 mr-1" />
-                                                        Yopish
+                                                        {t('admin.ai.close')}
                                                     </Button>
                                                     <Button size="sm" variant="outline" className="text-indigo-600 border-indigo-200 h-8" onClick={() => handleOpenDialog(q)}>
-                                                        FAQ ga qo'shish
+                                                        {t('admin.ai.addToFaq')}
                                                         <ArrowRight className="w-3 h-3 ml-2" />
                                                     </Button>
                                                 </div>
@@ -381,7 +381,7 @@ const AdminAIAssistantPage = () => {
                                         ))}
                                         {unanswered.filter(u => !u.is_resolved).length === 0 && (
                                             <div className="text-center py-12 text-muted-foreground bg-white rounded-xl border border-dashed">
-                                                Hozircha hamma savollarga javob berilgan! ✨
+                                                {t('admin.ai.allResolved')}
                                             </div>
                                         )}
                                     </div>
@@ -399,7 +399,7 @@ const AdminAIAssistantPage = () => {
                                         </div>
                                         <div className="mt-4">
                                             <h3 className="text-3xl font-black">128</h3>
-                                            <p className="text-indigo-100 text-xs mt-1">Umumiy suhbatlar</p>
+                                            <p className="text-indigo-100 text-xs mt-1">{t('admin.ai.totalConversations')}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -411,7 +411,7 @@ const AdminAIAssistantPage = () => {
                                         </div>
                                         <div className="mt-4">
                                             <h3 className="text-3xl font-black">94%</h3>
-                                            <p className="text-green-500 text-xs mt-1">Ijobiy reyting</p>
+                                            <p className="text-green-500 text-xs mt-1">{t('admin.ai.positiveRating')}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -419,11 +419,11 @@ const AdminAIAssistantPage = () => {
                                     <CardContent className="pt-6">
                                         <div className="flex justify-between items-start">
                                             <div className="p-2 bg-white/20 rounded-lg"><HelpCircle className="w-6 h-6" /></div>
-                                            <span className="text-xs">Chora zarur</span>
+                                            <span className="text-xs">{t('admin.ai.actionRequired')}</span>
                                         </div>
                                         <div className="mt-4">
                                             <h3 className="text-3xl font-black">{unanswered.filter(u => !u.is_resolved).length}</h3>
-                                            <p className="text-orange-100 text-xs mt-1">Javobsiz savollar</p>
+                                            <p className="text-orange-100 text-xs mt-1">{t('admin.ai.unansweredQuestions')}</p>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -433,7 +433,7 @@ const AdminAIAssistantPage = () => {
                                 <CardHeader className="bg-muted/20">
                                     <CardTitle className="text-base flex items-center gap-2">
                                         <Sparkles className="w-4 h-4 text-orange-500" />
-                                        Ommabop mavzular
+                                        {t('admin.ai.popularTopics')}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="p-0">
@@ -452,11 +452,11 @@ const AdminAIAssistantPage = () => {
                                                 <div className="flex items-center gap-8 text-sm">
                                                     <div className="flex flex-col items-end">
                                                         <span className="font-bold">{item.c} ta</span>
-                                                        <span className="text-[10px] text-muted-foreground uppercase">Suhbat</span>
+                                                        <span className="text-[10px] text-muted-foreground uppercase">{t('admin.ai.conversation')}</span>
                                                     </div>
                                                     <div className="flex flex-col items-end">
                                                         <span className={`font-bold ${item.r > 80 ? 'text-green-500' : 'text-orange-500'}`}>{item.r}%</span>
-                                                        <span className="text-[10px] text-muted-foreground uppercase">Reyting</span>
+                                                        <span className="text-[10px] text-muted-foreground uppercase">{t('admin.ai.rating')}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -473,14 +473,14 @@ const AdminAIAssistantPage = () => {
                         <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white pb-6">
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <TestTube2 className="w-5 h-5" />
-                                Test Playground
+                                {t('admin.ai.testPlayground')}
                             </CardTitle>
                             <CardDescription className="text-indigo-100 text-xs">
-                                AI o'zgarishlarini real vaqtda tekshirib ko'ring
+                                {t('admin.ai.testPlaygroundDesc')}
                             </CardDescription>
                         </CardHeader>
                         <div className="h-[600px] border-l border-r border-b">
-                            <AIAssistant onTalkToAdmin={() => toast.info("Test rejimida admin bilan bog'lanish faol emas")} />
+                            <AIAssistant onTalkToAdmin={() => toast.info(t('admin.ai.testModeAdminNotice'))} />
                         </div>
                     </Card>
                 </div>
@@ -494,7 +494,7 @@ const AdminAIAssistantPage = () => {
                     <div className="grid grid-cols-2 gap-6 py-4">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Savol (UZ) *</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.questionUz')} *</Label>
                                 <Input
                                     value={formData.question_uz}
                                     onChange={e => setFormData({ ...formData, question_uz: e.target.value })}
@@ -502,7 +502,7 @@ const AdminAIAssistantPage = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Savol (RU)</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.questionRu')}</Label>
                                 <Input
                                     value={formData.question_ru}
                                     onChange={e => setFormData({ ...formData, question_ru: e.target.value })}
@@ -510,7 +510,7 @@ const AdminAIAssistantPage = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Javob (UZ) *</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.answerUz')} *</Label>
                                 <Textarea
                                     rows={4}
                                     value={formData.answer_uz}
@@ -519,7 +519,7 @@ const AdminAIAssistantPage = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Javob (RU)</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.answerRu')}</Label>
                                 <Textarea
                                     rows={4}
                                     value={formData.answer_ru}
@@ -531,63 +531,63 @@ const AdminAIAssistantPage = () => {
 
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategoriya</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.category')}</Label>
                                 <Select value={formData.category} onValueChange={v => setFormData({ ...formData, category: v })}>
                                     <SelectTrigger className="bg-muted/30">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="GENERAL">Umumiy</SelectItem>
-                                        <SelectItem value="COURSES">Kurslar</SelectItem>
-                                        <SelectItem value="OLYMPIADS">Olimpiadalar</SelectItem>
-                                        <SelectItem value="PAYMENTS">To'lovlar</SelectItem>
+                                        <SelectItem value="GENERAL">{t('admin.ai.categoryGeneral')}</SelectItem>
+                                        <SelectItem value="COURSES">{t('admin.ai.categoryCourses')}</SelectItem>
+                                        <SelectItem value="OLYMPIADS">{t('admin.ai.categoryOlympiads')}</SelectItem>
+                                        <SelectItem value="PAYMENTS">{t('admin.ai.categoryPayments')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Prioritet (0-100)</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.priority')} (0-100)</Label>
                                 <Input
                                     type="number"
                                     value={formData.priority}
                                     onChange={e => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
                                     className="bg-muted/30"
                                 />
-                                <p className="text-[10px] text-muted-foreground italic">Yuqori raqam savolni qidiruvda yuqoriga chiqaradi</p>
+                                <p className="text-[10px] text-muted-foreground italic">{t('admin.ai.priorityHint')}</p>
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Search Tags (Vergul bilan)</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.searchTags')}</Label>
                                 <Input
                                     value={formData.search_tags}
                                     onChange={e => setFormData({ ...formData, search_tags: e.target.value })}
-                                    placeholder="kurs, o'quv, narx, to'lov"
+                                    placeholder={t('admin.ai.searchTagsPlaceholder')}
                                     className="bg-muted/30"
                                 />
                             </div>
                             <div className="space-y-2 pt-2">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tugma (Ixtiyoriy link uchun)</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('admin.ai.actionButton')}</Label>
                                 <div className="grid grid-cols-2 gap-2 mt-1">
-                                    <Input placeholder="Matn UZ" value={formData.action_label_uz} onChange={e => setFormData({ ...formData, action_label_uz: e.target.value })} className="h-8 text-xs bg-muted/30" />
+                                    <Input placeholder={t('admin.ai.actionLabelPlaceholder')} value={formData.action_label_uz} onChange={e => setFormData({ ...formData, action_label_uz: e.target.value })} className="h-8 text-xs bg-muted/30" />
                                     <Input placeholder="Link" value={formData.action_link} onChange={e => setFormData({ ...formData, action_link: e.target.value })} className="h-8 text-xs bg-muted/30" />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4 mt-4 bg-muted/20 p-3 rounded-lg border border-dashed">
                                 <div className="space-y-1">
-                                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Tartib</Label>
+                                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">{t('admin.ai.order')}</Label>
                                     <Input type="number" value={formData.order} onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })} className="h-8 text-xs" />
                                 </div>
                                 <div className="flex flex-col justify-end pb-1.5 pl-2">
                                     <div className="flex items-center space-x-2">
                                         <Switch checked={formData.is_active} onCheckedChange={v => setFormData({ ...formData, is_active: v })} />
-                                        <Label className="text-xs font-bold">Faol</Label>
+                                        <Label className="text-xs font-bold">{t('admin.ai.active')}</Label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <DialogFooter className="mt-6 gap-2">
-                        <Button variant="ghost" className="hover:bg-muted/50" onClick={() => setDialogOpen(false)}>Bekor qilish</Button>
+                        <Button variant="ghost" className="hover:bg-muted/50" onClick={() => setDialogOpen(false)}>{t('common.cancel')}</Button>
                         <Button className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:shadow-lg hover:shadow-indigo-200 transition-all font-bold px-8" onClick={handleSubmit}>
-                            O'zgarishlarni Saqlash
+                            {t('admin.ai.saveChanges')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

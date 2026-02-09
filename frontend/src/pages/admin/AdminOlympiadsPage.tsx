@@ -101,7 +101,7 @@ const AdminOlympiadsPage = () => {
         try {
             const res = await axios.post(`${API_URL}/olympiads/${id}/publish_results/`, {}, { headers: getAuthHeader() });
             if (res.data.success) {
-                toast({ title: t('common.success'), description: res.data.message });
+                toast({ title: t('common.success'), description: t('admin.olympiads.publishSuccess') });
                 fetchOlympiads();
             }
         } catch (error) {
@@ -114,12 +114,12 @@ const AdminOlympiadsPage = () => {
         try {
             const res = await axios.post(`${API_URL}/olympiads/${id}/force_start/`, {}, { headers: getAuthHeader() });
             if (res.data.success) {
-                toast({ title: t('common.success'), description: t('admin.forceStartSuccess') });
+                toast({ title: t('common.success'), description: t('admin.olympiads.forceStartSuccess') });
                 fetchOlympiads();
             }
         } catch (error) {
             console.error(error);
-            toast({ title: t('common.error'), description: t('admin.forceStartError'), variant: "destructive" });
+            toast({ title: t('common.error'), description: t('admin.olympiads.forceStartError'), variant: "destructive" });
         }
     };
 
@@ -152,11 +152,11 @@ const AdminOlympiadsPage = () => {
             // Update local state
             setOlympiads(olympiads.map(o => o.id === statusDialog.id ? { ...o, status: statusDialog.status as any } : o));
 
-            toast({ title: t('common.success'), description: t('admin.statusChangeSuccess') });
+            toast({ title: t('common.success'), description: t('admin.olympiads.statusChangeSuccess') });
             setStatusDialog(null);
         } catch (error) {
             console.error(error);
-            toast({ title: t('common.error'), description: t('admin.statusChangeError'), variant: "destructive" });
+            toast({ title: t('common.error'), description: t('admin.olympiads.statusChangeError'), variant: "destructive" });
         }
     };
 
@@ -181,8 +181,8 @@ const AdminOlympiadsPage = () => {
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-foreground">{t('admin.olympiadsManagement')}</h1>
-                    <p className="text-muted-foreground">{t('admin.olympiadsManagementSubtitle')}</p>
+                    <h1 className="text-2xl font-black text-foreground">{t('admin.olympiads.title')}</h1>
+                    <p className="text-muted-foreground">{t('admin.olympiads.subtitle')}</p>
                 </div>
 
                 <Button
@@ -190,32 +190,32 @@ const AdminOlympiadsPage = () => {
                     onClick={() => navigate("/admin/olympiads/new")}
                 >
                     <Plus className="w-4 h-4 mr-2" />
-                    {t('admin.newOlympiad')}
+                    {t('admin.olympiads.newOlympiad')}
                 </Button>
             </div>
 
             {/* QUICK STATS */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
-                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.totalParticipants')}</div>
+                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.olympiads.totalParticipants')}</div>
                     <div className="text-2xl font-black text-foreground">
                         {olympiads.reduce((acc, curr) => acc + (curr.participants_count || 0), 0)}
                     </div>
                 </div>
                 <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
-                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.subjectsCount')}</div>
+                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.olympiads.subjectsCount')}</div>
                     <div className="text-2xl font-black text-foreground">
                         {new Set(olympiads.map(o => o.subject)).size}
                     </div>
                 </div>
                 <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
-                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.activeOlympiads')}</div>
+                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.olympiads.activeOlympiads')}</div>
                     <div className="text-2xl font-black text-green-500">
                         {olympiads.filter(o => o.status === 'ONGOING').length}
                     </div>
                 </div>
                 <div className="bg-card p-4 rounded-2xl border border-border shadow-sm">
-                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.upcoming')}</div>
+                    <div className="text-muted-foreground text-xs font-bold uppercase mb-1">{t('admin.olympiads.upcomingOlympiads')}</div>
                     <div className="text-2xl font-black text-blue-500">
                         {olympiads.filter(o => o.status === 'UPCOMING').length}
                     </div>
@@ -227,7 +227,7 @@ const AdminOlympiadsPage = () => {
                 <div className="relative w-full md:w-96">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                        placeholder={t('admin.olympiadSearchPlaceholder')}
+                        placeholder={t('admin.olympiads.searchPlaceholder')}
                         className="pl-9 bg-background border-input"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -240,7 +240,7 @@ const AdminOlympiadsPage = () => {
                             <SelectValue placeholder={t('admin.subject')} />
                         </SelectTrigger>
                         <SelectContent className="bg-popover border-border">
-                            <SelectItem value="all">{t('admin.allSubjects')}</SelectItem>
+                            <SelectItem value="all">{t('admin.olympiads.allSubjects')}</SelectItem>
                             <SelectItem value="Matematika">{t('admin.math')}</SelectItem>
                             <SelectItem value="Fizika">{t('admin.physics')}</SelectItem>
                             <SelectItem value="Informatika">{t('admin.it')}</SelectItem>
@@ -266,7 +266,7 @@ const AdminOlympiadsPage = () => {
                             <TableHead className="w-[80px]">{t('common.id')}</TableHead>
                             <TableHead>{t('admin.olympiad')}</TableHead>
                             <TableHead>{t('admin.time')}</TableHead>
-                            <TableHead>{t('admin.levelAndPrice')}</TableHead>
+                            <TableHead>{t('admin.olympiads.levelAndPrice')}</TableHead>
                             <TableHead className="w-[200px]">{t('admin.status')}</TableHead>
                             <TableHead className="text-right">{t('admin.actions')}</TableHead>
                         </TableRow>
@@ -281,7 +281,7 @@ const AdminOlympiadsPage = () => {
                                         {oly.title}
                                     </div>
                                     <div className="text-xs text-muted-foreground mt-0.5">
-                                        {oly.subject} • {oly.questions_count || 0} {t('admin.questions')}
+                                        {oly.subject} • {oly.questions_count || 0} {t('admin.olympiads.questions')}
                                     </div>
                                 </TableCell>
                                 <TableCell>
@@ -326,28 +326,28 @@ const AdminOlympiadsPage = () => {
                                                 <Edit className="w-4 h-4 mr-2" /> {t('common.edit')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(`/admin/olympiads/${oly.id}/participants`)}>
-                                                <Users className="w-4 h-4 mr-2" /> {t('admin.participants')}
+                                                <Users className="w-4 h-4 mr-2" /> {t('admin.olympiads.participants')}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(`/admin/olympiads/${oly.id}/results`)}>
-                                                <Trophy className="w-4 h-4 mr-2" /> {t('admin.resultsAndAnalytics')}
+                                                <Trophy className="w-4 h-4 mr-2" /> {t('admin.olympiads.resultsAndAnalytics')}
                                             </DropdownMenuItem>
 
                                             {['DRAFT', 'UPCOMING', 'PAUSED'].includes(oly.status) && (
                                                 <DropdownMenuItem className="cursor-pointer text-green-600 font-bold" onClick={() => handleForceStart(oly.id)}>
-                                                    <span className="w-4 h-4 mr-2 flex items-center justify-center bg-green-600 rounded-full text-white text-[10px]">▶</span> {t('admin.startOlympiad')}
+                                                    <span className="w-4 h-4 mr-2 flex items-center justify-center bg-green-600 rounded-full text-white text-[10px]">▶</span> {t('admin.olympiads.startOlympiad')}
                                                 </DropdownMenuItem>
                                             )}
 
                                             {oly.status === 'CHECKING' && (
                                                 <DropdownMenuItem className="cursor-pointer text-purple-600 font-bold" onClick={() => handlePublishResults(oly.id)}>
-                                                    <span className="w-4 h-4 mr-2 flex items-center justify-center bg-purple-600 rounded-full text-white text-[10px]">✓</span> {t('admin.publishResults')}
+                                                    <span className="w-4 h-4 mr-2 flex items-center justify-center bg-purple-600 rounded-full text-white text-[10px]">✓</span> {t('admin.olympiads.publishResults')}
                                                 </DropdownMenuItem>
                                             )}
 
                                             <DropdownMenuSeparator className="bg-border" />
 
                                             <DropdownMenuItem className="cursor-pointer" onClick={() => setStatusDialog({ id: oly.id, status: oly.status })}>
-                                                <Activity className="w-4 h-4 mr-2" /> {t('admin.changeStatus')}
+                                                <Activity className="w-4 h-4 mr-2" /> {t('admin.olympiads.changeStatus')}
                                             </DropdownMenuItem>
 
                                             <DropdownMenuSeparator className="bg-border" />
@@ -371,8 +371,8 @@ const AdminOlympiadsPage = () => {
                         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4 text-muted-foreground">
                             <Trophy className="w-8 h-8" />
                         </div>
-                        <h3 className="font-bold text-lg text-foreground">{t('admin.noOlympiadsFound')}</h3>
-                        <p className="text-muted-foreground mb-6">{t('admin.noOlympiadsFoundSubtitle')}</p>
+                        <h3 className="font-bold text-lg text-foreground">{t('admin.olympiads.noOlympiadsFound')}</h3>
+                        <p className="text-muted-foreground mb-6">{t('admin.olympiads.noOlympiadsFoundSubtitle')}</p>
                         <Button variant="outline" onClick={() => { setSearchQuery(""); setStatusFilter("all"); setSubjectFilter("all") }}>
                             {t('admin.clearFilters')}
                         </Button>
@@ -386,10 +386,10 @@ const AdminOlympiadsPage = () => {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-red-600">
                             <AlertTriangle className="w-5 h-5" />
-                            {t('admin.deleteOlympiadConfirm')}
+                            {t('admin.olympiads.deleteConfirm')}
                         </DialogTitle>
                         <DialogDescription className="text-muted-foreground">
-                            {t('admin.deleteConfirmText', { title: olympiads.find(c => c.id === deleteId)?.title })}
+                            {t('admin.olympiads.deleteConfirmText', { title: olympiads.find(c => c.id === deleteId)?.title })}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -403,9 +403,9 @@ const AdminOlympiadsPage = () => {
             <Dialog open={!!statusDialog} onOpenChange={(open) => !open && setStatusDialog(null)}>
                 <DialogContent className="bg-card border-border sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>{t('admin.changeStatus')}</DialogTitle>
+                        <DialogTitle>{t('admin.olympiads.changeStatus')}</DialogTitle>
                         <DialogDescription>
-                            {t('admin.changeStatusDesc')}
+                            {t('admin.olympiads.changeStatusDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -415,17 +415,17 @@ const AdminOlympiadsPage = () => {
                                 onValueChange={(val) => setStatusDialog(prev => prev ? ({ ...prev, status: val }) : null)}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder={t('admin.selectStatus')} />
+                                    <SelectValue placeholder={t('admin.olympiads.selectStatus')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="DRAFT">DRAFT ({t('admin.draft')})</SelectItem>
                                     <SelectItem value="UPCOMING">UPCOMING ({t('admin.upcoming')} - {t('admin.time')})</SelectItem>
                                     <SelectItem value="ONGOING">ONGOING ({t('admin.active')} - Live)</SelectItem>
-                                    <SelectItem value="PAUSED">PAUSED ({t('admin.paused') || 'Vaqtinchalik to\'xtatilgan'})</SelectItem>
+                                    <SelectItem value="PAUSED">PAUSED ({t('admin.olympiads.paused')})</SelectItem>
                                     <SelectItem value="CHECKING">CHECKING ({t('admin.checking')})</SelectItem>
                                     <SelectItem value="PUBLISHED">PUBLISHED ({t('admin.published')})</SelectItem>
                                     <SelectItem value="COMPLETED">COMPLETED ({t('admin.completed')})</SelectItem>
-                                    <SelectItem value="CANCELED">CANCELED ({t('admin.canceled') || 'Bekor qilingan'})</SelectItem>
+                                    <SelectItem value="CANCELED">CANCELED ({t('admin.olympiads.canceled')})</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

@@ -100,7 +100,7 @@ const AdminOlympiadParticipantsPage = () => {
                         <CardDescription>{t('admin.participantsCountLabel', { count: participants.length })}</CardDescription>
                     </div>
                     <Button variant="outline" className="gap-2">
-                        <Download className="w-4 h-4" /> Export
+                        <Download className="w-4 h-4" /> {t('admin.export')}
                     </Button>
                 </CardHeader>
                 <CardContent>
@@ -153,7 +153,9 @@ const AdminOlympiadParticipantsPage = () => {
                                                 <span className={`px-2 py-1 rounded text-xs font-bold ${p.status === 'DISQUALIFIED' ? 'bg-red-100 text-red-700' :
                                                     'bg-green-100 text-green-700'
                                                     }`}>
-                                                    {p.status || "COMPLETED"}
+                                                    {p.status === 'DISQUALIFIED' ? t('admin.disqualification') :
+                                                        p.status === 'STARTED' ? t('admin.upcoming') :
+                                                            t('admin.completed')}
                                                 </span>
                                             </TableCell>
                                             <TableCell>
