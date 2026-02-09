@@ -190,7 +190,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
 
     const handleAddModule = async () => {
         if (!internalCourseId) return;
-        const title = prompt(t('admin.moduleTitlePlaceholder') || "Modul nomi");
+        const title = prompt(t('admin.curriculum.moduleTitlePlaceholder') || "Modul nomi");
         if (!title) return;
 
         try {
@@ -207,7 +207,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
     };
 
     const handleDeleteModule = async (id: number) => {
-        if (!confirm(t('admin.confirmDelete') || "O'chirishni tasdiqlaysizmi?")) return;
+        if (!confirm(t('admin.curriculum.confirmDeleteModule') || "O'chirishni tasdiqlaysizmi?")) return;
         try {
             await axios.delete(`${API_URL}/modules/${id}/`, { headers: getAuthHeader() });
             setModules(modules.filter(m => m.id !== id));

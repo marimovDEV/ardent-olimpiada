@@ -207,7 +207,7 @@ const AdminAIAssistantPage = () => {
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm(t('admin.confirmDelete'))) return;
+        if (!confirm(t('global.confirmDelete'))) return;
         try {
             await axios.delete(`${API_URL}/ai-assistant-faq/${id}/`, { headers: getAuthHeader() });
             toast.success(t('admin.delete'));

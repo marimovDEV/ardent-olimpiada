@@ -238,13 +238,6 @@
     "monetizationBonus": "Monetizatsiya va XP",
     "price": "Narxi (AC)",
     "xpReward": "XP Mukofot",
-    "curriculum": "Kurs Mundarijasi",
-    "curriculumDesc": "Modul va darslarni boshqarish",
-    "lessonsMgmt": "Darslar boshqaruvi",
-    "lessonsMgmtDesc": "Kursni darslar bilan boyitish uchun modullar yarating",
-    "addModule": "Modul qo'shish",
-    "moduleTitlePlaceholder": "Modul nomi",
-    "confirmDelete": "Haqiqatan ham o'chirmoqchimisiz?",
     "ready": "Tayyor!",
     "review": "Tekshiruv va Nashr",
     "courses": {

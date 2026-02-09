@@ -244,13 +244,6 @@
     "monetizationBonus": "Монетизация и XP",
     "price": "Цена (AC)",
     "xpReward": "XP Награда",
-    "curriculum": "Программа Курса",
-    "curriculumDesc": "Управление модулями и уроками",
-    "lessonsMgmt": "Управление уроками",
-    "lessonsMgmtDesc": "Создавайте модули, чтобы обогатить курс уроками",
-    "addModule": "Добавить модуль",
-    "moduleTitlePlaceholder": "Название модуля",
-    "confirmDelete": "Вы действительно хотите удалить?",
     "ready": "Готово!",
     "review": "Проверка и Публикация",
     "courses": {
