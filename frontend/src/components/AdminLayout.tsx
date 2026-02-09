@@ -81,7 +81,7 @@ const AdminLayout = () => {
         { icon: PanelTop, label: t('admin.cms'), path: "/admin/cms" },
         { icon: Briefcase, label: t('admin.professions'), path: "/admin/professions" },
         { icon: Book, label: t('admin.subjects'), path: "/admin/subjects" },
-        { icon: Award, label: t('admin.certificates'), path: "/admin/certificates" },
+        { icon: Award, label: t('admin.certificates.title'), path: "/admin/certificates" },
         { icon: HeadphonesIcon, label: t('admin.supportSection.title'), path: "/admin/support" },
         { icon: Bell, label: t('admin.notifications.title'), path: "/admin/notifications" },
         { icon: MessageSquare, label: t('admin.ai.title'), path: "/admin/ai-assistant" },

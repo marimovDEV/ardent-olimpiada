@@ -870,7 +870,7 @@ const AdminSettingsPage = () => {
                                         <div key={category} className="space-y-3">
                                             <h3 className="font-bold text-sm uppercase text-muted-foreground flex items-center gap-2">
                                                 {category === 'courses' && `📚 ${t('admin.courses')}`}
-                                                {category === 'olympiads' && `🏆 ${t('admin.olympiads')}`}
+                                                {category === 'olympiads' && `🏆 ${t('admin.olympiads.title')}`}
                                                 {category === 'users' && `👥 ${t('admin.users')}`}
                                                 {category === 'finance' && `💰 ${t('admin.finance')}`}
                                                 {category === 'settings' && `⚙️ ${t('admin.settings')}`}

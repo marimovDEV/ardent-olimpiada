@@ -152,7 +152,7 @@ export default function FinanceTransactions() {
                         <SelectContent>
                             <SelectItem value="all">{t('common.all')}</SelectItem>
                             <SelectItem value="Course">{t('admin.courses')}</SelectItem>
-                            <SelectItem value="Olympiad">{t('admin.olympiads')}</SelectItem>
+                            <SelectItem value="Olympiad">{t('admin.olympiads.title')}</SelectItem>
                         </SelectContent>
                     </Select>
 

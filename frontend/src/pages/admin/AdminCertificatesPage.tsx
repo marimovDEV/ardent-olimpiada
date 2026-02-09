@@ -385,7 +385,7 @@ const AdminCertificatesPage = () => {
             {/* Header */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-black text-foreground">{t('admin.certificates')}</h1>
+                    <h1 className="text-2xl font-black text-foreground">{t('admin.certificates.title')}</h1>
                     <p className="text-muted-foreground">{t('admin.certificates.certificatesSubtitle')}</p>
                 </div>
                 <div className="flex gap-2">
