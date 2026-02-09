@@ -215,7 +215,7 @@ const AdminSettingsPage = () => {
             await fetchAllSettings();
         } catch (error: any) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || "Saqlashda xatolik");
+            toast.error(error.response?.data?.detail || t('admin.saveError'));
         } finally {
             setSaving(false);
         }
@@ -236,7 +236,7 @@ const AdminSettingsPage = () => {
             await fetchAllSettings();
         } catch (error: any) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || "Saqlashda xatolik");
+            toast.error(error.response?.data?.detail || t('admin.saveError'));
         } finally {
             setSaving(false);
         }
@@ -257,7 +257,7 @@ const AdminSettingsPage = () => {
             await fetchAllSettings();
         } catch (error: any) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || "Saqlashda xatolik");
+            toast.error(error.response?.data?.detail || t('admin.saveError'));
         } finally {
             setSaving(false);
         }
@@ -278,7 +278,7 @@ const AdminSettingsPage = () => {
             await fetchAllSettings();
         } catch (error: any) {
             console.error("Upload error:", error);
-            toast.error(error.response?.data?.error || "Logo yuklashda xatolik");
+            toast.error(error.response?.data?.error || t('admin.logoUploadError'));
         }
     };
 
@@ -297,7 +297,7 @@ const AdminSettingsPage = () => {
             await fetchAllSettings();
         } catch (error: any) {
             console.error("Upload error:", error);
-            toast.error(error.response?.data?.error || "Favicon yuklashda xatolik");
+            toast.error(error.response?.data?.error || t('admin.faviconUploadError'));
         }
     };
 
@@ -308,7 +308,7 @@ const AdminSettingsPage = () => {
             await axios.post(`${API_URL}/settings/notifications/test_email/`, {}, { headers });
             toast.success(t('admin.testEmailSent'));
         } catch (error: any) {
-            toast.error(error.response?.data?.error || "Email yuborishda xatolik");
+            toast.error(error.response?.data?.error || t('admin.emailSendError'));
         } finally {
             setTestingEmail(false);
         }
@@ -340,23 +340,23 @@ const AdminSettingsPage = () => {
                 <TabsList className="grid w-full grid-cols-6 bg-muted/50 p-1">
                     <TabsTrigger value="general" className="gap-2">
                         <Globe className="w-4 h-4" />
-                        {i18n.language === 'ru' ? 'Общие' : 'Umumiy'}
+                        {t('admin.tabs.general')}
                     </TabsTrigger>
                     <TabsTrigger value="security" className="gap-2">
                         <Shield className="w-4 h-4" />
-                        {i18n.language === 'ru' ? 'Безопасность' : 'Xavfsizlik'}
+                        {t('admin.tabs.security')}
                     </TabsTrigger>
                     <TabsTrigger value="notifications" className="gap-2">
                         <Bell className="w-4 h-4" />
-                        {i18n.language === 'ru' ? 'Уведомления' : 'Bildirishnomalar'}
+                        {t('admin.tabs.notifications')}
                     </TabsTrigger>
                     <TabsTrigger value="roles" className="gap-2">
                         <Users className="w-4 h-4" />
-                        {i18n.language === 'ru' ? 'Роли' : 'Rollar'}
+                        {t('admin.tabs.roles')}
                     </TabsTrigger>
                     <TabsTrigger value="system" className="gap-2">
                         <SettingsIcon className="w-4 h-4" />
-                        {i18n.language === 'ru' ? 'Система' : 'Tizim'}
+                        {t('admin.tabs.system')}
                     </TabsTrigger>
                 </TabsList>
 
@@ -370,7 +370,7 @@ const AdminSettingsPage = () => {
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-3">
-                                    <Label>Logo</Label>
+                                    <Label>{t('admin.logo')}</Label>
                                     <div className="flex items-center gap-4">
                                         {platformSettings.logo && (
                                             <img src={platformSettings.logo} alt="Logo" className="w-20 h-20 object-contain border rounded-lg p-2" />
@@ -393,7 +393,7 @@ const AdminSettingsPage = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-3">
-                                    <Label>Favicon</Label>
+                                    <Label>{t('admin.favicon')}</Label>
                                     <div className="flex items-center gap-4">
                                         {platformSettings.favicon && (
                                             <img src={platformSettings.favicon} alt="Favicon" className="w-12 h-12 object-contain border rounded-lg p-1" />
@@ -540,7 +540,7 @@ const AdminSettingsPage = () => {
                     <div className="flex justify-end">
                         <Button onClick={savePlatformSettings} disabled={saving} className="min-w-[140px]">
                             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                            Saqlash
+                            {t('admin.save')}
                         </Button>
                     </div>
                 </TabsContent>
@@ -812,14 +812,14 @@ const AdminSettingsPage = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Username</Label>
+                                        <Label>{t('admin.smtpUsername')}</Label>
                                         <Input
                                             value={notificationSettings.smtp_username}
                                             onChange={(e) => setNotificationSettings({ ...notificationSettings, smtp_username: e.target.value })}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Password</Label>
+                                        <Label>{t('admin.smtpPassword')}</Label>
                                         <Input
                                             type="password"
                                             value={notificationSettings.smtp_password}
@@ -828,7 +828,7 @@ const AdminSettingsPage = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <Label>{t('admin.useTls')}</Label>
+                                    <Label>{t('admin.smtpUseTls')}</Label>
                                     <Switch
                                         checked={notificationSettings.smtp_use_tls}
                                         onCheckedChange={(c) => setNotificationSettings({ ...notificationSettings, smtp_use_tls: c })}
@@ -836,7 +836,7 @@ const AdminSettingsPage = () => {
                                 </div>
                                 <Button onClick={testEmailSettings} disabled={testingEmail} variant="outline" className="w-full">
                                     {testingEmail ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <TestTube className="w-4 h-4 mr-2" />}
-                                    {t('admin.testEmailSend')}
+                                    {t('admin.testSmtp')}
                                 </Button>
                             </CardContent>
                         </Card>
