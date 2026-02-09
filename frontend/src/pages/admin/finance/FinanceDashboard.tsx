@@ -41,39 +41,40 @@ export default function FinanceDashboard({ stats, loading }: FinanceDashboardPro
                             <Activity className="w-6 h-6" />
                         </div>
                         <span className="text-xs bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full font-bold">
-                            Bugun
+                            {t('admin.today')}
                         </span>
                     </div>
-                    <div>
-                        <div className="text-3xl font-black text-foreground tracking-tight">{stats.today_count}</div>
-                        <div className="text-sm text-muted-foreground font-medium mt-1">{t('admin.todayTransactions', { defaultValue: "Bugungi to'lovlar" })}</div>
+                    <div className="text-2xl font-black mt-2 text-foreground">
+                        {stats?.today_revenue?.toLocaleString()} {t('common.currency')}
                     </div>
+                    <div className="text-sm text-muted-foreground font-medium mt-1">{t('admin.todayTransactions')}</div>
                 </div>
 
-                <div className="bg-card p-6 rounded-2xl border border-border shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="p-3 bg-red-500/10 rounded-xl text-red-500">
-                            <TrendingDown className="w-6 h-6" />
+                <div className="bg-muted/30 p-4 rounded-xl border border-border/50">
+                    <div className="flex justify-between items-start">
+                        <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                            <ArrowDownRight className="w-5 h-5 text-red-600" />
                         </div>
                         <span className="text-xs bg-red-500/20 text-red-600 dark:text-red-400 px-2 py-1 rounded-full font-bold">
-                            Refunds
+                            {t('admin.refunds')}
                         </span>
                     </div>
-                    <div>
-                        <div className="text-3xl font-black text-foreground tracking-tight">{stats.refunded.toLocaleString()}</div>
-                        <div className="text-sm text-muted-foreground font-medium mt-1">{t('admin.refunds')}</div>
+                    <div className="text-2xl font-black mt-2 text-foreground">
+                        0 {t('common.currency')}
                     </div>
+                    <div className="text-sm text-muted-foreground font-medium mt-1">{t('admin.refunds')}</div>
                 </div>
             </div>
-
-            {/* CHARTS SECTION */}
-            <div className="grid lg:grid-cols-2 gap-6">
-                <FinanceTrendChart />
-                <TopItemsChart />
-            </div>
-
-            {/* Recent Transactions Preview (Optional) */}
-            {/* Use reused table component if needed, but keeping it simple for now */}
         </div>
+
+            {/* CHARTS SECTION */ }
+    <div className="grid lg:grid-cols-2 gap-6">
+        <FinanceTrendChart />
+        <TopItemsChart />
+    </div>
+
+    {/* Recent Transactions Preview (Optional) */ }
+    {/* Use reused table component if needed, but keeping it simple for now */ }
+        </div >
     );
 }

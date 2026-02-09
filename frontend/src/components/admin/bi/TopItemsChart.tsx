@@ -32,11 +32,11 @@ const TopItemsChart = () => {
             <div className="w-full h-[250px] flex-1">
                 {loading ? (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-                        Loading...
+                        {t('common.loading')}
                     </div>
                 ) : data.length === 0 ? (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
-                        No data available
+                        {t('common.noData')}
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">

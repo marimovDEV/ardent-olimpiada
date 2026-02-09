@@ -212,7 +212,7 @@ const AdminSupportPage = () => {
 
                 if (res.data.success) {
                     toast({
-                        title: "Bulk Action",
+                        title: t('admin.bulkAction'),
                         description: t('admin.ticketsClosed')
                     });
                     fetchTickets();

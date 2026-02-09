@@ -39,41 +39,49 @@ export default function AdminFinancePage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-black tracking-tight">Moliya</h1>
-                <p className="text-muted-foreground">To'lovlar statistikasi, tranzaksiyalar va sozlamalar.</p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <div>
+                    <h1 className="text-3xl font-black tracking-tight">{t('admin.finance')}</h1>
+                    <p className="text-muted-foreground">{t('admin.financeDesc')}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="rounded-xl border-blue-100 hover:bg-blue-50 text-blue-600 transition-colors">
+                        <Download className="w-4 h-4 mr-2" />
+                        {t('common.download')}
+                    </Button>
+                </div>
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-                <div className="border-b">
-                    <TabsList className="bg-transparent p-0 h-auto gap-6">
+            <Tabs defaultValue="dashboard" className="space-y-6">
+                <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md pt-1 border-b border-border/50">
+                    <TabsList className="h-auto p-0 bg-transparent flex justify-start gap-0 overflow-x-auto no-scrollbar">
                         <TabsTrigger
                             value="dashboard"
                             className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 bg-transparent border-b-2 border-transparent transition-all"
                         >
                             <LayoutDashboard className="w-4 h-4 mr-2" />
-                            Statistika
+                            {t('admin.tabs.stats')}
                         </TabsTrigger>
                         <TabsTrigger
                             value="transactions"
                             className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 bg-transparent border-b-2 border-transparent transition-all"
                         >
                             <Receipt className="w-4 h-4 mr-2" />
-                            Tranzaksiyalar
+                            {t('admin.tabs.transactions')}
                         </TabsTrigger>
                         <TabsTrigger
-                            value="bot_verification"
+                            value="verification"
                             className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 bg-transparent border-b-2 border-transparent transition-all"
                         >
                             <Smartphone className="w-4 h-4 mr-2" />
-                            Bot To'lovlari (Tasdiqlash)
+                            {t('admin.tabs.botPayments')}
                         </TabsTrigger>
                         <TabsTrigger
                             value="settings"
                             className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-4 py-3 bg-transparent border-b-2 border-transparent transition-all"
                         >
                             <Settings className="w-4 h-4 mr-2" />
-                            Sozlamalar
+                            {t('admin.tabs.settings')}
                         </TabsTrigger>
                     </TabsList>
                 </div>

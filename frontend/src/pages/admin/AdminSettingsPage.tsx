@@ -961,8 +961,8 @@ const AdminSettingsPage = () => {
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="HH:mm">24-soatlik (HH:mm)</SelectItem>
-                                            <SelectItem value="hh:mm A">12-soatlik (hh:mm AM/PM)</SelectItem>
+                                            <SelectItem value="HH:mm">{t('admin.24hour')} (HH:mm)</SelectItem>
+                                            <SelectItem value="hh:mm A">{t('admin.12hour')} (hh:mm AM/PM)</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
