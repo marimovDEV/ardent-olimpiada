@@ -63,10 +63,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [internalCourseId, setInternalCourseId] = useState<number | null>(null);
 
-    // Sync internal ID with prop
-    useEffect(() => {
-        setInternalCourseId(courseId || null);
-    }, [courseId]);
+
 
     const [formData, setFormData] = useState({
         title: "",
@@ -93,13 +90,15 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
         if (open) {
             fetchSubjects();
             fetchTeachers();
-            if (internalCourseId) {
-                fetchCourseDetails();
+            if (courseId) {
+                setInternalCourseId(courseId);
+                fetchCourseDetails(courseId);
             } else {
+                setInternalCourseId(null);
                 resetForm();
             }
         }
-    }, [open, internalCourseId]);
+    }, [open, courseId]);
 
     const fetchSubjects = async () => {
         try {
@@ -119,25 +118,27 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
         }
     };
 
-    const fetchCourseDetails = async () => {
-        if (!internalCourseId) return;
+    const fetchCourseDetails = async (id?: number) => {
+        const targetId = id || internalCourseId;
+        if (!targetId) return;
         setLoading(true);
         try {
-            const res = await axios.get(`${API_URL}/courses/${internalCourseId}/`, { headers: getAuthHeader() });
+            const res = await axios.get(`${API_URL}/courses/${targetId}/`, { headers: getAuthHeader() });
             const data = res.data;
             setFormData({
                 title: data.title,
                 description: data.description,
-                subject: data.subject?.toString() || "",
+                subject: (typeof data.subject === 'object' ? data.subject?.id : data.subject)?.toString() || "",
                 level: data.level,
                 price: Number(data.price),
                 is_active: data.is_active,
                 xp_reward: data.xp_reward,
                 language: data.language,
                 status: data.status,
-                teacher: data.teacher?.toString() || "",
+                teacher: (typeof data.teacher === 'object' ? data.teacher?.id : data.teacher)?.toString() || "",
                 is_certificate_enabled: data.is_certificate_enabled || false,
-                certificate_template: data.certificate_template || ""
+                certificate_template: data.certificate_template || "",
+                thumbnail: data.thumbnail
             });
             if (data.modules) {
                 setModules(data.modules);

@@ -244,6 +244,9 @@
     "monetizationBonus": "Монетизация и XP",
     "price": "Цена (AC)",
     "xpReward": "XP Награда",
+    "submitForApproval": "Отправить на утверждение",
+    "submissionStatus": "Статус отправки",
+    "publishNote": "Курс появится на платформе после утверждения.",
     "ready": "Готово!",
     "review": "Проверка и Публикация",
     "courses": {

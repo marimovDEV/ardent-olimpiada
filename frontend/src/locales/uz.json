@@ -238,6 +238,9 @@
     "monetizationBonus": "Monetizatsiya va XP",
     "price": "Narxi (AC)",
     "xpReward": "XP Mukofot",
+    "submitForApproval": "Tasdiqlashga yuborish",
+    "submissionStatus": "Yuborish holati",
+    "publishNote": "Kurs tasdiqlangandan so'ng platformada ko'rinadi.",
     "ready": "Tayyor!",
     "review": "Tekshiruv va Nashr",
     "courses": {
