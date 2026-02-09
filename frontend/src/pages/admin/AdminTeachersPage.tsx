@@ -58,6 +58,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import { Textarea } from "@/components/ui/textarea";
@@ -95,6 +96,7 @@ interface Teacher {
 const BASE_URL = API_URL.replace('/api', '');
 
 const AdminTeachersPage = () => {
+    const { t } = useTranslation();
     const [teachers, setTeachers] = useState<Teacher[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");

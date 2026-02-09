@@ -73,9 +73,9 @@ const AdminLayout = () => {
 
     const sidebarItems = [
         { icon: LayoutDashboard, label: t('admin.dashboard.title'), path: "/admin/dashboard" },
-        { icon: Users, label: t('admin.users'), path: "/admin/users" },
-        { icon: GraduationCap, label: t('admin.teachers'), path: "/admin/teachers" },
-        { icon: BookOpen, label: t('admin.courses'), path: "/admin/courses" },
+        { icon: Users, label: t('admin.users.title'), path: "/admin/users" },
+        { icon: GraduationCap, label: t('admin.teachers.title'), path: "/admin/teachers" },
+        { icon: BookOpen, label: t('admin.courses.title'), path: "/admin/courses" },
         { icon: Trophy, label: t('admin.olympiads.title'), path: "/admin/olympiads" },
         { icon: DollarSign, label: t('admin.finance'), path: "/admin/finance" },
         { icon: PanelTop, label: t('admin.cms'), path: "/admin/cms" },

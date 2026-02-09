@@ -151,7 +151,7 @@ export default function FinanceTransactions() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">{t('common.all')}</SelectItem>
-                            <SelectItem value="Course">{t('admin.courses')}</SelectItem>
+                            <SelectItem value="Course">{t('admin.courses.title')}</SelectItem>
                             <SelectItem value="Olympiad">{t('admin.olympiads.title')}</SelectItem>
                         </SelectContent>
                     </Select>

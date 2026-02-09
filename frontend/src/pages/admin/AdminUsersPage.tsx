@@ -237,7 +237,7 @@ const AdminUsersPage = () => {
                         <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-foreground tracking-tight">{t('admin.users')}</h1>
+                        <h1 className="text-2xl font-black text-foreground tracking-tight">{t('admin.users.title')}</h1>
                         <p className="text-muted-foreground text-sm font-medium">{t('admin.usersSubtitle')}</p>
                     </div>
                 </div>
@@ -331,7 +331,7 @@ const AdminUsersPage = () => {
                             className="text-xs font-bold px-4 rounded-lg h-8"
                             onClick={() => setRoleFilter("STUDENT")}
                         >
-                            {t('admin.students')}
+                            {t('admin.students.title')}
                         </Button>
                         <Button
                             variant={roleFilter === "TEACHER" ? "secondary" : "ghost"}
@@ -339,7 +339,7 @@ const AdminUsersPage = () => {
                             className="text-xs font-bold px-4 rounded-lg h-8"
                             onClick={() => setRoleFilter("TEACHER")}
                         >
-                            {t('admin.teachers')}
+                            {t('admin.teachers.title')}
                         </Button>
                     </div>
 

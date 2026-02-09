@@ -96,8 +96,8 @@ const AdminDashboard = () => {
 
     const kpis = [
         { label: t('admin.totalUsers'), value: data?.kpis?.total_users || 0, sub: `+${data?.kpis?.new_users_today || 0} ${t('common.today').toLowerCase()}`, icon: Users, color: "text-blue-600", bg: "bg-blue-100/50" },
-        { label: t('admin.teachers'), value: data?.kpis?.teachers_count || 0, sub: t('admin.dashboard.activeMentors'), icon: UserCheck, color: "text-indigo-600", bg: "bg-indigo-100/50" },
-        { label: t('admin.courses'), value: data?.kpis?.active_courses || 0, sub: t('admin.dashboard.coursesOnSale'), icon: BookOpen, color: "text-green-600", bg: "bg-green-100/50" },
+        { label: t('admin.teachers.title'), value: data?.kpis?.teachers_count || 0, sub: t('admin.dashboard.activeMentors'), icon: UserCheck, color: "text-indigo-600", bg: "bg-indigo-100/50" },
+        { label: t('admin.courses.title'), value: data?.kpis?.active_courses || 0, sub: t('admin.dashboard.coursesOnSale'), icon: BookOpen, color: "text-green-600", bg: "bg-green-100/50" },
         { label: t('admin.olympiads.title'), value: data?.kpis?.active_olympiads || 0, sub: t('admin.dashboard.olympiadsStatus'), icon: Trophy, color: "text-orange-600", bg: "bg-orange-100/50" },
         { label: t('admin.revenue'), value: `${(data?.kpis?.revenue_month || 0).toLocaleString()} UZS`, sub: `${(data?.kpis?.revenue_today || 0).toLocaleString()} ${t('common.today').toLowerCase()}`, icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-100/50" },
     ];

@@ -429,7 +429,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                             </div>
                             <div className="grid grid-cols-2 gap-4 pt-2">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">{t('admin.teacher')}</label>
+                                    <label className="text-sm font-medium">{t('admin.teacher.title')}</label>
                                     <Select value={formData.teacher} onValueChange={(val) => setFormData({ ...formData, teacher: val })}>
                                         <SelectTrigger><SelectValue placeholder={t('admin.selectTeacher')} /></SelectTrigger>
                                         <SelectContent>
@@ -573,7 +573,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
 
                             <div className="bg-card border border-border rounded-xl p-4 space-y-3">
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-muted-foreground">{t('admin.courses')}:</span>
+                                    <span className="text-muted-foreground">{t('admin.courses.title')}:</span>
                                     <span className="font-bold">{formData.title}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">

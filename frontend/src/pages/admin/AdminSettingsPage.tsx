@@ -869,9 +869,9 @@ const AdminSettingsPage = () => {
                                     {Object.entries(permissionsByCategory).map(([category, perms]) => (
                                         <div key={category} className="space-y-3">
                                             <h3 className="font-bold text-sm uppercase text-muted-foreground flex items-center gap-2">
-                                                {category === 'courses' && `📚 ${t('admin.courses')}`}
+                                                {category === 'courses' && `📚 ${t('admin.courses.title')}`}
                                                 {category === 'olympiads' && `🏆 ${t('admin.olympiads.title')}`}
-                                                {category === 'users' && `👥 ${t('admin.users')}`}
+                                                {category === 'users' && `👥 ${t('admin.users.title')}`}
                                                 {category === 'finance' && `💰 ${t('admin.finance')}`}
                                                 {category === 'settings' && `⚙️ ${t('admin.settings')}`}
                                                 {!['courses', 'olympiads', 'users', 'finance', 'settings'].includes(category) && `📁 ${category}`}

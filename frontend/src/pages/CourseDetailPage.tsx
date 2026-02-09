@@ -460,7 +460,7 @@ const CourseDetailPage = () => {
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-6">{t('dashboard.courseDetail.curriculum')}</h2>
+              <h2 className="text-2xl font-bold mb-6">{t('dashboard.courseDetail.curriculum.title')}</h2>
 
               <div className="space-y-4">
                 {modules.length === 0 ? (

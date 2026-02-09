@@ -262,6 +262,7 @@
     "uploadImage": "Rasm yuklash",
     "recommendedSize": "Tavsiya etiladi: 1200x675 (16:9)",
     "teacher": {
+      "title": "O'qituvchi",
       "onboarding": {
         "pendingTitle": "Kutilmoqda",
         "pendingDescription": "Ma'lumotlar moderator tekshiruvida.",
@@ -426,6 +427,9 @@
     },
     "teachers": {
       "title": "O'qituvchilar"
+    },
+    "students": {
+      "title": "O'quvchilar"
     },
     "finance": "Moliya va To'lovlar",
     "botPayments": "Bot To'lovlari",

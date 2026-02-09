@@ -279,7 +279,7 @@ const AdminCoursesPage = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: t('admin.courses'), value: courses.length, icon: BookOpen, color: "blue" },
+                    { label: t('admin.courses.title'), value: courses.length, icon: BookOpen, color: "blue" },
                     { label: t('admin.activeStudents'), value: totalStudents, icon: Users, color: "green" },
                     { label: t('admin.totalRevenue'), value: formatMoney(totalRevenue), icon: DollarSign, color: "yellow" },
                     { label: t('admin.avgRating'), value: "4.8", icon: Star, color: "purple" }
