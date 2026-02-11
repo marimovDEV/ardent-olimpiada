@@ -4,7 +4,7 @@ import uzTranslation from './locales/uz.json';
 import ruTranslation from './locales/ru.json';
 
 // Initialize i18next with proper configuration
-// Default language is always Uzbek unless user explicitly changes it
+// Default language is always Uzbek unless user explicitly changes it (Force Refresh)
 i18n
     .use(initReactI18next)
     .init({

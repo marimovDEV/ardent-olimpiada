@@ -61,7 +61,7 @@ const Footer = () => {
           {/* Brand Column - Always Visible */}
           <div className="space-y-4 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <img src="/logo.png" alt="Logo" className="h-8 w-auto mix-blend-multiply dark:mix-blend-normal" />
+              <img src="/logo.jpg" alt="Logo" className="h-8 w-auto mix-blend-multiply dark:mix-blend-normal" />
               <span className="text-2xl font-black bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                 Ardent
               </span>
