@@ -62,19 +62,15 @@ export default function FinanceDashboard({ stats, loading }: FinanceDashboardPro
                     <div className="text-2xl font-black mt-2 text-foreground">
                         0 {t('common.currency')}
                     </div>
-                    <div className="text-sm text-muted-foreground font-medium mt-1">{t('admin.refunds')}</div>
+                    <div className="text-sm text-muted-foreground font-medium mt-1">{t('admin.refundsDesc', 'Voz kechilgan to\'lovlar')}</div>
                 </div>
             </div>
+
+            {/* CHARTS SECTION */}
+            <div className="grid lg:grid-cols-2 gap-6">
+                <FinanceTrendChart />
+                <TopItemsChart />
+            </div>
         </div>
-
-            {/* CHARTS SECTION */ }
-    <div className="grid lg:grid-cols-2 gap-6">
-        <FinanceTrendChart />
-        <TopItemsChart />
-    </div>
-
-    {/* Recent Transactions Preview (Optional) */ }
-    {/* Use reused table component if needed, but keeping it simple for now */ }
-        </div >
     );
 }
