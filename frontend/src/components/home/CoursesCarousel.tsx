@@ -83,9 +83,11 @@ const CoursesCarousel = () => {
         const fetchCourses = async () => {
             setIsLoading(true);
             try {
-                const response = await axios.get(`${API_URL}/courses/featured/`);
-                if (response.data.success) {
-                    const mapped = response.data.courses.map((item: any) => {
+                const data = await homepageService.getFeaturedCourses();
+                const coursesList = data.courses || data.results || data;
+
+                if (Array.isArray(coursesList)) {
+                    const mapped = coursesList.map((item: any) => {
                         const theme = getSubjectTheme(item.subject_name || item.subject || "");
                         return {
                             id: item.id,
