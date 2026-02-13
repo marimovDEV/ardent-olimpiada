@@ -100,11 +100,19 @@
   }
 
   .btn-primary {
-    @apply bg-primary hover:bg-primary-hover text-white rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-purple hover:scale-[1.02] active:scale-95;
+    @apply bg-primary text-white rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-purple hover:scale-[1.02] active:scale-95;
+
+    &:hover {
+      background-color: hsl(var(--primary-hover));
+    }
   }
 
   .btn-secondary {
-    @apply border border-secondary text-secondary hover:bg-secondary/10 rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-cyan hover:scale-[1.02] active:scale-95;
+    @apply border border-secondary text-secondary rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-cyan hover:scale-[1.02] active:scale-95;
+
+    &:hover {
+      background-color: hsla(var(--secondary), 0.1);
+    }
   }
 
   .neon-glow-primary {

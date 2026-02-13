@@ -34,10 +34,10 @@ const DashboardStatCard = ({ label, value, icon: Icon, trend, color, delay = 0 }
                 </div>
 
                 <div className="mt-auto">
-                    <p className="text-text-secondary text-[10px] font-black uppercase tracking-widest mb-1 font-cinzel">
+                    <p className="text-secondary text-[10px] font-black uppercase tracking-widest mb-1 font-cinzel">
                         {label}
                     </p>
-                    <h3 className="text-3xl font-black text-text-primary tracking-tighter">
+                    <h3 className="text-3xl font-black text-primary tracking-tighter">
                         {value}
                     </h3>
                 </div>

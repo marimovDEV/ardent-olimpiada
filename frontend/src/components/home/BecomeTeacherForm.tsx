@@ -58,10 +58,10 @@ const BecomeTeacherForm = () => {
                         <Sparkles className="w-3.5 h-3.5" />
                         {t('becomeTeacher.badge', 'O\'qituvchilar jamoasiga qo\'shiling')}
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-black text-text-primary tracking-tighter leading-tight font-cinzel">
+                    <h2 className="text-3xl md:text-5xl font-black text-primary tracking-tighter leading-tight font-cinzel">
                         {t('becomeTeacher.title', 'Biz bilan Birga Dars Bering')}
                     </h2>
-                    <p className="text-text-secondary font-medium max-w-2xl mx-auto italic">
+                    <p className="text-secondary font-medium max-w-2xl mx-auto italic">
                         {t('becomeTeacher.subtitle', 'O\'z bilimingizni ulashing va platformamizda eng yaxshi o\'qituvchilardan biriga aylaning.')}
                     </p>
                 </div>
@@ -69,14 +69,14 @@ const BecomeTeacherForm = () => {
                 <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                         <div className="space-y-2">
-                            <Label className="text-text-primary font-bold ml-1 flex items-center gap-2">
+                            <Label className="text-primary font-bold ml-1 flex items-center gap-2">
                                 <User className="w-4 h-4 text-primary" />
                                 {t('becomeTeacher.name_label', 'Ism Familiyangiz')}
                             </Label>
                             <div className="relative group/input">
                                 <Input
                                     {...register("name", { required: true })}
-                                    className="bg-white/5 border-white/10 rounded-2xl h-14 pl-5 focus:ring-primary focus:border-primary text-text-primary placeholder:text-text-primary/20 transition-all group-hover/input:bg-white/10"
+                                    className="bg-white/5 border-white/10 rounded-2xl h-14 pl-5 focus:ring-primary focus:border-primary text-primary placeholder:text-primary/20 transition-all group-hover/input:bg-white/10"
                                     placeholder={t('becomeTeacher.name_placeholder', 'Masalan: Ali Valiyev')}
                                 />
                                 {errors.name && <span className="text-destructive text-xs mt-1 ml-1">{t('common.required')}</span>}
@@ -84,28 +84,28 @@ const BecomeTeacherForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-text-primary font-bold ml-1 flex items-center gap-2">
+                            <Label className="text-primary font-bold ml-1 flex items-center gap-2">
                                 <Phone className="w-4 h-4 text-secondary" />
                                 {t('becomeTeacher.phone_label', 'Telefon Raqamingiz')}
                             </Label>
                             <Input
                                 {...register("phone", { required: true })}
-                                className="bg-white/5 border-white/10 rounded-2xl h-14 pl-5 focus:ring-secondary focus:border-secondary text-text-primary placeholder:text-text-primary/20"
+                                className="bg-white/5 border-white/10 rounded-2xl h-14 pl-5 focus:ring-secondary focus:border-secondary text-primary placeholder:text-primary/20"
                                 placeholder="+998 (__) ___-__-__"
                             />
                             {errors.phone && <span className="text-destructive text-xs mt-1 ml-1">{t('common.required')}</span>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-text-primary font-bold ml-1 flex items-center gap-2">
+                            <Label className="text-primary font-bold ml-1 flex items-center gap-2">
                                 <MessageSquare className="w-4 h-4 text-primary" />
                                 {t('becomeTeacher.telegram_label', 'Telegram Username')}
                             </Label>
                             <div className="relative">
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-text-primary/40 font-bold">@</span>
+                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-primary/40 font-bold">@</span>
                                 <Input
                                     {...register("telegram_username")}
-                                    className="bg-white/5 border-white/10 rounded-2xl h-14 pl-10 focus:ring-primary focus:border-primary text-text-primary placeholder:text-text-primary/20"
+                                    className="bg-white/5 border-white/10 rounded-2xl h-14 pl-10 focus:ring-primary focus:border-primary text-primary placeholder:text-primary/20"
                                     placeholder="username"
                                 />
                             </div>
@@ -114,13 +114,13 @@ const BecomeTeacherForm = () => {
 
                     <div className="space-y-6 flex flex-col">
                         <div className="space-y-2 flex-1 flex flex-col">
-                            <Label className="text-text-primary font-bold ml-1 flex items-center gap-2">
+                            <Label className="text-primary font-bold ml-1 flex items-center gap-2">
                                 <BookOpen className="w-4 h-4 text-secondary" />
                                 {t('becomeTeacher.note_label', 'Siz dars bermoqchi bo\'lgan fan va tajribangiz')}
                             </Label>
                             <Textarea
                                 {...register("note")}
-                                className="bg-white/5 border-white/10 rounded-3xl p-5 focus:ring-secondary focus:border-secondary text-text-primary placeholder:text-text-primary/20 resize-none flex-1 min-h-[200px]"
+                                className="bg-white/5 border-white/10 rounded-3xl p-5 focus:ring-secondary focus:border-secondary text-primary placeholder:text-primary/20 resize-none flex-1 min-h-[200px]"
                                 placeholder={t('becomeTeacher.note_placeholder', 'Masalan: Matematika fani bo\'yicha 5 yillik tajriba...')}
                             />
                         </div>

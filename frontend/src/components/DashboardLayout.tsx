@@ -118,7 +118,7 @@ const DashboardLayout = () => {
                             to={item.path}
                             className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold group relative overflow-hidden ${isActive(item.path)
                                 ? "bg-primary/10 text-primary"
-                                : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
+                                : "text-secondary hover:bg-white/5 hover:text-primary"
                                 }`}
                         >
                             <item.icon className={`w-5 h-5 transition-all duration-300 ${isActive(item.path) ? "text-primary scale-110" : "text-muted-foreground group-hover:text-primary group-hover:scale-110"}`} />

@@ -305,7 +305,7 @@ const MyOlympiadsTab = () => {
             {/* Active Registrations */}
             {registrations.length > 0 && (
                 <div>
-                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-text-primary">
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
                         <Calendar className="w-5 h-5 text-primary" />
                         {t('dashboard.profile.olympiads.active')}
                     </h3>
@@ -313,8 +313,8 @@ const MyOlympiadsTab = () => {
                         {registrations.map(reg => (
                             <div key={reg.id} className="bg-card p-5 rounded-xl border border-card-border flex items-center justify-between shadow-sm">
                                 <div>
-                                    <h4 className="font-bold text-lg text-text-primary">{reg.olympiad.title}</h4>
-                                    <div className="flex items-center gap-3 text-sm text-text-secondary mt-1">
+                                    <h4 className="font-bold text-lg text-primary">{reg.olympiad.title}</h4>
+                                    <div className="flex items-center gap-3 text-sm text-secondary mt-1">
                                         <span className="bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">{reg.olympiad.subject}</span>
                                         <span className="flex items-center gap-1">
                                             <Calendar className="w-3 h-3" />

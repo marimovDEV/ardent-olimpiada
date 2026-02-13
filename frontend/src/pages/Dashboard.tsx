@@ -139,7 +139,7 @@ const Dashboard = () => {
               </div>
               <div className="flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-card-border backdrop-blur-md">
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{t('dashboard.hero.online', 'Online')}</span>
+                <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">{t('dashboard.hero.online', 'Online')}</span>
               </div>
             </div>
 
@@ -147,7 +147,7 @@ const Dashboard = () => {
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-tight">
                 {t('dashboard.hero.greeting', 'Salom')}, <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-xy italic">{data.hero?.user_name || 'Talaba'}!</span>
               </h1>
-              <p className="text-xl text-text-secondary max-w-xl font-medium leading-relaxed">
+              <p className="text-xl text-secondary max-w-xl font-medium leading-relaxed">
                 {t('dashboard.hero.subtitle', 'Sizning bugun uchun 3 ta vazifangiz bor. Olg‘a, yangi cho‘qqilarni zabt etamiz!')}
               </p>
             </div>
@@ -178,7 +178,7 @@ const Dashboard = () => {
               <div className="w-full h-full bg-background rounded-full flex flex-col items-center justify-center border-4 border-background relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5" />
                 <span className="text-[11px] font-black text-secondary uppercase tracking-[0.3em] font-cinzel relative z-10 mb-1">{t('common.level', 'Level')}</span>
-                <span className="text-7xl md:text-8xl font-black text-text-primary leading-none relative z-10 tracking-tighter">{data.level.current}</span>
+                <span className="text-7xl md:text-8xl font-black text-primary leading-none relative z-10 tracking-tighter">{data.level.current}</span>
                 <Zap className="w-6 h-6 text-primary mt-2 animate-bounce fill-primary relative z-10" />
               </div>
             </div>
@@ -191,15 +191,15 @@ const Dashboard = () => {
             <div className="space-y-1">
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-cinzel">Experience Points</span>
               <div className="flex items-center gap-3">
-                <span className="text-3xl font-black text-text-primary tracking-tighter">{data.level.xp_current}</span>
-                <span className="text-sm font-bold text-text-secondary font-cinzel">/ 500 XP</span>
+                <span className="text-3xl font-black text-primary tracking-tighter">{data.level.xp_current}</span>
+                <span className="text-sm font-bold text-secondary font-cinzel">/ 500 XP</span>
               </div>
             </div>
             <div className="text-right space-y-1">
-              <span className="text-[10px] font-black text-text-primary/30 uppercase tracking-[0.3em] font-cinzel block mb-1">Next Level in {data.level.xp_left} XP</span>
+              <span className="text-[10px] font-black text-primary/30 uppercase tracking-[0.3em] font-cinzel block mb-1">Next Level in {data.level.xp_left} XP</span>
               <div className="flex items-baseline justify-end gap-1">
                 <span className="text-2xl font-black text-secondary tracking-tighter">{data.level.progress_percent}%</span>
-                <span className="text-[10px] font-bold text-text-secondary uppercase">{t('common.completed', 'Ready')}</span>
+                <span className="text-[10px] font-bold text-secondary uppercase">{t('common.completed', 'Ready')}</span>
               </div>
             </div>
           </div>
@@ -264,7 +264,7 @@ const Dashboard = () => {
                   <PlayCircle className="w-8 h-8 text-secondary animate-pulse" />
                   🚀 O‘rganishni bugun boshlang
                 </h3>
-                <p className="text-text-secondary font-medium max-w-md">
+                <p className="text-secondary font-medium max-w-md">
                   XP yig‘ing, darajani oshiring va reytingda ko‘tariling! Bugun <strong>500 XP</strong> yutish imkoniyati bor.
                 </p>
               </div>
@@ -295,7 +295,7 @@ const Dashboard = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4">
             <div className="space-y-6">
-              <h3 className="text-xl font-black flex items-center gap-3 text-text-primary px-2">
+              <h3 className="text-xl font-black flex items-center gap-3 text-primary px-2">
                 <Trophy className="w-5 h-5 text-secondary" />
                 {t('dashboard.sections.stats', 'Analitika')}
               </h3>
@@ -304,7 +304,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="space-y-6">
-              <h3 className="text-xl font-black flex items-center gap-3 text-text-primary px-2">
+              <h3 className="text-xl font-black flex items-center gap-3 text-primary px-2">
                 <Zap className="w-5 h-5 text-primary" />
                 {t('dashboard.sections.subjects', 'Fanlar')}
               </h3>
@@ -320,7 +320,7 @@ const Dashboard = () => {
         <div className="space-y-10">
           <div className="bg-background-secondary border border-card-border p-8 rounded-[3rem] shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
-            <h3 className="text-lg font-black mb-8 flex items-center gap-3 text-text-primary">
+            <h3 className="text-lg font-black mb-8 flex items-center gap-3 text-primary">
               <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
                 <Zap className="w-4 h-4 text-orange-500" />
               </div>
@@ -330,7 +330,7 @@ const Dashboard = () => {
           </div>
 
           <div className="bg-background-secondary border border-card-border p-8 rounded-[3rem] shadow-2xl">
-            <h3 className="text-lg font-black mb-8 flex items-center gap-3 text-text-primary">
+            <h3 className="text-lg font-black mb-8 flex items-center gap-3 text-primary">
               <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
                 <PlayCircle className="w-4 h-4 text-secondary" />
               </div>

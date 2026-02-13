@@ -102,11 +102,11 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                 {/* Left Side (Desktop: Search) */}
                 <div className="hidden lg:flex items-center gap-6 flex-1">
                     <div className="relative w-80 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary group-focus-within:text-primary transition-all duration-300" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary group-focus-within:text-primary transition-all duration-300" />
                         <input
                             type="text"
                             placeholder={t('dashboard.navbar.search')}
-                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-text-primary placeholder:text-text-secondary"
+                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-primary placeholder:text-secondary"
                         />
                     </div>
                 </div>
@@ -128,9 +128,9 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                             {/* Stats */}
                             <div className="flex flex-col gap-0.5">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[11px] font-black text-text-primary tracking-widest font-cinzel">{xp} XP</span>
+                                    <span className="text-[11px] font-black text-primary tracking-widest font-cinzel">{xp} XP</span>
                                     <div className="w-1 h-1 rounded-full bg-white/20" />
-                                    <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
+                                    <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
                                 </div>
                                 <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
                                     <div
@@ -204,10 +204,10 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                                     </div>
                                 </div>
                                 <div className="text-left hidden lg:block pr-2">
-                                    <p className="text-sm font-black text-text-primary leading-none group-hover:text-primary transition-colors">
+                                    <p className="text-sm font-black text-primary leading-none group-hover:text-primary transition-colors">
                                         {user.first_name || user.username}
                                     </p>
-                                    <p className="text-[10px] text-text-secondary mt-1 font-bold uppercase tracking-wider">
+                                    <p className="text-[10px] text-secondary mt-1 font-bold uppercase tracking-wider">
                                         {getRoleLabel(user.role)}
                                     </p>
                                 </div>
@@ -215,7 +215,7 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-64 bg-background/95 backdrop-blur-2xl border-white/5 rounded-2xl shadow-2xl p-2">
                             <DropdownMenuLabel className="mb-2">
-                                <p className="text-xs text-text-secondary font-black uppercase tracking-widest">{t('dashboard.navbar.myAccount')}</p>
+                                <p className="text-xs text-secondary font-black uppercase tracking-widest">{t('dashboard.navbar.myAccount')}</p>
                             </DropdownMenuLabel>
                             <DropdownMenuItem
                                 onClick={() => navigate('/profile')}

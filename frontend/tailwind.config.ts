@@ -23,18 +23,13 @@ export default {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
+        "background-secondary": "hsl(var(--background-secondary))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "#FFD700", // Gold
-          foreground: "#0B132B",
-          light: "#F4E6A2",
-          dark: "#B8860B",
-        },
-        secondary: {
-          DEFAULT: "#0B132B", // Dark Navy
-          foreground: "#FFFFFF",
-          light: "#1C2541",
-        },
+        primary: "hsl(var(--primary))",
+        "primary-hover": "hsl(var(--primary-hover))",
+        "primary-foreground": "hsl(var(--primary-foreground))",
+        secondary: "hsl(var(--secondary))",
+        "secondary-foreground": "hsl(var(--secondary-foreground))",
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
@@ -88,6 +83,9 @@ export default {
         'strong': 'var(--shadow-lg)',
         'card': 'var(--shadow-card)',
         'button': 'var(--shadow-button)',
+        'purple': 'var(--shadow-purple)',
+        'cyan': 'var(--shadow-cyan)',
+        'gold': 'var(--shadow-gold)',
       },
       keyframes: {
         "accordion-down": {
@@ -132,6 +130,11 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "scale-in": "scale-in 0.4s ease-out",
         "bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
+      },
+      textColor: {
+        primary: "hsl(var(--text-primary))",
+        secondary: "hsl(var(--text-secondary))",
+        muted: "hsl(var(--text-muted))",
       },
     },
   },
