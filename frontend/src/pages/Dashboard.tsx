@@ -134,18 +134,18 @@ const Dashboard = () => {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] animate-pulse-soft">
+              <div className="px-5 py-2 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/20 text-[#7C3AED] text-[10px] font-black uppercase tracking-[0.2em] animate-pulse-soft">
                 {t('dashboard.hero.welcomeBack', 'Xush kelibsiz!')}
               </div>
-              <div className="flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-card-border backdrop-blur-md">
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              <div className="flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#22D3EE] animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
                 <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">{t('dashboard.hero.online', 'Online')}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-tight">
-                {t('dashboard.hero.greeting', 'Salom')}, <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-xy italic">{data.hero?.user_name || 'Talaba'}!</span>
+                {t('dashboard.hero.greeting', 'Salom')}, <span className="bg-gradient-to-r from-[#7C3AED] via-[#22D3EE] to-[#7C3AED] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-xy italic">{data.hero?.user_name || 'Talaba'}!</span>
               </h1>
               <p className="text-xl text-secondary max-w-xl font-medium leading-relaxed">
                 {t('dashboard.hero.subtitle', 'Sizning bugun uchun 3 ta vazifangiz bor. Olg‘a, yangi cho‘qqilarni zabt etamiz!')}
@@ -208,10 +208,10 @@ const Dashboard = () => {
               initial={{ width: 0 }}
               animate={{ width: `${data.level.progress_percent}%` }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-primary to-secondary rounded-full relative group"
+              className="h-full bg-gradient-to-r from-[#7C3AED] via-[#22D3EE] to-[#7C3AED] bg-[length:200%_auto] animate-gradient-xy rounded-full relative group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-              <div className="absolute -inset-y-2 right-0 w-8 bg-secondary/30 blur-md rounded-full animate-pulse" />
+              <div className="absolute -inset-y-2 right-0 w-8 bg-[#22D3EE]/30 blur-md rounded-full animate-pulse" />
             </motion.div>
           </div>
         </div>
@@ -231,7 +231,7 @@ const Dashboard = () => {
           label={t('dashboard.stats.totalXp', 'Total XP')}
           value={data.level.xp_current + (data.level.current - 1) * 500}
           icon={Trophy}
-          color="purple-500"
+          color="primary"
           delay={0.2}
         />
         <DashboardStatCard
@@ -239,14 +239,14 @@ const Dashboard = () => {
           value="#12"
           icon={Trophy}
           trend="Top 5%"
-          color="cyan-500"
+          color="cyan"
           delay={0.3}
         />
         <DashboardStatCard
           label={t('dashboard.stats.certificates', 'Sertifikatlar')}
           value="4"
           icon={Award}
-          color="yellow-500"
+          color="yellow"
           delay={0.4}
         />
       </div>
@@ -268,7 +268,7 @@ const Dashboard = () => {
                   XP yig‘ing, darajani oshiring va reytingda ko‘tariling! Bugun <strong>500 XP</strong> yutish imkoniyati bor.
                 </p>
               </div>
-              <Button className="bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-all duration-300 rounded-2xl h-14 px-10 text-white font-black text-lg shadow-purple group-hover:shadow-cyan">
+              <Button className="bg-gradient-to-r from-[#7C3AED] to-[#22D3EE] hover:scale-105 transition-all duration-300 rounded-2xl h-14 px-10 text-white font-black text-lg shadow-purple hover:shadow-[#22D3EE]/40">
                 Kurslarni boshlash
               </Button>
             </div>

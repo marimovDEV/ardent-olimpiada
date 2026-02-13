@@ -95,18 +95,18 @@ const DashboardLayout = () => {
 
             {/* Sidebar */}
             <aside
-                className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-background backdrop-blur-2xl border-r border-white-[0.05] flex flex-col transition-all duration-500 ease-in-out shadow-2xl lg:shadow-none ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+                className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-[#0B0F1A] backdrop-blur-2xl border-r border-white/5 flex flex-col transition-all duration-500 ease-in-out shadow-2xl lg:shadow-none ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
                 <div className="p-8 pb-4">
                     <Link to="/" className="flex items-center gap-3 mb-8 group">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary p-0.5 shadow-purple group-hover:scale-110 transition-all duration-500 hover:rotate-6">
-                            <div className="w-full h-full bg-background rounded-[14px] flex items-center justify-center overflow-hidden">
+                            <div className="w-full h-full bg-[#0B0F1A] rounded-[14px] flex items-center justify-center overflow-hidden">
                                 <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
                             </div>
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xl font-black font-cinzel text-white tracking-tighter group-hover:text-primary transition-colors leading-none">HOGWORDS</span>
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1">Academy</span>
+                            <span className="text-[10px] font-bold text-[#22D3EE] uppercase tracking-[0.2em] mt-1">Academy</span>
                         </div>
                     </Link>
                 </div>
@@ -118,14 +118,14 @@ const DashboardLayout = () => {
                             to={item.path}
                             className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold group relative overflow-hidden ${isActive(item.path)
                                 ? "bg-primary/10 text-primary"
-                                : "text-secondary hover:bg-white/5 hover:text-primary"
+                                : "text-muted-foreground hover:bg-white/5 hover:text-primary"
                                 }`}
                         >
                             <item.icon className={`w-5 h-5 transition-all duration-300 ${isActive(item.path) ? "text-primary scale-110" : "text-muted-foreground group-hover:text-primary group-hover:scale-110"}`} />
                             <span className="relative z-10 text-sm tracking-wide">{item.label}</span>
 
                             {isActive(item.path) && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary rounded-r-full shadow-purple" />
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary rounded-r-full shadow-purple shadow-[2px_0_10px_rgba(124,58,237,0.5)]" />
                             )}
                         </Link>
                     ))}
