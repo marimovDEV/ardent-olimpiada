@@ -1,7 +1,7 @@
-import { API_URL as API_BASE } from "@/services/api";
 import { useState, useEffect } from "react";
-
+import { homepageService } from "@/services/homepageService";
 import { Button } from "@/components/ui/button";
+// ... other imports
 import {
     BookOpen,
     Play,
@@ -29,8 +29,6 @@ const PublicCoursesPage = () => {
     const [selectedSubject, setSelectedSubject] = useState("all_subjects");
     const [selectedGrade, setSelectedGrade] = useState("all_grades");
 
-
-    // Map subject names to filter keys
     const subjectKeyMap: Record<string, string> = {
         'matematika': 'math',
         'math': 'math',
@@ -44,24 +42,15 @@ const PublicCoursesPage = () => {
         'chemistry': 'chemistry',
         'biologiya': 'biology',
         'biology': 'biology',
-        'dasturlash': 'informatics',
-        'programming': 'informatics',
-        'dizayn': 'informatics',
-        'design': 'informatics',
-        'marketing': 'informatics',
     };
 
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                // Fetch only active and approved courses
-                const res = await fetch(`${API_BASE}/courses/?is_active=true&status=APPROVED`);
-                if (res.ok) {
-                    const data = await res.json();
-                    setCourses(data.results || data);
-                }
+                const data = await homepageService.getPublicCourses();
+                setCourses(Array.isArray(data) ? data : data.results || []);
             } catch (err) {
-                console.error(err);
+                console.error("Failed to fetch courses:", err);
             } finally {
                 setIsLoading(false);
             }

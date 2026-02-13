@@ -142,10 +142,10 @@ const TeachersSection = () => {
                                                 </Badge>
                                             ))}
                                         </div>
-                                        <p className="text-muted-foreground font-medium mb-8 leading-relaxed italic">
-                                            "{teacher.bio}"
+                                        <p className="text-xs text-muted-foreground font-medium mb-4 flex items-center gap-1">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                            Hogwords Mentor
                                         </p>
-
                                         <div className="mt-auto pt-6 border-t border-border/50 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 shadow-inner">

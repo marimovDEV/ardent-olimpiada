@@ -202,6 +202,22 @@ export const homepageService = {
         const res = await api.get(`/homepage/featured-subjects/`);
         return res.data;
     },
+    // Main Public Pages
+    getPublicOlympiads: async (params?: any) => {
+        const res = await api.get(`/olympiads/upcoming/`, { params });
+        return res.data;
+    },
+    getPublicCourses: async (params?: any) => {
+        const res = await api.get(`/courses/`, {
+            params: { is_active: true, status: 'APPROVED', ...params }
+        });
+        return res.data;
+    },
+    getLeaderboard: async (olympiadId?: number) => {
+        const url = olympiadId ? `/olympiads/${olympiadId}/results/` : `/homepage/winners/`;
+        const res = await api.get(url);
+        return res.data;
+    },
 
     // Admin APIs (Managing data) - Assuming standard CRUD for now
     // Admin APIs (Managing data)

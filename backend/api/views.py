@@ -4387,31 +4387,30 @@ class HomePageViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'])
     def mentors(self, request):
-        """Get mentors for teachers section"""
-        mentors = User.objects.filter(role='TEACHER').order_by('?')[:8]
+        """Get mentors for teachers section (Only approved ones with profiles)"""
+        mentors = User.objects.filter(
+            role='TEACHER', 
+            teacher_profile__verification_status='APPROVED'
+        ).select_related('teacher_profile').order_by('?')[:8]
+        
         data = []
         for m in mentors:
-            # Try to get teacher profile, or use defaults
-            pos = "O'qituvchi"
-            exp = "5 yil"
-            bio = ""
-            soc = {'telegram': '', 'linkedin': ''}
+            tp = getattr(m, 'teacher_profile', None)
             
-            if hasattr(m, 'teacher_profile'):
-                tp = m.teacher_profile
-                pos = tp.specialization or pos
-                exp = f"{tp.experience_years} yil"
-                bio = tp.bio
-                soc = {
-                    'telegram': tp.telegram_username,
-                    'linkedin': tp.linkedin_profile
-                }
+            # Use data from profile if available, otherwise fallbacks
+            pos = tp.specialization if tp and tp.specialization else "O'qituvchi"
+            exp = f"{tp.experience_years} yil" if tp else "5 yil"
+            bio = tp.bio if tp else ""
+            soc = {
+                'telegram': tp.telegram_username if tp else '',
+                'linkedin': tp.linkedin_profile if tp else ''
+            }
 
             data.append({
                 'id': m.id,
                 'name': m.get_full_name() or m.username,
                 'position': pos,
-                'company': "Ardent",
+                'company': "Hogwords Mentor", # Branding updated
                 'experience': exp,
                 'bio_uz': bio,
                 'bio_ru': bio,
