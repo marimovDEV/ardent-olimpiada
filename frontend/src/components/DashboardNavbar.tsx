@@ -102,11 +102,11 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                 {/* Left Side (Desktop: Search) */}
                 <div className="hidden lg:flex items-center gap-6 flex-1">
                     <div className="relative w-80 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary group-focus-within:text-[#22D3EE] transition-all duration-300" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary group-focus-within:text-primary transition-all duration-300" />
                         <input
                             type="text"
                             placeholder={t('dashboard.navbar.search')}
-                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-[#22D3EE]/30 focus:ring-4 focus:ring-[#22D3EE]/10 transition-all outline-none text-sm text-white placeholder:text-[#64748B]"
+                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-white placeholder:text-[#64748B]"
                         />
                     </div>
                 </div>
@@ -121,20 +121,20 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                             onClick={() => setIsProgressModalOpen(true)}
                         >
                             {/* Level Badge */}
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#22D3EE] flex items-center justify-center text-white font-black text-sm shadow-purple group-hover:scale-110 transition-transform duration-500">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#FACC15] to-[#CA8A04] flex items-center justify-center text-[#0B0F1A] font-black text-sm shadow-gold group-hover:scale-110 transition-transform duration-500">
                                 {level}
                             </div>
 
                             {/* Stats */}
                             <div className="flex flex-col gap-0.5">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-[11px] font-black text-[#22D3EE] tracking-widest font-cinzel">{xp} XP</span>
+                                    <span className="text-[11px] font-black text-[#FACC15] tracking-widest font-cinzel">{xp} XP</span>
                                     <div className="w-1 h-1 rounded-full bg-white/20" />
                                     <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
                                 </div>
                                 <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-[#7C3AED] to-[#22D3EE] rounded-full transition-all duration-1000 group-hover:animate-pulse"
+                                        className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] rounded-full transition-all duration-1000 group-hover:animate-pulse"
                                         style={{ width: `${progressPercent}%` }}
                                     />
                                 </div>

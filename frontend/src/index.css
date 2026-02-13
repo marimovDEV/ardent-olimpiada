@@ -14,14 +14,15 @@
     --foreground: 210 40% 98%;
     /* #F8FAFC */
 
-    --primary: 260 83% 60%;
-    /* #7C3AED */
-    --primary-hover: 260 83% 50%;
-    /* #6D28D9 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 48 96% 53%;
+    /* #FACC15 */
+    --primary-hover: 45 93% 47%;
+    /* #EAB308 */
+    --primary-foreground: 225 60% 4%;
+    /* Navy text on Gold */
 
-    --secondary: 187 82% 65%;
-    /* #22D3EE (Cyan Glow) */
+    --secondary: 48 96% 53%;
+    /* Unified Gold accent */
     --secondary-foreground: 225 60% 4%;
 
     /* Achievement / Gold #FACC15 */
@@ -43,7 +44,7 @@
 
     --border: 225 30% 18%;
     --input: 225 30% 18%;
-    --ring: 260 83% 60%;
+    --ring: 48 96% 53%;
 
     --radius: 1.5rem;
 
@@ -54,9 +55,7 @@
     --gradient-dark: linear-gradient(135deg, #0B0F1A 0%, #111827 100%);
 
     /* Shadows & Effects */
-    --shadow-purple: 0 10px 40px -10px rgba(124, 58, 237, 0.5);
-    --shadow-cyan: 0 10px 40px -10px rgba(34, 211, 238, 0.4);
-    --shadow-gold: 0 10px 40px -10px rgba(250, 204, 21, 0.4);
+    --shadow-gold: 0 10px 40px -10px rgba(250, 204, 21, 0.5);
     --shadow-card: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
   }
 
@@ -100,7 +99,7 @@
   }
 
   .btn-primary {
-    @apply bg-primary text-white rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-purple hover:scale-[1.02] active:scale-95;
+    @apply bg-primary text-[#0B0F1A] rounded-xl px-6 py-3 font-semibold transition-all duration-300 shadow-gold hover:scale-[1.02] active:scale-95;
 
     &:hover {
       background-color: hsl(var(--primary-hover));
@@ -108,10 +107,10 @@
   }
 
   .btn-secondary {
-    @apply border border-secondary text-secondary rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-cyan hover:scale-[1.02] active:scale-95;
+    @apply border border-primary text-primary rounded-xl px-6 py-3 font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95;
 
     &:hover {
-      background-color: hsla(var(--secondary), 0.1);
+      background-color: hsla(var(--primary), 0.1);
     }
   }
 

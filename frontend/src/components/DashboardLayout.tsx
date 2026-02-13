@@ -106,7 +106,7 @@ const DashboardLayout = () => {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xl font-black font-cinzel text-white tracking-tighter group-hover:text-primary transition-colors leading-none">HOGWORDS</span>
-                            <span className="text-[10px] font-bold text-[#22D3EE] uppercase tracking-[0.2em] mt-1">Academy</span>
+                            <span className="text-[10px] font-bold text-[#FACC15] uppercase tracking-[0.2em] mt-1">Academy</span>
                         </div>
                     </Link>
                 </div>
@@ -125,7 +125,7 @@ const DashboardLayout = () => {
                             <span className="relative z-10 text-sm tracking-wide">{item.label}</span>
 
                             {isActive(item.path) && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary rounded-r-full shadow-purple shadow-[2px_0_10px_rgba(124,58,237,0.5)]" />
+                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary rounded-r-full shadow-gold shadow-[2px_0_15px_rgba(250,204,21,0.5)]" />
                             )}
                         </Link>
                     ))}

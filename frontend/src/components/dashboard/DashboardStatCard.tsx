@@ -37,7 +37,7 @@ const DashboardStatCard = ({ label, value, icon: Icon, trend, color, delay = 0 }
                     <p className="text-secondary text-[10px] font-black uppercase tracking-widest mb-1 font-cinzel">
                         {label}
                     </p>
-                    <h3 className="text-3xl font-black text-[#7C3AED] tracking-tighter">
+                    <h3 className="text-3xl font-black text-[#FACC15] tracking-tighter">
                         {value}
                     </h3>
                 </div>

@@ -134,18 +134,18 @@ const Dashboard = () => {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="px-5 py-2 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/20 text-[#7C3AED] text-[10px] font-black uppercase tracking-[0.2em] animate-pulse-soft">
+              <div className="px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] animate-pulse-soft">
                 {t('dashboard.hero.welcomeBack', 'Xush kelibsiz!')}
               </div>
               <div className="flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 backdrop-blur-md">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#22D3EE] animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(250,204,21,0.5)]" />
                 <span className="text-[10px] font-bold text-secondary uppercase tracking-widest">{t('dashboard.hero.online', 'Online')}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-tight">
-                {t('dashboard.hero.greeting', 'Salom')}, <span className="bg-gradient-to-r from-[#7C3AED] via-[#22D3EE] to-[#7C3AED] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-xy italic">{data.hero?.user_name || 'Talaba'}!</span>
+                {t('dashboard.hero.greeting', 'Salom')}, <span className="bg-gradient-to-r from-primary via-[#CA8A04] to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-xy italic">{data.hero?.user_name || 'Talaba'}!</span>
               </h1>
               <p className="text-xl text-secondary max-w-xl font-medium leading-relaxed">
                 {t('dashboard.hero.subtitle', 'Sizning bugun uchun 3 ta vazifangiz bor. Olg‘a, yangi cho‘qqilarni zabt etamiz!')}
@@ -174,8 +174,8 @@ const Dashboard = () => {
           {/* Level Badge Premium */}
           <div className="relative group cursor-pointer" onClick={() => setIsProgressModalOpen(true)}>
             <div className="absolute inset-0 bg-primary/30 rounded-full blur-[60px] group-hover:bg-primary/50 transition-all duration-700 opacity-60" />
-            <div className="relative w-40 h-40 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-primary via-secondary to-primary p-1.5 shadow-purple transition-all duration-700 group-hover:scale-110 group-hover:rotate-12">
-              <div className="w-full h-full bg-background rounded-full flex flex-col items-center justify-center border-4 border-background relative overflow-hidden">
+            <div className="relative w-40 h-40 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-[#FACC15] via-[#EAB308] to-[#CA8A04] p-1.5 shadow-gold transition-all duration-700 group-hover:scale-110 group-hover:rotate-12">
+              <div className="w-full h-full bg-[#0B0F1A] rounded-full flex flex-col items-center justify-center border-4 border-[#0B0F1A] relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5" />
                 <span className="text-[11px] font-black text-secondary uppercase tracking-[0.3em] font-cinzel relative z-10 mb-1">{t('common.level', 'Level')}</span>
                 <span className="text-7xl md:text-8xl font-black text-primary leading-none relative z-10 tracking-tighter">{data.level.current}</span>
@@ -203,15 +203,15 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <div className="h-4 bg-white/5 rounded-full overflow-hidden border border-card-border p-[3px] shadow-inner relative">
+          <div className="h-4 bg-white/5 rounded-full overflow-hidden border border-white/10 p-[3px] shadow-inner relative">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${data.level.progress_percent}%` }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-[#7C3AED] via-[#22D3EE] to-[#7C3AED] bg-[length:200%_auto] animate-gradient-xy rounded-full relative group"
+              className="h-full bg-gradient-to-r from-[#FACC15] via-[#EAB308] to-[#CA8A04] bg-[length:200%_auto] animate-gradient-xy rounded-full relative group"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-              <div className="absolute -inset-y-2 right-0 w-8 bg-[#22D3EE]/30 blur-md rounded-full animate-pulse" />
+              <div className="absolute -inset-y-2 right-0 w-8 bg-primary/30 blur-md rounded-full animate-pulse" />
             </motion.div>
           </div>
         </div>

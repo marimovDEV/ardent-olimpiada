@@ -83,8 +83,6 @@ export default {
         'strong': 'var(--shadow-lg)',
         'card': 'var(--shadow-card)',
         'button': 'var(--shadow-button)',
-        'purple': 'var(--shadow-purple)',
-        'cyan': 'var(--shadow-cyan)',
         'gold': 'var(--shadow-gold)',
       },
       keyframes: {
