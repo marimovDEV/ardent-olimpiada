@@ -14,6 +14,33 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 
 import { getLucideIcon } from "@/lib/icon-utils";
+import { memo } from "react";
+
+const ProfessionCard = memo(({ prof, t }: { prof: any; t: any }) => {
+    return (
+        <Link to={`/profession/${prof.id}`} className="block h-full">
+            <div className="group h-full p-4 md:p-6 bg-card rounded-2xl border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex flex-col items-center text-center">
+                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${prof.color} bg-opacity-10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform`}>
+                    <div className={`bg-white/20 p-3 rounded-xl`}>
+                        <prof.icon className={`w-8 h-8 text-white`} />
+                    </div>
+                </div>
+
+                <h3 className="font-bold text-lg mb-1">{prof.name}</h3>
+                <p className="text-sm text-muted-foreground mb-4">{prof.coursesCount} {t('professions.courses_count')}</p>
+
+                <div className="mt-auto w-full">
+                    <div className="text-xs text-muted-foreground mb-3 bg-muted py-1 px-3 rounded-full inline-block">
+                        {t('professions.avg_salary')}: <span className="font-semibold text-foreground">{prof.salary}</span>
+                    </div>
+                    <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-white transition-colors">
+                        {t('professions.view_roadmap')}
+                    </Button>
+                </div>
+            </div>
+        </Link>
+    );
+});
 
 const ProfessionsCarousel = () => {
     const { t, i18n } = useTranslation();
@@ -79,35 +106,7 @@ const ProfessionsCarousel = () => {
                 <CarouselContent className="-ml-4 pb-4">
                     {professions.map((prof, index) => (
                         <CarouselItem key={prof.id} className="pl-4 basis-1/2 md:basis-1/3 lg:basis-1/4">
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.05 }}
-                                className="h-full"
-                            >
-                                <Link to={`/profession/${prof.id}`} className="block h-full">
-                                    <div className="group h-full p-4 md:p-6 bg-card rounded-2xl border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex flex-col items-center text-center">
-                                        <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${prof.color} bg-opacity-10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform`}>
-                                            <div className={`bg-white/20 p-3 rounded-xl`}>
-                                                <prof.icon className={`w-8 h-8 text-white`} />
-                                            </div>
-                                        </div>
-
-                                        <h3 className="font-bold text-lg mb-1">{prof.name}</h3>
-                                        <p className="text-sm text-muted-foreground mb-4">{prof.coursesCount} {t('professions.courses_count')}</p>
-
-                                        <div className="mt-auto w-full">
-                                            <div className="text-xs text-muted-foreground mb-3 bg-muted py-1 px-3 rounded-full inline-block">
-                                                {t('professions.avg_salary')}: <span className="font-semibold text-foreground">{prof.salary}</span>
-                                            </div>
-                                            <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-white transition-colors">
-                                                {t('professions.view_roadmap')}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
+                            <ProfessionCard prof={prof} t={t} />
                         </CarouselItem>
                     ))}
                 </CarouselContent>

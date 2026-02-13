@@ -57,6 +57,136 @@ const CountdownTimer = () => {
   );
 };
 
+import { memo } from "react";
+
+const OlympiadCard = memo(({ olympiad, t }: { olympiad: any; t: any }) => {
+  return (
+    <div
+      className={`group relative bg-card rounded-2xl md:rounded-3xl overflow-hidden shadow-card hover:shadow-strong transition-all duration-300 hover:-translate-y-1 h-full ${olympiad.featured ? 'ring-2 ring-warning' : ''
+        }`}
+    >
+      {/* Featured badge */}
+      {olympiad.featured && (
+        <div className="absolute top-4 right-4 z-10 animate-pulse-soft">
+          <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-warning text-warning-foreground text-xs font-bold shadow-lg shadow-warning/20">
+            <Star className="w-3 h-3 fill-current" />
+            {t('olympiadsSection.featured')}
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="relative h-64 overflow-hidden group">
+        {olympiad.thumbnail ? (
+          <img
+            src={olympiad.thumbnail.startsWith('http') ? olympiad.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${olympiad.thumbnail}`}
+            alt={olympiad.title}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          />
+        ) : (
+          <div className={`absolute inset-0 ${olympiad.featured ? 'gradient-accent' : 'gradient-primary'}`} />
+        )}
+
+        {/* Overlay for better text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+        {/* Header Content */}
+        <div className="relative z-10 p-4 md:p-6 flex flex-col h-full justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-white/80 text-sm font-medium">{olympiad.subject}</span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold uppercase tracking-wider">
+                    {olympiad.level}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <h3 className="text-2xl font-black text-white leading-tight line-clamp-2 drop-shadow-md">
+              {olympiad.title}
+            </h3>
+          </div>
+
+          {/* Countdown for featured olympiad */}
+          {olympiad.featured && (
+            <div className="mt-4 pt-4 border-t border-white/20">
+              <div className="text-white/80 text-xs mb-2 flex items-center gap-1 font-bold">
+                <Timer className="w-3 h-3 text-warning" />
+                {t('olympiadsSection.startIn')}
+              </div>
+              <div className="text-white">
+                <CountdownTimer />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4 md:p-6">
+        {/* Info grid */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="flex items-center gap-2 text-sm text-foreground">
+            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <span>{olympiad.date}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-foreground">
+            <Clock className="w-4 h-4 text-muted-foreground" />
+            <span>{olympiad.time} • {olympiad.duration.split(' ')[0]} {t('common.hours')}</span>
+          </div>
+        </div>
+
+        {/* Participants progress */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between text-sm mb-2">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-muted-foreground" />
+              <span className="text-foreground">{t('olympiadsSection.participants')}</span>
+            </div>
+            <span className="font-bold text-primary">
+              {olympiad.participants}/{olympiad.maxParticipants}
+            </span>
+          </div>
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full gradient-primary rounded-full transition-all duration-500"
+              style={{ width: `${(olympiad.participants / olympiad.maxParticipants) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Price and CTA */}
+        <div className="flex items-center justify-between">
+          <div className="text-left">
+            <span className="text-sm text-muted-foreground">{t('olympiadsSection.price')}</span>
+            <div className="text-xl font-bold text-foreground">
+              {olympiad.price} <span className="text-sm font-normal">{t('olympiadsSection.currency')}</span>
+            </div>
+          </div>
+          {olympiad.is_registered ? (
+            <Link to={`/olympiad/${olympiad.id}${olympiad.is_completed ? '/result' : ''}`}>
+              <Button variant={olympiad.featured ? "hero" : "default"} size="lg" className="w-full md:w-auto">
+                {olympiad.is_completed ? t('olympiadsPage.card.viewResults') : t('olympiadsPage.card.enter')}
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/auth">
+              <Button variant={olympiad.featured ? "hero" : "default"} size="lg" className="w-full md:w-auto">
+                {t('olympiadsSection.join')}
+              </Button>
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
 const OlympiadSection = () => {
   const { t, i18n } = useTranslation();
   const [upcomingOlympiads, setUpcomingOlympiads] = useState<any[]>([]);
@@ -196,130 +326,9 @@ const OlympiadSection = () => {
           className="w-full"
         >
           <CarouselContent className="-ml-6 pb-4">
-            {upcomingOlympiads.map((olympiad, index) => (
+            {upcomingOlympiads.map((olympiad) => (
               <CarouselItem key={olympiad.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
-                <div
-                  className={`group relative bg-card rounded-2xl md:rounded-3xl overflow-hidden shadow-card hover:shadow-strong transition-all duration-300 hover:-translate-y-1 h-full ${olympiad.featured ? 'ring-2 ring-warning' : ''
-                    }`}
-                >
-                  {/* Featured badge */}
-                  {olympiad.featured && (
-                    <div className="absolute top-4 right-4 z-10 animate-pulse-soft">
-                      <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-warning text-warning-foreground text-xs font-bold shadow-lg shadow-warning/20">
-                        <Star className="w-3 h-3 fill-current" />
-                        {t('olympiadsSection.featured')}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Header */}
-                  <div className="relative h-64 overflow-hidden group">
-                    {olympiad.thumbnail ? (
-                      <img
-                        src={olympiad.thumbnail.startsWith('http') ? olympiad.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${olympiad.thumbnail}`}
-                        alt={olympiad.title}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className={`absolute inset-0 ${olympiad.featured ? 'gradient-accent' : 'gradient-primary'}`} />
-                    )}
-
-                    {/* Overlay for better text legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-                    {/* Header Content */}
-                    <div className="relative z-10 p-4 md:p-6 flex flex-col h-full justify-between">
-                      <div>
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                            <Trophy className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <span className="text-white/80 text-sm font-medium">{olympiad.subject}</span>
-                            <div className="flex items-center gap-2">
-                              <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold uppercase tracking-wider">
-                                {olympiad.level}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <h3 className="text-2xl font-black text-white leading-tight line-clamp-2 drop-shadow-md">
-                          {olympiad.title}
-                        </h3>
-                      </div>
-
-                      {/* Countdown for featured olympiad */}
-                      {olympiad.featured && (
-                        <div className="mt-4 pt-4 border-t border-white/20">
-                          <div className="text-white/80 text-xs mb-2 flex items-center gap-1 font-bold">
-                            <Timer className="w-3 h-3 text-warning" />
-                            {t('olympiadsSection.startIn')}
-                          </div>
-                          <div className="text-white">
-                            <CountdownTimer />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4 md:p-6">
-                    {/* Info grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <div className="flex items-center gap-2 text-sm text-foreground">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
-                        <span>{olympiad.date}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-foreground">
-                        <Clock className="w-4 h-4 text-muted-foreground" />
-                        <span>{olympiad.time} • {olympiad.duration.split(' ')[0]} {t('common.hours')}</span>
-                      </div>
-                    </div>
-
-                    {/* Participants progress */}
-                    <div className="mb-6">
-                      <div className="flex items-center justify-between text-sm mb-2">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-foreground">{t('olympiadsSection.participants')}</span>
-                        </div>
-                        <span className="font-bold text-primary">
-                          {olympiad.participants}/{olympiad.maxParticipants}
-                        </span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full gradient-primary rounded-full transition-all duration-500"
-                          style={{ width: `${(olympiad.participants / olympiad.maxParticipants) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Price and CTA */}
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <span className="text-sm text-muted-foreground">{t('olympiadsSection.price')}</span>
-                        <div className="text-xl font-bold text-foreground">
-                          {olympiad.price} <span className="text-sm font-normal">{t('olympiadsSection.currency')}</span>
-                        </div>
-                      </div>
-                      {olympiad.is_registered ? (
-                        <Link to={`/olympiad/${olympiad.id}${olympiad.is_completed ? '/result' : ''}`}>
-                          <Button variant={olympiad.featured ? "hero" : "default"} size="lg" className="w-full md:w-auto">
-                            {olympiad.is_completed ? t('olympiadsPage.card.viewResults') : t('olympiadsPage.card.enter')}
-                          </Button>
-                        </Link>
-                      ) : (
-                        <Link to="/auth">
-                          <Button variant={olympiad.featured ? "hero" : "default"} size="lg" className="w-full md:w-auto">
-                            {t('olympiadsSection.join')}
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                <OlympiadCard olympiad={olympiad} t={t} />
               </CarouselItem>
             ))}
           </CarouselContent>

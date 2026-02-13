@@ -89,7 +89,7 @@ const ReviewsCarousel = () => {
                                                 parent.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
                                             }
                                         }}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
                                     />
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
