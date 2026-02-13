@@ -87,12 +87,8 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
         >
             <div className="h-20 px-4 md:px-8 flex items-center justify-between gap-4">
 
-                {/* Mobile Menu Trigger */}
-                <div className="flex items-center gap-2 lg:hidden">
-                    <Button variant="ghost" size="icon" onClick={onMobileMenuClick}>
-                        <Menu className="w-6 h-6" />
-                    </Button>
-                </div>
+                {/* Mobile Side (Empty or Stats) */}
+                <div className="flex lg:hidden flex-1 shrink-0" />
 
                 {/* Left Side (Desktop: Search or Title) */}
                 <div className="hidden lg:flex items-center gap-4 flex-1">
@@ -112,16 +108,21 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                     {/* Level & XP Widget (Students Only) */}
                     {user.role !== 'TEACHER' && (
                         <div
-                            className="hidden md:flex items-center gap-3 bg-background/50 p-1.5 pr-4 rounded-full border border-border hover:border-primary/20 transition-all cursor-pointer group relative active:scale-95"
+                            className="flex items-center gap-2 md:gap-3 bg-white/5 md:bg-background/50 p-1 md:p-1.5 md:pr-4 rounded-full border border-white/5 md:border-border hover:border-primary/20 transition-all cursor-pointer group relative active:scale-95 shadow-lg md:shadow-none"
                             onClick={() => setIsProgressModalOpen(true)}
                         >
                             {/* Level Badge */}
-                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black text-sm shadow-gold">
+                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black text-xs md:text-sm shadow-gold">
                                 {level}
                             </div>
 
+                            {/* Mobile XP Text */}
+                            <span className="text-[10px] font-black text-primary md:hidden pr-1 font-cinzel">
+                                {xp} XP
+                            </span>
+
                             {/* XP Bar */}
-                            <div className="flex flex-col gap-0.5 min-w-[100px]">
+                            <div className="hidden sm:flex flex-col gap-0.5 min-w-[100px]">
                                 <div className="flex justify-between items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">
                                     <span>{xp} XP</span>
                                     <span className="text-primary/70">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>

@@ -19,6 +19,7 @@ import {
 import SupportWidget from '@/components/support/SupportWidget';
 import DashboardNavbar from "./DashboardNavbar";
 import TelegramBotBanner from "./dashboard/TelegramBotBanner";
+import MobileBottomNav from "./dashboard/MobileBottomNav";
 import { useTranslation } from "react-i18next";
 
 const DashboardLayout = () => {
@@ -160,11 +161,14 @@ const DashboardLayout = () => {
                 <TelegramBotBanner />
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-y-auto w-full relative">
+                <main className="flex-1 overflow-y-auto w-full relative pb-24 lg:pb-0">
                     <Outlet />
                     {/* Floating Support Widget */}
                     <SupportWidget />
                 </main>
+
+                {/* Mobile Bottom Navigation */}
+                <MobileBottomNav />
             </div>
         </div>
     );
