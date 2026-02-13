@@ -251,7 +251,7 @@ const CurriculumManager = ({ courseId, modules }: { courseId: string, modules: a
                                             </div>
                                             <span className="text-sm font-medium">{lesson.title}</span>
                                             <div className="flex items-center gap-1 ml-4">
-                                                {lesson.video_url && <Video className="w-3.5 h-3.5 text-blue-500" />}
+                                                {lesson.video_url && <Video className="w-3.5 h-3.5 text-primary" />}
                                                 {lesson.pdf_url && <FileText className="w-3.5 h-3.5 text-red-500" />}
                                                 {lesson.practice && <Target className="w-3.5 h-3.5 text-orange-500" />}
                                                 {lesson.test && <Award className="w-3.5 h-3.5 text-green-500" />}
@@ -438,8 +438,8 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                         </TabsContent>
 
                         <TabsContent value="extra" className="space-y-6 pt-2">
-                            <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-xl space-y-3">
-                                <h4 className="font-bold flex items-center gap-2 text-orange-600">
+                            <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl space-y-3">
+                                <h4 className="font-bold flex items-center gap-2 text-primary">
                                     <Target className="w-4 h-4" /> Amaliy topshiriq
                                 </h4>
                                 <p className="text-xs text-muted-foreground">O'quvchi dars oxirida bajarishi kerak bo'lgan matnli topshiriq.</p>
@@ -459,8 +459,8 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                                 </Button>
                             </div>
 
-                            <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-xl space-y-3">
-                                <h4 className="font-bold flex items-center gap-2 text-green-600">
+                            <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl space-y-3">
+                                <h4 className="font-bold flex items-center gap-2 text-primary">
                                     <Award className="w-4 h-4" /> Yakuniy test
                                 </h4>
                                 <p className="text-xs text-muted-foreground">Bir nechta variantli savollardan iborat mini-test.</p>

@@ -100,10 +100,10 @@ const MyCertificatesPage = () => {
 
     const getTypeColor = (type: string) => {
         switch (type) {
-            case 'COURSE': return 'bg-blue-500';
-            case 'OLYMPIAD': return 'bg-amber-500';
-            case 'DIPLOMA': return 'bg-purple-500';
-            default: return 'bg-gray-500';
+            case 'COURSE': return 'bg-primary';
+            case 'OLYMPIAD': return 'bg-primary';
+            case 'DIPLOMA': return 'bg-primary';
+            default: return 'bg-primary';
         }
     };
 
@@ -153,7 +153,7 @@ const MyCertificatesPage = () => {
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
         );
     }
@@ -194,7 +194,7 @@ const MyCertificatesPage = () => {
                 </Card>
                 <Card>
                     <CardContent className="p-5 flex items-center gap-4">
-                        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
+                        <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                             <Award className="w-6 h-6" />
                         </div>
                         <div>
@@ -222,7 +222,7 @@ const MyCertificatesPage = () => {
                                 </Button>
                             </Link>
                             <Link to="/olympiads">
-                                <Button className="bg-purple-600 hover:bg-purple-700">
+                                <Button className="bg-primary hover:bg-primary/90 text-background font-bold">
                                     <Trophy className="w-4 h-4 mr-2" />
                                     Olimpiadalar
                                 </Button>
@@ -238,7 +238,7 @@ const MyCertificatesPage = () => {
                             <CardHeader className="pb-2">
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className={`w-12 h-12 ${getTypeColor(cert.cert_type)} rounded-xl flex items-center justify-center text-white`}>
+                                        <div className={`w-12 h-12 ${getTypeColor(cert.cert_type)} rounded-xl flex items-center justify-center text-background font-bold`}>
                                             {getTypeIcon(cert.cert_type)}
                                         </div>
                                         <div>

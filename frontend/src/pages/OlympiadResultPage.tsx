@@ -221,11 +221,11 @@ const OlympiadResultPage = () => {
 
                 {/* Certificate Section if Passed */}
                 {isPassed && !isDisqualified && olympiad?.status === 'PUBLISHED' && (
-                    <Card className="p-6 bg-gradient-to-r from-purple-600/10 to-blue-600/10 border-2 border-purple-500/20 rounded-3xl overflow-hidden relative group">
+                    <Card className="p-6 bg-primary/5 border-2 border-primary/20 rounded-3xl overflow-hidden relative group">
                         <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
                             <div className="flex items-center gap-4">
                                 <div className="p-4 bg-white dark:bg-slate-900 rounded-2xl shadow-lg group-hover:rotate-3 transition-transform">
-                                    <Award className="w-12 h-12 text-purple-600" />
+                                    <Award className="w-12 h-12 text-primary" />
                                 </div>
                                 <div className="text-center md:text-left">
                                     <h3 className="text-xl font-black">{t('olympiadResult.hasCertificate')}</h3>
@@ -234,7 +234,7 @@ const OlympiadResultPage = () => {
                             </div>
                             <Button
                                 onClick={handleDownloadCertificate}
-                                className="h-12 px-8 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg shadow-purple-600/20"
+                                className="h-12 px-8 bg-primary hover:bg-primary/90 text-background font-bold rounded-xl shadow-lg shadow-gold/20"
                             >
                                 <Download className="w-5 h-5 mr-2" />
                                 {t('olympiadResult.downloadCert')}
@@ -341,7 +341,7 @@ const OlympiadResultPage = () => {
                 {/* Secondary Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <Card className="p-4 flex flex-col items-center justify-center space-y-1 text-center bg-card/50">
-                        <Clock className="w-5 h-5 text-blue-500 mb-1" />
+                        <Clock className="w-5 h-5 text-primary mb-1" />
                         <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('olympiadResult.time')}</span>
                         <span className="text-sm font-black tabular-nums uppercase">{formatTime(result.my_result?.time_taken)}</span>
                     </Card>
@@ -353,7 +353,7 @@ const OlympiadResultPage = () => {
                     </Card>
 
                     <Card className="p-4 flex flex-col items-center justify-center space-y-1 text-center bg-card/50">
-                        <LayoutDashboard className="w-5 h-5 text-purple-500 mb-1" />
+                        <LayoutDashboard className="w-5 h-5 text-primary/60 mb-1" />
                         <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('common.id', 'ID')}</span>
                         <span className="text-sm font-black tabular-nums opacity-50">#{result.my_result?.id}</span>
                     </Card>

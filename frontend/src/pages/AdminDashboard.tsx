@@ -113,12 +113,12 @@ const AdminDashboard = () => {
     const alerts = [
         { label: t('admin.pendingCourses'), value: data?.alerts?.pending_courses || 0, icon: BookOpen, color: "text-yellow-600", bg: "bg-yellow-100", link: "/admin/courses" },
         { label: t('admin.openTickets'), value: data?.alerts?.open_tickets || 0, icon: Megaphone, color: "text-red-600", bg: "bg-red-100", link: "/admin/support" },
-        { label: t('admin.pendingCertificates'), value: data?.alerts?.pending_certificates || 0, icon: Award, color: "text-blue-600", bg: "bg-blue-100", link: "/admin/certificates" },
+        { label: t('admin.pendingCertificates'), value: data?.alerts?.pending_certificates || 0, icon: Award, color: "text-primary", bg: "bg-primary/10", link: "/admin/certificates" },
     ];
 
     const getActivityIcon = (iconName: string) => {
         switch (iconName) {
-            case 'UserPlus': return <UserPlus className="w-4 h-4 text-blue-500" />;
+            case 'UserPlus': return <UserPlus className="w-4 h-4 text-primary" />;
             case 'CreditCard': return <CreditCard className="w-4 h-4 text-emerald-500" />;
             case 'Trophy': return <Trophy className="w-4 h-4 text-orange-500" />;
             default: return <Bell className="w-4 h-4 text-gray-500" />;
@@ -255,9 +255,10 @@ const AdminDashboard = () => {
                         <Card className="border-border shadow-sm">
                             <CardHeader className="pb-2">
                                 <CardTitle className="text-sm font-black tracking-tight flex items-center gap-2 uppercase">
-                                    <Users className="w-4 h-4 text-blue-500" />
+                                    <Users className="w-4 h-4 text-primary" />
                                     {t('admin.dashboard.userGrowth')}
                                 </CardTitle>
+                                drum
                             </CardHeader>
                             <CardContent className="pl-0">
                                 <div className="h-[250px] w-full">

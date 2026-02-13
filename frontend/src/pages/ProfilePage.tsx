@@ -137,9 +137,9 @@ const GRADES = [
 const getSubjectTheme = (subject: any) => {
     switch (String(subject || "").toLowerCase()) {
         case 'matematika': return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
-        case 'fizika': return { bg: 'from-violet-500 to-purple-700', text: 'text-violet-600', light: 'bg-violet-50 dark:bg-violet-900/20' };
-        case 'informatika': return { bg: 'from-secondary/20 to-secondary/40', text: 'text-secondary', light: 'bg-secondary/5' };
-        default: return { bg: 'from-primary/20 to-secondary/20', text: 'text-primary', light: 'bg-primary/5' };
+        case 'fizika': return { bg: 'from-primary/30 to-primary/50', text: 'text-primary', light: 'bg-primary/10' };
+        case 'informatika': return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
+        default: return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
     }
 };
 
@@ -178,7 +178,7 @@ const MyCoursesTab = () => {
                     {t('dashboard.profile.empty.coursesDesc')}
                 </p>
                 <Link to="/courses">
-                    <Button>{t('dashboard.profile.empty.viewCourses')}</Button>
+                    <Button className="bg-primary text-background hover:bg-primary/90 rounded-xl font-bold px-8 h-12 shadow-gold">{t('dashboard.profile.empty.viewCourses')}</Button>
                 </Link>
             </div>
         );
@@ -194,7 +194,7 @@ const MyCoursesTab = () => {
                     <Link
                         key={course.id}
                         to={`/course/${course.id}`}
-                        className="group bg-card rounded-2xl border border-border hover:border-primary/50 shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
+                        className="group bg-[#111827] rounded-2xl border border-white/5 hover:border-primary/50 shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
                     >
                         {/* Thumbnail */}
                         <div className="h-40 relative overflow-hidden bg-muted">
@@ -234,7 +234,7 @@ const MyCoursesTab = () => {
                                 </div>
                                 <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
                                     <div
-                                        className={'h-full rounded-full bg-gradient-to-r from-primary to-secondary'}
+                                        className={'h-full rounded-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04]'}
                                         style={{ width: `${enrollment.progress || 0}%` }}
                                     ></div>
                                 </div>
@@ -348,21 +348,21 @@ const MyOlympiadsTab = () => {
 
                                 <div className="flex flex-wrap items-center gap-4 sm:gap-6">
                                     <div className="text-center">
-                                        <div className="text-2xl font-black text-blue-600">{res.score}%</div>
+                                        <div className="text-2xl font-black text-primary">{res.score}%</div>
                                         <div className="text-xs text-muted-foreground">{t('dashboard.profile.olympiads.result')}</div>
                                     </div>
-                                    <div className="text-center px-4 border-l border-border">
-                                        <div className="text-lg font-bold text-green-600">{res.correct_answers} / {res.total_questions}</div>
+                                    <div className="text-center px-4 border-l border-white/10">
+                                        <div className="text-lg font-bold text-green-500">{res.correct_answers} / {res.total_questions}</div>
                                         <div className="text-xs text-muted-foreground">{t('dashboard.profile.olympiads.correct')}</div>
                                     </div>
                                     <div className="flex flex-col sm:flex-row gap-2 ml-auto">
-                                        <Button variant="outline" size="sm" asChild>
+                                        <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10" asChild>
                                             <Link to={`/olympiad/${res.olympiad.id}/result`}>
                                                 <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
                                                 {t('dashboard.profile.olympiads.viewResult')}
                                             </Link>
                                         </Button>
-                                        <Button variant="ghost" size="sm" className="text-muted-foreground" asChild>
+                                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/5" asChild>
                                             <Link to={`/olympiad/${res.olympiad.id}/results`}>
                                                 <Trophy className="w-4 h-4 mr-2 text-yellow-500" />
                                                 {t('dashboard.profile.olympiads.analysis')}
@@ -434,8 +434,8 @@ const PaymentsTab = () => {
                                 <TableCell className="font-medium">
                                     <div className="flex items-center gap-2">
                                         {trx.description?.toLowerCase().includes('kurs') ?
-                                            <BookOpen className="w-4 h-4 text-blue-500" /> :
-                                            <Trophy className="w-4 h-4 text-purple-500" />
+                                            <BookOpen className="w-4 h-4 text-primary" /> :
+                                            <Trophy className="w-4 h-4 text-primary" />
                                         }
                                         {trx.description}
                                     </div>
@@ -590,7 +590,7 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="bg-green-500 hover:bg-green-600 text-white font-bold gap-2 shadow-lg hover:shadow-green-500/20 transition-all">
+                <Button className="bg-primary hover:bg-primary/90 text-background font-bold gap-2 shadow-lg shadow-gold/20 transition-all rounded-xl h-11">
                     <CreditCard className="w-4 h-4" />
                     Hisobni to'ldirish
                 </Button>
@@ -637,7 +637,7 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleTopUp} disabled={loading} className="w-full">
+                    <Button onClick={handleTopUp} disabled={loading} className="w-full bg-primary text-background hover:bg-primary/90 rounded-xl font-bold h-12 shadow-gold/20">
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         To'lashga o'tish
                     </Button>
@@ -872,73 +872,73 @@ const ProfilePage = () => {
 
 
             {/* Profile Header Card */}
-            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-6 md:p-10 text-white mb-8 relative overflow-hidden shadow-xl">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
+            <div className="bg-[#111827] rounded-3xl p-6 md:p-10 text-white mb-8 relative overflow-hidden shadow-2xl border border-white/5 ring-1 ring-white/5">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-10">
                     {/* Avatar - Larger on mobile */}
                     <div className="relative group">
                         {displayAvatar ? (
-                            <img src={displayAvatar} alt={fullName} className="w-40 h-40 md:w-48 md:h-48 rounded-3xl object-cover border-4 border-white/20 shadow-2xl" />
+                            <img src={displayAvatar} alt={fullName} className="w-40 h-40 md:w-48 md:h-48 rounded-3xl object-cover border-4 border-primary/20 shadow-2xl" />
                         ) : (
-                            <div className="w-40 h-40 md:w-48 md:h-48 rounded-3xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-6xl md:text-7xl font-bold border-4 border-white/20 shadow-2xl">
+                            <div className="w-40 h-40 md:w-48 md:h-48 rounded-3xl bg-gradient-to-br from-[#FACC15] to-[#CA8A04] flex items-center justify-center text-6xl md:text-7xl font-bold border-4 border-white/10 shadow-2xl">
                                 {initials}
                             </div>
                         )}
                         {isEditing && (
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="absolute -bottom-2 -right-2 w-12 h-12 bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer"
+                                className="absolute -bottom-2 -right-2 w-12 h-12 bg-primary text-background rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer border-4 border-[#111827]"
                             >
-                                <Camera className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                                <Camera className="w-6 h-6" />
                             </button>
                         )}
                     </div>
 
                     {/* Info */}
                     <div className="text-center md:text-left flex-1 w-full">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-2">{fullName}</h1>
-                        <p className="text-lg text-blue-100 mb-8 font-medium">@{user.username}</p>
+                        <h1 className="text-4xl md:text-5xl font-black mb-2 font-cinzel text-primary tracking-tight">{fullName}</h1>
+                        <p className="text-lg text-white/60 mb-8 font-medium">@{user.username}</p>
 
                         {/* Gamification Stats - More spacing */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full mb-8">
-                            <div className="flex items-center gap-5 bg-white/10 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/15 transition-colors">
-                                <div className="w-16 h-16 rounded-xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Star className="w-8 h-8 text-yellow-400 fill-yellow-400" />
+                            <div className="flex items-center gap-5 bg-white/5 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/10 transition-colors border border-white/5">
+                                <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                    <Star className="w-8 h-8 text-primary shadow-gold" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-bold whitespace-nowrap">{user.level || 1}</p>
-                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mt-1">{t('dashboard.profile.level')}</p>
+                                    <p className="text-3xl font-black text-white whitespace-nowrap">{user.level || 1}</p>
+                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.level')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-5 bg-white/10 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/15 transition-colors">
-                                <div className="w-16 h-16 rounded-xl bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Zap className="w-8 h-8 text-green-400 fill-green-400" />
+                            <div className="flex items-center gap-5 bg-white/5 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/10 transition-colors border border-white/5">
+                                <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                    <Zap className="w-8 h-8 text-primary shadow-gold" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-bold whitespace-nowrap">{user.xp || 0}</p>
-                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mt-1">{t('dashboard.profile.xp')}</p>
+                                    <p className="text-3xl font-black text-white whitespace-nowrap">{user.xp || 0}</p>
+                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.xp')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-5 bg-white/10 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/15 transition-colors">
-                                <div className="w-16 h-16 rounded-xl bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                                    <Trophy className="w-8 h-8 text-purple-400 fill-purple-400" />
+                            <div className="flex items-center gap-5 bg-white/5 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/10 transition-colors border border-white/5">
+                                <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                    <Trophy className="w-8 h-8 text-primary shadow-gold" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-bold whitespace-nowrap">0</p>
-                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mt-1">{t('dashboard.profile.achievements')}</p>
+                                    <p className="text-3xl font-black text-white whitespace-nowrap">0</p>
+                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.achievements')}</p>
                                 </div>
                             </div>
                         </div>
 
                         {/* Financial Section - Improved */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-white/5 p-5 rounded-2xl border border-white/10">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-white/5 p-5 rounded-2xl border border-white/5">
                             <div className="flex items-center gap-4 flex-1 min-w-0">
-                                <div className="w-14 h-14 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                                    <CreditCard className="w-7 h-7 text-blue-300" />
+                                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                    <CreditCard className="w-7 h-7 text-primary" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm text-blue-100 uppercase font-semibold tracking-wide mb-1">{t('dashboard.profile.balance')}</p>
-                                    <p className="text-3xl font-bold whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} UZS</p>
+                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mb-1 font-cinzel">{t('dashboard.profile.balance')}</p>
+                                    <p className="text-3xl font-black text-white whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} <span className="text-primary/70 text-lg">UZS</span></p>
                                 </div>
                             </div>
                             <div className="flex-shrink-0">
@@ -951,31 +951,30 @@ const ProfilePage = () => {
                             className="mt-8 w-full max-w-lg cursor-pointer group/xp transition-all hover:scale-[1.02] active:scale-[0.98]"
                             onClick={() => setIsProgressModalOpen(true)}
                         >
-                            <div className="flex justify-between text-sm font-bold text-blue-100 mb-3 uppercase tracking-wide group-hover/xp:text-white transition-colors">
+                            <div className="flex justify-between text-xs font-black text-white/50 mb-3 uppercase tracking-widest group-hover/xp:text-primary transition-colors font-cinzel">
                                 <span>{t('dashboard.widgets.xpLeft', { xp: user.level_progress?.xp_left || 0 })}</span>
                                 <span>{user.level_progress?.progress_percent || 0}%</span>
                             </div>
-                            <div className="h-4 w-full bg-white/10 rounded-full overflow-hidden backdrop-blur-sm border border-white/5 ring-1 ring-white/0 group-hover/xp:ring-white/20 transition-all">
+                            <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden backdrop-blur-sm border border-white/10 ring-1 ring-white/0 group-hover/xp:ring-primary/20 transition-all">
                                 <div
-                                    className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(251,191,36,0.5)]"
+                                    className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(250,204,21,0.5)]"
                                     style={{ width: `${user.level_progress?.progress_percent || 0}%` }}
                                 ></div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Edit Actions */}
                     <div className="self-start">
                         {!isEditing ? (
-                            <Button onClick={() => setIsEditing(true)} size="lg" className="gap-2 bg-white hover:bg-white/90 text-blue-600 border-0 backdrop-blur-md shadow-lg hover:shadow-xl transition-all font-semibold px-6 py-6 text-base min-h-[48px]">
+                            <Button onClick={() => setIsEditing(true)} size="lg" className="gap-2 bg-primary hover:bg-primary/90 text-background border-0 shadow-lg shadow-gold/20 transition-all font-bold px-8 h-12 rounded-xl">
                                 <Edit3 className="w-5 h-5" /> {t('dashboard.profile.edit')}
                             </Button>
                         ) : (
                             <div className="flex gap-3">
-                                <Button onClick={handleCancel} variant="ghost" size="lg" className="text-white hover:bg-white/20 px-5 py-6 min-h-[48px]">
+                                <Button onClick={handleCancel} variant="outline" size="lg" className="text-white border-white/20 hover:bg-white/10 px-8 h-12 rounded-xl">
                                     <X className="w-5 h-5 mr-2" /> {t('dashboard.profile.cancel')}
                                 </Button>
-                                <Button onClick={handleSave} disabled={isLoading || usernameStatus === 'taken'} size="lg" className="bg-green-500 hover:bg-green-600 border-0 px-6 py-6 font-semibold shadow-lg min-h-[48px]">
+                                <Button onClick={handleSave} disabled={isLoading || usernameStatus === 'taken'} size="lg" className="bg-primary text-background hover:bg-primary/90 border-0 px-8 h-12 font-bold shadow-lg shadow-gold/20 rounded-xl">
                                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
                                     {t('dashboard.profile.save')}
                                 </Button>
@@ -998,9 +997,9 @@ const ProfilePage = () => {
                 <TabsContent value="profile" className="space-y-6 focus-visible:outline-none">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Account Info */}
-                        <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+                        <div className="bg-[#111827] rounded-2xl p-6 shadow-sm border border-white/5">
                             <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                <AtSign className="w-5 h-5 text-purple-600" /> {t('dashboard.profile.info.account')}
+                                <AtSign className="w-5 h-5 text-primary" /> {t('dashboard.profile.info.account')}
                             </h2>
                             <div className="space-y-4">
                                 <div>
@@ -1033,7 +1032,7 @@ const ProfilePage = () => {
                                 <div>
                                     <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.role')}</label>
                                     <div className="flex">
-                                        <span className={`px-4 py-2 rounded-xl text-sm font-bold ${user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
+                                        <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest font-cinzel ${user.role === 'ADMIN' ? 'bg-primary/20 text-primary border border-primary/20' : 'bg-primary/10 text-primary/80 border border-primary/10'}`}>
                                             {user.role === 'ADMIN' ? t('dashboard.profile.info.admin') : t('dashboard.profile.info.student')}
                                         </span>
                                     </div>
@@ -1042,9 +1041,9 @@ const ProfilePage = () => {
                         </div>
 
                         {/* Personal Info */}
-                        <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+                        <div className="bg-[#111827] rounded-2xl p-6 shadow-sm border border-white/5">
                             <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                <User className="w-5 h-5 text-blue-600" /> {t('dashboard.profile.info.personal')}
+                                <User className="w-5 h-5 text-primary" /> {t('dashboard.profile.info.personal')}
                             </h2>
                             <div className="space-y-4">
                                 <div className="grid grid-cols-2 gap-3">
@@ -1085,9 +1084,9 @@ const ProfilePage = () => {
                         </div>
 
                         {/* Education */}
-                        <div className="bg-card rounded-2xl p-6 shadow-sm border border-border md:col-span-2">
+                        <div className="bg-[#111827] rounded-2xl p-6 shadow-sm border border-white/5 md:col-span-2">
                             <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                <School className="w-5 h-5 text-orange-500" /> {t('dashboard.profile.info.education')}
+                                <School className="w-5 h-5 text-primary" /> {t('dashboard.profile.info.education')}
                             </h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>

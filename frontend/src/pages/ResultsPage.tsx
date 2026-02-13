@@ -128,10 +128,10 @@ const ResultsPage = () => {
                 <>
                     {/* Top Stats */}
                     <div className="grid grid-cols-3 gap-4 mb-8">
-                        <div className="bg-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-900/20">
+                        <div className="bg-primary rounded-2xl p-6 text-background shadow-lg shadow-gold/20">
                             <div className="flex justify-between items-start mb-2">
-                                <span className="text-blue-200 font-bold text-xs uppercase">{t('resultsPage.avgScore')}</span>
-                                <BarChart3 className="w-5 h-5 text-blue-200" />
+                                <span className="text-background/70 font-bold text-xs uppercase">{t('resultsPage.avgScore')}</span>
+                                <BarChart3 className="w-5 h-5 text-background/70" />
                             </div>
                             <span className="text-3xl font-black">{avgScore}%</span>
                         </div>
@@ -142,10 +142,10 @@ const ResultsPage = () => {
                             </div>
                             <span className="text-3xl font-black">{bestResult}%</span>
                         </div>
-                        <div className="bg-indigo-500 rounded-2xl p-6 text-white shadow-lg shadow-indigo-900/20">
+                        <div className="bg-primary/20 backdrop-blur-sm border border-primary/20 rounded-2xl p-6 text-foreground shadow-sm">
                             <div className="flex justify-between items-start mb-2">
-                                <span className="text-indigo-200 font-bold text-xs uppercase">{t('resultsPage.attempts')}</span>
-                                <CheckCircle2 className="w-5 h-5 text-indigo-200" />
+                                <span className="text-muted-foreground font-bold text-xs uppercase">{t('resultsPage.attempts')}</span>
+                                <CheckCircle2 className="w-5 h-5 text-primary" />
                             </div>
                             <span className="text-3xl font-black">{totalTests}</span>
                         </div>
@@ -159,7 +159,7 @@ const ResultsPage = () => {
                                 {/* Header Row */}
                                 <div className="flex flex-col md:flex-row gap-6 justify-between items-start">
                                     <div className="flex gap-4">
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner ${item.score >= 80 ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' : item.score >= 60 ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400'}`}>
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner ${item.score >= 80 ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' : item.score >= 60 ? 'bg-primary/20 text-primary' : 'bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400'}`}>
                                             {Math.round(item.score)}%
                                         </div>
                                         <div>
@@ -183,7 +183,7 @@ const ResultsPage = () => {
                                         <div className="w-px h-6 bg-border"></div>
                                         <div className="flex flex-col items-center px-2">
                                             <span className="text-[10px] text-muted-foreground font-bold uppercase">{t('resultsPage.ratingImpact')}</span>
-                                            <span className={`font-bold flex items-center gap-0.5 text-blue-600`}>
+                                            <span className={`font-bold flex items-center gap-0.5 text-primary`}>
                                                 +{item.ratingImpact}
                                             </span>
                                         </div>

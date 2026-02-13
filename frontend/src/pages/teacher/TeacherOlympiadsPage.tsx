@@ -76,7 +76,7 @@ const TeacherOlympiadsPage = () => {
                                         <TableRow key={oly.id}>
                                             <TableCell className="font-medium">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
+                                                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
                                                         <Trophy className="w-5 h-5" />
                                                     </div>
                                                     {oly.title}
@@ -91,7 +91,7 @@ const TeacherOlympiadsPage = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase ${oly.status === 'ONGOING' ? 'bg-green-100 text-green-700' :
-                                                    oly.status === 'UPCOMING' ? 'bg-blue-100 text-blue-700' :
+                                                    oly.status === 'UPCOMING' ? 'bg-primary/10 text-primary/80 border border-primary/10' :
                                                         oly.status === 'CHECKING' ? 'bg-yellow-100 text-yellow-700' :
                                                             oly.status === 'PUBLISHED' ? 'bg-primary/10 text-primary' :
                                                                 'bg-gray-100 text-gray-700'
@@ -107,8 +107,8 @@ const TeacherOlympiadsPage = () => {
                                                             {t('teacherOlympiads.table.results')}
                                                         </Link>
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                        <Edit className="w-4 h-4 text-blue-500" />
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary">
+                                                        <Edit className="w-4 h-4 text-primary" />
                                                     </Button>
                                                 </div>
                                             </TableCell>

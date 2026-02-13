@@ -79,9 +79,9 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
     ];
 
     const earningTips = [
-        { icon: BookOpen, title: "Darsni tugatish", xp: "+10 XP", color: "text-blue-500", bg: "bg-blue-500/10" },
+        { icon: BookOpen, title: "Darsni tugatish", xp: "+10 XP", color: "text-primary", bg: "bg-primary/10" },
         { icon: Target, title: "Testdan o'tish", xp: "+20 XP", color: "text-green-500", bg: "bg-green-500/10" },
-        { icon: Trophy, title: "Olimpiada ishtiroki", xp: "+50 XP", color: "text-purple-500", bg: "bg-purple-500/10" },
+        { icon: Trophy, title: "Olimpiada ishtiroki", xp: "+50 XP", color: "text-primary", bg: "bg-primary/20" },
         { icon: Flame, title: "Kunlik streak", xp: "+10 XP", color: "text-orange-500", bg: "bg-orange-500/10" },
     ];
 
@@ -90,7 +90,7 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
             <DialogContent className="max-w-2xl p-0 overflow-hidden bg-card border-none shadow-2xl rounded-[32px]">
                 <div className="relative">
                     {/* Background Header Decoration */}
-                    <div className="absolute top-0 inset-x-0 h-48 bg-gradient-to-br from-blue-600 to-purple-700 opacity-10 blur-3xl -z-10" />
+                    <div className="absolute top-0 inset-x-0 h-48 bg-primary/10 opacity-20 blur-3xl -z-10" />
 
                     <div className="p-8">
                         <DialogHeader className="mb-6">
@@ -137,7 +137,7 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
                                         initial={{ width: 0 }}
                                         animate={{ width: `${progress.progress_percent}%` }}
                                         transition={{ duration: 1.5, ease: "easeOut" }}
-                                        className="h-full bg-gradient-to-r from-blue-600 via-primary to-purple-600 rounded-full shadow-[0_0_20px_rgba(59,130,246,0.5)]"
+                                        className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] rounded-full shadow-gold"
                                     />
                                 </div>
 
@@ -199,10 +199,10 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
                                                         : "bg-transparent border-border/50 opacity-50"
                                                     }`}>
                                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 z-10 ${item.level === progress.current
-                                                        ? "bg-primary text-white"
+                                                        ? "bg-primary text-background"
                                                         : item.reached
-                                                            ? "bg-green-500 text-white"
-                                                            : "bg-muted text-muted-foreground"
+                                                            ? "bg-green-500/20 text-green-500"
+                                                            : "bg-white/5 text-white/20 border border-white/5"
                                                         }`}>
                                                         {item.reached ? <Check className="w-4 h-4" /> : <span className="text-[10px] font-bold">{item.level}</span>}
                                                     </div>
@@ -210,7 +210,7 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
                                                         <div className="flex items-center justify-between">
                                                             <p className="text-sm font-bold text-foreground">{item.name}</p>
                                                             {item.level === progress.current && (
-                                                                <span className="text-[10px] font-black bg-primary text-white px-2 py-0.5 rounded-full uppercase">{t('common.youAreHere', "Siz shu yerdasiz")}</span>
+                                                                <span className="text-[10px] font-black bg-primary text-background px-2 py-0.5 rounded-full uppercase font-cinzel tracking-wider">{t('common.youAreHere', "Siz shu yerdasiz")}</span>
                                                             )}
                                                         </div>
                                                         <p className="text-[10px] font-medium text-muted-foreground">{t('common.reward', "Mukofot")}: {item.reward}</p>
