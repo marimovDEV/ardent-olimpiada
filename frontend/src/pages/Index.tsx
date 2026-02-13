@@ -17,6 +17,7 @@ const ReviewsCarousel = lazy(() => import("@/components/home/ReviewsCarousel"));
 const FreeCoursesSection = lazy(() => import("@/components/home/FreeCoursesSection"));
 const TeachersSection = lazy(() => import("@/components/home/TeachersSection"));
 const LeadForm = lazy(() => import("@/components/home/LeadForm"));
+const SubjectsSection = lazy(() => import("@/components/SubjectsSection"));
 
 import { homepageService, HomePageConfig } from "@/services/homepageService";
 import { useEffect, useState } from "react";
@@ -47,6 +48,10 @@ const Index = () => {
         <HeroSection />
 
         {(!config || config.show_stats) && <StatsBlock />}
+
+        <Suspense fallback={<SectionSkeleton />}>
+          <SubjectsSection />
+        </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
           {/* Conditionally Render Sections */}

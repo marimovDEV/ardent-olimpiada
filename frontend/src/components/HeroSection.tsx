@@ -47,7 +47,7 @@ const HeroSection = () => {
   const title = t('hero.title1', { defaultValue: hero ? ((hero as any)[`title_${lang}`] || hero.hero_title) : '' });
   const subtitle = t('hero.subtitle', { defaultValue: hero ? ((hero as any)[`subtitle_${lang}`] || hero.hero_subtitle) : '' });
   const btnText = t('hero.cta_primary', { defaultValue: hero ? ((hero as any)[`button_text_${lang}`] || hero.hero_button_text) : '' });
-  const btnLink = hero ? hero.hero_button_link || hero.button_link : "/olympiads";
+  const btnLink = hero ? hero.hero_button_link || hero.button_link : "/all-olympiads";
 
   // Render Banner Slider if banners exist
   if (banners.length > 0) {
@@ -166,7 +166,7 @@ const HeroSection = () => {
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-full border-2 hover:bg-muted/50 transition-all" asChild>
-              <Link to="/courses">
+              <Link to="/all-courses">
                 {t('hero.cta_secondary')}
               </Link>
             </Button>

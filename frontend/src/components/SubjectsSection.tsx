@@ -80,7 +80,7 @@ const SubjectsSection = () => {
         {/* Subjects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
           {displaySubjects.map((subject, index) => (
-            <Link to={`/courses?subject=${subject.id}`} key={subject.id || index}>
+            <Link to={`/all-courses?subject=${subject.id}`} key={subject.id || index}>
               <div
                 className="group bg-card rounded-2xl md:rounded-3xl border border-border p-4 md:p-8 hover:shadow-2xl hover:shadow-blue-100/50 dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300 relative overflow-hidden h-full flex flex-col items-start"
               >
