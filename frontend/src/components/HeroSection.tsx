@@ -52,7 +52,7 @@ const HeroSection = () => {
   // Render Banner Slider if banners exist
   if (banners.length > 0) {
     return (
-      <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden bg-background">
+      <section className="relative pt-28 pb-12 md:pt-32 md:pb-20 overflow-hidden bg-background">
         <div className="container px-4">
           <Carousel
             plugins={[plugin.current]}

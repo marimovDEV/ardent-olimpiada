@@ -181,7 +181,7 @@ const PrideCarousel = () => {
     };
 
     return (
-        <section className="relative py-24 bg-background overflow-hidden min-h-[900px]">
+        <section className="relative py-16 md:py-24 bg-background overflow-hidden min-h-[800px] md:min-h-[900px]">
             {/* Dynamic Background Glow */}
             <motion.div
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] rounded-full opacity-30 blur-[180px] pointer-events-none transition-colors duration-700"
@@ -202,7 +202,7 @@ const PrideCarousel = () => {
                         {t('carousel.badge')}
                         <Sparkles className="w-4 h-4" />
                     </div>
-                    <h2 className="text-4xl md:text-7xl font-black text-foreground mb-4 tracking-tighter">
+                    <h2 className="text-3xl md:text-7xl font-black text-foreground mb-4 tracking-tighter">
                         {t('carousel.title')}
                     </h2>
                     <p className="text-muted-foreground text-lg max-w-xl mx-auto">
@@ -224,7 +224,7 @@ const PrideCarousel = () => {
                         style={{ x: 0 }}
                         whileTap={{ cursor: "grabbing" }}
                     >
-                        <div className="relative w-full max-w-7xl h-[600px] flex items-center justify-center">
+                        <div className="relative w-full max-w-7xl h-[500px] md:h-[600px] flex items-center justify-center">
                             {/* Render Items from Main State */}
                             {olympiads.length > 0 && olympiads.map((olympiad, i) => {
                                 let offset = i - index;
@@ -239,7 +239,7 @@ const PrideCarousel = () => {
                                 return (
                                     <motion.div
                                         key={olympiad.id}
-                                        className={`absolute w-[350px] md:w-[600px] h-[550px] rounded-[3rem] p-1.5 border backdrop-blur-3xl transition-all duration-500 ease-out flex flex-col overflow-hidden ${getCardStyles(i)}`}
+                                        className={`absolute w-[300px] md:w-[600px] h-[480px] md:h-[550px] rounded-[2rem] md:rounded-[3rem] p-1 border backdrop-blur-3xl transition-all duration-500 ease-out flex flex-col overflow-hidden ${getCardStyles(i)}`}
                                         initial={false}
                                         whileInView={{ opacity: isActive ? 1 : Math.max(0, 1 - Math.abs(offset) * 0.4) }}
                                         viewport={{ once: true }}
@@ -256,7 +256,7 @@ const PrideCarousel = () => {
                                             damping: 25
                                         }}
                                     >
-                                        <div className={`w-full h-full rounded-[2.7rem] overflow-hidden bg-gradient-to-br ${theme.gradient} relative shadow-2xl`}>
+                                        <div className={`w-full h-full rounded-[1.9rem] md:rounded-[2.7rem] overflow-hidden bg-gradient-to-br ${theme.gradient} relative shadow-2xl`}>
 
                                             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxmaWx0ZXIgaWQ9Im4iPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjUiIG51bSBPY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIiBvcGFjaXR5PSIwLjUiLz48L3N2Zz4=')] opacity-25 mix-blend-overlay"></div>
                                             <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] -mr-20 -mt-20 mix-blend-overlay" />
@@ -268,7 +268,7 @@ const PrideCarousel = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="relative z-10 p-10 flex flex-col h-full justify-between">
+                                            <div className="relative z-10 p-6 md:p-10 flex flex-col h-full justify-between">
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-6">
                                                         <span className="px-4 py-1.5 rounded-xl bg-black/30 backdrop-blur-md text-white text-[11px] font-black tracking-widest uppercase border border-white/10 shadow-sm">
@@ -281,7 +281,7 @@ const PrideCarousel = () => {
                                                         </span>
                                                     </div>
 
-                                                    <h3 className="text-4xl md:text-5xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-lg mb-3">
+                                                    <h3 className="text-2xl md:text-5xl font-black text-white leading-[0.9] tracking-tighter drop-shadow-lg mb-3">
                                                         {t(olympiad.title, { defaultValue: olympiad.title })}
                                                     </h3>
                                                     <p className="text-white/70 text-sm font-bold uppercase tracking-widest flex items-center gap-2">
@@ -295,7 +295,7 @@ const PrideCarousel = () => {
                                                         const medal = getMedalStyle(winner.rank, t);
                                                         return (
                                                             <div key={winner.id} className="group/winner flex items-center gap-4 p-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors">
-                                                                <div className={`w-10 h-10 rounded-xl ${medal.bg} flex items-center justify-center text-lg shadow-lg ring-2 ring-white/10 group-hover/winner:scale-110 transition-transform`}>
+                                                                <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl ${medal.bg} flex items-center justify-center text-base md:text-lg shadow-lg ring-2 ring-white/10 group-hover/winner:scale-110 transition-transform`}>
                                                                     {medal.icon}
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
@@ -309,13 +309,13 @@ const PrideCarousel = () => {
 
                                                 <div className="pt-4">
                                                     <Link to={`/olympiad/${olympiad.id}/results`} className="block group/btn pointer-events-auto cursor-pointer">
-                                                        <div className="relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-xl text-black p-5 flex items-center justify-between shadow-xl hover:bg-white hover:scale-[1.02] transition-all duration-300">
+                                                        <div className="relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-xl text-black p-3 md:p-5 flex items-center justify-between shadow-xl hover:bg-white hover:scale-[1.02] transition-all duration-300">
                                                             <div className="flex flex-col">
-                                                                <span className="text-[10px] uppercase tracking-widest font-extrabold text-black/40 mb-0.5">{t('carousel.view_results')}</span>
-                                                                <span className="text-lg font-black tracking-tight">{t('carousel.more')}</span>
+                                                                <span className="text-[9px] md:text-[10px] uppercase tracking-widest font-extrabold text-black/40 mb-0.5">{t('carousel.view_results')}</span>
+                                                                <span className="text-base md:text-lg font-black tracking-tight">{t('carousel.more')}</span>
                                                             </div>
-                                                            <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover/btn:bg-yellow-400 group-hover/btn:text-black transition-all duration-300 shadow-lg">
-                                                                <ArrowRight className="w-6 h-6 transform group-hover/btn:translate-x-1 transition-transform" />
+                                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-black text-white flex items-center justify-center group-hover/btn:bg-yellow-400 group-hover/btn:text-black transition-all duration-300 shadow-lg">
+                                                                <ArrowRight className="w-5 h-5 md:w-6 md:h-6 transform group-hover/btn:translate-x-1 transition-transform" />
                                                             </div>
                                                         </div>
                                                     </Link>
