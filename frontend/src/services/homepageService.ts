@@ -198,6 +198,10 @@ export const homepageService = {
         const res = await api.get(`/homepage/mentors/`);
         return res.data;
     },
+    getFeaturedSubjects: async () => {
+        const res = await api.get(`/homepage/featured-subjects/`);
+        return res.data;
+    },
 
     // Admin APIs (Managing data) - Assuming standard CRUD for now
     // Admin APIs (Managing data)

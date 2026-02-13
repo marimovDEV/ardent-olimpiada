@@ -44,44 +44,8 @@ const TeachersSection = () => {
                     };
                 });
 
-                // Add premium fallback teachers if API returns few or no results
-                const fallbacks = [
-                    {
-                        id: 'f1',
-                        name: i18n.language === 'ru' ? "Александр Петров" : "Diyorbek Rustamov",
-                        role: i18n.language === 'ru' ? "Профессор Математики" : "Matematika Professori",
-                        experience: "12+ yil",
-                        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
-                        companies: ["MIT", "Ardent Academy"],
-                        bio: i18n.language === 'ru' ? "Эксперт в области высшей математики и подготовки к международным олимпиадам." : "Oliy matematika va xalqaro olimpiadalarga tayyorlash bo'yicha mutaxassis.",
-                        color: "from-blue-500 to-indigo-600"
-                    },
-                    {
-                        id: 'f2',
-                        name: i18n.language === 'ru' ? "Елена Смирнова" : "Madina G'ulomova",
-                        role: i18n.language === 'ru' ? "Преподаватель Английского" : "Ingliz tili fani o'qituvchisi",
-                        experience: "8+ yil",
-                        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400",
-                        companies: ["Oxford", "IELTS Expert"],
-                        bio: i18n.language === 'ru' ? "Помогает студентам достичь баллов 8.0+ по IELTS с помощью авторских методик." : "O'quvchilarga IELTS imtihonidan 8.0+ ball olishda o'zining mualliflik metodikasi bilan yordam beradi.",
-                        color: "from-purple-500 to-pink-600"
-                    },
-                    {
-                        id: 'f3',
-                        name: i18n.language === 'ru' ? "Дмитрий Иванов" : "Javohir Toshmatov",
-                        role: i18n.language === 'ru' ? "IT Архитектор" : "IT Arxitektor",
-                        experience: "15+ yil",
-                        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400",
-                        companies: ["Google", "Senior Developer"],
-                        bio: i18n.language === 'ru' ? "Практикующий разработчик, научит вас создавать сложные системы с нуля." : "Amaliyotchi dasturchi, sizga murakkab tizimlarni noldan yaratishni o'rgatadi.",
-                        color: "from-emerald-500 to-teal-600"
-                    }
-                ];
-
                 if (mapped.length > 0) {
-                    setTeachers([...mapped, ...fallbacks]);
-                } else {
-                    setTeachers(fallbacks);
+                    setTeachers(mapped);
                 }
             } catch (err) {
                 console.error(err);

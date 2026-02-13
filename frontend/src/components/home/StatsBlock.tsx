@@ -42,10 +42,8 @@ const StatsBlock = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const response = await axios.get(`${API_URL}/stats/public/`);
-                if (response.data.success) {
-                    setStats(response.data.stats);
-                }
+                const data = await homepageService.getStats();
+                setStats(data.stats || data);
             } catch (error) {
                 console.error("Failed to fetch stats", error);
             } finally {

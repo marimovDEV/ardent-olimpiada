@@ -32,23 +32,7 @@ const SubjectsSection = () => {
     fetchSubjects();
   }, []);
 
-  // Fallback subjects if API returns empty (for demo)
-  const defaultSubjects = [
-    {
-      id: 1,
-      name: t('subjects.matematika'),
-      description: t('subjectsSection.matematika_desc', "Olimpiada va maktab uchun chuqur tayyorgarlik"),
-      icon: "Calculator",
-      color: "bg-blue-600",
-      lightColor: "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-      badges: ["olympiad", "popular"],
-      xp_reward: 100,
-      stats: { students: "3.2k", olympiads: 12 }
-    },
-    // ... add more mocked if needed, but for now relying on backend or empty state
-  ];
-
-  const displaySubjects = subjects.length > 0 ? subjects : []; // Don't show default if we want to enforce CMS, or use defaultEntities for transition
+  const displaySubjects = subjects;
 
   const getBadgeContent = (badge: string) => {
     switch (badge) {
