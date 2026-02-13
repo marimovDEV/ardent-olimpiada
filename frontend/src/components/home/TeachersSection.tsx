@@ -14,6 +14,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion";
 import { homepageService } from "@/services/homepageService";
 import { API_URL } from "@/services/api";
+import BecomeTeacherForm from "./BecomeTeacherForm";
 
 const TeachersSection = () => {
     const { t, i18n } = useTranslation();
@@ -172,6 +173,11 @@ const TeachersSection = () => {
                         <CarouselNext className="static translate-y-0 h-14 w-14 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all" />
                     </div>
                 </Carousel>
+
+                {/* Become a Teacher Form Integration */}
+                <div className="mt-24">
+                    <BecomeTeacherForm />
+                </div>
             </div>
         </section>
     );

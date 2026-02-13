@@ -80,65 +80,64 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
 
     return (
         <header
-            className={`sticky top-0 z-30 w-full transition-all duration-300 ${scrolled
-                ? 'bg-background/80 backdrop-blur-md shadow-sm border-b border-border'
+            className={`sticky top-0 z-30 w-full transition-all duration-500 ${scrolled
+                ? 'bg-background/80 backdrop-blur-2xl shadow-xl border-b border-white/5'
                 : 'bg-transparent'
                 }`}
         >
             <div className="h-20 px-4 md:px-8 flex items-center justify-between gap-4">
 
-                {/* Mobile Side (Empty or Stats) */}
-                <div className="flex lg:hidden flex-1 shrink-0" />
+                {/* Mobile Menu Toggle (Left on mobile) */}
+                <div className="flex lg:hidden flex-1 shrink-0">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={onMobileMenuClick}
+                        className="rounded-xl hover:bg-white/5 text-white"
+                    >
+                        <Menu className="w-6 h-6" />
+                    </Button>
+                </div>
 
-                {/* Left Side (Desktop: Search or Title) */}
-                <div className="hidden lg:flex items-center gap-4 flex-1">
-                    <div className="relative w-64 group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                {/* Left Side (Desktop: Search) */}
+                <div className="hidden lg:flex items-center gap-6 flex-1">
+                    <div className="relative w-80 group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary group-focus-within:text-primary transition-all duration-300" />
                         <input
                             type="text"
                             placeholder={t('dashboard.navbar.search')}
-                            className="w-full h-10 pl-10 pr-4 rounded-full bg-muted/50 border-transparent focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-foreground placeholder:text-muted-foreground"
+                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-text-primary placeholder:text-text-secondary"
                         />
                     </div>
                 </div>
 
                 {/* Right Side: Stats & Profile */}
-                <div className="flex items-center gap-3 md:gap-6">
+                <div className="flex items-center gap-4 md:gap-6">
 
                     {/* Level & XP Widget (Students Only) */}
                     {user.role !== 'TEACHER' && (
                         <div
-                            className="flex items-center gap-2 md:gap-3 bg-white/5 md:bg-background/50 p-1 md:p-1.5 md:pr-4 rounded-full border border-white/5 md:border-border hover:border-primary/20 transition-all cursor-pointer group relative active:scale-95 shadow-md md:shadow-none"
+                            className="flex items-center gap-3 bg-background/80 backdrop-blur-md p-1.5 pr-5 rounded-full border border-white/5 hover:border-primary/30 transition-all cursor-pointer group relative active:scale-95 shadow-2xl"
                             onClick={() => setIsProgressModalOpen(true)}
                         >
                             {/* Level Badge */}
-                            <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black text-xs md:text-sm shadow-gold">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-black text-sm shadow-purple group-hover:scale-110 transition-transform duration-500">
                                 {level}
                             </div>
 
-                            {/* Mobile XP Text */}
-                            <span className="text-[10px] font-black text-primary md:hidden pr-1 font-cinzel">
-                                {xp} XP
-                            </span>
-
-                            {/* XP Bar */}
-                            <div className="hidden sm:flex flex-col gap-0.5 min-w-[100px]">
-                                <div className="flex justify-between items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">
-                                    <span>{xp} XP</span>
-                                    <span className="text-primary/70">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
+                            {/* Stats */}
+                            <div className="flex flex-col gap-0.5">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[11px] font-black text-text-primary tracking-widest font-cinzel">{xp} XP</span>
+                                    <div className="w-1 h-1 rounded-full bg-white/20" />
+                                    <span className="text-[10px] font-bold text-text-secondary uppercase tracking-wider">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-primary rounded-full transition-all duration-1000 group-hover:animate-pulse shadow-gold"
+                                        className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 group-hover:animate-pulse"
                                         style={{ width: `${progressPercent}%` }}
                                     />
                                 </div>
-                            </div>
-
-                            {/* Tooltip */}
-                            <div className="absolute top-full right-0 mt-2 w-48 p-3 bg-popover rounded-xl shadow-xl border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                <p className="text-xs text-muted-foreground mb-1">{t('dashboard.navbar.currentLevel')} <span className="text-foreground font-bold">{level}</span></p>
-                                <p className="text-xs text-muted-foreground">{t('dashboard.navbar.nextLevelText')} <span className="text-primary font-bold">{xpLeft} XP</span> {t('dashboard.navbar.collectXp')}</p>
                             </div>
                         </div>
                     )}
@@ -146,8 +145,8 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                     {/* Teacher Subscription Status */}
                     {user.role === 'TEACHER' && (
                         user.teacher_profile?.is_premium ? (
-                            <div className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-md">
-                                <Crown className="w-4 h-4 fill-white" />
+                            <div className="flex items-center gap-2 bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded-xl text-xs font-black tracking-widest shadow-purple">
+                                <Crown className="w-4 h-4" />
                                 {t('dashboard.navbar.premium')}
                             </div>
                         ) : (
@@ -155,9 +154,9 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 border-indigo-200 hover:border-indigo-300 hover:from-indigo-100 hover:to-purple-100 dark:bg-gray-800 dark:from-gray-800 dark:to-gray-800 dark:text-indigo-400 dark:border-indigo-900"
+                                    className="bg-white/5 text-white border-white/10 hover:bg-white/10 rounded-xl font-bold border-2"
                                 >
-                                    <Crown className="w-4 h-4 mr-2" />
+                                    <Crown className="w-4 h-4 mr-2 text-primary" />
                                     {t('dashboard.navbar.upgrade')}
                                 </Button>
                             </Link>
@@ -166,10 +165,14 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
 
                     {/* ArdCoin Balance */}
                     <div
-                        className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 px-3 py-1.5 rounded-full border border-yellow-500/20 cursor-pointer hover:bg-yellow-500/20 transition-colors"
+                        className="flex items-center gap-3 bg-gradient-to-br from-yellow-500/10 to-orange-500/5 px-4 py-2 rounded-2xl border border-yellow-500/20 cursor-pointer hover:bg-yellow-500/20 transition-all group shadow-lg"
                         onClick={() => setPaymentOpen(true)}
                     >
-                        <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-110" />
+                        <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-125 group-hover:rotate-12 transition-transform duration-500" />
+                        <div className="hidden sm:flex flex-col">
+                            <span className="text-xs font-black text-white leading-none tracking-tighter">{parseFloat(user.balance || 0).toLocaleString()}</span>
+                            <span className="text-[8px] font-black text-yellow-500 uppercase tracking-widest mt-0.5">Coins</span>
+                        </div>
                     </div>
 
                     <PaymentModal
@@ -181,42 +184,60 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                     />
 
                     {/* Notifications */}
-                    <NotificationBell />
+                    <div className="relative group">
+                        <NotificationBell />
+                    </div>
 
                     {/* User Profile */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full hover:bg-muted transition-colors outline-none group">
-                                <div className="text-right hidden sm:block">
-                                    <p className="text-sm font-bold text-foreground leading-none group-hover:text-primary transition-colors">
+                            <button className="flex items-center gap-3 p-1 rounded-full hover:bg-white/5 transition-all outline-none group border border-transparent hover:border-white/5">
+                                <div className="w-10 h-10 rounded-full p-0.5 bg-gradient-to-br from-primary/40 to-secondary/40 group-hover:from-primary group-hover:to-secondary transition-all duration-500">
+                                    <div className="w-full h-full rounded-full bg-[#0B0F1A] border-2 border-[#0B0F1A] overflow-hidden relative shadow-2xl">
+                                        {user.avatar_url || user.avatar ? (
+                                            <img src={user.avatar_url || user.avatar} alt="Avatar" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 text-white font-black text-lg">
+                                                {(user.first_name?.[0] || user.username?.[0] || 'U').toUpperCase()}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="text-left hidden lg:block pr-2">
+                                    <p className="text-sm font-black text-text-primary leading-none group-hover:text-primary transition-colors">
                                         {user.first_name || user.username}
                                     </p>
-                                    <p className="text-xs text-muted-foreground mt-0.5 font-medium">
+                                    <p className="text-[10px] text-text-secondary mt-1 font-bold uppercase tracking-wider">
                                         {getRoleLabel(user.role)}
                                     </p>
                                 </div>
-                                <div className="w-10 h-10 rounded-full bg-muted border-2 border-background shadow-sm overflow-hidden relative">
-                                    {user.avatar_url || user.avatar ? (
-                                        <img src={user.avatar_url || user.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold text-lg">
-                                            {(user.first_name?.[0] || user.username?.[0] || 'U').toUpperCase()}
-                                        </div>
-                                    )}
-                                </div>
                             </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-56">
-                            <DropdownMenuLabel>{t('dashboard.navbar.myAccount')}</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => navigate('/profile')}>
-                                <UserIcon className="w-4 h-4 mr-2" />
-                                {t('dashboard.navbar.profile')}
+                        <DropdownMenuContent align="end" className="w-64 bg-background/95 backdrop-blur-2xl border-white/5 rounded-2xl shadow-2xl p-2">
+                            <DropdownMenuLabel className="mb-2">
+                                <p className="text-xs text-text-secondary font-black uppercase tracking-widest">{t('dashboard.navbar.myAccount')}</p>
+                            </DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => navigate('/profile')}
+                                className="rounded-xl h-12 gap-3 focus:bg-primary/10 focus:text-primary cursor-pointer transition-all"
+                            >
+                                <UserIcon className="w-4 h-4" />
+                                <span className="font-bold">{t('dashboard.navbar.profile')}</span>
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-500/10 cursor-pointer">
-                                <LogOut className="w-4 h-4 mr-2" />
-                                {t('dashboard.navbar.logout')}
+                            <DropdownMenuItem
+                                onClick={() => navigate('/settings')}
+                                className="rounded-xl h-12 gap-3 focus:bg-white/5 cursor-pointer transition-all"
+                            >
+                                <Settings className="w-4 h-4" />
+                                <span className="font-bold">{t('dashboard.navbar.settings', 'Sozlamalar')}</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-white/5 my-2" />
+                            <DropdownMenuItem
+                                onClick={handleLogout}
+                                className="rounded-xl h-12 gap-3 text-red-400 focus:text-red-400 focus:bg-red-500/10 cursor-pointer transition-all"
+                            >
+                                <LogOut className="w-4 h-4" />
+                                <span className="font-bold">{t('dashboard.navbar.logout')}</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

@@ -6,70 +6,67 @@
 
 @layer base {
   :root {
-    /* Hogwords Palette - Premium Magical theme */
-    --primary: 51 100% 50%;
-    /* Gold #FFD700 */
-    --primary-foreground: 225 60% 11%;
-    --primary-light: 51 80% 80%;
-    /* #F4E6A2 */
-    --primary-dark: 41 90% 36%;
-    /* Dark Gold */
+    /* HOGWORDS Unified Color System - Premium Midnight Magic */
+    --background: 225 40% 7%;
+    /* #0B0F1A */
+    --background-secondary: 225 40% 10%;
+    /* #111827 */
+    --foreground: 210 40% 98%;
+    /* #F8FAFC (Primary Text) */
 
-    --secondary: 225 60% 11%;
-    /* Dark Navy #0B132B */
-    --secondary-foreground: 0 0% 100%;
-    --secondary-light: 225 40% 18%;
-    /* #1C2541 */
+    --primary: 260 83% 60%;
+    /* #7C3AED (Royal Purple) */
+    --primary-hover: 260 83% 50%;
+    /* #6D28D9 */
+    --primary-foreground: 0 0% 100%;
 
-    /* Backgrounds */
-    --background: 225 60% 4%;
-    /* Near black navy */
-    --foreground: 51 30% 95%;
-    /* Soft cream */
+    --secondary: 187 82% 65%;
+    /* #22D3EE (Cyan Glow) */
+    --secondary-foreground: 225 60% 4%;
 
-    /* Cards - Darker with glass effect */
-    --card: 225 60% 6%;
-    --card-foreground: 51 30% 95%;
+    /* Achievement / Gold #FACC15 */
+    --accent: 48 96% 53%;
+    --accent-foreground: 225 60% 4%;
 
-    --muted: 225 40% 12%;
-    --muted-foreground: 225 20% 70%;
+    /* Typography System */
+    --text-primary: 210 40% 98%;
+    /* #F8FAFC */
+    --text-secondary: 215 25% 65%;
+    /* #94A3B8 */
+    --text-muted: 215 15% 47%;
+    /* #64748B */
 
-    --accent: 51 100% 50%;
-    --accent-foreground: 225 60% 11%;
+    /* Cards - Unified Glassmorphism */
+    --card: 225 40% 9%;
+    --card-foreground: 210 40% 98%;
+    --card-border: rgba(255, 255, 255, 0.08);
 
-    --border: 225 40% 15%;
-    --input: 225 40% 15%;
-    --ring: 51 100% 50%;
+    --border: 225 30% 18%;
+    --input: 225 30% 18%;
+    --ring: 260 83% 60%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 142 70% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 48 96% 53%;
-    --warning-foreground: 225 60% 11%;
-
-    --radius: 1rem;
+    --radius: 1.5rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, #FFD700 0%, #F4E6A2 100%);
-    --gradient-hero: linear-gradient(135deg, #0B132B 0%, #1C2541 100%);
-    --gradient-gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
-    --gradient-dark: linear-gradient(135deg, #0B132B 0%, #000000 100%);
+    --gradient-primary: linear-gradient(135deg, #7C3AED 0%, #22D3EE 100%);
+    --gradient-purple: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+    --gradient-gold: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
+    --gradient-dark: linear-gradient(135deg, #0B0F1A 0%, #111827 100%);
 
-    /* Shadows */
-    --shadow-gold: 0 0 20px -5px hsla(51, 100%, 50%, 0.3);
-    --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    /* Shadows & Effects */
+    --shadow-purple: 0 10px 40px -10px rgba(124, 58, 237, 0.5);
+    --shadow-cyan: 0 10px 40px -10px rgba(34, 211, 238, 0.4);
+    --shadow-gold: 0 10px 40px -10px rgba(250, 204, 21, 0.4);
+    --shadow-card: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
   }
 
   /* Force dark mode by default for that magical vibe if preferred, 
      but keeping the dark block for system preference support */
   .dark {
-    --background: 225 60% 4%;
-    --foreground: 51 30% 95%;
-    --card: 225 60% 6%;
-    --border: 225 40% 15%;
+    --background: 225 40% 7%;
+    --foreground: 210 40% 98%;
+    --card: 225 40% 9%;
+    --border: 225 30% 18%;
   }
 }
 
@@ -95,11 +92,19 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-card;
+    @apply bg-card/60 backdrop-blur-xl border border-card-border shadow-card;
   }
 
   .glass-card-premium {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
+    @apply bg-white/5 backdrop-blur-xl border border-card-border shadow-2xl;
+  }
+
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-hover text-white rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-purple hover:scale-[1.02] active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply border border-secondary text-secondary hover:bg-secondary/10 rounded-xl px-6 py-3 font-bold transition-all duration-300 shadow-cyan hover:scale-[1.02] active:scale-95;
   }
 
   .neon-glow-primary {

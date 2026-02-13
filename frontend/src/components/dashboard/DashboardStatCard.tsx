@@ -16,7 +16,7 @@ const DashboardStatCard = ({ label, value, icon: Icon, trend, color, delay = 0 }
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay }}
-            className="glass-card-premium p-6 rounded-[2rem] relative overflow-hidden group card-3d-hover"
+            className="bg-white/5 backdrop-blur-xl border border-card-border p-6 rounded-[2rem] relative overflow-hidden group hover:translate-y-[-4px] transition-all duration-300 hover:shadow-purple"
         >
             {/* Decorative Blur */}
             <div className={`absolute -right-4 -top-4 w-24 h-24 bg-${color}/10 rounded-full blur-3xl group-hover:bg-${color}/20 transition-colors duration-500`} />
@@ -34,10 +34,10 @@ const DashboardStatCard = ({ label, value, icon: Icon, trend, color, delay = 0 }
                 </div>
 
                 <div className="mt-auto">
-                    <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mb-1 font-cinzel">
+                    <p className="text-text-secondary text-[10px] font-black uppercase tracking-widest mb-1 font-cinzel">
                         {label}
                     </p>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter">
+                    <h3 className="text-3xl font-black text-text-primary tracking-tighter">
                         {value}
                     </h3>
                 </div>

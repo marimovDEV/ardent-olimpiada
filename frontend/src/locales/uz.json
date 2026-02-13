@@ -130,7 +130,8 @@
     "noResults": "Natijalar topilmadi",
     "tryDifferentFilter": "Boshqa filtrlar yordamida qidirib ko'ring",
     "min": "daq",
-    "time": "vaqt"
+    "time": "vaqt",
+    "required": "To'ldirilishi shart"
   },
   "success": {
     "purchase_completed": "Muvaffaqiyatli sotib olindi",
@@ -207,6 +208,22 @@
     "dashboard": "Shaxsiy kabinet",
     "profile": "Profil",
     "messages": "Xabarlar"
+  },
+  "becomeTeacher": {
+    "badge": "O'qituvchilar jamoasiga qo'shiling",
+    "title": "Biz bilan Birga Dars Bering",
+    "subtitle": "O'z bilimingizni ulashing va platformamizda eng yaxshi o'qituvchilardan biriga aylaning.",
+    "name_label": "Ism Familiyangiz",
+    "name_placeholder": "Masalan: Ali Valiyev",
+    "phone_label": "Telefon Raqamingiz",
+    "telegram_label": "Telegram Username",
+    "note_label": "Siz dars bermoqchi bo'lgan fan va tajribangiz",
+    "note_placeholder": "Masalan: Matematika fani bo'yicha 5 yillik tajriba...",
+    "submit_btn": "Ariza Yuborish",
+    "success_title": "Arizangiz qabul qilindi!",
+    "success_desc": "Tez orada ma'murlarimiz siz bilan bog'lanishadi.",
+    "error_title": "Xatolik yuz berdi",
+    "error_desc": "Iltimos, keyinroq qayta urinib ko'ring."
   },
   "home": {
     "stats": {

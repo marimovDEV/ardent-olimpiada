@@ -136,14 +136,10 @@ const GRADES = [
 
 const getSubjectTheme = (subject: any) => {
     switch (String(subject || "").toLowerCase()) {
-        case 'matematika': return { bg: 'from-blue-500 to-blue-700', text: 'text-blue-600', light: 'bg-blue-50 dark:bg-blue-900/20' };
+        case 'matematika': return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
         case 'fizika': return { bg: 'from-violet-500 to-purple-700', text: 'text-violet-600', light: 'bg-violet-50 dark:bg-violet-900/20' };
-        case 'informatika': return { bg: 'from-emerald-500 to-green-700', text: 'text-emerald-600', light: 'bg-emerald-50 dark:bg-emerald-900/20' };
-        case 'ingliz tili': return { bg: 'from-pink-500 to-rose-700', text: 'text-pink-600', light: 'bg-pink-50 dark:bg-pink-900/20' };
-        case 'mantiq': return { bg: 'from-orange-500 to-amber-700', text: 'text-orange-600', light: 'bg-orange-50 dark:bg-orange-900/20' };
-        case 'kimyo': return { bg: 'from-teal-500 to-cyan-700', text: 'text-teal-600', light: 'bg-teal-50 dark:bg-teal-900/20' };
-        case 'biologiya': return { bg: 'from-green-500 to-emerald-700', text: 'text-green-600', light: 'bg-green-50 dark:bg-green-900/20' };
-        default: return { bg: 'from-blue-500 to-indigo-700', text: 'text-blue-600', light: 'bg-blue-50 dark:bg-blue-900/20' };
+        case 'informatika': return { bg: 'from-secondary/20 to-secondary/40', text: 'text-secondary', light: 'bg-secondary/5' };
+        default: return { bg: 'from-primary/20 to-secondary/20', text: 'text-primary', light: 'bg-primary/5' };
     }
 };
 
@@ -236,9 +232,9 @@ const MyCoursesTab = () => {
                                     <span>{t('dashboard.profile.status.progress')}</span>
                                     <span>{enrollment.progress || 0}%</span>
                                 </div>
-                                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
                                     <div
-                                        className={`h-full rounded-full ${enrollment.is_completed ? 'bg-green-500' : 'bg-blue-500'}`}
+                                        className={'h-full rounded-full bg-gradient-to-r from-primary to-secondary'}
                                         style={{ width: `${enrollment.progress || 0}%` }}
                                     ></div>
                                 </div>
@@ -309,17 +305,17 @@ const MyOlympiadsTab = () => {
             {/* Active Registrations */}
             {registrations.length > 0 && (
                 <div>
-                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-foreground">
-                        <Calendar className="w-5 h-5 text-blue-500" />
+                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-text-primary">
+                        <Calendar className="w-5 h-5 text-primary" />
                         {t('dashboard.profile.olympiads.active')}
                     </h3>
                     <div className="grid gap-4">
                         {registrations.map(reg => (
-                            <div key={reg.id} className="bg-card p-5 rounded-xl border border-border flex items-center justify-between shadow-sm">
+                            <div key={reg.id} className="bg-card p-5 rounded-xl border border-card-border flex items-center justify-between shadow-sm">
                                 <div>
-                                    <h4 className="font-bold text-lg text-foreground">{reg.olympiad.title}</h4>
-                                    <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                                        <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded font-medium">{reg.olympiad.subject}</span>
+                                    <h4 className="font-bold text-lg text-text-primary">{reg.olympiad.title}</h4>
+                                    <div className="flex items-center gap-3 text-sm text-text-secondary mt-1">
+                                        <span className="bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">{reg.olympiad.subject}</span>
                                         <span className="flex items-center gap-1">
                                             <Calendar className="w-3 h-3" />
                                             {new Date(reg.olympiad.start_time).toLocaleString()}
@@ -538,7 +534,7 @@ const MyCertificatesTab = () => {
                                 </Button>
                             </a>
                             <Link to={`/certificate/verify/${cert.cert_number}`} className="flex-1">
-                                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                                <Button className="w-full btn-primary">
                                     <CheckCircle2 className="w-4 h-4 mr-2" />
                                     Tekshirish
                                 </Button>

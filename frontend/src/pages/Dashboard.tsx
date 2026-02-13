@@ -123,69 +123,95 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10 animate-fade-in pb-24 text-foreground min-h-screen">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10 animate-fade-in pb-24 text-foreground min-h-screen relative z-10">
 
       {/* 1. PREMIUM HERO SECTION */}
-      <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#0B132B] to-[#1C2541] border border-white/10 p-8 md:p-12 shadow-2xl">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none" />
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px]" />
+      <section className="relative overflow-hidden rounded-[3.5rem] bg-card border border-card-border p-8 md:p-14 shadow-2xl group">
+        {/* Animated Background Glows */}
+        <div className="absolute top-0 right-0 w-[60%] h-full bg-gradient-to-l from-primary/20 via-primary/5 to-transparent pointer-events-none opacity-50 group-hover:opacity-80 transition-opacity duration-1000" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-secondary/10 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest animate-pulse-soft">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-10">
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] animate-pulse-soft">
                 {t('dashboard.hero.welcomeBack', 'Xush kelibsiz!')}
               </div>
-              <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('dashboard.hero.online', 'Online')}</span>
+              <div className="flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-card-border backdrop-blur-md">
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{t('dashboard.hero.online', 'Online')}</span>
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white">
-              {t('dashboard.hero.greeting', 'Salom')}, <span className="text-primary italic">{data.hero?.user_name || 'Talaba'}!</span>
-            </h1>
+            <div className="space-y-2">
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-tight">
+                {t('dashboard.hero.greeting', 'Salom')}, <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-xy italic">{data.hero?.user_name || 'Talaba'}!</span>
+              </h1>
+              <p className="text-xl text-text-secondary max-w-xl font-medium leading-relaxed">
+                {t('dashboard.hero.subtitle', 'Sizning bugun uchun 3 ta vazifangiz bor. Olg‘a, yangi cho‘qqilarni zabt etamiz!')}
+              </p>
+            </div>
 
-            <p className="text-lg text-blue-100/60 max-w-xl font-medium leading-relaxed">
-              {t('dashboard.hero.subtitle', 'Sizning bugun uchun 3 ta vazifangiz bor. Olg‘a, yangi cho‘qqilarni zabt etamiz!')}
-            </p>
+            <div className="flex items-center gap-6 pt-2">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-1">Balance</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl font-black text-white leading-none">150,000</span>
+                  <span className="text-sm font-black text-secondary uppercase tracking-tighter">AC</span>
+                </div>
+              </div>
+              <div className="w-px h-10 bg-white/10" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-orange-400 uppercase tracking-[0.2em] mb-1">Streak</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl font-black text-white leading-none">{data.hero?.streak_days || 1}</span>
+                  <Zap className="w-5 h-5 text-orange-400 fill-orange-400" />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Level Badge Premium */}
-          <div className="relative group cursor-help" onClick={() => setIsProgressModalOpen(true)}>
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/40 transition-colors duration-500" />
-            <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary to-primary-dark p-1 shadow-gold transform group-hover:rotate-12 transition-transform duration-500">
-              <div className="w-full h-full bg-[#0B132B] rounded-full flex flex-col items-center justify-center border-4 border-[#0B132B]">
-                <span className="text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">{t('common.level', 'Level')}</span>
-                <span className="text-5xl md:text-6xl font-black text-white leading-none">{data.level.current}</span>
-                <Zap className="w-5 h-5 text-primary mt-1 animate-bounce fill-primary" />
+          <div className="relative group cursor-pointer" onClick={() => setIsProgressModalOpen(true)}>
+            <div className="absolute inset-0 bg-primary/30 rounded-full blur-[60px] group-hover:bg-primary/50 transition-all duration-700 opacity-60" />
+            <div className="relative w-40 h-40 md:w-52 md:h-52 rounded-full bg-gradient-to-br from-primary via-secondary to-primary p-1.5 shadow-purple transition-all duration-700 group-hover:scale-110 group-hover:rotate-12">
+              <div className="w-full h-full bg-background rounded-full flex flex-col items-center justify-center border-4 border-background relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5" />
+                <span className="text-[11px] font-black text-secondary uppercase tracking-[0.3em] font-cinzel relative z-10 mb-1">{t('common.level', 'Level')}</span>
+                <span className="text-7xl md:text-8xl font-black text-text-primary leading-none relative z-10 tracking-tighter">{data.level.current}</span>
+                <Zap className="w-6 h-6 text-primary mt-2 animate-bounce fill-primary relative z-10" />
               </div>
             </div>
           </div>
         </div>
 
         {/* XP Progress Bar Premium */}
-        <div className="mt-12 space-y-3">
-          <div className="flex justify-between items-end">
-            <div className="flex gap-4 items-center">
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">Current XP</span>
-                <span className="text-2xl font-black text-white">{data.level.xp_current} <span className="text-sm font-medium text-white/40">/ 500</span></span>
+        <div className="mt-16 space-y-4">
+          <div className="flex justify-between items-end px-1">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-cinzel">Experience Points</span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl font-black text-text-primary tracking-tighter">{data.level.xp_current}</span>
+                <span className="text-sm font-bold text-text-secondary font-cinzel">/ 500 XP</span>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-[10px] font-black text-white/40 uppercase tracking-widest font-cinzel">{t('dashboard.widgets.xpLeft', { xp: data.level.xp_left })}</span>
-              <p className="text-sm font-black text-primary tracking-tighter">{data.level.progress_percent}% {t('common.completed', 'Tayyor')}</p>
+            <div className="text-right space-y-1">
+              <span className="text-[10px] font-black text-text-primary/30 uppercase tracking-[0.3em] font-cinzel block mb-1">Next Level in {data.level.xp_left} XP</span>
+              <div className="flex items-baseline justify-end gap-1">
+                <span className="text-2xl font-black text-secondary tracking-tighter">{data.level.progress_percent}%</span>
+                <span className="text-[10px] font-bold text-text-secondary uppercase">{t('common.completed', 'Ready')}</span>
+              </div>
             </div>
           </div>
-          <div className="h-4 bg-white/5 rounded-full overflow-hidden border border-white/10 p-[2px]">
+          <div className="h-4 bg-white/5 rounded-full overflow-hidden border border-card-border p-[3px] shadow-inner relative">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${data.level.progress_percent}%` }}
               transition={{ duration: 1.5, ease: "easeOut" }}
-              className="h-full bg-gradient-to-r from-primary-dark via-primary to-primary-light rounded-full shadow-gold relative"
+              className="h-full bg-gradient-to-r from-primary to-secondary rounded-full relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+              <div className="absolute -inset-y-2 right-0 w-8 bg-secondary/30 blur-md rounded-full animate-pulse" />
             </motion.div>
           </div>
         </div>
@@ -202,41 +228,62 @@ const Dashboard = () => {
           delay={0.1}
         />
         <DashboardStatCard
-          label={t('dashboard.stats.totalXp', 'Jami XP')}
+          label={t('dashboard.stats.totalXp', 'Total XP')}
           value={data.level.xp_current + (data.level.current - 1) * 500}
           icon={Trophy}
-          color="primary"
+          color="purple-500"
           delay={0.2}
         />
         <DashboardStatCard
-          label={t('dashboard.stats.rank', 'Reyting')}
+          label={t('dashboard.stats.rank', 'Ranking')}
           value="#12"
           icon={Trophy}
           trend="Top 5%"
-          color="blue-500"
+          color="cyan-500"
           delay={0.3}
         />
         <DashboardStatCard
           label={t('dashboard.stats.certificates', 'Sertifikatlar')}
           value="4"
           icon={Award}
-          color="purple-500"
+          color="yellow-500"
           delay={0.4}
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Left Content */}
-        <div className="lg:col-span-2 space-y-10">
+        <div className="lg:col-span-2 space-y-12">
+
+          {/* Motivational Start Learning Section */}
+          <section className="bg-gradient-to-r from-primary/10 via-secondary/10 to-transparent p-1 shadow-2xl rounded-[2.5rem] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-xl rounded-[2.4rem]" />
+            <div className="relative z-10 p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="space-y-3 text-center md:text-left">
+                <h3 className="text-2xl font-black text-white flex items-center justify-center md:justify-start gap-3">
+                  <PlayCircle className="w-8 h-8 text-secondary animate-pulse" />
+                  🚀 O‘rganishni bugun boshlang
+                </h3>
+                <p className="text-text-secondary font-medium max-w-md">
+                  XP yig‘ing, darajani oshiring va reytingda ko‘tariling! Bugun <strong>500 XP</strong> yutish imkoniyati bor.
+                </p>
+              </div>
+              <Button className="bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-all duration-300 rounded-2xl h-14 px-10 text-white font-black text-lg shadow-purple group-hover:shadow-cyan">
+                Kurslarni boshlash
+              </Button>
+            </div>
+          </section>
 
           {/* Courses / Learning */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
-                <PlayCircle className="w-6 h-6 text-primary" />
+          <div className="space-y-8">
+            <div className="flex items-center justify-between px-2">
+              <h2 className="text-2xl font-black tracking-tight flex items-center gap-4 text-white">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                </div>
                 {t('dashboard.sections.continueLearning', 'O\'rganishda davom eting')}
               </h2>
-              <Button variant="ghost" className="text-primary font-bold hover:bg-primary/5 rounded-xl">
+              <Button variant="ghost" className="text-primary font-bold hover:bg-primary/10 rounded-xl h-10">
                 {t('common.viewAll', 'Hammasi')} →
               </Button>
             </div>
@@ -246,38 +293,47 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4">
+            <div className="space-y-6">
+              <h3 className="text-xl font-black flex items-center gap-3 text-text-primary px-2">
+                <Trophy className="w-5 h-5 text-secondary" />
                 {t('dashboard.sections.stats', 'Analitika')}
               </h3>
-              <AnalyticsResults />
+              <div className="bg-background-secondary border border-card-border rounded-[2.5rem] p-6 shadow-xl">
+                <AnalyticsResults />
+              </div>
             </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-primary" />
+            <div className="space-y-6">
+              <h3 className="text-xl font-black flex items-center gap-3 text-text-primary px-2">
+                <Zap className="w-5 h-5 text-primary" />
                 {t('dashboard.sections.subjects', 'Fanlar')}
               </h3>
-              <SubjectStats stats={data.subject_stats} />
+              <div className="bg-background-secondary border border-card-border rounded-[2.5rem] p-6 shadow-xl">
+                <SubjectStats stats={data.subject_stats} />
+              </div>
             </div>
           </div>
 
         </div>
 
         {/* Right Sidebar */}
-        <div className="space-y-8">
-          <div className="glass-card-premium p-6 rounded-[2.5rem] border-white/10">
-            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-primary" />
+        <div className="space-y-10">
+          <div className="bg-background-secondary border border-card-border p-8 rounded-[3rem] shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
+            <h3 className="text-lg font-black mb-8 flex items-center gap-3 text-text-primary">
+              <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                <Zap className="w-4 h-4 text-orange-500" />
+              </div>
               {t('dashboard.sections.dailyMission', 'Kunlik Vazifa')}
             </h3>
             <DailyMissionCard mission={data.mission} />
           </div>
 
-          <div className="glass-card-premium p-6 rounded-[2.5rem] border-white/10">
-            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-              <PlayCircle className="w-5 h-5 text-primary" />
+          <div className="bg-background-secondary border border-card-border p-8 rounded-[3rem] shadow-2xl">
+            <h3 className="text-lg font-black mb-8 flex items-center gap-3 text-text-primary">
+              <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
+                <PlayCircle className="w-4 h-4 text-secondary" />
+              </div>
               {t('dashboard.sections.activity', 'Faollik')}
             </h3>
             <StreakCalendar calendar={data.calendar} />
