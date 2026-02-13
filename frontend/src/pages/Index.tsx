@@ -36,7 +36,7 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>{config ? (config as any)[`title_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_title : "Ardent Olimpiada - Kelajagingizni quring"}</title>
+        <title>{config ? (config as any)[`title_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_title : "Hogwords Olimpiada - Kelajagingizni quring"}</title>
         <meta name="description" content={config ? (config as any)[`subtitle_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_subtitle : "O'zbekistonning eng nufuzli olimpiadalar portali"} />
         <meta property="og:title" content="OlimpiadaUZ - Online Olimpiada Platformasi" />
         <meta property="og:description" content="Maktab o'quvchilari uchun online ta'lim va olimpiada platformasi" />

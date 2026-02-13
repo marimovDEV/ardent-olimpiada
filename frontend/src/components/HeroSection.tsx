@@ -109,9 +109,9 @@ const HeroSection = () => {
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-background">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/10 to-transparent opacity-50" />
-        <div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-blue-600/20 blur-[100px] animate-pulse" />
-        <div className="absolute top-[20%] -left-[10%] w-[500px] h-[500px] rounded-full bg-purple-600/20 blur-[100px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/5 to-transparent opacity-30" />
+        <div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[100px] animate-pulse" />
+        <div className="absolute top-[20%] -left-[10%] w-[500px] h-[500px] rounded-full bg-secondary-light/10 blur-[100px]" />
       </div>
 
       <div className="container relative z-10 px-4">
@@ -133,10 +133,10 @@ const HeroSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tight mb-8"
+            className="text-6xl md:text-8xl lg:text-9xl font-black font-cinzel leading-[1.1] tracking-tight mb-8"
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-primary to-purple-600 animate-gradient-x">
-              {title}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-light to-primary animate-pulse-soft">
+              Hogwords
             </span>
           </motion.h1>
 
@@ -146,9 +146,9 @@ const HeroSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed"
+            className="text-xl md:text-2xl font-medium italic text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-cinzel"
           >
-            {subtitle}
+            "Magic of Knowledge & Olympiad Excellence"
           </motion.p>
 
           {/* Buttons */}

@@ -19,7 +19,7 @@ const GuidePage = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navItems = [
-        { id: "platform-overview", label: t('guide.nav.overview', 'Ardent nima?'), icon: BookOpen },
+        { id: "platform-overview", label: t('guide.nav.overview', 'Hogwords nima?'), icon: BookOpen },
         { id: "getting-started", label: t('guide.nav.gettingStarted', 'Boshlash'), icon: Zap },
         { id: "courses-guide", label: t('guide.nav.courses', 'Kurslar'), icon: BookOpen },
         { id: "olympiads-guide", label: t('guide.nav.olympiads', 'Olimpiadalar'), icon: Trophy },
@@ -73,7 +73,7 @@ const GuidePage = () => {
                             {t('guide.hero.badge', 'Platforma Qo\'llanmasi')}
                         </div>
                         <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-                            {t('guide.hero.title', 'Ardent platformasidan qanday foydalaniladi?')}
+                            {t('guide.hero.title', 'Hogwords platformasidan qanday foydalaniladi?')}
                         </h1>
                         <p className="text-xl text-muted-foreground leading-relaxed">
                             {t('guide.hero.subtitle', '2–3 daqiqada platformani to‘liq tushunib oling va o‘qishni boshlang 🎓')}

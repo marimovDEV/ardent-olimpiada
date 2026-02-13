@@ -8,7 +8,7 @@ export const AuthGuideSide = () => {
         <div className="hidden lg:flex w-1/2 bg-muted/30 border-r border-white/10 flex-col p-12 justify-between relative overflow-hidden backdrop-blur-3xl bg-slate-900/50">
             {/* Background Effects */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute -top-[20%] -left-[20%] w-[80%] h-[80%] bg-blue-600/10 rounded-full blur-[100px]" />
+                <div className="absolute -top-[20%] -left-[20%] w-[80%] h-[80%] bg-primary/10 rounded-full blur-[100px]" />
                 <div className="absolute -bottom-[20%] -right-[20%] w-[80%] h-[80%] bg-purple-600/10 rounded-full blur-[100px]" />
             </div>
 

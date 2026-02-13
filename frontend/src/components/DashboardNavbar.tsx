@@ -116,19 +116,19 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                             onClick={() => setIsProgressModalOpen(true)}
                         >
                             {/* Level Badge */}
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/30">
+                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black text-sm shadow-gold">
                                 {level}
                             </div>
 
                             {/* XP Bar */}
                             <div className="flex flex-col gap-0.5 min-w-[100px]">
-                                <div className="flex justify-between items-center gap-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                <div className="flex justify-between items-center gap-2 text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">
                                     <span>{xp} XP</span>
                                     <span className="text-primary/70">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full transition-all duration-1000 group-hover:animate-pulse"
+                                        className="h-full bg-primary rounded-full transition-all duration-1000 group-hover:animate-pulse shadow-gold"
                                         style={{ width: `${progressPercent}%` }}
                                     />
                                 </div>

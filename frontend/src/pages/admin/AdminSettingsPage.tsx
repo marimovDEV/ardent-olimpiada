@@ -98,7 +98,7 @@ const AdminSettingsPage = () => {
 
     // Settings State
     const [platformSettings, setPlatformSettings] = useState<PlatformSettings>({
-        platform_name: "Ardent",
+        platform_name: "Hogwords",
         support_email: "support@ardent.uz",
         currency: "UZS",
         default_language: "uz",

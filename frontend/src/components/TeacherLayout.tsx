@@ -108,10 +108,10 @@ const TeacherLayout = () => {
             {/* Sidebar */}
             <aside className="w-64 bg-card border-r fixed inset-y-0 left-0 z-50 flex flex-col">
                 <div className="p-6 border-b flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                        <User className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                        <img src="/logo.jpg" alt="Logo" className="w-6 h-6 object-contain" />
                     </div>
-                    <span className="font-bold text-xl">Ardent Mentor</span>
+                    <span className="font-black font-cinzel text-xl">Hogwords Mentor</span>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">

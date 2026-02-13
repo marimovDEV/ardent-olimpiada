@@ -94,8 +94,8 @@ const DashboardLayout = () => {
             >
                 <div className="p-8 pb-4">
                     <Link to="/" className="flex items-center gap-2 mb-6">
-                        <img src="/logo.jpg" alt="Ardent Logo" decoding="async" className="w-8 h-8 rounded-xl object-contain" />
-                        <span className="text-xl font-black text-foreground tracking-tight">Ardent</span>
+                        <img src="/logo.jpg" alt="Logo" decoding="async" className="w-8 h-8 rounded-xl object-contain" />
+                        <span className="text-xl font-black font-cinzel text-foreground tracking-tight">Hogwords</span>
                     </Link>
                 </div>
 

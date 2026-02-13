@@ -104,7 +104,7 @@ const CertificateVerifyPage = () => {
                     <Award className="w-16 h-16 mx-auto mb-4 opacity-90" />
                     <h1 className="text-3xl font-black mb-2">Sertifikat Tekshirish</h1>
                     <p className="text-purple-200">
-                        Ardent Olimpiada platformasi sertifikatlari haqiqiyligini tekshiring
+                        Hogwords Olimpiada platformasi sertifikatlari haqiqiyligini tekshiring
                     </p>
                 </div>
             </div>
@@ -165,7 +165,7 @@ const CertificateVerifyPage = () => {
                                         </div>
                                         <div>
                                             <h2 className="text-2xl font-black text-green-700">✓ HAQIQIY SERTIFIKAT</h2>
-                                            <p className="text-green-600">Bu sertifikat Ardent Olimpiada tomonidan tasdiqlangan</p>
+                                            <p className="text-green-600">Bu sertifikat Hogwords Olimpiada tomonidan tasdiqlangan</p>
                                         </div>
                                     </div>
                                 </CardContent>

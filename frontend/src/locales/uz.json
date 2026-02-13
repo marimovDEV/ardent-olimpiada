@@ -644,7 +644,7 @@
     },
     "ai": {
       "title": "AI Yordamchi",
-      "controlCenter": "Ardent AI Boshqaruv Markazi",
+      "controlCenter": "Hogwords AI Boshqaruv Markazi",
       "analyticsSubtitle": "Analitika, FAQ boshqaruvi va AI sinov maydoni",
       "newKnowledge": "Yangi bilim",
       "knowledgeBase": "Bilimlar Bazasi",
@@ -1013,9 +1013,9 @@
     "course": "Kurs"
   },
   "aiChat": {
-    "title": "Ardent AI",
+    "title": "Hogwords AI",
     "status": "Online • Yordamchi",
-    "greeting": "Assalomu alaykum! Men Ardent AI yordamchiman. Sizga qanday yordam bera olaman?",
+    "greeting": "Assalomu alaykum! Men Hogwords AI yordamchiman. Sizga qanday yordam bera olaman?",
     "quickQuestions": "Tezkor savollar:",
     "placeholder": "Savolingizni yozing...",
     "suggestions": {
@@ -1112,7 +1112,7 @@
       "help": "Yordam"
     },
     "rightSide": {
-      "title": "Ardentga Xush Kelibsiz",
+      "title": "Hogwordsga Xush Kelibsiz",
       "subtitle": "Bilim va g'alabalar sari yo'lingiz shu yerdan boshlanadi",
       "badge": "Ta'lim Platformasi №1",
       "loginTitle": "Xush Ko'rdik!",
@@ -1873,7 +1873,7 @@
       "qr_title": "QR-kodli Sertifikatlar",
       "qr_desc": "Yutuqlarni soxtalashtirib bo'lmaydi. Istalgan vaqtda QR-kod orqali tekshirish imkoniyati."
     },
-    "whyUs": "Nega aynan Ardent Olimpiada?",
+    "whyUs": "Nega aynan Hogwords Olimpiada?",
     "subtitle": "Bizning maqsadimiz - O'zbekiston yoshlarini xalqaro darajadagi bilim bilan ta'minlash.",
     "problem": {
       "badge": "Muammo",
@@ -1897,12 +1897,12 @@
   "guide": {
     "hero": {
       "badge": "Platforma Qo'llanmasi",
-      "title": "Ardent platformasidan qanday foydalaniladi?",
+      "title": "Hogwords platformasidan qanday foydalaniladi?",
       "subtitle": "2–3 daqiqada platformani to‘liq tushunib oling va o‘qishni boshlang 🎓"
     },
     "platform": {
-      "title": "Ardent nima?",
-      "description": "Ardent - bu zamonaviy ta'lim platformasi. Bu yerda siz professional kurslarni o'rganishingiz, olimpiadalarda qatnashishingiz va o'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.",
+      "title": "Hogwords nima?",
+      "description": "Hogwords - bu zamonaviy ta'lim platformasi. Bu yerda siz professional kurslarni o'rganishingiz, olimpiadalarda qatnashishingiz va o'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.",
       "courses": "Kurslar",
       "coursesDesc": "Professional ustozlardan video darslar, amaliy mashg'ulotlar va testlar",
       "olympiads": "Olimpiadalar",
@@ -2034,7 +2034,7 @@
       "email": "Email yuborish"
     },
     "nav": {
-      "overview": "Ardent nima?",
+      "overview": "Hogwords nima?",
       "gettingStarted": "Boshlash",
       "courses": "Kurslar",
       "olympiads": "Olimpiadalar",
@@ -2050,7 +2050,7 @@
     }
   },
   "auth_guide": {
-    "title": "Ardent — Bilim va Olimpiadalar Platformasi",
+    "title": "Hogwords — Bilim va Olimpiadalar Platformasi",
     "subtitle": "Qanday ishlaydi? Juda oddiy 👇",
     "step1": "Kiring yoki ro‘yxatdan o‘ting",
     "step2": "Kurs yoki olimpiadani tanlang",

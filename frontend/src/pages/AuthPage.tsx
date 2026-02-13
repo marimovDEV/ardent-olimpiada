@@ -408,7 +408,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                 <Trophy className="w-5 h-5 text-white" />
               </div>
               <span className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                Ardent
+                Hogwords
               </span>
             </Link>
 
@@ -931,7 +931,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
 
           <div className="mt-8 pt-6 border-t border-white/5 text-center">
             <p className="text-xs text-gray-600">
-              &copy; 2024 Ardent Olimpiada. {t('auth.footer.rights')} <br />
+              &copy; 2024 Hogwords Olimpiada. {t('auth.footer.rights')} <br />
               <Link to="/" className="hover:text-white transition-colors">{t('auth.footer.privacy')}</Link> • <Link to="/" className="hover:text-white transition-colors">{t('auth.footer.help')}</Link>
             </p>
           </div>

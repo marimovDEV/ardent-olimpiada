@@ -45,8 +45,8 @@ const MOCK_USER_ADMIN = {
 const MOCK_HERO: HeroConfig[] = [
     {
         id: 1,
-        title_uz: "Ardent Olimpiada 2024 – Ilm bilan cho‘qqilarni zabt eting",
-        title_ru: "Ardent Olympiad 2024 – Conquer peaks with knowledge",
+        title_uz: "Hogwords Olimpiada 2024 – Ilm bilan cho‘qqilarni zabt eting",
+        title_ru: "Hogwords Olympiad 2024 – Conquer peaks with knowledge",
         subtitle_uz: "Respublikadagi eng nufuzli fan olimpiadalarida ishtirok eting",
         subtitle_ru: "Participate in the most prestigious subject olympiads in the Republic",
         button_text_uz: "Olimpiadaga Qatnashish",

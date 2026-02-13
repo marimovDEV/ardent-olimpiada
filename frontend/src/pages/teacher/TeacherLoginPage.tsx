@@ -164,7 +164,7 @@ const TeacherLoginPage = () => {
                     <div className="mt-8 pt-6 border-t border-white/5 text-center">
                         <p className="text-xs text-gray-600">
                             Darslaringizni oson boshqaring. <br />
-                            Ardent Olimpiada.
+                            Hogwords Olimpiada.
                         </p>
                     </div>
                 </div>

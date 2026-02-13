@@ -16,8 +16,8 @@ const OlympiadLayout = () => {
             {/* Minimal Navbar */}
             <header className="h-16 border-b border-border flex items-center justify-between px-6 bg-card/50 backdrop-blur sticky top-0 z-50">
                 <div className="flex items-center gap-2">
-                    <img src="/logo.jpg" alt="Ardent Logo" decoding="async" className="w-8 h-8 rounded-xl object-contain" />
-                    <span className="text-xl font-black text-foreground tracking-tight">Ardent <span className="text-primary">Olimpiada</span></span>
+                    <img src="/logo.jpg" alt="Logo" decoding="async" className="w-8 h-8 rounded-xl object-contain" />
+                    <span className="text-xl font-black font-cinzel text-foreground tracking-tight">Hogwords</span>
                 </div>
 
                 <div className="flex items-center gap-4">

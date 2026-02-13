@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 const SmartOlympiadCard = () => {
     return (
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden flex flex-col h-full">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
 
             <div className="relative z-10 flex flex-col h-full">
                 <div className="flex items-start justify-between mb-4">
                     <div>
-                        <span className="text-blue-400 font-bold text-xs uppercase tracking-wider mb-1 block">Ro'yxatdan o'tilgan</span>
+                        <span className="text-primary font-bold text-xs uppercase tracking-wider mb-1 block">Ro'yxatdan o'tilgan</span>
                         <h3 className="text-xl font-bold leading-tight">Milliy Matematika Tanlovi</h3>
                     </div>
                     <div className="bg-white/10 rounded-lg p-2 text-center min-w-[50px]">
@@ -28,12 +28,12 @@ const SmartOlympiadCard = () => {
                         </div>
                     </div>
 
-                    <div className="bg-blue-500/10 border border-blue-500/20 p-3 rounded-xl">
+                    <div className="bg-primary/10 border border-primary/20 p-3 rounded-xl">
                         <div className="flex items-center gap-2 mb-1">
-                            <BookOpen className="w-3 h-3 text-blue-400" />
-                            <span className="text-xs font-bold text-blue-300">Tavsiya:</span>
+                            <BookOpen className="w-3 h-3 text-primary" />
+                            <span className="text-xs font-bold text-primary-light">Tavsiya:</span>
                         </div>
-                        <Link to="/courses" className="text-sm text-white/90 hover:text-blue-300 underline underline-offset-2 decoration-blue-500/50">
+                        <Link to="/courses" className="text-sm text-white/90 hover:text-primary-light underline underline-offset-2 decoration-primary/50">
                             Algebra - 3 va 4-mavzularni takrorlang
                         </Link>
                     </div>

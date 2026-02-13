@@ -87,24 +87,24 @@ const Header = () => {
             }}
           >
             <img src="/logo.jpg" alt="Logo" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
-            <span className="text-xl md:text-2xl font-bold gradient-text">
-              Ardent
+            <span className="text-xl md:text-2xl font-black font-cinzel tracking-wider text-primary">
+              HOGWORDS
             </span>
           </a>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/all-courses" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-              {t('nav.courses')}
+          <nav className="hidden lg:flex items-center gap-8">
+            <Link to="/" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
+              {t('nav.home', 'Bosh sahifa')}
             </Link>
-            <Link to="/guide" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-              {t('nav.guide')}
+            <Link to="/olympiads" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
+              {t('nav.olympiads', 'Olimpiadalar')}
             </Link>
-            <Link to="/all-olympiads" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-              {t('nav.olympiads')}
+            <Link to="/results" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
+              {t('nav.ranking', 'Reyting')}
             </Link>
-            <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-              {t('nav.about')}
+            <Link to="/courses" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
+              {t('nav.tasks', 'Topshiriqlar')}
             </Link>
           </nav>
 
@@ -183,7 +183,7 @@ const Header = () => {
                 <SheetTitle className="text-left">
                   <div className="flex items-center gap-2">
                     <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
-                    <span className="text-xl font-bold gradient-text">Ardent</span>
+                    <span className="text-xl font-black font-cinzel tracking-wider text-primary">Hogwords</span>
                   </div>
                 </SheetTitle>
               </SheetHeader>

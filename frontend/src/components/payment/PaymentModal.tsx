@@ -75,12 +75,12 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
             <DialogContent className="max-w-md w-[95vw] sm:w-full p-0 overflow-hidden bg-slate-950 border-none rounded-[24px] sm:rounded-[32px] shadow-[0_0_50px_rgba(59,130,246,0.15)] ring-1 ring-white/10">
                 <div className="relative p-4 sm:p-8">
                     {/* Background Neon Glows */}
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-blue-600/20 blur-[80px] -mr-20 -mt-20 rounded-full" />
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-primary/20 blur-[80px] -mr-20 -mt-20 rounded-full" />
                     <div className="absolute bottom-0 left-0 w-40 h-40 bg-purple-600/20 blur-[80px] -ml-20 -mb-20 rounded-full" />
 
                     <DialogHeader className="relative z-10 space-y-2 mb-8">
                         <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-primary-dark flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.3)]">
                                 <Zap className="w-6 h-6 text-white" />
                             </div>
                             <div className="text-left">
@@ -100,7 +100,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                                 className="space-y-8 relative z-10"
                             >
                                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-4 flex gap-4 items-start">
-                                    <div className="bg-blue-600 rounded-full p-2 mt-1 shrink-0">
+                                    <div className="bg-primary rounded-full p-2 mt-1 shrink-0">
                                         <Smartphone className="w-5 h-5 text-white" />
                                     </div>
                                     <div className="space-y-1">
@@ -135,7 +135,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
                                                 key={amt}
                                                 onClick={() => setAmount(amt)}
                                                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${amount === amt
-                                                    ? "bg-blue-600 border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]"
+                                                    ? "bg-primary border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]"
                                                     : "bg-slate-900/50 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200"
                                                     }`}
                                             >
@@ -147,7 +147,7 @@ const PaymentModal = ({ isOpen, onOpenChange, onClose, onSuccess, requiredAmount
 
                                 <Button
                                     onClick={handleGoToBot}
-                                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black text-lg shadow-lg shadow-blue-600/25 transition-all group"
+                                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-primary-dark hover:from-blue-700 hover:to-indigo-700 text-white font-black text-lg shadow-lg shadow-primary/25 transition-all group"
                                 >
                                     <span>Botga o'tish</span>
                                     <Zap className="w-5 h-5 ml-2 group-hover:scale-110 transition-transform" />

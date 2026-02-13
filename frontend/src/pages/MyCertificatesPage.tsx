@@ -122,7 +122,7 @@ const MyCertificatesPage = () => {
     const shareToTelegram = () => {
         if (!selectedCert) return;
         const url = `${window.location.origin}/certificate/verify/${selectedCert.cert_number}`;
-        const text = encodeURIComponent(`🎓 Men Ardent Olimpiada platformasida "${selectedCert.title}" bo'yicha sertifikat oldim!\n\n✅ Tekshirish: ${url}`);
+        const text = encodeURIComponent(`🎓 Men Hogwords Olimpiada platformasida "${selectedCert.title}" bo'yicha sertifikat oldim!\n\n✅ Tekshirish: ${url}`);
         window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
     };
 
