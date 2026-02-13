@@ -93,11 +93,11 @@ const Footer = () => {
 
             <FooterSection title={t('footer.courses_title')} id="courses">
               <ul className="space-y-2 text-sm text-muted-foreground/80">
-                <li><Link to="/courses" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.all_courses')}</Link></li>
-                <li><Link to="/courses?cat=programming" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.programming')}</Link></li>
-                <li><Link to="/courses?cat=design" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.design')}</Link></li>
-                <li><Link to="/courses?cat=languages" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.languages')}</Link></li>
-                <li><Link to="/olympiads" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.olympiads')}</Link></li>
+                <li><Link to="/all-courses" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.all_courses')}</Link></li>
+                <li><Link to="/all-courses?cat=programming" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.programming')}</Link></li>
+                <li><Link to="/all-courses?cat=design" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.design')}</Link></li>
+                <li><Link to="/all-courses?cat=languages" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.languages')}</Link></li>
+                <li><Link to="/all-olympiads" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.olympiads')}</Link></li>
                 <li><Link to="/pathways" className="hover:text-primary transition-colors flex items-center gap-2"><span>&rsaquo;</span> {t('footer.pathways')}</Link></li>
               </ul>
             </FooterSection>
