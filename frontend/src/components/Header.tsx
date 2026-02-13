@@ -154,12 +154,12 @@ const Header = () => {
             ) : (
               <>
                 <Link to="/auth/login">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="font-bold text-foreground hover:text-primary">
                     {t('nav.login')}
                   </Button>
                 </Link>
                 <Link to="/auth/register">
-                  <Button variant="hero" size="default">
+                  <Button variant="default" size="default" className="shadow-gold font-bold">
                     {t('nav.register')}
                   </Button>
                 </Link>
@@ -268,13 +268,13 @@ const Header = () => {
                 ) : (
                   <>
                     <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="outline" className="w-full min-h-12">
+                      <Button variant="outline" className="w-full min-h-12 font-bold">
                         <User className="w-5 h-5 mr-2" />
                         {t('nav.login')}
                       </Button>
                     </Link>
                     <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="hero" className="w-full min-h-12">
+                      <Button variant="default" className="w-full min-h-12 font-bold shadow-gold">
                         {t('nav.register')}
                       </Button>
                     </Link>
