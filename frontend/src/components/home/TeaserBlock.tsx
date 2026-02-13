@@ -30,7 +30,7 @@ const TeaserBlock = () => {
                     initial={{ opacity: 0, scale: 0.98 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="relative overflow-hidden rounded-3xl p-8 md:p-12 text-center md:text-left shadow-xl min-h-[300px] flex items-center group"
+                    className="relative overflow-hidden rounded-2xl md:rounded-3xl p-6 md:p-12 text-center md:text-left shadow-xl min-h-[300px] flex items-center group"
                 >
                     {/* Background Layer */}
                     {imageUrl ? (

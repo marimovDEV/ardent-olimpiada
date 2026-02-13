@@ -92,7 +92,7 @@ const FreeCoursesSection = () => {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="group cursor-pointer bg-card rounded-xl border overflow-hidden hover:shadow-lg transition-all"
+                className="group cursor-pointer bg-card rounded-2xl md:rounded-xl border overflow-hidden hover:shadow-lg transition-all"
             >
                 <div className="relative aspect-video overflow-hidden">
                     <img
@@ -114,7 +114,7 @@ const FreeCoursesSection = () => {
                         {getDuration()}
                     </div>
                 </div>
-                <div className="p-5">
+                <div className="p-4 md:p-5">
                     <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">{course.title}</h3>
                     <Link to={`/courses/${course.id}`} className="text-sm text-primary font-medium hover:underline inline-flex items-center">
                         {t('freeCourses.view_lesson', "Darsni ko'rish")} <ArrowRight className="w-3 h-3 ml-1" />
@@ -131,7 +131,7 @@ const FreeCoursesSection = () => {
     const buttonText = i18n.language === 'ru' ? section.button_text_ru : section.button_text_uz;
 
     return (
-        <section className="py-20 bg-muted/20">
+        <section className="py-12 md:py-20 bg-muted/20">
             <div className="container">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                     <motion.div

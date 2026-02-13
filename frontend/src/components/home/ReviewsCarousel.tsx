@@ -48,7 +48,7 @@ const ReviewsCarousel = () => {
     if (!isLoading && reviews.length === 0) return null;
 
     return (
-        <section className="py-16 bg-gradient-to-b from-background to-muted/20 container">
+        <section className="py-12 md:py-16 bg-gradient-to-b from-background to-muted/20 container">
             <div className="text-center mb-10">
                 <h2 className="text-3xl font-bold mb-4">{t('reviews.title', "O'quvchilarimiz Fikrlari")}</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">

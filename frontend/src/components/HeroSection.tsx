@@ -106,7 +106,7 @@ const HeroSection = () => {
 
   // Fallback to Standard Hero (Config based)
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-background">
+    <section className="relative pt-24 pb-12 md:pt-48 md:pb-32 overflow-hidden bg-background min-h-[60vh] md:min-h-screen flex items-center">
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/5 to-transparent opacity-30" />
@@ -121,10 +121,10 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-8"
+            className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] md:text-sm font-semibold mb-6 md:mb-8"
           >
-            <Trophy className="w-4 h-4" />
-            <span className="tracking-wide uppercase text-xs">{t('hero.badge')}</span>
+            <Trophy className="w-3 h-3 md:w-4 md:h-4" />
+            <span className="tracking-wide uppercase">{t('hero.badge', 'Eng yaxshi olimpiadalar platformasi')}</span>
           </motion.div>
 
           {/* Main Title */}
@@ -133,7 +133,7 @@ const HeroSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl lg:text-9xl font-black font-cinzel leading-[1.1] tracking-tight mb-8"
+            className="text-5xl md:text-8xl lg:text-9xl font-black font-cinzel leading-[1.1] tracking-tight mb-4 md:mb-8"
           >
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-light to-primary animate-pulse-soft">
               Hogwords
@@ -146,7 +146,7 @@ const HeroSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl font-medium italic text-muted-foreground/80 max-w-2xl mb-10 leading-relaxed font-cinzel"
+            className="text-base md:text-2xl font-medium italic text-muted-foreground/80 max-w-2xl mb-8 md:mb-10 leading-relaxed font-cinzel"
           >
             "Magic of Knowledge & Olympiad Excellence"
           </motion.p>
@@ -157,27 +157,27 @@ const HeroSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
+            className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto px-4 md:px-0"
           >
-            <Button size="xl" className="h-14 px-8 text-lg rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all hover:scale-105" asChild>
+            <Button size="lg" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all hover:scale-105" asChild>
               <Link to={btnLink}>
                 {btnText} <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             </Button>
-            <Button size="xl" variant="outline" className="h-14 px-8 text-lg rounded-full border-2 hover:bg-muted/50 transition-all" asChild>
+            <Button size="lg" variant="outline" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-full border-2 hover:bg-muted/50 transition-all" asChild>
               <Link to="/courses">
                 {t('hero.cta_secondary')}
               </Link>
             </Button>
           </motion.div>
 
-          {/* Trust/Stats Mini Bar */}
+          {/* Trust/Stats Mini Bar - Hidden on mobile if not needed or redesigned */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.5 }}
-            className="mt-16 pt-8 border-t border-border/50 grid grid-cols-3 gap-8 md:gap-16"
+            className="hidden md:grid mt-16 pt-8 border-t border-border/50 grid-cols-3 gap-8 md:gap-16 w-full"
           >
             <div className="flex flex-col items-center">
               <span className="text-2xl md:text-3xl font-bold">10k+</span>

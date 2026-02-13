@@ -87,8 +87,8 @@ const ProfessionsCarousel = () => {
                                 className="h-full"
                             >
                                 <Link to={`/profession/${prof.id}`} className="block h-full">
-                                    <div className="group h-full p-6 bg-card rounded-2xl border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex flex-col items-center text-center">
-                                        <div className={`w-16 h-16 rounded-2xl ${prof.color} bg-opacity-10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                                    <div className="group h-full p-4 md:p-6 bg-card rounded-2xl border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex flex-col items-center text-center">
+                                        <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${prof.color} bg-opacity-10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform`}>
                                             <div className={`bg-white/20 p-3 rounded-xl`}>
                                                 <prof.icon className={`w-8 h-8 text-white`} />
                                             </div>

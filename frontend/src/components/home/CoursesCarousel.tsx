@@ -56,7 +56,7 @@ const CoursesCarousel = () => {
     if (!isLoading && courses.length === 0) return null;
 
     return (
-        <section className="py-16 bg-muted/30">
+        <section className="py-12 md:py-16 bg-muted/30">
             <div className="container">
                 <div className="flex justify-between items-center mb-8">
                     <div>
@@ -99,7 +99,7 @@ const CoursesCarousel = () => {
                                         </div>
                                     </div>
 
-                                    <div className="p-5 flex flex-col flex-1">
+                                    <div className="p-4 md:p-5 flex flex-col flex-1">
                                         <div className="flex justify-between items-start mb-2">
                                             <div className="flex gap-1">
                                                 {[1, 2, 3, 4, 5].map(i => (

@@ -135,10 +135,10 @@ const OlympiadSection = () => {
   if (!isLoading && upcomingOlympiads.length === 0) return null;
 
   return (
-    <section id="olympiad" className="py-16 md:py-24 relative bg-background transition-colors duration-300">
+    <section id="olympiad" className="py-12 md:py-24 relative bg-background transition-colors duration-300">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-8 md:mb-16">
           <div className="animate-slide-up text-left">
             <motion.span
               initial={{ opacity: 0, y: 10 }}
@@ -199,7 +199,7 @@ const OlympiadSection = () => {
             {upcomingOlympiads.map((olympiad, index) => (
               <CarouselItem key={olympiad.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
                 <div
-                  className={`group relative bg-card rounded-3xl overflow-hidden shadow-card hover:shadow-strong transition-all duration-300 hover:-translate-y-1 h-full ${olympiad.featured ? 'ring-2 ring-warning' : ''
+                  className={`group relative bg-card rounded-2xl md:rounded-3xl overflow-hidden shadow-card hover:shadow-strong transition-all duration-300 hover:-translate-y-1 h-full ${olympiad.featured ? 'ring-2 ring-warning' : ''
                     }`}
                 >
                   {/* Featured badge */}
@@ -228,7 +228,7 @@ const OlympiadSection = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
                     {/* Header Content */}
-                    <div className="relative z-10 p-6 flex flex-col h-full justify-between">
+                    <div className="relative z-10 p-4 md:p-6 flex flex-col h-full justify-between">
                       <div>
                         <div className="flex items-center gap-3 mb-4">
                           <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
@@ -264,7 +264,7 @@ const OlympiadSection = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="p-6">
+                  <div className="p-4 md:p-6">
                     {/* Info grid */}
                     <div className="grid grid-cols-2 gap-4 mb-6">
                       <div className="flex items-center gap-2 text-sm text-foreground">
