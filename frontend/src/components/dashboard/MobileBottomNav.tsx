@@ -14,8 +14,8 @@ const MobileBottomNav = () => {
     ];
 
     return (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#111827]/80 backdrop-blur-xl border-t border-[#FACC15]/20 px-2 pb-safe-offset-1 pt-2 rounded-t-[20px] shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.5)]">
-            <div className="flex items-center justify-around max-w-md mx-auto h-16">
+        <nav className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-fit bg-[#111827]/80 backdrop-blur-xl border border-[#FACC15]/20 px-6 pt-2 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center justify-center gap-1 h-16">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}
