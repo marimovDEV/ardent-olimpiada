@@ -148,6 +148,27 @@
   .animate-scale-in {
     animation: scale-in 0.4s ease-out;
   }
+
+  .nav-link-premium {
+    @apply relative text-sm font-bold uppercase tracking-wider transition-colors hover:text-primary;
+  }
+
+  .nav-link-premium::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-0 h-[2px] bg-primary transition-all duration-300;
+  }
+
+  .nav-link-premium:hover::after {
+    @apply w-full;
+  }
+
+  .nav-link-premium-active {
+    @apply text-primary;
+  }
+
+  .nav-link-premium-active::after {
+    @apply w-full;
+  }
 }
 
 @keyframes float {

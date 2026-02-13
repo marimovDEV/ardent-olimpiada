@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const location = useLocation();
 
   const token = localStorage.getItem('token');
   const userStr = localStorage.getItem('user');
@@ -67,7 +68,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border bg-background/80 backdrop-blur-md">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0B132B] backdrop-blur-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -86,26 +87,31 @@ const Header = () => {
               }
             }}
           >
-            <img src="/logo.jpg" alt="Logo" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+            <img src="/logo.jpg" alt="Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain" />
             <span className="text-xl md:text-2xl font-black font-cinzel tracking-wider text-primary">
               HOGWORDS
             </span>
           </a>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            <Link to="/" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
-              {t('nav.home', 'Bosh sahifa')}
-            </Link>
-            <Link to="/olympiads" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
-              {t('nav.olympiads', 'Olimpiadalar')}
-            </Link>
-            <Link to="/results" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
-              {t('nav.ranking', 'Reyting')}
-            </Link>
-            <Link to="/courses" className="text-sm font-semibold hover:text-primary transition-colors uppercase tracking-wider font-cinzel">
-              {t('nav.tasks', 'Topshiriqlar')}
-            </Link>
+          <nav className="hidden lg:flex items-center gap-6">
+            <NavLink to="/" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+              {t('nav.home')}
+            </NavLink>
+            <NavLink to="/all-olympiads" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+              {t('nav.olympiads')}
+            </NavLink>
+            <NavLink to="/all-courses" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+              {t('nav.courses')}
+            </NavLink>
+            <NavLink to="/guide" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+              {t('nav.guides')}
+            </NavLink>
+            <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+              {t('nav.ranking')}
+            </NavLink>
+            <NavLink to="/about" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+              {t('nav.mentors')}
+            </NavLink>
           </nav>
 
           {/* Desktop Actions */}
@@ -190,8 +196,24 @@ const Header = () => {
 
               <nav className="flex flex-col gap-1 mt-6">
                 <Link
+                  to="/"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Globe className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{t('nav.home')}</span>
+                </Link>
+                <Link
+                  to="/all-olympiads"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Trophy className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{t('nav.olympiads')}</span>
+                </Link>
+                <Link
                   to="/all-courses"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <BookOpen className="w-5 h-5 text-primary" />
@@ -199,27 +221,27 @@ const Header = () => {
                 </Link>
                 <Link
                   to="/guide"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <BookOpen className="w-5 h-5 text-blue-500" />
-                  <span className="font-medium">{t('nav.guide')}</span>
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{t('nav.guides')}</span>
                 </Link>
                 <Link
-                  to="/all-olympiads"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted transition-colors"
+                  to="/winners"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <Trophy className="w-5 h-5 text-warning" />
-                  <span className="font-medium">{t('nav.olympiads')}</span>
+                  <Trophy className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{t('nav.ranking')}</span>
                 </Link>
                 <Link
                   to="/about"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <User className="w-5 h-5 text-green-500" />
-                  <span className="font-medium">{t('nav.about')}</span>
+                  <User className="w-5 h-5 text-primary" />
+                  <span className="font-medium">{t('nav.mentors')}</span>
                 </Link>
               </nav>
 
