@@ -95,19 +95,19 @@ const AdminDashboard = () => {
     }
 
     const kpis = [
-        { label: t('admin.totalUsers'), value: data?.kpis?.total_users || 0, sub: `+${data?.kpis?.new_users_today || 0} ${t('common.today').toLowerCase()}`, icon: Users, color: "text-blue-600", bg: "bg-blue-100/50" },
-        { label: t('admin.teachers.title'), value: data?.kpis?.teachers_count || 0, sub: t('admin.dashboard.activeMentors'), icon: UserCheck, color: "text-indigo-600", bg: "bg-indigo-100/50" },
-        { label: t('admin.courses.title'), value: data?.kpis?.active_courses || 0, sub: t('admin.dashboard.coursesOnSale'), icon: BookOpen, color: "text-green-600", bg: "bg-green-100/50" },
-        { label: t('admin.olympiads.title'), value: data?.kpis?.active_olympiads || 0, sub: t('admin.dashboard.olympiadsStatus'), icon: Trophy, color: "text-orange-600", bg: "bg-orange-100/50" },
-        { label: t('admin.revenue'), value: `${(data?.kpis?.revenue_month || 0).toLocaleString()} UZS`, sub: `${(data?.kpis?.revenue_today || 0).toLocaleString()} ${t('common.today').toLowerCase()}`, icon: DollarSign, color: "text-emerald-600", bg: "bg-emerald-100/50" },
+        { label: t('admin.totalUsers'), value: data?.kpis?.total_users || 0, sub: `+${data?.kpis?.new_users_today || 0} ${t('common.today').toLowerCase()}`, icon: Users, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('admin.teachers.title'), value: data?.kpis?.teachers_count || 0, sub: t('admin.dashboard.activeMentors'), icon: UserCheck, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('admin.courses.title'), value: data?.kpis?.active_courses || 0, sub: t('admin.dashboard.coursesOnSale'), icon: BookOpen, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('admin.olympiads.title'), value: data?.kpis?.active_olympiads || 0, sub: t('admin.dashboard.olympiadsStatus'), icon: Trophy, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('admin.revenue'), value: `${(data?.kpis?.revenue_month || 0).toLocaleString()} UZS`, sub: `${(data?.kpis?.revenue_today || 0).toLocaleString()} ${t('common.today').toLowerCase()}`, icon: DollarSign, color: "text-primary", bg: "bg-primary/10" },
     ];
 
     const quickActions = [
-        { label: t('admin.dashboard.createCourse'), icon: Plus, link: "/admin/courses", color: "bg-blue-600" },
-        { label: t('admin.dashboard.createOlympiad'), icon: Trophy, link: "/admin/olympiads", color: "bg-orange-600" },
-        { label: t('admin.dashboard.issueCertificate'), icon: Award, link: "/admin/certificates", color: "bg-indigo-600" },
-        { label: t('admin.dashboard.sendNotification'), icon: Megaphone, link: "/admin/notifications", color: "bg-purple-600" },
-        { label: t('admin.dashboard.addSubject'), icon: Plus, link: "/admin/subjects", color: "bg-rose-600" },
+        { label: t('admin.dashboard.createCourse'), icon: Plus, link: "/admin/courses", color: "bg-primary text-primary-foreground shadow-gold" },
+        { label: t('admin.dashboard.createOlympiad'), icon: Trophy, link: "/admin/olympiads", color: "bg-primary text-primary-foreground shadow-gold" },
+        { label: t('admin.dashboard.issueCertificate'), icon: Award, link: "/admin/certificates", color: "bg-primary text-primary-foreground shadow-gold" },
+        { label: t('admin.dashboard.sendNotification'), icon: Megaphone, link: "/admin/notifications", color: "bg-primary text-primary-foreground shadow-gold" },
+        { label: t('admin.dashboard.addSubject'), icon: Plus, link: "/admin/subjects", color: "bg-primary text-primary-foreground shadow-gold" },
     ];
 
     const alerts = [
@@ -265,8 +265,8 @@ const AdminDashboard = () => {
                                         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                             <defs>
                                                 <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                                                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                                                 </linearGradient>
                                             </defs>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -276,7 +276,7 @@ const AdminDashboard = () => {
                                                 contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '12px', fontSize: '10px' }}
                                                 labelFormatter={(name) => t(`months.${name.toLowerCase()}`)}
                                             />
-                                            <Area type="monotone" dataKey="users" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
+                                            <Area type="monotone" dataKey="users" stroke="hsl(var(--primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
                                         </AreaChart>
                                     </ResponsiveContainer>
                                 </div>
@@ -303,7 +303,7 @@ const AdminDashboard = () => {
                                                 labelFormatter={(name) => t(`months.${name.toLowerCase()}`)}
                                                 formatter={(val: any) => [`${val.toLocaleString()} UZS`, t('admin.revenue')]}
                                             />
-                                            <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} barSize={24} />
+                                            <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={24} />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </div>

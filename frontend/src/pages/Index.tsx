@@ -40,7 +40,7 @@ const Index = () => {
         <meta name="description" content={config ? (config as any)[`subtitle_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_subtitle : "O'zbekistonning eng nufuzli olimpiadalar portali"} />
         <meta property="og:title" content="OlimpiadaUZ - Online Olimpiada Platformasi" />
         <meta property="og:description" content="Maktab o'quvchilari uchun online ta'lim va olimpiada platformasi" />
-        <meta property="og:image" content="https://ardent-olimpiada-course.vercel.app/logo.jpg" />
+        <meta property="og:image" content="https://hogwords.uz/logo.jpg" />
       </Helmet>
 
       <main>

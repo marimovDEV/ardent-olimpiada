@@ -14,11 +14,11 @@ export const AuthGuideSide = () => {
 
             <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-12">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
-                        <Trophy className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center shadow-gold">
+                        <Trophy className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-2xl font-black tracking-tight text-white">
-                        Ardent
+                    <span className="text-2xl font-black tracking-tight text-primary font-cinzel">
+                        Hogwords
                     </span>
                 </div>
 

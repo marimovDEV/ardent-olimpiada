@@ -38,9 +38,9 @@ const StreakHero = ({ data }: { data: StreakInfo }) => {
     const isSaved = data.is_active_today;
 
     return (
-        <div className={`relative overflow-hidden rounded-2xl p-1 shadow-lg transition-all duration-500 ${isSaved
-                ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-900/20'
-                : 'bg-gradient-to-br from-orange-500 to-red-600 shadow-orange-900/20'
+        <div className={`relative overflow-hidden rounded-2xl p-1 shadow-gold transition-all duration-500 ${isSaved
+            ? 'bg-gradient-to-br from-primary/40 via-primary/20 to-transparent'
+            : 'bg-gradient-to-br from-primary-dark/40 via-primary/20 to-transparent'
             }`}>
             {/* Background Decoration */}
             <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20"></div>
@@ -50,11 +50,9 @@ const StreakHero = ({ data }: { data: StreakInfo }) => {
                 {/* Left: Streak Info */}
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <div className={`absolute inset-0 blur-[40px] opacity-60 animate-pulse ${isSaved ? 'bg-emerald-400' : 'bg-red-500'
-                            }`}></div>
+                        <div className={`absolute inset-0 blur-[40px] opacity-40 animate-pulse bg-primary`}></div>
                         <Flame
-                            className={`w-16 h-16 animate-float-slow drop-shadow-lg ${isSaved ? 'text-emerald-300' : 'text-yellow-300'
-                                }`}
+                            className="w-16 h-16 animate-float-slow drop-shadow-gold text-primary"
                             fill="currentColor"
                         />
                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 bg-black/40 blur-sm rounded-full"></div>
@@ -62,10 +60,10 @@ const StreakHero = ({ data }: { data: StreakInfo }) => {
 
                     <div>
                         <div className="flex items-center gap-2">
-                            <h2 className="text-3xl font-black uppercase tracking-tight italic">
-                                {data.streak_count} {t('dashboard.streak.daily')} <span className={isSaved ? 'text-emerald-300' : 'text-yellow-300'}>{t('dashboard.streak.streak')}</span>
+                            <h2 className="text-3xl font-black uppercase tracking-tight italic font-cinzel">
+                                {data.streak_count} {t('dashboard.streak.daily')} <span className="text-primary">{t('dashboard.streak.streak')}</span>
                             </h2>
-                            {isSaved && <CheckCircle2 className="w-6 h-6 text-emerald-300 animate-bounce" />}
+                            {isSaved && <CheckCircle2 className="w-6 h-6 text-primary animate-pulse" />}
                         </div>
                         <p className="text-white/90 font-medium max-w-sm leading-tight mt-1">
                             {t(data.subtitle)}
@@ -76,16 +74,16 @@ const StreakHero = ({ data }: { data: StreakInfo }) => {
                 {/* Right: Timer / Status */}
                 <div className="flex flex-col items-center md:items-end w-full md:w-auto">
                     <div className={`flex items-center gap-3 px-5 py-3 rounded-xl border backdrop-blur-md transition-all ${isSaved
-                            ? 'bg-emerald-400/20 border-emerald-400/30 text-emerald-50'
-                            : 'bg-black/30 border-white/10 text-white'
+                        ? 'bg-primary/20 border-primary/30 text-primary'
+                        : 'bg-black/30 border-white/10 text-white'
                         }`}>
                         <Clock className={`w-5 h-5 ${!isSaved && data.is_danger ? 'animate-pulse text-red-200' : ''}`} />
                         <div className="flex flex-col">
-                            <span className="font-bold font-mono text-2xl tracking-wider">
-                                {formatTime(timeLeft)}
-                            </span>
-                            <span className="text-[10px] uppercase font-black tracking-widest opacity-70">
+                            <span className="text-primary-light font-black tracking-widest uppercase text-xs mb-1">
                                 {isSaved ? t('dashboard.streak.saved') : t('dashboard.streak.left')}
+                            </span>
+                            <span className="font-black font-mono text-2xl tracking-wider text-white">
+                                {formatTime(timeLeft)}
                             </span>
                         </div>
                     </div>

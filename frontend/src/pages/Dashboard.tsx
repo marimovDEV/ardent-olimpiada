@@ -94,18 +94,18 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-        <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
-        <h2 className="text-xl font-bold text-foreground mb-2">{t('dashboard.widgets.error')}</h2>
-        <p className="text-muted-foreground mb-4">{error || t('dashboard.widgets.noData')}</p>
-        <Button onClick={fetchDashboardData} variant="outline" className="text-foreground border-border hover:bg-muted">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center">
+        <AlertTriangle className="w-12 h-12 text-primary mb-4" />
+        <h2 className="text-xl font-bold text-foreground mb-2 font-cinzel">{t('dashboard.widgets.error')}</h2>
+        <p className="text-muted-foreground mb-4 font-medium">{error || t('dashboard.widgets.noData')}</p>
+        <Button onClick={fetchDashboardData} variant="outline" className="text-foreground border-primary/20 hover:bg-primary/5 rounded-xl font-bold">
           {t('dashboard.widgets.tryAgain')}
         </Button>
       </div>
@@ -123,12 +123,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 animate-fade-in pb-20">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8 animate-fade-in pb-20 bg-background text-foreground">
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
         {/* --- LEFT COLUMN (Main Content) [Takes 3/4 space] --- */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-8">
 
           {/* 1. Hero Section */}
           <div className="animate-pop-in layer-1">
@@ -152,8 +152,7 @@ const Dashboard = () => {
 
           {/* 5. Analytics & More */}
           <div className="animate-pop-in layer-5" style={{ animationDelay: '400ms' }}>
-            {/* Profession Roadmap if exists, else SubjectStats/Analytics toggle? */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ProfessionRoadmap profession={data.active_profession} />
               <AnalyticsResults />
             </div>
@@ -163,12 +162,11 @@ const Dashboard = () => {
 
 
         {/* --- RIGHT COLUMN (Sidebar) [Takes 1/4 space] --- */}
-        <div className="space-y-6 lg:col-span-1">
+        <div className="space-y-8 lg:col-span-1">
 
           {/* 1. Profile Summary (Compact) */}
           <div className="animate-pop-in layer-1">
             <StudentProfileCard />
-            {/* We might need to adjust ProfileCard CSS to be column-friendly */}
           </div>
 
           {/* 2. Streak Calendar */}
@@ -182,25 +180,25 @@ const Dashboard = () => {
             style={{ animationDelay: '250ms' }}
             onClick={() => setIsProgressModalOpen(true)}
           >
-            <div className="bg-card border border-border rounded-2xl p-6 relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
+            <div className="bg-card border border-border rounded-2xl p-6 relative overflow-hidden shadow-gold hover:border-primary/50 transition-all duration-500">
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
 
               <div className="relative z-10">
-                <h3 className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center justify-between">
+                <h3 className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mb-3 flex items-center justify-between font-cinzel">
                   {t('dashboard.widgets.levelProgress')}
-                  <Zap className="w-3 h-3 text-primary fill-primary" />
+                  <Zap className="w-4 h-4 text-primary animate-pulse fill-primary" />
                 </h3>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="text-2xl font-black text-foreground">LEVEL {data.level.current}</span>
-                  <span className="text-primary font-bold text-xs">{t('dashboard.widgets.xpLeft', { xp: data.level.xp_left })}</span>
+                <div className="flex justify-between items-end mb-3">
+                  <span className="text-3xl font-black text-foreground font-cinzel">LVM {data.level.current}</span>
+                  <span className="text-primary font-black text-xs">{t('dashboard.widgets.xpLeft', { xp: data.level.xp_left })}</span>
                 </div>
-                <div className="h-3 bg-muted rounded-full overflow-hidden mb-2">
+                <div className="h-4 bg-secondary-light/30 rounded-full overflow-hidden mb-3 border border-white/5 p-[1px]">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-primary rounded-full transition-all duration-1000"
+                    className="h-full bg-gradient-to-r from-primary-dark via-primary to-primary-light rounded-full transition-all duration-1000 shadow-gold"
                     style={{ width: `${data.level.progress_percent}%` }}
                   />
                 </div>
-                <p className="text-[10px] font-bold text-primary uppercase text-right group-hover:translate-x-1 transition-transform">
+                <p className="text-[10px] font-black text-primary uppercase text-right group-hover:translate-x-1 transition-transform font-cinzel">
                   {t('common.details')} →
                 </p>
               </div>

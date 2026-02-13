@@ -54,10 +54,10 @@ const TeacherDashboard = () => {
     };
 
     const statItems = [
-        { label: t('teacher.dashboard.stats.students'), value: stats.students_count, icon: Users, color: "text-blue-500", bg: "bg-blue-100 dark:bg-blue-900/20" },
-        { label: t('teacher.dashboard.stats.courses'), value: stats.active_courses, icon: BookOpen, color: "text-green-500", bg: "bg-green-100 dark:bg-green-900/20" },
-        { label: t('teacher.dashboard.stats.rating'), value: stats.rating, icon: Star, color: "text-yellow-500", bg: "bg-yellow-100 dark:bg-yellow-900/20" },
-        { label: t('teacher.dashboard.stats.lessons'), value: stats.total_lessons, icon: Clock, color: "text-purple-500", bg: "bg-purple-100 dark:bg-purple-900/20" },
+        { label: t('teacher.dashboard.stats.students'), value: stats.students_count, icon: Users, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('teacher.dashboard.stats.courses'), value: stats.active_courses, icon: BookOpen, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('teacher.dashboard.stats.rating'), value: stats.rating, icon: Star, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('teacher.dashboard.stats.lessons'), value: stats.total_lessons, icon: Clock, color: "text-primary", bg: "bg-primary/10" },
     ];
 
     if (loading) {
@@ -72,25 +72,30 @@ const TeacherDashboard = () => {
         <div className="space-y-6 relative">
             {/* Welcome Animation Overlay */}
             <div
-                className={`fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm transition-opacity duration-1000 pointer-events-none
+                className={`fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-md transition-opacity duration-1000 pointer-events-none
                 ${showWelcome ? 'opacity-100' : 'opacity-0'}`}
             >
                 <div className={`text-center transition-transform duration-1000 ${showWelcome ? 'scale-100 translate-y-0' : 'scale-90 translate-y-10'}`}>
-                    <div className="inline-flex p-4 rounded-full bg-blue-100 text-blue-600 mb-6 shadow-lg shadow-blue-200 animate-bounce">
-                        <Star className="w-12 h-12 fill-blue-600" />
+                    <div className="inline-flex p-5 rounded-3xl bg-primary/10 text-primary mb-8 shadow-gold animate-bounce">
+                        <Star className="w-16 h-16 fill-primary" />
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-4">
+                    <h1 className="text-5xl md:text-7xl font-black text-primary mb-6 tracking-tighter font-cinzel">
                         {t('teacher.dashboard.welcome')}
                     </h1>
-                    <p className="text-xl text-gray-500 font-medium">
+                    <p className="text-xl text-muted-foreground font-medium uppercase tracking-widest font-cinzel">
                         {t('teacher.dashboard.welcomeMessage')}
                     </p>
                 </div>
             </div>
 
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">{t('teacher.dashboard.title')}</h1>
-                <p className="text-muted-foreground">{new Date().toLocaleDateString()}</p>
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-card p-6 rounded-2xl border border-border shadow-sm">
+                <div>
+                    <h1 className="text-3xl font-black text-foreground tracking-tight font-cinzel">{t('teacher.dashboard.title')}</h1>
+                    <p className="text-muted-foreground font-medium mt-1">{t('teacher.dashboard.welcomeMessage')}</p>
+                </div>
+                <div className="bg-primary/10 px-4 py-2 rounded-xl border border-primary/20">
+                    <p className="text-xs font-black text-primary uppercase tracking-widest">{new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                </div>
             </div>
 
             {/* Stats Grid */}
@@ -119,25 +124,31 @@ const TeacherDashboard = () => {
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-6">
                     {/* Quick Actions */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('teacher.dashboard.quickActions')}</CardTitle>
+                    <Card className="border-border overflow-hidden">
+                        <CardHeader className="bg-muted/50 border-b border-border">
+                            <CardTitle className="text-lg font-black font-cinzel tracking-tight">{t('teacher.dashboard.quickActions')}</CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-wrap gap-4">
+                        <CardContent className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Link to="/teacher/courses">
-                                <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700">
-                                    <Plus className="w-4 h-4" /> {t('teacher.courses.newCourse')}
+                                <Button className="w-full justify-start gap-3 h-14 bg-primary text-primary-foreground hover:bg-primary-light rounded-xl font-bold text-base shadow-gold">
+                                    <Plus className="w-6 h-6" /> {t('teacher.courses.newCourse')}
                                 </Button>
                             </Link>
                             <Link to="/teacher/olympiads">
-                                <Button variant="outline" className="gap-2">
-                                    <Plus className="w-4 h-4" /> {t('teacher.olympiads.new')}
+                                <Button variant="outline" className="w-full justify-start gap-3 h-14 border-primary/20 text-primary hover:bg-primary/5 rounded-xl font-bold text-base">
+                                    <Trophy className="w-6 h-6" /> {t('teacher.olympiads.new')}
                                 </Button>
                             </Link>
-                            {/* Placeholder for future features */}
-                            <Button variant="secondary" className="gap-2 opacity-50 cursor-not-allowed">
-                                <Video className="w-4 h-4" /> {t('teacher.dashboard.googleMeet')}
-                            </Button>
+                            <Link to="/teacher/students">
+                                <Button variant="secondary" className="w-full justify-start gap-3 h-14 rounded-xl font-bold text-base">
+                                    <Users className="w-6 h-6" /> {t('teacher.dashboard.stats.students')}
+                                </Button>
+                            </Link>
+                            <Link to="/teacher/olympiads">
+                                <Button variant="secondary" className="w-full justify-start gap-3 h-14 rounded-xl font-bold text-base">
+                                    <Send className="w-6 h-6" /> {t('teacher.olympiads.results')}
+                                </Button>
+                            </Link>
                         </CardContent>
                     </Card>
 
@@ -157,28 +168,30 @@ const TeacherDashboard = () => {
 
                 {/* Sidebar Widgets */}
                 <div className="space-y-6">
-                    <Card className={`${user?.teacher_profile?.is_premium ? 'bg-gradient-to-br from-indigo-600 to-purple-700' : 'bg-gradient-to-br from-slate-600 to-slate-700'} text-white border-none`}>
+                    <Card className={`${user?.teacher_profile?.is_premium ? 'bg-gradient-to-br from-primary-dark via-primary to-primary-light shadow-gold' : 'bg-gradient-to-br from-slate-800 to-black border border-border'} text-primary-foreground border-none transition-all duration-500 hover:scale-[1.02]`}>
                         <CardHeader>
-                            <CardTitle className="text-lg">
+                            <CardTitle className={`text-lg font-cinzel font-black tracking-tight ${!user?.teacher_profile?.is_premium && 'text-primary'}`}>
                                 {user?.teacher_profile?.is_premium ? t('teacher.dashboard.premiumTitle') : t('teacher.dashboard.premiumTitleStandard')}
                             </CardTitle>
-                            <CardDescription className="text-indigo-100">{t('teacher.dashboard.ratingDesc')}</CardDescription>
+                            <CardDescription className={user?.teacher_profile?.is_premium ? 'text-primary-foreground/80' : 'text-muted-foreground'}>{t('teacher.dashboard.ratingDesc')}</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center gap-2 mb-4">
-                                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                                <span className="text-2xl font-bold">{stats.rating}/5.0</span>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className={`p-3 rounded-2xl ${user?.teacher_profile?.is_premium ? 'bg-primary-foreground/10' : 'bg-primary/10'}`}>
+                                    <Star className={`w-6 h-6 fill-current ${user?.teacher_profile?.is_premium ? 'text-primary-foreground' : 'text-primary'}`} />
+                                </div>
+                                <span className={`text-3xl font-black font-cinzel ${user?.teacher_profile?.is_premium ? 'text-primary-foreground' : 'text-primary'}`}>{stats.rating}/5.0</span>
                             </div>
-                            <p className="text-sm text-indigo-100 mb-4">
+                            <p className={`text-xs font-bold uppercase tracking-widest mb-6 ${user?.teacher_profile?.is_premium ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                                 {t('teacher.dashboard.studentsSatisfied')}
                             </p>
                             {!user?.teacher_profile?.is_premium && (
-                                <Button variant="secondary" className="w-full bg-white text-indigo-600 hover:bg-indigo-50">
+                                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary-light font-black rounded-xl">
                                     {t('teacher.dashboard.upgradeButton')}
                                 </Button>
                             )}
                             {user?.teacher_profile?.is_premium && (
-                                <Button variant="secondary" className="w-full bg-white text-indigo-600 hover:bg-indigo-50">
+                                <Button variant="secondary" className="w-full bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/30 font-black rounded-xl border border-white/10">
                                     {t('common.details')}
                                 </Button>
                             )}

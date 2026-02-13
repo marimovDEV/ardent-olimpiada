@@ -62,113 +62,131 @@ const TeacherCoursesPage = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-card p-8 rounded-2xl border border-border shadow-sm">
                 <div>
-                    <h1 className="text-3xl font-bold">{t('teacher.courses.title')}</h1>
-                    <p className="text-muted-foreground">{t('teacher.courses.subtitle')}</p>
+                    <h1 className="text-3xl font-black text-foreground tracking-tight font-cinzel italic">{t('teacher.courses.title')}</h1>
+                    <p className="text-muted-foreground mt-2 font-medium">{t('teacher.courses.subtitle')}</p>
                 </div>
                 <Link to="/teacher/courses/create">
-                    <Button className="gap-2">
-                        <Plus className="w-4 h-4" /> {t('teacher.courses.newCourse')}
+                    <Button className="gap-3 bg-primary text-primary-foreground hover:bg-primary-light h-14 px-8 rounded-2xl font-black text-lg shadow-gold transition-all duration-300">
+                        <Plus className="w-6 h-6" /> {t('teacher.courses.newCourse')}
                     </Button>
                 </Link>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>{t('teacher.courses.allCourses')}</CardTitle>
-                    <CardDescription>
-                        {t('teacher.courses.totalCourses')} {courses.length} ta kurs topildi
-                    </CardDescription>
+            <Card className="border-border overflow-hidden shadow-2xl bg-card">
+                <CardHeader className="bg-muted/30 border-b border-border p-8">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="text-xl font-black font-cinzel tracking-tight">{t('teacher.courses.allCourses')}</CardTitle>
+                            <CardDescription className="mt-2 font-medium text-primary/80">
+                                {t('teacher.courses.totalCourses')}: {courses.length}
+                            </CardDescription>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
+                            <BookOpen className="w-8 h-8 text-primary shadow-gold" />
+                        </div>
+                    </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                     {loading ? (
-                        <div className="text-center py-8 text-muted-foreground">{t('common.loading')}</div>
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
+                            <p className="text-muted-foreground font-bold tracking-widest uppercase text-xs">{t('common.loading')}</p>
+                        </div>
                     ) : courses.length === 0 ? (
-                        <div className="text-center py-12 border-2 border-dashed rounded-xl">
-                            <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                            <h3 className="text-lg font-medium mb-1">{t('teacher.courses.noCourses')}</h3>
-                            <p className="text-muted-foreground mb-4">{t('teacher.courses.noCoursesDesc')}</p>
+                        <div className="text-center py-24 px-8">
+                            <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/10">
+                                <BookOpen className="w-12 h-12 text-primary/40" />
+                            </div>
+                            <h3 className="text-2xl font-black font-cinzel mb-2">{t('teacher.courses.noCourses')}</h3>
+                            <p className="text-muted-foreground mb-8 max-w-md mx-auto">{t('teacher.courses.noCoursesDesc')}</p>
                             <Link to="/teacher/courses/create">
-                                <Button variant="outline">{t('teacher.courses.createFirst')}</Button>
+                                <Button variant="outline" className="h-12 px-8 rounded-xl border-primary/20 text-primary hover:bg-primary/5 font-bold">
+                                    {t('teacher.courses.createFirst')}
+                                </Button>
                             </Link>
                         </div>
                     ) : (
-                        <div className="rounded-md border overflow-hidden">
+                        <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
-                                    <TableRow>
-                                        <TableHead>{t('teacher.courses.name')}</TableHead>
-                                        <TableHead>{t('teacher.courses.subject')}</TableHead>
-                                        <TableHead>{t('teacher.courses.price')}</TableHead>
-                                        <TableHead>{t('teacher.courses.status')}</TableHead>
-                                        <TableHead className="text-right">{t('teacher.courses.students')}</TableHead>
-                                        <TableHead className="text-right">{t('teacher.courses.rating')}</TableHead>
-                                        <TableHead className="w-[50px]"></TableHead>
+                                    <TableRow className="bg-muted/50 border-b border-border hover:bg-muted/50">
+                                        <TableHead className="font-black text-xs uppercase tracking-widest p-6">{t('teacher.courses.name')}</TableHead>
+                                        <TableHead className="font-black text-xs uppercase tracking-widest p-6">{t('teacher.courses.subject')}</TableHead>
+                                        <TableHead className="font-black text-xs uppercase tracking-widest p-6">{t('teacher.courses.price')}</TableHead>
+                                        <TableHead className="font-black text-xs uppercase tracking-widest p-6">{t('teacher.courses.status')}</TableHead>
+                                        <TableHead className="font-black text-xs uppercase tracking-widest p-6 text-right">{t('teacher.courses.students')}</TableHead>
+                                        <TableHead className="font-black text-xs uppercase tracking-widest p-6 text-right">{t('teacher.courses.rating')}</TableHead>
+                                        <TableHead className="w-[80px] p-6"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {courses.map((course) => (
-                                        <TableRow key={course.id}>
-                                            <TableCell className="font-medium">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                                        <TableRow key={course.id} className="border-border hover:bg-primary/5 transition-colors group">
+                                            <TableCell className="p-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden shrink-0 border border-border shadow-sm group-hover:shadow-gold transition-all duration-300">
                                                         {course.thumbnail ? (
                                                             <img src={course.thumbnail} alt="" className="w-full h-full object-cover" />
                                                         ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                                <BookOpen className="w-5 h-5" />
+                                                            <div className="w-full h-full flex items-center justify-center text-primary/40 bg-primary/5">
+                                                                <BookOpen className="w-6 h-6" />
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <span className="line-clamp-1">{course.title}</span>
+                                                    <span className="font-bold text-foreground line-clamp-2 text-base">{course.title}</span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{course.subject}</TableCell>
-                                            <TableCell>
+                                            <TableCell className="p-6">
+                                                <Badge variant="outline" className="font-bold tracking-tight border-primary/20 text-primary bg-primary/5">
+                                                    {course.subject}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="p-6 font-black text-foreground">
                                                 {parseFloat(course.price) === 0
-                                                    ? <span className="text-green-600 font-medium">{t('teacher.courses.free')}</span>
+                                                    ? <span className="text-primary">{t('teacher.courses.free')}</span>
                                                     : <span>{parseInt(course.price).toLocaleString()} UZS</span>
                                                 }
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="p-6">
                                                 <StatusBadge is_active={course.is_active} t={t} />
                                             </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-1 text-muted-foreground">
-                                                    <Users className="w-4 h-4" />
+                                            <TableCell className="p-6 text-right">
+                                                <div className="flex items-center justify-end gap-2 font-bold text-muted-foreground">
+                                                    <Users className="w-4 h-4 text-primary" />
                                                     {course.students_count}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-1 text-yellow-500 font-medium">
-                                                    <Star className="w-4 h-4 fill-current" />
+                                            <TableCell className="p-6 text-right">
+                                                <div className="flex items-center justify-end gap-2 text-primary font-black">
+                                                    <Star className="w-4 h-4 fill-current shadow-gold" />
                                                     {course.rating}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="p-6">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                            <MoreVertical className="w-4 h-4" />
+                                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
+                                                            <MoreVertical className="w-5 h-5" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuItem asChild>
-                                                            <Link to={`/courses/${course.id}`} className="flex items-center">
-                                                                <Eye className="w-4 h-4 mr-2" /> {t('common.view')}
+                                                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl bg-card border-border shadow-2xl">
+                                                        <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-primary/10 focus:text-primary transition-all cursor-pointer">
+                                                            <Link to={`/courses/${course.id}`} className="flex items-center font-bold">
+                                                                <Eye className="w-5 h-5 mr-3" /> {t('common.view')}
                                                             </Link>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem asChild>
-                                                            <Link to={`/teacher/courses/${course.id}/edit`} className="flex items-center">
-                                                                <Edit className="w-4 h-4 mr-2" /> {t('common.edit')}
+                                                        <DropdownMenuItem asChild className="rounded-xl p-3 focus:bg-primary/10 focus:text-primary transition-all cursor-pointer">
+                                                            <Link to={`/teacher/courses/${course.id}/edit`} className="flex items-center font-bold">
+                                                                <Edit className="w-5 h-5 mr-3" /> {t('common.edit')}
                                                             </Link>
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
-                                                            className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                                                            className="rounded-xl p-3 text-red-500 focus:text-red-500 focus:bg-red-500/10 transition-all font-bold cursor-pointer"
                                                             onClick={() => handleDelete(course.id)}
                                                         >
-                                                            <Trash2 className="w-4 h-4 mr-2" /> {t('common.delete')}
+                                                            <Trash2 className="w-5 h-5 mr-3" /> {t('common.delete')}
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>

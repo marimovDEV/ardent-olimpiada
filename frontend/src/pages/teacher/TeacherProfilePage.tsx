@@ -137,7 +137,7 @@ const TeacherProfilePage = () => {
             const res = await axios.put(`${API_URL}/auth/profile/`, payload, { headers: getAuthHeader() });
 
             if (res.data.success) {
-                toast({ title: "Muvaffaqiyatli", description: t('teacherProfile.saved') });
+                toast({ title: t('common.success'), description: t('teacher.profile.saveSuccess') });
                 fetchProfile(); // Refresh
             }
         } catch (error) {
@@ -164,21 +164,22 @@ const TeacherProfilePage = () => {
     return (
         <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in">
             {/* Header Profile Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
-                <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-700 relative">
-                    <div className="absolute top-4 right-4">
-                        <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur">
+            <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden transition-all duration-500">
+                <div className="h-40 bg-gradient-to-r from-secondary-light via-secondary to-background relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('/magic-pattern.png')] opacity-10"></div>
+                    <div className="absolute top-6 right-6">
+                        <Badge className="bg-primary/20 text-primary border border-primary/30 backdrop-blur-md px-4 py-1 font-cinzel tracking-widest">
                             ID: {user.username}
                         </Badge>
                     </div>
                 </div>
 
                 <div className="px-8 pb-8">
-                    <div className="relative flex justify-between items-end -mt-12 mb-6">
-                        <div className="flex items-end gap-6">
+                    <div className="relative flex flex-col md:flex-row justify-between items-center md:items-end -mt-16 mb-8 gap-6">
+                        <div className="flex flex-col md:flex-row items-center md:items-end gap-6">
                             <div className="relative group">
-                                <div className="w-32 h-32 rounded-2xl bg-white dark:bg-gray-800 p-1 shadow-lg transition-colors">
-                                    <div className="w-full h-full rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 relative transition-colors">
+                                <div className="w-36 h-36 rounded-2xl bg-card p-1 shadow-gold transition-transform duration-500 hover:scale-105">
+                                    <div className="w-full h-full rounded-xl overflow-hidden bg-muted relative">
                                         {displayAvatar ? (
                                             <img
                                                 src={displayAvatar}
@@ -186,28 +187,28 @@ const TeacherProfilePage = () => {
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400 font-bold text-3xl">
+                                            <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-black text-4xl font-cinzel">
                                                 {user.first_name?.[0]}
                                             </div>
                                         )}
                                         {/* Overlay for upload */}
-                                        <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                            <Camera className="text-white w-8 h-8" />
+                                        <label className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                            <Camera className="text-primary w-10 h-10" />
                                             <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mb-2">
-                                <h1 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors">{user.first_name} {user.last_name}</h1>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 border-blue-200 dark:border-blue-800 transition-colors">
-                                        {t('teacherProfile.role')}
+                            <div className="text-center md:text-left mb-2">
+                                <h1 className="text-3xl font-black text-foreground tracking-tight font-cinzel">{user.first_name} {user.last_name}</h1>
+                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-2">
+                                    <Badge className="bg-primary/10 text-primary border border-primary/20 font-bold uppercase tracking-widest text-[10px] px-3">
+                                        {t('teacher.management')}
                                     </Badge>
                                     {formData.specialization && (
-                                        <Badge variant="outline" className="text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 flex items-center gap-1 transition-colors">
-                                            <Briefcase className="w-3 h-3" />
+                                        <Badge variant="outline" className="text-muted-foreground border-border flex items-center gap-1 font-medium">
+                                            <Briefcase className="w-3 h-3 text-primary" />
                                             {formData.specialization}
                                         </Badge>
                                     )}
@@ -215,17 +216,17 @@ const TeacherProfilePage = () => {
                             </div>
                         </div>
 
-                        <Button onClick={handleSave} disabled={saving} className="bg-blue-600 hover:bg-blue-700">
-                            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                            {t('teacherProfile.save')}
+                        <Button onClick={handleSave} disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary-light h-12 px-8 rounded-xl font-bold shadow-gold transition-all duration-300">
+                            {saving ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
+                            {t('common.save')}
                         </Button>
                     </div>
 
                     <Tabs defaultValue="personal" className="w-full">
-                        <TabsList className="grid w-full md:w-[600px] grid-cols-3 mb-8">
-                            <TabsTrigger value="personal">{t('teacherProfile.tabs.personal')}</TabsTrigger>
-                            <TabsTrigger value="professional">{t('teacherProfile.tabs.professional')}</TabsTrigger>
-                            <TabsTrigger value="security">{t('teacherProfile.tabs.security')}</TabsTrigger>
+                        <TabsList className="grid w-full md:w-[600px] grid-cols-3 mb-10 bg-muted/30 p-1 rounded-2xl border border-border">
+                            <TabsTrigger value="personal" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-gold font-bold transition-all py-3">{t('admin.teacher.profile.title')}</TabsTrigger>
+                            <TabsTrigger value="professional" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-gold font-bold transition-all py-3">{t('teacher.dashboard.stats.rating')}</TabsTrigger>
+                            <TabsTrigger value="security" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-gold font-bold transition-all py-3">{t('common.password')}</TabsTrigger>
                         </TabsList>
 
                         {/* Personal Info Tab */}

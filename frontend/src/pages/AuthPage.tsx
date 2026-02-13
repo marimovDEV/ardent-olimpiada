@@ -357,9 +357,9 @@ const AuthPage = ({ mode }: AuthPageProps) => {
       {/* Dynamic Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Animated Gradient Orbs */}
-        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-blue-600/20 rounded-full blur-[120px] animate-blob mix-blend-screen" />
-        <div className="absolute -bottom-[20%] -right-[10%] w-[70vw] h-[70vw] bg-purple-600/20 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-screen" />
-        <div className="absolute top-[30%] left-[30%] w-[40vw] h-[40vw] bg-pink-600/20 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-screen" />
+        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-primary/10 rounded-full blur-[120px] animate-blob mix-blend-screen" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[70vw] h-[70vw] bg-primary-dark/10 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-screen" />
+        <div className="absolute top-[30%] left-[30%] w-[40vw] h-[40vw] bg-secondary-light/10 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-screen" />
 
         {/* Grid Pattern Overlay */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
@@ -392,29 +392,29 @@ const AuthPage = ({ mode }: AuthPageProps) => {
         <Sparkles className="w-6 h-6 text-blue-400 opacity-50" />
       </div>
 
-      {/* Main Glass Card Container */}
-      <div className="relative z-10 w-full max-w-6xl h-auto min-h-[600px] bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[32px] shadow-2xl flex overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+      {/* Main Container */}
+      <div className="relative z-10 w-full max-w-md h-auto bg-card/40 backdrop-blur-2xl border border-white/5 rounded-[32px] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-500">
 
-        {/* NEW Left Side - Guide (Desktop) */}
-        <AuthGuideSide />
+        {/* Card Content */}
+        <div className="w-full p-8 md:p-10 flex flex-col items-center justify-center relative bg-black/20">
 
-        {/* Right Side (Form) */}
-        <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center relative bg-black/40 backdrop-blur-md">
-
-          {/* Logo / Header (Mobile Only) */}
-          <div className="mb-8 lg:hidden">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
-                <Trophy className="w-5 h-5 text-white" />
+          {/* Logo / Header */}
+          <div className="mb-8 flex flex-col items-center text-center">
+            <Link to="/" className="flex flex-col items-center gap-3 mb-6 group">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-gold group-hover:scale-110 transition-transform duration-500">
+                <img src="/logo.jpg" alt="Logo" className="w-10 h-10 object-contain" />
               </div>
-              <span className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-                Hogwords
-              </span>
+              <h1 className="text-4xl font-black font-cinzel tracking-widest text-primary">
+                HOGWORDS
+              </h1>
+              <p className="text-sm font-medium italic text-muted-foreground/80 tracking-widest uppercase font-cinzel">
+                Magic of Knowledge
+              </p>
             </Link>
 
-            <div key={animKey} className="animate-in slide-in-from-left-4 fade-in duration-500">
-              <h1 className="text-3xl font-bold mb-2">{getStepTitle()}</h1>
-              <p className="text-gray-400">{getStepSubtitle()}</p>
+            <div key={animKey} className="animate-in slide-in-from-bottom-2 fade-in duration-500 mt-2">
+              <h2 className="text-xl font-bold text-white">{getStepTitle()}</h2>
+              <p className="text-xs text-muted-foreground mt-1">{getStepSubtitle()}</p>
             </div>
           </div>
 
@@ -431,44 +431,44 @@ const AuthPage = ({ mode }: AuthPageProps) => {
             {/* ====== LOGIN FORM ====== */}
             {mode === 'login' && (
               <form onSubmit={handleLogin} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="group">
-                  <label className="text-xs font-medium text-gray-400 ml-1 mb-1 block group-focus-within:text-blue-400 transition-colors">{t('auth.phone')}</label>
+                <div className="group w-full text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 mb-2 block group-focus-within:text-primary transition-colors font-cinzel">{t('auth.phone')}</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">+998</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary/60 font-black">+998</span>
                     <input
                       type="tel"
-                      value={email} // keeping variable name 'email' for minimal refactor, but it stores 9 digits
+                      value={email}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '').slice(0, 9);
                         setEmail(val);
                       }}
                       placeholder="90 123 45 67"
-                      className="w-full h-14 pl-16 pr-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-white placeholder-gray-600"
+                      className="w-full h-14 pl-16 pr-4 rounded-xl bg-white/5 border border-white/10 focus:border-primary focus:bg-white/10 focus:ring-4 focus:ring-primary/10 outline-none transition-all text-white placeholder-gray-600 font-bold"
                       autoFocus
                     />
                   </div>
                 </div>
 
-                <div className="group">
-                  <label className="text-xs font-medium text-gray-400 ml-1 mb-1 block group-focus-within:text-blue-400 transition-colors">{t('auth.password')}</label>
+                <div className="group w-full text-left">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1 mb-2 block group-focus-within:text-primary transition-colors font-cinzel">{t('auth.password')}</label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full h-14 px-4 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all text-white placeholder-gray-600"
+                      className="w-full h-14 px-4 rounded-xl bg-white/5 border border-white/10 focus:border-primary focus:bg-white/10 focus:ring-4 focus:ring-primary/10 outline-none transition-all text-white placeholder-gray-600 font-bold"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  <div className="text-right mt-2">
-                    <Link to="/auth/recover" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                  <div className="text-right mt-3">
+                    <Link to="/auth/recover" className="text-xs font-bold text-primary/80 hover:text-primary transition-colors">
                       {t('auth.forgot')}
                     </Link>
                   </div>
@@ -477,17 +477,17 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full h-14 bg-primary hover:bg-primary-light text-primary-foreground font-black uppercase tracking-widest rounded-xl shadow-gold transition-all hover:scale-[1.02] active:scale-[0.98] font-cinzel"
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                   {isLoading ? t('auth_guide.loading') : t('auth.login')}
                 </Button>
 
-                <div className="text-center pt-4 border-t border-white/5">
-                  <p className="text-sm text-gray-400">
+                <div className="text-center pt-6 border-t border-white/5">
+                  <p className="text-sm text-muted-foreground font-medium">
                     {t('auth.noAccount')}{" "}
-                    <Link to="/auth/register" className="text-blue-400 font-bold hover:underline">
+                    <Link to="/auth/register" className="text-primary font-black hover:underline tracking-tight">
                       {t('auth.register')}
                     </Link>
                   </p>

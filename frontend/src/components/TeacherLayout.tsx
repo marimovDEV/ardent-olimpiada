@@ -78,8 +78,8 @@ const TeacherLayout = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -104,34 +104,34 @@ const TeacherLayout = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-muted/40 flex">
+        <div className="min-h-screen bg-background flex text-foreground">
             {/* Sidebar */}
-            <aside className="w-64 bg-card border-r fixed inset-y-0 left-0 z-50 flex flex-col">
-                <div className="p-6 border-b flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                        <img src="/logo.jpg" alt="Logo" className="w-6 h-6 object-contain" />
+            <aside className="w-64 bg-card border-r border-border fixed inset-y-0 left-0 z-50 flex flex-col shadow-2xl">
+                <div className="p-6 border-b border-border flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-gold">
+                        <img src="/logo.jpg" alt="Logo" className="w-7 h-7 object-contain" />
                     </div>
-                    <span className="font-black font-cinzel text-xl">Hogwords Mentor</span>
+                    <span className="font-black font-cinzel text-xl text-primary tracking-tighter">Hogwords Mentor</span>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-hide">
                     {!isProfileComplete && !isPending && (
-                        <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200 dark:border-yellow-800/30 mb-4">
-                            <p className="text-[11px] font-black uppercase tracking-widest text-yellow-700 dark:text-yellow-500 mb-2">
+                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20 mb-4 animate-pulse">
+                            <p className="text-[11px] font-black uppercase tracking-widest text-primary mb-2 font-cinzel">
                                 {t('teacher.onboarding.attentionTitle')}
                             </p>
-                            <p className="text-xs font-bold text-yellow-800 dark:text-yellow-400 leading-tight">
+                            <p className="text-xs font-bold text-primary/80 leading-tight">
                                 {t('teacher.onboarding.attentionDescription')}
                             </p>
                         </div>
                     )}
 
                     {isPending && (
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-200 dark:border-blue-800/30 mb-4">
-                            <p className="text-[11px] font-black uppercase tracking-widest text-blue-700 dark:text-blue-500 mb-2">
+                        <div className="p-4 bg-primary/5 rounded-2xl border border-primary/20 mb-4">
+                            <p className="text-[11px] font-black uppercase tracking-widest text-primary mb-2 font-cinzel">
                                 {t('teacher.onboarding.pendingTitle')}
                             </p>
-                            <p className="text-xs font-bold text-blue-800 dark:text-blue-400 leading-tight">
+                            <p className="text-xs font-bold text-primary/80 leading-tight">
                                 {t('teacher.onboarding.pendingDescription')}
                             </p>
                         </div>
@@ -144,31 +144,33 @@ const TeacherLayout = () => {
                                 <Button
                                     variant={isActive ? "secondary" : "ghost"}
                                     disabled={!isProfileComplete && item.path !== '/teacher/profile' && item.path !== '/teacher/onboarding'}
-                                    className={`w-full justify-start gap-3 mb-1 ${isActive ? "bg-indigo-50 dark:bg-indigo-900/20 font-bold text-indigo-600 dark:text-indigo-400" : "text-muted-foreground opacity-70"}`}
+                                    className={`w-full justify-start gap-3 mb-1 rounded-xl transition-all duration-300 ${isActive
+                                        ? "bg-primary/10 font-bold text-primary shadow-[inset_0_0_10px_rgba(255,215,0,0.1)] border border-primary/20"
+                                        : "text-muted-foreground hover:text-primary hover:bg-primary/5 opacity-70"}`}
                                 >
-                                    <Icon className="w-5 h-5" />
-                                    {item.label}
+                                    <Icon className={`w-5 h-5 ${isActive ? "text-primary" : ""}`} />
+                                    <span className="font-medium tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>
                                 </Button>
                             </Link>
                         );
                     })}
                 </nav>
 
-                <div className="p-4 border-t">
+                <div className="p-4 border-t border-border bg-black/20">
                     <div className="flex items-center justify-between mb-4 px-2">
-                        <span className="text-sm font-medium">{t('dashboard.navbar.settings')}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground font-cinzel">{t('dashboard.navbar.settings')}</span>
                         <ThemeToggle />
                     </div>
                     <Button
                         variant="outline"
                         size="sm"
-                        className="w-full justify-center gap-2 mb-2"
+                        className="w-full justify-center gap-2 mb-2 border-border hover:bg-primary/5 hover:text-primary transition-all rounded-xl font-bold"
                         onClick={() => i18n.changeLanguage(i18n.language === 'uz' ? 'ru' : 'uz')}
                     >
                         <Globe className="w-4 h-4" />
                         {i18n.language === 'uz' ? '🇺🇿 O\'zbek' : '🇷🇺 Русский'}
                     </Button>
-                    <Button variant="destructive" className="w-full gap-2" onClick={handleLogout}>
+                    <Button variant="destructive" className="w-full gap-2 rounded-xl font-bold" onClick={handleLogout}>
                         <LogOut className="w-4 h-4" />
                         {t('common.exit')}
                     </Button>
@@ -190,7 +192,7 @@ const TeacherLayout = () => {
                                         ? user.avatar_url
                                         : user.avatar?.startsWith('http')
                                             ? user.avatar
-                                            : `https://test.api.ardentsoft.uz${user.avatar_url || user.avatar}`
+                                            : `${API_URL.replace('/api', '')}${user.avatar_url || user.avatar}`
                                 }
                                 alt={user.first_name || 'Teacher'}
                                 className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100"
