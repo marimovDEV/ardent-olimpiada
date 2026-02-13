@@ -39,7 +39,7 @@ const GettingStartedSteps = () => {
     ];
 
     return (
-        <section id="getting-started" className="py-16 bg-muted/30 scroll-mt-20">
+        <section id="getting-started" className="py-12 md:py-16 bg-muted/30 scroll-mt-20">
             <div className="container">
                 {/* Header */}
                 <motion.div
@@ -123,7 +123,7 @@ const GettingStartedSteps = () => {
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex-1 bg-card rounded-2xl p-6 border">
+                                <div className="flex-1 bg-card rounded-2xl p-4 md:p-6 border">
                                     <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center mb-3`}>
                                         <Icon className="w-5 h-5 text-white" />
                                     </div>
@@ -143,7 +143,7 @@ const GettingStartedSteps = () => {
                     className="text-center"
                 >
                     <Button size="lg" asChild className="rounded-xl">
-                        <Link to="/register">
+                        <Link to="/auth/register">
                             {t('guide.gettingStarted.cta', 'Hoziroq boshlash')}
                             <ArrowRight className="w-5 h-5 ml-2" />
                         </Link>

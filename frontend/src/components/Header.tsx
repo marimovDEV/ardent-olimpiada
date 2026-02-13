@@ -12,8 +12,10 @@ import {
   Languages,
   Sun,
   Moon,
-  Globe
+  Globe,
+  Zap
 } from "lucide-react";
+import ArdCoin from "./ArdCoin";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,14 +143,23 @@ const Header = () => {
             </Button>
 
             {isLoggedIn ? (
-              <div className="flex items-center gap-3">
-                <Link to="/dashboard">
+              <div className="flex items-center gap-2 md:gap-3">
+                {/* Mobile Stats Widget */}
+                <div className="flex flex-col items-end md:hidden mr-1">
+                  <div className="flex items-center gap-1.5 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                    <Zap className="w-3 h-3 text-primary fill-primary" />
+                    <span className="text-[10px] font-bold text-primary">{user?.xp || 0} XP</span>
+                  </div>
+                  <ArdCoin amount={user?.coins || 0} size="sm" showAmount={true} className="text-[10px] gap-1" />
+                </div>
+
+                <Link to="/dashboard" className="hidden md:block">
                   <Button variant="ghost" size="sm">
                     {t('nav.dashboard', 'Dashboard')}
                   </Button>
                 </Link>
                 <Link to="/profile">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold border-2 border-background shadow-sm overflow-hidden">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold border-2 border-background shadow-sm overflow-hidden shrink-0">
                     {user?.avatar ? (
                       <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (

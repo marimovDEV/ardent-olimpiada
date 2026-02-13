@@ -194,7 +194,6 @@ const OlympiadSection = () => {
 
   const tr = (text: string) => {
     if (!text) return '';
-    const cleanText = text.trim();
     const lang = i18n.language.split('-')[0];
     const mappings: Record<string, Record<string, string>> = {
       'Matematika': { 'ru': 'Математика', 'uz': 'Matematika' },
@@ -202,7 +201,22 @@ const OlympiadSection = () => {
       'Ingliz tili': { 'ru': 'Английский язык', 'uz': 'Ingliz tili' },
       "Matematika Bo'yicha Sinov Olimpiadasi": { "ru": "Тестовая Олимпиада по Математике", "uz": "Matematika Bo'yicha Sinov Olimpiadasi" }
     };
+
+    // Check if direct mapping exists
+    const cleanText = text.trim();
     if (mappings[cleanText] && mappings[cleanText][lang]) return mappings[cleanText][lang];
+
+    // Check if it's a known subject
+    const lower = cleanText.toLowerCase();
+    const translatedSubject = t(`subjects.${lower}`, { defaultValue: '' });
+    if (translatedSubject) return translatedSubject;
+
+    // Fallback or specific rules for titles
+    if (lang === 'ru') {
+      if (cleanText.includes('Olimpiadasi')) return cleanText.replace('Olimpiadasi', 'Олимпиада');
+      if (cleanText.includes('Olimpiada')) return cleanText.replace('Olimpiada', 'Олимпиада');
+    }
+
     return t(cleanText, { keySeparator: false, defaultValue: cleanText });
   };
 
@@ -215,20 +229,6 @@ const OlympiadSection = () => {
           const langCode = i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU';
           const mapped = response.data.olympiads.map((item: any) => {
             const startDate = new Date(item.start_date);
-            const tr = (text: string) => {
-              if (!text) return '';
-              const lower = text.toLowerCase();
-              // Check if subject translation exists
-              const translatedSubject = t(`subjects.${lower}`, { defaultValue: '' });
-              if (translatedSubject) return translatedSubject;
-
-              // Fallback or specific rules for titles
-              if (i18n.language === 'ru') {
-                if (text.includes('Olimpiadasi')) return text.replace('Olimpiadasi', 'Олимпиада');
-                if (text.includes('Olimpiada')) return text.replace('Olimpiada', 'Олимпиада');
-              }
-              return text;
-            };
             const translateStatus = (status: string) => {
               if (!status) return "Olimpiada";
               const statusKey = status.toLowerCase();

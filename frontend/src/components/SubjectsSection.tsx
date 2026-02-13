@@ -61,7 +61,7 @@ const SubjectsSection = () => {
   };
 
   return (
-    <section id="subjects" className="py-16 md:py-24 relative bg-background transition-colors duration-300 font-sans">
+    <section id="subjects" className="py-12 md:py-24 relative bg-background transition-colors duration-300 font-sans">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
@@ -82,7 +82,7 @@ const SubjectsSection = () => {
           {displaySubjects.map((subject, index) => (
             <Link to={`/courses?subject=${subject.id}`} key={subject.id || index}>
               <div
-                className="group bg-card rounded-3xl border border-border p-6 md:p-8 hover:shadow-2xl hover:shadow-blue-100/50 dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300 relative overflow-hidden h-full flex flex-col items-start"
+                className="group bg-card rounded-2xl md:rounded-3xl border border-border p-4 md:p-8 hover:shadow-2xl hover:shadow-blue-100/50 dark:hover:shadow-none hover:-translate-y-1 transition-all duration-300 relative overflow-hidden h-full flex flex-col items-start"
               >
                 {/* Decoration Circle */}
                 <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-5 group-hover:opacity-10 transition-opacity ${subject.color || "bg-blue-600"}`} />

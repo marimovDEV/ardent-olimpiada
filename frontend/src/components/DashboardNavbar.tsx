@@ -108,7 +108,7 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                     {/* Level & XP Widget (Students Only) */}
                     {user.role !== 'TEACHER' && (
                         <div
-                            className="flex items-center gap-2 md:gap-3 bg-white/5 md:bg-background/50 p-1 md:p-1.5 md:pr-4 rounded-full border border-white/5 md:border-border hover:border-primary/20 transition-all cursor-pointer group relative active:scale-95 shadow-lg md:shadow-none"
+                            className="flex items-center gap-2 md:gap-3 bg-white/5 md:bg-background/50 p-1 md:p-1.5 md:pr-4 rounded-full border border-white/5 md:border-border hover:border-primary/20 transition-all cursor-pointer group relative active:scale-95 shadow-md md:shadow-none"
                             onClick={() => setIsProgressModalOpen(true)}
                         >
                             {/* Level Badge */}

@@ -54,7 +54,7 @@ const Footer = () => {
   );
 
   return (
-    <footer className="bg-card border-t pt-10 md:pt-16 pb-8">
+    <footer className="bg-card border-t pt-8 md:pt-16 pb-6 md:pb-8">
       <div className="container px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
 
