@@ -123,99 +123,172 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8 animate-fade-in pb-20 bg-background text-foreground">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-10 animate-fade-in pb-24 text-foreground min-h-screen">
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* 1. PREMIUM HERO SECTION */}
+      <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#0B132B] to-[#1C2541] border border-white/10 p-8 md:p-12 shadow-2xl">
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary/10 to-transparent pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-[100px]" />
 
-        {/* --- LEFT COLUMN (Main Content) [Takes 3/4 space] --- */}
-        <div className="lg:col-span-3 space-y-8">
-
-          {/* 1. Hero Section */}
-          <div className="animate-pop-in layer-1">
-            <StreakHero data={data.hero} />
-          </div>
-
-          {/* 2. Mission & Actions */}
-          <div className="animate-pop-in layer-2" style={{ animationDelay: '100ms' }}>
-            <DailyMissionCard mission={data.mission} />
-          </div>
-
-          {/* 3. Subjects Section */}
-          <div className="animate-pop-in layer-3" style={{ animationDelay: '200ms' }}>
-            <SubjectStats stats={data.subject_stats} />
-          </div>
-
-          {/* 4. Courses List */}
-          <div className="animate-pop-in layer-4" style={{ animationDelay: '300ms' }}>
-            <SmartCourseList courses={data.enrolled_courses} />
-          </div>
-
-          {/* 5. Analytics & More */}
-          <div className="animate-pop-in layer-5" style={{ animationDelay: '400ms' }}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <ProfessionRoadmap profession={data.active_profession} />
-              <AnalyticsResults />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest animate-pulse-soft">
+                {t('dashboard.hero.welcomeBack', 'Xush kelibsiz!')}
+              </div>
+              <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('dashboard.hero.online', 'Online')}</span>
+              </div>
             </div>
+
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white">
+              {t('dashboard.hero.greeting', 'Salom')}, <span className="text-primary italic">{data.hero?.user_name || 'Talaba'}!</span>
+            </h1>
+
+            <p className="text-lg text-blue-100/60 max-w-xl font-medium leading-relaxed">
+              {t('dashboard.hero.subtitle', 'Sizning bugun uchun 3 ta vazifangiz bor. Olg‘a, yangi cho‘qqilarni zabt etamiz!')}
+            </p>
           </div>
 
-        </div>
-
-
-        {/* --- RIGHT COLUMN (Sidebar) [Takes 1/4 space] --- */}
-        <div className="space-y-8 lg:col-span-1">
-
-          {/* 1. Profile Summary (Compact) */}
-          <div className="animate-pop-in layer-1">
-            <StudentProfileCard />
-          </div>
-
-          {/* 2. Streak Calendar */}
-          <div className="animate-pop-in layer-2" style={{ animationDelay: '150ms' }}>
-            <StreakCalendar calendar={data.calendar} />
-          </div>
-
-          {/* 3. Level Progress */}
-          <div
-            className="animate-pop-in layer-3 cursor-pointer group/level transition-all hover:scale-[1.02]"
-            style={{ animationDelay: '250ms' }}
-            onClick={() => setIsProgressModalOpen(true)}
-          >
-            <div className="bg-card border border-border rounded-2xl p-6 relative overflow-hidden shadow-gold hover:border-primary/50 transition-all duration-500">
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
-
-              <div className="relative z-10">
-                <h3 className="text-muted-foreground text-[10px] font-black uppercase tracking-widest mb-3 flex items-center justify-between font-cinzel">
-                  {t('dashboard.widgets.levelProgress')}
-                  <Zap className="w-4 h-4 text-primary animate-pulse fill-primary" />
-                </h3>
-                <div className="flex justify-between items-end mb-3">
-                  <span className="text-3xl font-black text-foreground font-cinzel">LVM {data.level.current}</span>
-                  <span className="text-primary font-black text-xs">{t('dashboard.widgets.xpLeft', { xp: data.level.xp_left })}</span>
-                </div>
-                <div className="h-4 bg-secondary-light/30 rounded-full overflow-hidden mb-3 border border-white/5 p-[1px]">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary-dark via-primary to-primary-light rounded-full transition-all duration-1000 shadow-gold"
-                    style={{ width: `${data.level.progress_percent}%` }}
-                  />
-                </div>
-                <p className="text-[10px] font-black text-primary uppercase text-right group-hover:translate-x-1 transition-transform font-cinzel">
-                  {t('common.details')} →
-                </p>
+          {/* Level Badge Premium */}
+          <div className="relative group cursor-help" onClick={() => setIsProgressModalOpen(true)}>
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/40 transition-colors duration-500" />
+            <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-primary to-primary-dark p-1 shadow-gold transform group-hover:rotate-12 transition-transform duration-500">
+              <div className="w-full h-full bg-[#0B132B] rounded-full flex flex-col items-center justify-center border-4 border-[#0B132B]">
+                <span className="text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">{t('common.level', 'Level')}</span>
+                <span className="text-5xl md:text-6xl font-black text-white leading-none">{data.level.current}</span>
+                <Zap className="w-5 h-5 text-primary mt-1 animate-bounce fill-primary" />
               </div>
             </div>
           </div>
+        </div>
 
-          {/* 4. Telegram Status */}
-          <div className="animate-pop-in layer-4" style={{ animationDelay: '350ms' }}>
-            <TelegramStatus
-              status={data.telegram}
-              onConnect={handleConnectTelegram}
-              isLoading={isLinking}
-            />
+        {/* XP Progress Bar Premium */}
+        <div className="mt-12 space-y-3">
+          <div className="flex justify-between items-end">
+            <div className="flex gap-4 items-center">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-primary uppercase tracking-widest font-cinzel">Current XP</span>
+                <span className="text-2xl font-black text-white">{data.level.xp_current} <span className="text-sm font-medium text-white/40">/ 500</span></span>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] font-black text-white/40 uppercase tracking-widest font-cinzel">{t('dashboard.widgets.xpLeft', { xp: data.level.xp_left })}</span>
+              <p className="text-sm font-black text-primary tracking-tighter">{data.level.progress_percent}% {t('common.completed', 'Tayyor')}</p>
+            </div>
+          </div>
+          <div className="h-4 bg-white/5 rounded-full overflow-hidden border border-white/10 p-[2px]">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${data.level.progress_percent}%` }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="h-full bg-gradient-to-r from-primary-dark via-primary to-primary-light rounded-full shadow-gold relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. STAT CARDS GRID */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+        <DashboardStatCard
+          label={t('dashboard.stats.streak', 'Streak')}
+          value={`${data.hero?.streak_days || 0} ${t('common.days', 'Kun')}`}
+          icon={Zap}
+          trend="+2"
+          color="orange-500"
+          delay={0.1}
+        />
+        <DashboardStatCard
+          label={t('dashboard.stats.totalXp', 'Jami XP')}
+          value={data.level.xp_current + (data.level.current - 1) * 500}
+          icon={Trophy}
+          color="primary"
+          delay={0.2}
+        />
+        <DashboardStatCard
+          label={t('dashboard.stats.rank', 'Reyting')}
+          value="#12"
+          icon={Trophy}
+          trend="Top 5%"
+          color="blue-500"
+          delay={0.3}
+        />
+        <DashboardStatCard
+          label={t('dashboard.stats.certificates', 'Sertifikatlar')}
+          value="4"
+          icon={Award}
+          color="purple-500"
+          delay={0.4}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Content */}
+        <div className="lg:col-span-2 space-y-10">
+
+          {/* Courses / Learning */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                <PlayCircle className="w-6 h-6 text-primary" />
+                {t('dashboard.sections.continueLearning', 'O\'rganishda davom eting')}
+              </h2>
+              <Button variant="ghost" className="text-primary font-bold hover:bg-primary/5 rounded-xl">
+                {t('common.viewAll', 'Hammasi')} →
+              </Button>
+            </div>
+
+            <div className="animate-pop-in">
+              <SmartCourseList courses={data.enrolled_courses} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-primary" />
+                {t('dashboard.sections.stats', 'Analitika')}
+              </h3>
+              <AnalyticsResults />
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+                {t('dashboard.sections.subjects', 'Fanlar')}
+              </h3>
+              <SubjectStats stats={data.subject_stats} />
+            </div>
           </div>
 
         </div>
 
+        {/* Right Sidebar */}
+        <div className="space-y-8">
+          <div className="glass-card-premium p-6 rounded-[2.5rem] border-white/10">
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-primary" />
+              {t('dashboard.sections.dailyMission', 'Kunlik Vazifa')}
+            </h3>
+            <DailyMissionCard mission={data.mission} />
+          </div>
+
+          <div className="glass-card-premium p-6 rounded-[2.5rem] border-white/10">
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <PlayCircle className="w-5 h-5 text-primary" />
+              {t('dashboard.sections.activity', 'Faollik')}
+            </h3>
+            <StreakCalendar calendar={data.calendar} />
+          </div>
+
+          <TelegramStatus
+            status={data.telegram}
+            onConnect={handleConnectTelegram}
+            isLoading={isLinking}
+          />
+        </div>
       </div>
 
       <LevelProgressModal

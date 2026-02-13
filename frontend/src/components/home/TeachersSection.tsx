@@ -59,7 +59,7 @@ const TeachersSection = () => {
     if (!isLoading && teachers.length === 0) return null;
 
     return (
-        <section className="py-24 bg-muted/30 relative overflow-hidden">
+        <section id="mentors" className="py-24 bg-muted/30 relative overflow-hidden">
             {/* Background Decorations */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full -ml-32 -mt-32" />
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 blur-[150px] rounded-full -mr-48 -mb-48" />

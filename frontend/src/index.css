@@ -95,36 +95,23 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-white/20 shadow-card;
+    @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-card;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-hero);
+  .glass-card-premium {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
   }
 
-  .gradient-primary {
-    background: var(--gradient-primary);
+  .neon-glow-primary {
+    box-shadow: 0 0 20px -5px hsla(var(--primary), 0.5);
   }
 
-  .gradient-secondary {
-    background: var(--gradient-secondary);
+  .neon-glow-purple {
+    box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.4);
   }
 
-  .gradient-hero {
-    background: var(--gradient-hero);
-  }
-
-  .gradient-accent {
-    background: var(--gradient-accent);
-  }
-
-  .shadow-button {
-    box-shadow: var(--shadow-button);
-  }
-
-  .shadow-card-hover {
-    box-shadow: var(--shadow-md);
+  .card-3d-hover {
+    @apply transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:shadow-2xl;
   }
 }
 

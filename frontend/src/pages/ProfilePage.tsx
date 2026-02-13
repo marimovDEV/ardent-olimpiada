@@ -17,6 +17,15 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import LevelProgressModal from "@/components/dashboard/LevelProgressModal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 // --- Types ---
 interface UserData {
@@ -548,10 +557,15 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     const [amount, setAmount] = useState('');
     const [method, setMethod] = useState('PAYME');
     const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
 
     const handleTopUp = async () => {
         if (!amount || isNaN(Number(amount)) || Number(amount) < 1000) {
-            toast.error("Minimal summa 1000 so'm");
+            toast({
+                title: "Xatolik",
+                description: "Minimal summa 1000 so'm",
+                variant: "destructive"
+            });
             return;
         }
         setLoading(true);
@@ -567,7 +581,11 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
                 window.location.href = res.data.payment_url;
             }
         } catch (err) {
-            toast.error("Xatolik yuz berdi");
+            toast({
+                title: "Xatolik",
+                description: "Xatolik yuz berdi",
+                variant: "destructive"
+            });
         } finally {
             setLoading(false);
         }

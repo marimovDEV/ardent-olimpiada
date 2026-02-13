@@ -91,58 +91,63 @@ const DashboardLayout = () => {
 
             {/* Sidebar */}
             <aside
-                className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-card border-r border-border flex flex-col transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+                className={`fixed lg:static inset-y-0 left-0 z-50 w-72 bg-card/60 backdrop-blur-xl border-r border-white/10 flex flex-col transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
                 <div className="p-8 pb-4">
-                    <Link to="/" className="flex items-center gap-2 mb-6">
-                        <img src="/logo.jpg" alt="Logo" decoding="async" className="w-8 h-8 rounded-xl object-contain" />
-                        <span className="text-xl font-black font-cinzel text-foreground tracking-tight">Hogwords</span>
+                    <Link to="/" className="flex items-center gap-3 mb-8 group">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-gold group-hover:scale-110 transition-transform duration-500">
+                            <div className="w-full h-full bg-background rounded-[14px] flex items-center justify-center overflow-hidden">
+                                <img src="/logo.jpg" alt="Logo" className="w-7 h-7 object-contain" />
+                            </div>
+                        </div>
+                        <span className="text-2xl font-black font-cinzel text-foreground tracking-tighter group-hover:text-primary transition-colors">HOGWORDS</span>
                     </Link>
                 </div>
 
-                <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+                <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
                     {menuItems.map((item) => (
                         <Link
                             key={item.path}
                             to={item.path}
-                            className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 font-medium group relative overflow-hidden ${isActive(item.path)
-                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
-                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                            className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold group relative overflow-hidden ${isActive(item.path)
+                                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
+                                : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
                                 }`}
                         >
-                            <item.icon className={`w-5 h-5 transition-colors ${isActive(item.path) ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`} />
-                            <span className="relative z-10">{item.label}</span>
-                            {isActive(item.path) && <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 animate-shimmer" />}
+                            <item.icon className={`w-5 h-5 transition-transform duration-300 ${isActive(item.path) ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary group-hover:scale-110"}`} />
+                            <span className="relative z-10 text-sm tracking-wide">{item.label}</span>
+                            {isActive(item.path) && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 animate-shimmer" />
+                            )}
                         </Link>
                     ))}
                 </nav>
 
-                <div className="p-4 border-t border-border space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+                <div className="p-6 border-t border-white/10 space-y-4">
+                    <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1 justify-center gap-2"
+                            className="flex-1 justify-center gap-2 rounded-xl bg-white/5 border-white/10 hover:bg-white/10"
                             onClick={toggleLanguage}
                         >
-                            <Globe className="w-4 h-4" />
-                            {i18n.language === 'uz' ? '🇺🇿 O\'zbek' : '🇷🇺 Русский'}
+                            <Globe className="w-4 h-4 text-primary" />
+                            <span className="text-xs font-bold uppercase">{i18n.language === 'uz' ? 'UZ' : 'RU'}</span>
                         </Button>
                         <Button
                             variant="outline"
                             size="icon"
-                            className="shrink-0"
+                            className="shrink-0 rounded-xl bg-white/5 border-white/10 hover:bg-white/10"
                             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         >
-                            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                            <span className="sr-only">Toggle theme</span>
+                            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                         </Button>
                     </div>
 
                     <Button
                         variant="ghost"
-                        className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 gap-3 px-4 rounded-xl h-11"
+                        className="w-full justify-start text-destructive hover:text-red-400 hover:bg-red-500/5 gap-3 px-5 rounded-2xl h-12 font-bold transition-all"
                         onClick={handleLogout}
                     >
                         <LogOut className="w-5 h-5" />
