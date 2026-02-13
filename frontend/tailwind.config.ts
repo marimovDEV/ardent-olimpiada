@@ -16,6 +16,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        cinzel: ['Cinzel', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -24,15 +25,15 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-          light: "hsl(var(--primary-light))",
-          dark: "hsl(var(--primary-dark))",
+          DEFAULT: "#FFD700", // Gold
+          foreground: "#0B132B",
+          light: "#F4E6A2",
+          dark: "#B8860B",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-          light: "hsl(var(--secondary-light))",
+          DEFAULT: "#0B132B", // Dark Navy
+          foreground: "#FFFFFF",
+          light: "#1C2541",
         },
         success: {
           DEFAULT: "hsl(var(--success))",
