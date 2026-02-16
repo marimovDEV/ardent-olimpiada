@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Circle, ArrowRight, Loader2, Target, BookOpen, FileQuestion, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface Goal {
     id: number;
@@ -217,13 +218,13 @@ const DailyGoals = () => {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.1 }}
                             className={`group/item flex items-center p-5 rounded-[1.5rem] border transition-all duration-300 ${goal.completed
-                                    ? 'bg-primary/5 border-primary/20 opacity-60'
-                                    : 'bg-white/5 border-white/5 hover:border-primary/30 hover:bg-white/[0.08]'
+                                ? 'bg-primary/5 border-primary/20 opacity-60'
+                                : 'bg-white/5 border-white/5 hover:border-primary/30 hover:bg-white/[0.08]'
                                 }`}
                         >
                             <button className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mr-5 transition-all duration-500 ${goal.completed
-                                    ? 'border-primary bg-primary text-background shadow-gold scale-110'
-                                    : 'border-white/20 group-hover/item:border-primary'
+                                ? 'border-primary bg-primary text-background shadow-gold scale-110'
+                                : 'border-white/20 group-hover/item:border-primary'
                                 }`}>
                                 {goal.completed ? <CheckCircle2 className="w-5 h-5" /> : <div className="w-2 h-2 rounded-full bg-transparent group-hover/item:bg-primary transition-colors" />}
                             </button>

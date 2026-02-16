@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LayoutGrid, BookOpen, Trophy, Award, User } from "lucide-react";
+import { motion } from "framer-motion";
 
 const MobileBottomNav = () => {
     const { t } = useTranslation();
