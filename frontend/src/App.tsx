@@ -86,7 +86,7 @@ const queryClient = new QueryClient();
 
 const DomainTeachersRedirect = () => {
   const hostname = window.location.hostname;
-  if (hostname.includes('ardentsoft.uz')) {
+  if (hostname.includes('ardentsoft.uz') || hostname.includes('hogwords.uz')) {
     return <Navigate to="/teacher/login" replace />;
   }
   return <PublicTeachersPage />;
