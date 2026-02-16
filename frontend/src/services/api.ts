@@ -3,13 +3,9 @@ import axios from "axios";
 export const getBaseUrl = () => {
     if (typeof window === 'undefined') return "https://api.hogwords.uz";
     const hostname = window.location.hostname;
-
-    // If we're on ardentsoft.uz, we're likely in transition
     if (hostname.includes('ardentsoft.uz')) {
         return "https://test.api.ardentsoft.uz";
     }
-
-    // Default for hogwords.uz and other domains
     return "https://api.hogwords.uz";
 };
 
