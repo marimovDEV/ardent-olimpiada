@@ -9,7 +9,7 @@ from .models import (
     Module, LessonPractice, LessonTest, Lead, LessonProgress,
     Testimonial, Winner, Banner, AIAssistantFAQ,
     NotificationTemplate, NotificationBroadcast,
-    AIConversation, AIMessage, AIUnansweredQuestion, OlympiadPrize,
+    AIConversation, AIMessage, AIUnansweredQuestion, OlympiadPrize, WinnerPrize, PrizeAddress,
     TeacherWallet, Transaction, Payout
 )
 
@@ -298,6 +298,25 @@ class FreeCourseLessonCardSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class LessonContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LessonContent
+        fields = ['id', 'lesson', 'text_content', 'resources_file', 'created_by', 'created_at', 'updated_at']
+
+
+class HomeworkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Homework
+        fields = ['id', 'lesson', 'title', 'description', 'deadline', 'created_at']
+
+
+class HomeworkSubmissionSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    class Meta:
+        model = HomeworkSubmission
+        fields = ['id', 'student', 'student_name', 'homework', 'file_url', 'grade', 'feedback', 'status', 'submitted_at']
+
+
 class LessonSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField()
     
@@ -503,12 +522,14 @@ class LearningLessonSerializer(serializers.ModelSerializer):
     is_locked = serializers.SerializerMethodField()
     practice = LessonPracticeSerializer(read_only=True)
     test = LessonTestSerializer(read_only=True)
+    content = LessonContentSerializer(read_only=True)
+    homework = HomeworkSerializer(read_only=True)
     
     class Meta:
         model = Lesson
         fields = ['id', 'title', 'description', 'video_url', 'youtube_id', 'video_type', 
                   'video_duration', 'duration', 'pdf_url', 'order', 'is_free', 
-                  'progress', 'is_locked', 'practice', 'test']
+                  'progress', 'is_locked', 'practice', 'test', 'content', 'homework']
 
     def get_duration(self, obj):
         if obj.video_duration:
@@ -547,8 +568,9 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = [
-            'id', 'title', 'description', 'thumbnail', 'subject', 'subject_name',
-            'level', 'price', 'is_active', 'status', 'lessons_count', 'students_count',
+            'id', 'title', 'admin', 'description', 'thumbnail', 'subject', 'subject_name',
+            'level', 'price', 'teacher_percentage', 'platform_percentage',
+            'is_active', 'status', 'lessons_count', 'students_count',
             'rating', 'teacher_name', 'teacher_avatar', 'created_at'
         ]
 
@@ -571,8 +593,9 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'thumbnail', 'price', 'level',
+        fields = ['id', 'title', 'admin', 'description', 'thumbnail', 'price', 'level',
                   'level_display', 'status', 'status_display', 'subject', 'subject_name', 'subject_details', 'language', 'duration', 'lessons_count', 
+                  'teacher_percentage', 'platform_percentage',
                   'rating', 'students_count', 'is_featured', 'is_active', 'xp_reward',
                   'is_enrolled', 'enrollment', 'created_at', 'updated_at', 'lessons', 'modules']
 
@@ -639,6 +662,8 @@ class TeacherLessonTestSerializer(serializers.ModelSerializer):
 class TeacherLessonSerializer(serializers.ModelSerializer):
     practice = TeacherLessonPracticeSerializer(read_only=True)
     test = TeacherLessonTestSerializer(read_only=True)
+    content = LessonContentSerializer(read_only=True)
+    homework = HomeworkSerializer(read_only=True)
     
     class Meta:
         model = Lesson
@@ -671,6 +696,26 @@ class OlympiadPrizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = OlympiadPrize
         fields = ['id', 'olympiad', 'name', 'image', 'description', 'condition', 'value']
+
+
+class PrizeAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrizeAddress
+        fields = '__all__'
+
+
+class WinnerPrizeSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.get_full_name', read_only=True)
+    olympiad_title = serializers.CharField(source='olympiad.title', read_only=True)
+    address = PrizeAddressSerializer(read_only=True)
+    prize_item_name = serializers.CharField(source='prize_item.name', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = WinnerPrize
+        fields = ['id', 'olympiad', 'olympiad_title', 'student', 'student_name', 
+                  'position', 'status', 'status_display', 'prize_item', 'prize_item_name', 
+                  'address', 'awarded_at', 'updated_at']
 
 
 class OlympiadSerializer(serializers.ModelSerializer):

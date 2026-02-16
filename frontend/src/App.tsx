@@ -59,6 +59,8 @@ import TeacherMessagesPage from "./pages/teacher/TeacherMessagesPage";
 import TeacherCourseEditor from "./pages/teacher/TeacherCourseEditor";
 import TeacherOnboarding from "./pages/teacher/TeacherOnboarding";
 import CourseCreationPayment from "./pages/teacher/CourseCreationPayment";
+import TeacherPrizeManagement from "./pages/teacher/TeacherPrizeManagement";
+import TeacherWalletPage from "./pages/teacher/TeacherWalletPage";
 
 import CertificateVerify from "./pages/CertificateVerify";
 import ResultsPage from "./pages/ResultsPage";
@@ -221,7 +223,9 @@ const App = () => {
                   <Route path="olympiads" element={<TeacherOlympiadsPage />} />
                   <Route path="olympiads/:id/results" element={<TeacherOlympiadResultsPage />} />
                   <Route path="messages" element={<TeacherMessagesPage />} />
+                  <Route path="prizes" element={<TeacherPrizeManagement />} />
                   <Route path="profile" element={<TeacherProfilePage />} />
+                  <Route path="wallet" element={<TeacherWalletPage />} />
                   <Route path="onboarding" element={<TeacherOnboarding />} />
                   <Route index element={<TeacherDashboard />} />
                 </Route>

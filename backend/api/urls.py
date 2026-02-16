@@ -8,6 +8,7 @@ router.register(r'courses', views.CourseViewSet)
 router.register(r'olympiads', views.OlympiadViewSet, basename='olympiads')
 router.register(r'questions', views.QuestionViewSet, basename='questions')
 router.register(r'olympiad-prizes', views.OlympiadPrizeViewSet, basename='olympiad-prizes')
+router.register(r'winner-prizes', views.WinnerPrizeViewSet, basename='winner-prizes')
 router.register(r'subjects', views.SubjectViewSet)
 router.register(r'lessons', views.LessonViewSet)
 router.register(r'modules', views.ModuleViewSet)
@@ -41,6 +42,12 @@ router.register(r'testimonials', views.TestimonialViewSet, basename='testimonial
 router.register(r'ai-assistant-faq', views.AIAssistantFAQViewSet, basename='ai-assistant-faq')
 router.register(r'ai-conversations', views.AIConversationViewSet, basename='ai-conversations')
 router.register(r'ai-unanswered', views.AIUnansweredQuestionViewSet, basename='ai-unanswered')
+
+# Monetization & Content
+router.register(r'payouts', views.PayoutViewSet, basename='payouts')
+router.register(r'lesson-content', views.LessonContentViewSet, basename='lesson-content')
+router.register(r'homeworks', views.HomeworkViewSet, basename='homeworks')
+router.register(r'homework-submissions', views.HomeworkSubmissionViewSet, basename='homework-submissions')
 
 # Settings ViewSets
 from .views_settings import (

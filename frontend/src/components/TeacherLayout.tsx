@@ -100,7 +100,9 @@ const TeacherLayout = () => {
         { icon: BookOpen, label: t('teacher.courses.title'), path: "/teacher/courses" },
         { icon: Trophy, label: t('teacher.olympiads.title'), path: "/teacher/olympiads" },
         { icon: Users, label: t('teacher.dashboard.stats.students'), path: "/teacher/students" },
+        { icon: Trophy, label: t('teacher.prizes.title'), path: "/teacher/prizes" },
         { icon: MessageSquare, label: t('nav.messages'), path: "/teacher/messages" },
+        { icon: Wallet, label: t('wallet.title', 'Hamyon'), path: "/teacher/wallet" },
         { icon: User, label: t('nav.profile'), path: "/teacher/profile" },
     ];
 

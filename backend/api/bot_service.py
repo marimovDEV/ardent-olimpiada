@@ -146,3 +146,28 @@ class BotService:
 <a href="http://localhost:3000/admin/leads">Admin panelda ko'rish</a>
 """
         return cls.send_to_admin(text)
+
+    @classmethod
+    def notify_winner(cls, winner_prize):
+        """Send notification to the olympiad winner and request address"""
+        user = winner_prize.student
+        if not user.telegram_id:
+            return False
+            
+        olympiad = winner_prize.olympiad
+        position = winner_prize.position
+        
+        pos_emoji = {1: "🥇", 2: "🥈", 3: "🥉"}.get(position, "🏆")
+        pos_text = f"{position}-o'rin"
+        
+        text = f"""
+{pos_emoji} <b>Tabriklaymiz! Siz g'olib bo'ldingiz!</b>
+
+Siz <b>{olympiad.title}</b> olimpiadasida <b>{pos_text}</b>ni qo'lga kiritdingiz! 🎊
+
+Sovrinni yetkazib berishimiz uchun, iltimos, manzilingizni yuboring:
+📍 <b>Lokatsiya yuboring</b> (Share Location tugmasi orqali)
+yoki
+📦 <b>To'liq manzilingizni matn ko'rinishida yozib yuboring.</b>
+"""
+        return cls.send_message(user.telegram_id, text)

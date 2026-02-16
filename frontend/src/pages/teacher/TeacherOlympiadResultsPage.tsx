@@ -43,10 +43,35 @@ const TeacherOlympiadResultsPage = () => {
     const [gradingScore, setGradingScore] = useState<string>("");
     const [gradingComment, setGradingComment] = useState("");
     const [isGrading, setIsGrading] = useState(false);
+    const [olympiad, setOlympiad] = useState<any>(null);
+    const [prizes, setPrizes] = useState<any[]>([]);
+    const [selectedWinners, setSelectedWinners] = useState<Record<number, any>>({}); // {position: result}
+    const [isConfirming, setIsConfirming] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     useEffect(() => {
         fetchResults();
+        fetchOlympiadDetails();
+        fetchPrizes();
     }, [id]);
+
+    const fetchOlympiadDetails = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/olympiads/${id}/`, { headers: getAuthHeader() });
+            setOlympiad(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const fetchPrizes = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/olympiad-prizes/?olympiad=${id}`, { headers: getAuthHeader() });
+            setPrizes(res.data.results || []);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const fetchResults = async () => {
         try {
@@ -85,6 +110,38 @@ const TeacherOlympiadResultsPage = () => {
         }
     };
 
+    const handleConfirmWinners = async () => {
+        if (Object.keys(selectedWinners).length === 0) {
+            toast.error("Iltimos, g'oliblarni tanlang");
+            return;
+        }
+
+        setIsConfirming(true);
+        try {
+            const winnersList = Object.entries(selectedWinners).map(([pos, res]) => ({
+                user_id: res.user_id,
+                position: parseInt(pos),
+                prize_id: prizes.find(p => p.condition.includes(pos))?.id
+            }));
+
+            const res = await axios.post(
+                `${API_URL}/olympiads/${id}/confirm_winners/`,
+                { winners: winnersList },
+                { headers: getAuthHeader() }
+            );
+
+            if (res.data.success) {
+                toast.success(res.data.message);
+                setShowConfirmModal(false);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("G'oliblarni tasdiqlashda xatolik");
+        } finally {
+            setIsConfirming(false);
+        }
+    };
+
     const filteredResults = results.filter(r =>
         r.student.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (r.region && r.region.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -106,8 +163,70 @@ const TeacherOlympiadResultsPage = () => {
                 </Button>
                 <div>
                     <h1 className="text-3xl font-bold">Natijalarni Tekshirish</h1>
-                    <p className="text-muted-foreground">Ishtirokchilar tomonidan topshirilgan ishlar</p>
+                    <p className="text-muted-foreground">{olympiad?.title || "Olimpiada natijalari"}</p>
                 </div>
+                <div className="flex-1" />
+                <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+                    <DialogTrigger asChild>
+                        <Button className="gap-2 bg-primary shadow-gold">
+                            <Trophy className="w-4 h-4" />
+                            G'oliblarni tasdiqlash
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle>G'oliblarni Tasdiqlash</DialogTitle>
+                            <DialogDescription>
+                                Olimpiada yakunlangach, top 3 o'rinni egallagan ishtirokchilarni tasdiqlang.
+                                Ularga Telegram orqali xabar yuboriladi.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="grid gap-6 py-4">
+                            {[1, 2, 3].map(pos => (
+                                <div key={pos} className="flex items-center gap-4 p-4 rounded-2xl border border-border bg-muted/30">
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black ${pos === 1 ? 'bg-yellow-400 text-yellow-950 shadow-gold' :
+                                            pos === 2 ? 'bg-slate-300 text-slate-800' :
+                                                'bg-amber-600 text-amber-50'
+                                        }`}>
+                                        {pos}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{pos}-o'rin egalovchisi</p>
+                                        <select
+                                            className="w-full bg-background border border-border rounded-lg p-2 text-sm font-medium"
+                                            value={selectedWinners[pos]?.user_id || ""}
+                                            onChange={(e) => {
+                                                const res = results.find(r => r.user_id === parseInt(e.target.value));
+                                                setSelectedWinners(prev => ({ ...prev, [pos]: res }));
+                                            }}
+                                        >
+                                            <option value="">Tanlang...</option>
+                                            {results.sort((a, b) => b.score - a.score).slice(0, 10).map(r => (
+                                                <option key={r.user_id} value={r.user_id}>
+                                                    {r.student} ({r.score} ball)
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Sovrin</p>
+                                        <p className="text-sm font-bold text-primary">
+                                            {prizes.find(p => p.condition.includes(pos.toString()))?.name || "Belgilanmagan"}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setShowConfirmModal(false)}>Bekor qilish</Button>
+                            <Button onClick={handleConfirmWinners} disabled={isConfirming} className="bg-primary text-primary-foreground">
+                                {isConfirming ? "Yuborilmoqda..." : "Tasdiqlash va Xabar yuborish"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -171,8 +290,8 @@ const TeacherOlympiadResultsPage = () => {
                                         </TableCell>
                                         <TableCell>
                                             <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase ${res.status === 'COMPLETED' ? 'bg-green-100 text-green-700' :
-                                                    res.status === 'DISQUALIFIED' ? 'bg-red-100 text-red-700' :
-                                                        'bg-yellow-100 text-yellow-700'
+                                                res.status === 'DISQUALIFIED' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
                                                 }`}>
                                                 {res.status}
                                             </span>

@@ -260,6 +260,8 @@
     "monetizationBonus": "Монетизация и XP",
     "price": "Цена (AC)",
     "xpReward": "XP Награда",
+    "teacherShare": "Доля учителя",
+    "platformShare": "Доля платформы",
     "submitForApproval": "Отправить на утверждение",
     "submissionStatus": "Статус отправки",
     "publishNote": "Курс появится на платформе после утверждения.",
@@ -283,6 +285,14 @@
     "recommendedSize": "Рекомендуется: 1200x675 (16:9)",
     "teacher": {
       "title": "Учитель",
+      "homework": "Домашнее задание",
+      "homeworkTitle": "Заголовок",
+      "homeworkTitlePlaceholder": "Например: Самостоятельная работа по алгебре",
+      "homeworkDescription": "Описание и условия",
+      "homeworkDeadline": "Срок сдачи",
+      "lessonContent": "Содержание урока",
+      "textContent": "Основной текст (Теория)",
+      "resourcesFile": "Дополнительные ресурсы (PDF, ZIP, и др.)",
       "onboarding": {
         "pendingTitle": "Ожидается",
         "pendingDescription": "Данные находятся на проверке модератора.",

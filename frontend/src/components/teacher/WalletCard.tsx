@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface WalletData {
     balance: number;
@@ -15,6 +16,7 @@ interface WalletData {
 
 export const WalletCard = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [wallet, setWallet] = useState<WalletData>({
         balance: 0,
         pending_balance: 0,
@@ -97,12 +99,17 @@ export const WalletCard = () => {
 
                 {/* Action Buttons */}
                 <div className="space-y-2 pt-2">
-                    <Button variant="outline" className="w-full border-green-600 text-green-700 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-950">
+                    <Button
+                        variant="outline"
+                        className="w-full border-green-600 text-green-700 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-950"
+                        onClick={() => navigate('/teacher/wallet')}
+                    >
                         {t('wallet.view_history', "Tarix ko'rish")}
                     </Button>
                     <Button
                         className="w-full bg-green-600 hover:bg-green-700 text-white dark:bg-green-700 dark:hover:bg-green-600"
                         disabled={wallet.balance < 100000}
+                        onClick={() => navigate('/teacher/wallet')}
                     >
                         {t('wallet.withdraw', 'Pul yechish')} {wallet.balance < 100000 && `(${t('wallet.min_amount', 'min.')} 100,000)`}
                     </Button>

@@ -41,6 +41,8 @@ interface Participant {
     max_score: number;
     time: string;
     avatar?: string;
+    prize_status?: string;
+    prize_item?: string;
 }
 
 const mockLeaderboard: Record<string, any> = {
@@ -72,6 +74,25 @@ const mockLeaderboard: Record<string, any> = {
             { id: 3, rank: 3, name: "Temur Qodirov", region: "Qashqadaryo", score: 88, max_score: 100, time: "60m" },
         ]
     }
+};
+
+const PrizeStatusBadge = ({ status }: { status?: string }) => {
+    const { t } = useTranslation();
+    if (!status) return null;
+
+    const styles: Record<string, string> = {
+        'PENDING': 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+        'CONTACTED': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+        'ADDRESS_RECEIVED': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+        'SHIPPED': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+        'COMPLETED': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    };
+
+    return (
+        <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${styles[status] || 'bg-gray-100 text-gray-700'}`}>
+            {t(`teacher.prizes.status.${status.toLowerCase()}`)}
+        </span>
+    );
 };
 
 const getMedalStyles = (rank: number) => {
@@ -169,7 +190,9 @@ const OlympiadLeaderboardPage = () => {
                                 region: p.region || 'Noma’lum',
                                 score: p.score,
                                 max_score: 100,
-                                time: formatTime(p.time_taken)
+                                time: formatTime(p.time_taken),
+                                prize_status: p.prize_status,
+                                prize_item: p.prize_item
                             }))
                         };
                         setData(adaptedData);
@@ -508,7 +531,8 @@ const OlympiadLeaderboardPage = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-8 py-5">
-                                                        <div className="flex justify-end">
+                                                        <div className="flex flex-col items-end gap-2">
+                                                            {p.prize_status && <PrizeStatusBadge status={p.prize_status} />}
                                                             <div className="w-32 h-1.5 bg-muted rounded-full overflow-hidden">
                                                                 <div
                                                                     className="h-full bg-primary rounded-full transition-all duration-1000"
@@ -577,6 +601,12 @@ const WinnerCard = ({ participant, rank, isFeatured = false }: { participant: an
                     <MapPin className="w-3.5 h-3.5 text-primary" />
                     {participant.region}
                 </div>
+
+                {participant.prize_status && (
+                    <div className="mb-4">
+                        <PrizeStatusBadge status={participant.prize_status} />
+                    </div>
+                )}
 
                 <div className="w-full grid grid-cols-2 gap-3 pt-6 border-t border-border">
                     <div className="text-center">

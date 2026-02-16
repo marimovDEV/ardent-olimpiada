@@ -201,11 +201,17 @@ class Course(models.Model):
     ]
     
     title = models.CharField(max_length=200)
+    admin = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='created_courses', limit_choices_to={'role': 'ADMIN'})
     end_time = models.DateTimeField(null=True, blank=True) # Added end_time
     result_time = models.DateTimeField(blank=True, null=True, help_text="Time when results will be published") # Added result_time
     description = models.TextField()
     thumbnail = models.ImageField(upload_to='courses/', blank=True, null=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    
+    # Revenue Split
+    teacher_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=70.00)
+    platform_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=30.00)
+
     level = models.CharField(max_length=15, choices=LEVEL_CHOICES, default='BEGINNER')
     subject = models.ForeignKey('Subject', on_delete=models.SET_NULL, null=True, related_name='courses')
     duration = models.CharField(max_length=50, blank=True, null=True, help_text="Duration in HH:MM:SS or minutes") # Modified duration
@@ -357,6 +363,56 @@ class Lesson(models.Model):
     
     def __str__(self):
         return f"{self.course.title} - {self.title}"
+
+
+class LessonContent(models.Model):
+    """Rich content for a lesson added by Teacher"""
+    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='content')
+    text_content = models.TextField(blank=True)
+    resources_file = models.FileField(upload_to='lessons/resources/', blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'TEACHER'})
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'lesson_contents'
+
+    def __str__(self):
+        return f"Content for: {self.lesson.title}"
+
+
+class Homework(models.Model):
+    """Homework assigned to a lesson"""
+    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='homework')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    deadline = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'homeworks'
+
+    def __str__(self):
+        return self.title
+
+
+class HomeworkSubmission(models.Model):
+    """Student submission for homework"""
+    STATUS_CHOICES = [
+        ('PENDING', 'Kutilmoqda'),
+        ('GRADED', 'Baholangan'),
+        ('REJECTED', 'Rad etilgan'),
+    ]
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='homework_submissions')
+    homework = models.ForeignKey(Homework, on_delete=models.CASCADE, related_name='submissions')
+    file_url = models.FileField(upload_to='homework/submissions/')
+    grade = models.IntegerField(null=True, blank=True)
+    feedback = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'homework_submissions'
 
 
 class LessonPractice(models.Model):
@@ -619,6 +675,48 @@ class Question(models.Model):
     
     def __str__(self):
         return f"{self.olympiad.title} - Q{self.order}"
+
+
+class WinnerPrize(models.Model):
+    """Specific prize awarded to a student after an olympiad"""
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('CONTACTED', 'Contacted'),
+        ('ADDRESS_RECEIVED', 'Address received'),
+        ('SHIPPED', 'Shipped'),
+        ('COMPLETED', 'Completed'),
+    ]
+
+    olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, related_name='winners_prizes')
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='won_prizes')
+    position = models.IntegerField(help_text="1, 2 or 3")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    prize_item = models.ForeignKey(OlympiadPrize, on_delete=models.SET_NULL, null=True, blank=True)
+    awarded_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'winner_prizes'
+        ordering = ['position']
+        unique_together = ['olympiad', 'student']
+
+    def __str__(self):
+        return f"{self.student.username} - {self.olympiad.title} ({self.position}-o'rin)"
+
+
+class PrizeAddress(models.Model):
+    """Shipping information collected via Telegram"""
+    prize = models.OneToOneField(WinnerPrize, on_delete=models.CASCADE, related_name='address')
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    address_text = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'prize_addresses'
+
+    def __str__(self):
+        return f"Address for {self.prize.student.username}"
 
 
 class OlympiadRegistration(models.Model):

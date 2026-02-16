@@ -17,8 +17,10 @@ const TeacherDashboard = () => {
         students_count: 0,
         active_courses: 0,
         rating: 0,
-        total_lessons: 0
+        total_lessons: 0,
+        avg_score: 0
     });
+    const [recentWinners, setRecentWinners] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -39,6 +41,7 @@ const TeacherDashboard = () => {
         }
 
         fetchStats();
+        fetchRecentWinners();
     }, []);
 
     const fetchStats = async () => {
@@ -47,16 +50,25 @@ const TeacherDashboard = () => {
             setStats(res.data);
         } catch (error) {
             console.error(error);
-            toast.error(t('common.error'));
+            // toast.error(t('common.error'));
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchRecentWinners = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/winner-prizes/?limit=5`, { headers: getAuthHeader() });
+            setRecentWinners(res.data.results || []);
+        } catch (error) {
+            console.error(error);
         }
     };
 
     const statItems = [
         { label: t('teacher.dashboard.stats.students'), value: stats.students_count, icon: Users, color: "text-primary", bg: "bg-primary/10" },
         { label: t('teacher.dashboard.stats.courses'), value: stats.active_courses, icon: BookOpen, color: "text-primary", bg: "bg-primary/10" },
-        { label: t('teacher.dashboard.stats.rating'), value: stats.rating, icon: Star, color: "text-primary", bg: "bg-primary/10" },
+        { label: t('teacher.dashboard.stats.avg_score'), value: stats.avg_score + '%', icon: Star, color: "text-primary", bg: "bg-primary/10" },
         { label: t('teacher.dashboard.stats.lessons'), value: stats.total_lessons, icon: Clock, color: "text-primary", bg: "bg-primary/10" },
     ];
 
@@ -152,16 +164,50 @@ const TeacherDashboard = () => {
                         </CardContent>
                     </Card>
 
-                    {/* Upcoming Classes Placeholder */}
+                    {/* Recent Winners */}
                     <Card>
-                        <CardHeader>
-                            <CardTitle>{t('teacher.dashboard.recentActivity')}</CardTitle>
-                            <CardDescription>{t('teacher.dashboard.recentActivityDesc')}</CardDescription>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div>
+                                <CardTitle>{t('teacher.prizes.recentWinners')}</CardTitle>
+                                <CardDescription>{t('teacher.dashboard.recentActivityDesc')}</CardDescription>
+                            </div>
+                            <Link to="/teacher/prizes">
+                                <Button variant="ghost" size="sm" className="text-primary font-bold">
+                                    {t('common.viewAll')}
+                                </Button>
+                            </Link>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-center py-8 text-muted-foreground">
-                                {t('teacher.dashboard.noActivity')}
-                            </div>
+                            {recentWinners.length > 0 ? (
+                                <div className="space-y-4">
+                                    {recentWinners.map((winner) => (
+                                        <div key={winner.id} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card/50 hover:bg-muted/50 transition-colors">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-2 rounded-lg bg-primary/10 text-primary`}>
+                                                    <Trophy className="w-4 h-4" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-sm tracking-tight">{winner.student_name}</p>
+                                                    <p className="text-xs text-muted-foreground">{winner.olympiad_title}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${winner.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' :
+                                                        winner.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-500' :
+                                                            winner.status === 'ADDRESS_RECEIVED' ? 'bg-orange-500/10 text-orange-500' :
+                                                                'bg-muted text-muted-foreground'
+                                                    }`}>
+                                                    {t(`teacher.prizes.${winner.status.toLowerCase()}`)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    {t('teacher.prizes.noPrizes')}
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

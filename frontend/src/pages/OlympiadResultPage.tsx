@@ -150,6 +150,24 @@ const OlympiadResultPage = () => {
         );
     }
 
+    const PrizeStatusBadge = ({ status }: { status?: string }) => {
+        if (!status) return null;
+
+        const styles: Record<string, string> = {
+            'PENDING': 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+            'CONTACTED': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+            'ADDRESS_RECEIVED': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+            'SHIPPED': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+            'COMPLETED': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+        };
+
+        return (
+            <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider ${styles[status] || 'bg-gray-100 text-gray-700'}`}>
+                {t(`teacher.prizes.status.${status.toLowerCase()}`)}
+            </span>
+        );
+    };
+
     const tr = (text: string) => {
         if (!text) return '';
         const cleanText = text.trim();
@@ -320,9 +338,12 @@ const OlympiadResultPage = () => {
                                             {item.student}
                                             {item.student === result.my_result?.student && <Badge className="h-4 text-[8px] p-1">{t('olympiadResult.you')}</Badge>}
                                         </div>
-                                        <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-                                            <MapPin className="w-3 h-3" />
-                                            {item.region}
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                                <MapPin className="w-3 h-3" />
+                                                {item.region}
+                                            </div>
+                                            {item.prize_status && <PrizeStatusBadge status={item.prize_status} />}
                                         </div>
                                     </div>
                                 </div>

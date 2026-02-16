@@ -30,7 +30,8 @@ from .models import (
     Module, LessonPractice, LessonTest, Lead, LessonProgress,
     Testimonial, Winner, Banner, AIAssistantFAQ,
     NotificationBroadcast, NotificationTemplate,
-    AIConversation, AIMessage, AIUnansweredQuestion, OlympiadPrize
+    AIConversation, AIMessage, AIUnansweredQuestion, OlympiadPrize, WinnerPrize, PrizeAddress,
+    TeacherWallet, Transaction, Payout, LessonContent, Homework, HomeworkSubmission
 )
 from .serializers import (
     UserSerializer, UserRegisterSerializer, UserLoginSerializer,
@@ -49,12 +50,15 @@ from .serializers import (
     TeacherModuleSerializer, TeacherLessonSerializer, TeacherCourseDetailSerializer, LeadSerializer,
     TestimonialSerializer, WinnerSerializer, BannerSerializer, AIAssistantFAQSerializer,
     NotificationBroadcastSerializer, NotificationTemplateSerializer,
-    AIConversationSerializer, AIMessageSerializer, AIUnansweredQuestionSerializer
+    AIConversationSerializer, AIMessageSerializer, AIUnansweredQuestionSerializer,
+    WinnerPrizeSerializer, PrizeAddressSerializer,
+    TeacherWalletSerializer, TransactionSerializer, PayoutSerializer,
+    LessonContentSerializer, HomeworkSerializer, HomeworkSubmissionSerializer
 )
 from .streak_service import StreakService
 from .services.learning_service import LearningService
 from .authentication import generate_token
-from .permissions import IsAdmin, IsOwnerOrAdmin, IsTeacher, IsTeacherOrAdmin
+from .permissions import IsAdmin, IsOwnerOrAdmin, IsTeacher, IsTeacherOrAdmin, HasCourseAccess
 from .pagination import StandardPagination, SmallPagination
 from .telegram_service import TelegramService, generate_verification_code, format_phone_number
 from .utils import generate_unique_id
@@ -939,6 +943,11 @@ class CourseViewSet(viewsets.ModelViewSet):
                 from rest_framework.exceptions import ValidationError
                 raise ValidationError("Siz faqat 'DRAFT' yoki 'PENDING' statusini o'rnata olasiz.")
                 
+            # Prevent updating sensitive fields
+            for field in ['teacher_percentage', 'platform_percentage', 'admin', 'price']:
+                 if field in serializer.validated_data:
+                      serializer.validated_data.pop(field)
+
         serializer.save()
 
     @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
@@ -1067,7 +1076,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         user.balance -= course.price
         user.save(update_fields=['balance'])
         
-        Payment.objects.create(
+        payment = Payment.objects.create(
             user=user,
             type='COURSE',
             reference_id=str(course.id),
@@ -1075,8 +1084,43 @@ class CourseViewSet(viewsets.ModelViewSet):
             status='COMPLETED',
             payment_method='BALANCE'
         )
+
+        # 4. Revenue Split Logic
+        if course.teacher and course.price > 0:
+            # Calculate shares
+            teacher_share = (course.price * course.teacher_percentage) / 100
+            platform_share = (course.price * course.platform_percentage) / 100
+            
+            # Update Teacher Wallet
+            from .models import TeacherWallet, Transaction
+            wallet, created = TeacherWallet.objects.get_or_create(teacher=course.teacher)
+            wallet.pending_balance += teacher_share
+            wallet.total_earned += teacher_share
+            wallet.save()
+            
+            # Create Transaction for Teacher (Income)
+            Transaction.objects.create(
+                transaction_type='COURSE_SALE',
+                user=course.teacher,
+                course=course,
+                amount=teacher_share,
+                status='SUCCESS',
+                description=f"Kurs sotuvi: {course.title} ({course.teacher_percentage}% ulush)",
+                metadata={'purchase_id': payment.id, 'student_id': user.id}
+            )
+            
+            # Create Transaction for Platform (optional, for tracking)
+            Transaction.objects.create(
+                transaction_type='COMMISSION',
+                user=User.objects.filter(role='ADMIN').first(), # Assign to a generic admin or system user
+                course=course,
+                amount=platform_share,
+                status='SUCCESS',
+                description=f"Platforma komissiyasi: {course.title} ({course.platform_percentage}%)",
+                metadata={'purchase_id': payment.id}
+            )
         
-        # 4. Enroll
+        # 5. Enroll
         first_lesson = course.lessons.all().order_by('module__order', 'order').first()
         enrollment = Enrollment.objects.create(
             user=user, 
@@ -1222,7 +1266,14 @@ class LessonViewSet(viewsets.ModelViewSet):
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['retrieve', 'complete_video', 'submit_practice', 'submit_test']:
+            return [IsAuthenticated(), HasCourseAccess()]
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsTeacherOrAdmin()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         # Admins see all, others see none unless through filtered access 
@@ -1249,6 +1300,14 @@ class LessonViewSet(viewsets.ModelViewSet):
                 notification_type='COURSE',
                 link=f"/learning/{course.id}"
             )
+
+    def perform_update(self, serializer):
+        if self.request.user.role == 'TEACHER':
+            # Teachers cannot change video source/admin fields
+            for field in ['video_url', 'youtube_id', 'video_type', 'video_duration']:
+                 if field in serializer.validated_data:
+                     serializer.validated_data.pop(field)
+        serializer.save()
 
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def complete_video(self, request, pk=None):
@@ -1289,7 +1348,7 @@ class ModuleViewSet(viewsets.ModelViewSet):
 class LessonPracticeViewSet(viewsets.ModelViewSet):
     queryset = LessonPractice.objects.all()
     serializer_class = TeacherLessonPracticeSerializer
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    permission_classes = [IsAuthenticated, HasCourseAccess]
 
     def get_queryset(self):
         user = self.request.user
@@ -1300,7 +1359,7 @@ class LessonPracticeViewSet(viewsets.ModelViewSet):
 class LessonTestViewSet(viewsets.ModelViewSet):
     queryset = LessonTest.objects.all()
     serializer_class = TeacherLessonTestSerializer
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    permission_classes = [IsAuthenticated, HasCourseAccess]
 
     def get_queryset(self):
         user = self.request.user
@@ -1322,6 +1381,42 @@ class OlympiadPrizeViewSet(viewsets.ModelViewSet):
         if olympiad_id:
             return self.queryset.filter(olympiad_id=olympiad_id)
         return self.queryset
+
+class WinnerPrizeViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing Olympiad winners and their prizes"""
+    queryset = WinnerPrize.objects.all()
+    serializer_class = WinnerPrizeSerializer
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['olympiad', 'student', 'status']
+    ordering = ['position']
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'ADMIN':
+            return WinnerPrize.objects.all()
+        elif user.role == 'TEACHER':
+            return WinnerPrize.objects.filter(olympiad__teacher=user)
+        return WinnerPrize.objects.filter(student=user)
+
+    @action(detail=True, methods=['post'])
+    def update_status(self, request, pk=None):
+        """Update the status of a prize (e.g. marked as SHIPPED)"""
+        prize = self.get_object()
+        new_status = request.data.get('status')
+        
+        if new_status not in [choice[0] for choice in WinnerPrize.STATUS_CHOICES]:
+            return Response({'success': False, 'error': 'Yaroqsiz status'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        prize.status = new_status
+        prize.save()
+        
+        # Send notification to student if status is SHIPPED
+        if new_status == 'SHIPPED' and prize.student.telegram_id:
+            msg = f"🚚 <b>Sovriningiz yo'lga chiqdi!</b>\n\n<b>{prize.olympiad.title}</b> olimpiadasidagi yutug'ingiz yuborildi. Yaqin kunlarda yetib boradi!"
+            BotService.send_message(prize.student.telegram_id, msg)
+            
+        return Response({'success': True, 'message': f'Status {new_status} ga o\'zgartirildi'})
 
 
 class OlympiadViewSet(viewsets.ModelViewSet):
@@ -1529,6 +1624,71 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         questions = olympiad.questions.all().order_by('order')
         return Response(QuestionSerializer(questions, many=True).data)
 
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def ranking(self, request, pk=None):
+        """Get the leaderboard for an olympiad"""
+        olympiad = self.get_object()
+        
+        # Ranking logic: score DESC, then time_taken ASC
+        results = TestResult.objects.filter(olympiad=olympiad, status='COMPLETED')\
+            .order_by('-score', 'time_taken', 'submitted_at')
+        
+        data = []
+        for i, res in enumerate(results):
+            data.append({
+                'rank': i + 1,
+                'user_id': res.user.id,
+                'full_name': res.user.get_full_name() or res.user.username,
+                'phone': res.user.phone,
+                'score': res.score,
+                'percentage': res.percentage,
+                'time_taken': res.time_taken,
+                'submitted_at': res.submitted_at
+            })
+            
+        return Response({'success': True, 'ranking': data})
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def confirm_winners(self, request, pk=None):
+        """Confirm winners and notify via Telegram"""
+        olympiad = self.get_object()
+        winners_data = request.data.get('winners', []) # List of {user_id, position, prize_id}
+        
+        if not winners_data:
+            return Response({'success': False, 'error': 'G\'oliblar ro\'yxati bo\'sh'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        notifications_sent = 0
+        for win in winners_data:
+            user_id = win.get('user_id')
+            position = win.get('position')
+            prize_id = win.get('prize_id')
+            
+            user = get_object_or_404(User, id=user_id)
+            prize_item = None
+            if prize_id:
+                prize_item = get_object_or_404(OlympiadPrize, id=prize_id)
+                
+            winner_prize, created = WinnerPrize.objects.update_or_create(
+                olympiad=olympiad,
+                student=user,
+                defaults={
+                    'position': position,
+                    'prize_item': prize_item,
+                    'status': 'PENDING'
+                }
+            )
+            
+            # Send notification
+            if BotService.notify_winner(winner_prize):
+                winner_prize.status = 'CONTACTED'
+                winner_prize.save()
+                notifications_sent += 1
+            
+        return Response({
+            'success': True, 
+            'message': f'{len(winners_data)} ta g\'olib tasdiqlandi. {notifications_sent} tasiga Telegram orqali xabar yuborildi.'
+        })
+
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def submit(self, request, pk=None):
         """Submit test answers with anti-cheat validation"""
@@ -1731,6 +1891,11 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 mins, secs = divmod(res.time_taken, 60)
                 time_str = f"{mins:02}:{secs:02}"
                     
+                # Winner Prize Info
+                prize_info = WinnerPrize.objects.filter(olympiad=olympiad, student=res.user).first()
+                prize_status = prize_info.status if prize_info else None
+                prize_item = prize_info.prize_item.name if prize_info and prize_info.prize_item else None
+                    
                 leaderboard_data.append({
                     'id': res.user.id,
                     'rank': idx + 1,
@@ -1742,7 +1907,9 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                     'time': time_str,
                     'region': res.user.region or "",
                     'status': res.status,
-                    'avatar': res.user.avatar.url if res.user.avatar else None
+                    'avatar': res.user.avatar.url if res.user.avatar else None,
+                    'prize_status': prize_status,
+                    'prize_item': prize_item
                 })
 
         return Response({
@@ -3760,6 +3927,31 @@ def telegram_webhook(request):
                     }
                     BotService.send_message(chat_id, welcome_text, reply_markup=reply_markup)
         
+        # Handle location sharing
+        elif 'location' in message:
+            location = message['location']
+            lat = location.get('latitude')
+            lon = location.get('longitude')
+            
+            user = User.objects.filter(telegram_id=chat_id).first()
+            if user:
+                # Check for contacted winner prize
+                prize = WinnerPrize.objects.filter(student=user, status='CONTACTED').order_by('-awarded_at').first()
+                if prize:
+                    PrizeAddress.objects.update_or_create(
+                        prize=prize,
+                        defaults={
+                            'latitude': lat,
+                            'longitude': lon
+                        }
+                    )
+                    prize.status = 'ADDRESS_RECEIVED'
+                    prize.save()
+                    BotService.send_message(chat_id, "✅ <b>Manzil qabul qilindi!</b>\n\nTez orada sovriningizni yuboramiz. Rahmat!")
+                    BotService.send_to_admin(f"📦 <b>Yangi manzil!</b>\nStudent: {user.get_full_name()}\nOlimpiada: {prize.olympiad.title}\nTur: Lokatsiya")
+                else:
+                    BotService.send_message(chat_id, "Manzil uchun rahmat!")
+
         # Handle menu buttons
         elif text == "🏆 Mening Olimpiadalarim":
             user = User.objects.filter(telegram_id=chat_id).first()
@@ -3774,6 +3966,21 @@ def telegram_webhook(request):
                     BotService.send_message(chat_id, resp)
                 else:
                     BotService.send_message(chat_id, "Siz hali hech qanday olimpiadaga ro'yxatdan o'tmagansiz.")
+        
+        # Handle address text if not a menu command
+        elif text and text not in ["📚 Mening Kurslarim", "🎥 Meetinglar", "📊 Natijalarim", "❓ Yordam"]:
+             user = User.objects.filter(telegram_id=chat_id).first()
+             if user:
+                prize = WinnerPrize.objects.filter(student=user, status='CONTACTED').order_by('-awarded_at').first()
+                if prize:
+                    PrizeAddress.objects.update_or_create(
+                        prize=prize,
+                        defaults={'address_text': text}
+                    )
+                    prize.status = 'ADDRESS_RECEIVED'
+                    prize.save()
+                    BotService.send_message(chat_id, "✅ <b>Manzil qabul qilindi!</b>\n\nTez orada sovriningizni yuboramiz. Rahmat!")
+                    BotService.send_to_admin(f"📦 <b>Yangi manzil!</b>\nStudent: {user.get_full_name()}\nOlimpiada: {prize.olympiad.title}\nTur: Matn: {text}")
         
         elif text == "📚 Mening Kurslarim":
             user = User.objects.filter(telegram_id=chat_id).first()
@@ -4620,11 +4827,21 @@ class TeacherViewSet(viewsets.ViewSet):
         # 4. Total Lessons Taught (or just total lessons created)
         total_lessons = Lesson.objects.filter(course__in=courses).count()
 
+        # 5. Average Score (Across all teacher's courses/olympiads)
+        course_avg = Enrollment.objects.filter(course__in=courses).aggregate(avg=Avg('progress'))['avg'] or 0
+        
+        olympiads = Olympiad.objects.filter(teacher=user)
+        oly_avg = TestResult.objects.filter(olympiad__in=olympiads, status='COMPLETED').aggregate(avg=Avg('percentage'))['avg'] or 0
+        
+        # Weighted average or simple average of both? Let's take simple average for now
+        avg_score = (course_avg + float(oly_avg)) / 2 if (course_avg and oly_avg) else (course_avg or float(oly_avg))
+
         return Response({
             'students_count': students_count,
             'active_courses': active_courses_count,
             'rating': round(avg_rating, 1),
             'total_lessons': total_lessons,
+            'avg_score': round(avg_score, 1)
         })
 
     @action(detail=False, methods=['get'])
@@ -5237,3 +5454,120 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 'detail': traceback.format_exc(),
                 'request_data': self.request.data  # Return payload for debugging
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PayoutViewSet(viewsets.ModelViewSet):
+    """
+    Teacher Payout Management
+    """
+    queryset = Payout.objects.all()
+    serializer_class = PayoutSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'ADMIN' or user.is_staff:
+            return Payout.objects.all()
+        return Payout.objects.filter(teacher=user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.role != 'TEACHER':
+            raise serializers.ValidationError({"detail": "Faqat o'qituvchilar pul yechish so'rovini yubora olishadi."})
+        
+        amount = serializer.validated_data.get('amount')
+        wallet, created = TeacherWallet.objects.get_or_create(teacher=user)
+        
+        if wallet.balance < amount:
+            raise serializers.ValidationError({"detail": "Balansda yetarli mablag' mavjud emas."})
+            
+        if amount < 100000:
+            raise serializers.ValidationError({"detail": "Minimal yechib olish miqdori 100,000 so'm."})
+            
+        # Deduct from wallet immediately
+        wallet.balance -= amount
+        wallet.save()
+        
+        serializer.save(teacher=user, status='REQUESTED')
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
+    def approve(self, request, pk=None):
+        payout = self.get_object()
+        if payout.status != 'REQUESTED':
+            return Response({'error': 'Ushbu so\'rov allaqachon ko\'rib chiqilgan'}, status=400)
+            
+        payout.status = 'APPROVED'
+        payout.approved_by = request.user
+        payout.approved_at = timezone.now()
+        payout.save()
+        
+        return Response({'success': True, 'message': 'So\'rov tasdiqlandi'})
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAdmin])
+    def mark_paid(self, request, pk=None):
+        payout = self.get_object()
+        if payout.status != 'APPROVED':
+            return Response({'error': 'Avval so\'rovni tasdiqlash kerak'}, status=400)
+            
+        payout.status = 'PAID'
+        payout.paid_at = timezone.now()
+        payout.save()
+        
+        # Log Transaction
+        Transaction.objects.create(
+            transaction_type='PAYOUT',
+            user=payout.teacher,
+            amount=payout.amount,
+            status='SUCCESS',
+            description=f"Yechib olish yakunlandi: {payout.id}",
+            metadata={'payout_id': payout.id}
+        )
+        
+        # Total withdrawn update
+        wallet = TeacherWallet.objects.filter(teacher=payout.teacher).first()
+        if wallet:
+            wallet.total_withdrawn += payout.amount
+            wallet.save()
+            
+        return Response({'success': True, 'message': 'To\'lov yakunlandi'})
+
+
+class LessonContentViewSet(viewsets.ModelViewSet):
+    """
+    Teacher Content Editor (Text, Files)
+    """
+    queryset = LessonContent.objects.all()
+    serializer_class = LessonContentSerializer
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+
+class HomeworkViewSet(viewsets.ModelViewSet):
+    """
+    Teacher Homework Management
+    """
+    queryset = Homework.objects.all()
+    serializer_class = HomeworkSerializer
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+
+
+class HomeworkSubmissionViewSet(viewsets.ModelViewSet):
+    """
+    Student Homework Submissions
+    """
+    queryset = HomeworkSubmission.objects.all()
+    serializer_class = HomeworkSubmissionSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'STUDENT':
+            return HomeworkSubmission.objects.filter(student=user)
+        if user.role == 'TEACHER':
+            return HomeworkSubmission.objects.filter(homework__lesson__course__teacher=user)
+        return HomeworkSubmission.objects.all()
+        
+    def perform_create(self, serializer):
+        serializer.save(student=self.request.user)

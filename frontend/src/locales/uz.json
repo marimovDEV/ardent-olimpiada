@@ -254,6 +254,8 @@
     "monetizationBonus": "Monetizatsiya va XP",
     "price": "Narxi (AC)",
     "xpReward": "XP Mukofot",
+    "teacherShare": "O'qituvchi ulushi",
+    "platformShare": "Platforma ulushi",
     "submitForApproval": "Tasdiqlashga yuborish",
     "submissionStatus": "Yuborish holati",
     "publishNote": "Kurs tasdiqlangandan so'ng platformada ko'rinadi.",
@@ -277,6 +279,14 @@
     "recommendedSize": "Tavsiya etiladi: 1200x675 (16:9)",
     "teacher": {
       "title": "O'qituvchi",
+      "homework": "Uyga vazifa",
+      "homeworkTitle": "Sarlavha",
+      "homeworkTitlePlaceholder": "Masalan: Algebraik ifodalar bo'yicha mustaqil ish",
+      "homeworkDescription": "Tavsif va shartlar",
+      "homeworkDeadline": "Topshirish muddati",
+      "lessonContent": "Dars mazmuni",
+      "textContent": "Asosiy matn (Nazariya)",
+      "resourcesFile": "Qo'shimcha resurslar (PDF, ZIP, va b.)",
       "onboarding": {
         "pendingTitle": "Kutilmoqda",
         "pendingDescription": "Ma'lumotlar moderator tekshiruvida.",
@@ -2221,6 +2231,7 @@
         "courses": "Faol Kurslar",
         "rating": "O'rtacha Baho",
         "lessons": "Darslar Soni",
+        "avg_score": "O'rtacha ball",
         "realTime": "Real vaqt statistikasi"
       }
     },
@@ -2265,6 +2276,19 @@
       "new": "Yangi Olimpiada",
       "results": "Natijalar",
       "error": "Xatolik yuz berdi"
+    },
+    "prizes": {
+      "title": "Sovrinlar boshqaruvi",
+      "recentWinners": "So'nggi g'oliblar",
+      "pending": "Kutilmoqda",
+      "contacted": "Aloqaga chiqildi",
+      "address_received": "Manzil olindi",
+      "shipped": "Yuborildi",
+      "completed": "Yakunlandi",
+      "viewAddress": "Manzilni ko'rish",
+      "markShipped": "Yuborilgan deb belgilash",
+      "noPrizes": "Hozircha sovrinlar yo'q",
+      "statusUpdated": "Status muvaffaqiyatli yangilandi"
     }
   },
   "deleteCourse": "Kursni o'chirish",

@@ -78,7 +78,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
         teacher: "",
         is_certificate_enabled: false,
         certificate_template: "",
-        thumbnail: null as File | string | null
+        thumbnail: null as File | string | null,
+        teacher_percentage: 70,
+        platform_percentage: 30
     });
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -138,7 +140,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                 teacher: (typeof data.teacher === 'object' ? data.teacher?.id : data.teacher)?.toString() || "",
                 is_certificate_enabled: data.is_certificate_enabled || false,
                 certificate_template: data.certificate_template || "",
-                thumbnail: data.thumbnail
+                thumbnail: data.thumbnail,
+                teacher_percentage: data.teacher_percentage || 70,
+                platform_percentage: data.platform_percentage || 30
             });
             if (data.modules) {
                 setModules(data.modules);
@@ -167,7 +171,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
             teacher: "",
             is_certificate_enabled: false,
             certificate_template: "",
-            thumbnail: null
+            thumbnail: null,
+            teacher_percentage: 70,
+            platform_percentage: 30
         });
         setThumbnailPreview(null);
         setModules([]);
@@ -496,6 +502,28 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                         type="number"
                                         value={formData.xp_reward}
                                         onChange={(e) => setFormData({ ...formData, xp_reward: Number(e.target.value) })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">{t('admin.teacherShare') || "O'qituvchi ulushi"} (%)</label>
+                                    <Input
+                                        type="number"
+                                        value={formData.teacher_percentage}
+                                        onChange={(e) => {
+                                            const val = Number(e.target.value);
+                                            setFormData({ ...formData, teacher_percentage: val, platform_percentage: 100 - val });
+                                        }}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">{t('admin.platformShare') || "Platforma ulushi"} (%)</label>
+                                    <Input
+                                        type="number"
+                                        value={formData.platform_percentage}
+                                        readOnly
+                                        className="bg-muted opacity-60"
                                     />
                                 </div>
                             </div>

@@ -327,7 +327,9 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
         video_duration: 0,
         pdf_url: "",
         is_free: false,
-        order: 0
+        order: 0,
+        content: { text_content: "", resources_file: null },
+        homework: { title: "", description: "", deadline: null }
     });
 
     const [practiceEditor, setPracticeEditor] = useState<{ open: boolean, data: any }>({ open: false, data: null });
@@ -357,9 +359,42 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
         }
     });
 
+    const saveContentMutation = useMutation({
+        mutationFn: (data: any) => {
+            if (data.id) return api.put(`/lesson-content/${data.id}/`, data);
+            return api.post(`/lesson-content/`, { ...data, lesson: lesson.id });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['teacher-course'] });
+            toast.success("Dars mazmuni saqlandi");
+        }
+    });
+
+    const saveHomeworkMutation = useMutation({
+        mutationFn: (data: any) => {
+            if (data.id) return api.put(`/homeworks/${data.id}/`, data);
+            return api.post(`/homeworks/`, { ...data, lesson: lesson.id });
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['teacher-course'] });
+            toast.success("Uyga vazifa saqlandi");
+        }
+    });
+
     useEffect(() => {
-        if (lesson) setFormData(lesson);
-        else setFormData({ title: "", description: "", video_url: "", video_type: "YOUTUBE", video_duration: 0, pdf_url: "", is_free: false, order: 0 });
+        if (lesson) {
+            setFormData({
+                ...lesson,
+                content: lesson.content || { text_content: "", resources_file: null },
+                homework: lesson.homework || { title: "", description: "", deadline: null }
+            });
+        }
+        else setFormData({
+            title: "", description: "", video_url: "", video_type: "YOUTUBE",
+            video_duration: 0, pdf_url: "", is_free: false, order: 0,
+            content: { text_content: "", resources_file: null },
+            homework: { title: "", description: "", deadline: null }
+        });
     }, [lesson, open]);
 
     return (
@@ -374,8 +409,9 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                     <Tabs defaultValue="basics">
                         <TabsList className="bg-muted w-full justify-start p-1 h-auto mb-6">
                             <TabsTrigger value="basics" className="px-6 py-2">Asosiy</TabsTrigger>
-                            <TabsTrigger value="content" className="px-6 py-2">Video & PDF</TabsTrigger>
-                            <TabsTrigger value="extra" className="px-6 py-2">Amaliyot & Test</TabsTrigger>
+                            <TabsTrigger value="lesson_content" className="px-6 py-2">Mazmun</TabsTrigger>
+                            <TabsTrigger value="homework" className="px-6 py-2">Vazifa</TabsTrigger>
+                            <TabsTrigger value="extra" className="px-6 py-2">Test</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="basics" className="space-y-4 pt-2">
@@ -408,7 +444,7 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                             </div>
                         </TabsContent>
 
-                        <TabsContent value="content" className="space-y-4 pt-2">
+                        <TabsContent value="lesson_content" className="space-y-4 pt-2">
                             <div className="space-y-2">
                                 <label className="text-sm font-bold">Video URL (YouTube)</label>
                                 <Input
@@ -417,23 +453,55 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                                     placeholder="https://youtube.com/watch?v=..."
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-4 border-t pt-4">
+                                <h4 className="font-bold text-primary flex items-center gap-2">
+                                    <FileText className="w-4 h-4" /> Dars nazariyasi
+                                </h4>
+                                <Textarea
+                                    value={formData.content?.text_content}
+                                    onChange={(e) => setFormData({ ...formData, content: { ...formData.content, text_content: e.target.value } })}
+                                    placeholder="Dars matni, nazariy qism..."
+                                    rows={10}
+                                />
+                                <Button size="sm" onClick={() => saveContentMutation.mutate(formData.content)} disabled={!lesson?.id || saveContentMutation.isPending}>
+                                    Mazmunni saqlash
+                                </Button>
+                            </div>
+                        </TabsContent>
+
+                        <TabsContent value="homework" className="space-y-4 pt-2">
+                            <div className="space-y-4">
+                                <h4 className="font-bold text-primary flex items-center gap-2">
+                                    <BookOpen className="w-4 h-4" /> Uyga vazifa
+                                </h4>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold">Davomiyligi (soniya)</label>
+                                    <label className="text-sm font-medium">Vazifa sarlavhasi</label>
                                     <Input
-                                        type="number"
-                                        value={formData.video_duration}
-                                        onChange={(e) => setFormData({ ...formData, video_duration: parseInt(e.target.value) })}
+                                        value={formData.homework?.title}
+                                        onChange={(e) => setFormData({ ...formData, homework: { ...formData.homework, title: e.target.value } })}
+                                        placeholder="Masalan: 12-masalani yechish"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold">PDF material URL</label>
-                                    <Input
-                                        value={formData.pdf_url}
-                                        onChange={(e) => setFormData({ ...formData, pdf_url: e.target.value })}
-                                        placeholder="https://..."
+                                    <label className="text-sm font-medium">Tavsif</label>
+                                    <Textarea
+                                        value={formData.homework?.description}
+                                        onChange={(e) => setFormData({ ...formData, homework: { ...formData.homework, description: e.target.value } })}
+                                        placeholder="Vazifa sharti..."
+                                        rows={4}
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Muddati</label>
+                                    <Input
+                                        type="datetime-local"
+                                        value={formData.homework?.deadline ? formData.homework.deadline.split('.')[0] : ''}
+                                        onChange={(e) => setFormData({ ...formData, homework: { ...formData.homework, deadline: e.target.value } })}
+                                    />
+                                </div>
+                                <Button size="sm" onClick={() => saveHomeworkMutation.mutate(formData.homework)} disabled={!lesson?.id || saveHomeworkMutation.isPending}>
+                                    Vazifani saqlash
+                                </Button>
                             </div>
                         </TabsContent>
 

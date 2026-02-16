@@ -85,6 +85,9 @@ const OlympiadTestPage = () => {
                     return;
                 }
 
+                const attemptData = await startRes.json();
+                const attempt = attemptData.attempt;
+
                 const qRes = await fetch(`${API_BASE}/olympiads/${id}/questions/`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -94,23 +97,41 @@ const OlympiadTestPage = () => {
                     setOlympiad(data.olympiad);
                     if (data.questions) setQuestions(data.questions);
 
-                    // LOGIC: min(duration, end_time - now)
-                    const durationSeconds = parseDuration(data.olympiad.duration);
-
-                    let timeUntilEnd = Infinity;
-                    if (data.olympiad.end_date) {
-                        const endDate = new Date(data.olympiad.end_date).getTime();
-                        const now = new Date().getTime();
-                        timeUntilEnd = Math.floor(Math.max(0, endDate - now) / 1000);
+                    if (attempt.answers) {
+                        setAnswers(attempt.answers);
+                        const confirmed: Record<string, boolean> = {};
+                        Object.keys(attempt.answers).forEach(qid => {
+                            confirmed[qid] = true;
+                        });
+                        setConfirmedAnswers(confirmed);
                     }
 
-                    const finalTime = Math.min(durationSeconds, timeUntilEnd);
-                    setTimeLeft(finalTime);
+                    setTabSwitches(attempt.tab_switches_count || 0);
 
-                    // Auto-start fullscreen if enabled and not already started
-                    if (data.olympiad.required_full_screen && !isStarted && !isLoading) {
-                        // We can't auto-request fullscreen without user interaction, 
-                        // but we can ensure it's requested when they click 'Start'
+                    // LOGIC: Calculate remaining time
+                    const durationSeconds = parseDuration(data.olympiad.duration);
+                    const startTime = new Date(attempt.submitted_at).getTime();
+                    const now = new Date().getTime();
+                    const elapsedSeconds = Math.floor((now - startTime) / 1000);
+
+                    let timeRemaining = durationSeconds - elapsedSeconds;
+
+                    if (data.olympiad.end_date) {
+                        const endDate = new Date(data.olympiad.end_date).getTime();
+                        const timeUntilEnd = Math.floor(Math.max(0, endDate - now) / 1000);
+                        timeRemaining = Math.min(timeRemaining, timeUntilEnd);
+                    }
+
+                    if (timeRemaining <= 0) {
+                        toast.error("Vaqt tugagan!");
+                        navigate(`/olympiad/${id}/result`);
+                        return;
+                    }
+
+                    setTimeLeft(timeRemaining);
+
+                    if (attempt.status === 'IN_PROGRESS') {
+                        setIsStarted(true);
                     }
 
                 } else {
