@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { API_URL } from "@/services/api";
 import NotificationBell from './NotificationBell';
 import { useTranslation } from "react-i18next";
 import authService from "@/services/authService";
