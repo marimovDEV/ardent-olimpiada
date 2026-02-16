@@ -1399,6 +1399,29 @@ class WinnerPrizeViewSet(viewsets.ModelViewSet):
             return WinnerPrize.objects.filter(olympiad__teacher=user)
         return WinnerPrize.objects.filter(student=user)
 
+    def list(self, request, *args, **kwargs):
+        """Override list to add error handling and limit support"""
+        try:
+            queryset = self.filter_queryset(self.get_queryset())
+            
+            # Support ?limit=N parameter
+            limit = request.query_params.get('limit')
+            if limit:
+                try:
+                    queryset = queryset[:int(limit)]
+                except (ValueError, TypeError):
+                    pass
+            
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'error': str(e),
+                'traceback': traceback.format_exc()
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @action(detail=True, methods=['post'])
     def update_status(self, request, pk=None):
         """Update the status of a prize (e.g. marked as SHIPPED)"""
