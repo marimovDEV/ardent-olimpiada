@@ -22,7 +22,7 @@ const TeachersSection = () => {
     const [teachers, setTeachers] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const plugin = useRef(
-        Autoplay({ delay: 4000, stopOnInteraction: true })
+        Autoplay({ delay: 5000, stopOnInteraction: true })
     );
 
     useEffect(() => {
@@ -33,7 +33,10 @@ const TeachersSection = () => {
                 const lang = i18n.language === 'ru' ? 'ru' : 'uz';
                 const mapped = data.map((item: any) => {
                     const baseUrl = 'https://test.api.ardentsoft.uz';
-                    const imageUrl = item.image?.startsWith('http') ? item.image : `${baseUrl}${item.image}`;
+                    const imageUrl = item.image
+                        ? (item.image.startsWith('http') ? item.image : `${baseUrl}${item.image}`)
+                        : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&size=400&background=FACC15&color=0B0F1A`;
+
                     return {
                         id: item.id,
                         name: item.name,
@@ -42,7 +45,6 @@ const TeachersSection = () => {
                         image: imageUrl,
                         companies: [item.company],
                         bio: item[`bio_${lang}`] || item.bio_uz,
-                        color: "from-blue-500 to-indigo-600"
                     };
                 });
 
@@ -61,36 +63,42 @@ const TeachersSection = () => {
     if (!isLoading && teachers.length === 0) return null;
 
     return (
-        <section id="mentors" className="py-24 bg-muted/30 relative overflow-hidden">
-            {/* Background Decorations */}
-            <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 blur-[120px] rounded-full -ml-32 -mt-32" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 blur-[150px] rounded-full -mr-48 -mb-48" />
+        <section id="mentors" className="py-32 bg-[#0B0F1A] relative overflow-hidden">
+            {/* Background Decorations - Subtle Magic */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] opacity-10"
+                    style={{
+                        background: `radial-gradient(circle at 50% 0%, rgba(250,204,21,0.2), transparent 70%)`
+                    }}
+                />
+            </div>
 
             <div className="container relative z-10">
-                <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
-                    <div className="text-left">
+                <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+                    <div className="text-left space-y-4">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                         >
-                            <Badge variant="outline" className="mb-6 px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-bold uppercase tracking-widest">
+                            <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
                                 <Sparkles className="w-4 h-4 mr-2" />
-                                {t('teachers.badge', "Kuchli Jamoa")}
+                                {t('teachers.badge', "KUCHLI JAMOA")}
                             </Badge>
                         </motion.div>
-                        <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white leading-tight">
-                            {t('teachers.title')} <span className="text-primary italic">{t('teachers.mentors', 'Mentorlar')}</span>
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none font-cinzel">
+                            {t('teachers.title')} <span className="text-primary italic gold-glow">{t('teachers.mentors', 'Mentorlar')}</span>
                         </h2>
-                        <p className="text-xl text-secondary max-w-2xl font-medium leading-relaxed">
+                        <p className="text-xl text-[#94A3B8] max-w-2xl font-medium italic font-cinzel leading-relaxed">
                             {t('teachers.description', "O'z sohasining haqiqiy professionallaridan bilim oling va maqsadlaringizga tezroq erishing.")}
                         </p>
                     </div>
 
                     <Link to="/teachers" className="shrink-0">
-                        <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 hover:border-primary/50 text-white font-black group">
+                        <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-white font-black hover:border-primary/50 hover:bg-white/10 transition-all group active:scale-95 shadow-lg">
                             Barcha mentorlar
-                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </Link>
                 </div>
@@ -103,86 +111,74 @@ const TeachersSection = () => {
                     }}
                     onMouseEnter={plugin.current.stop}
                     onMouseLeave={plugin.current.reset}
-                    className="w-full relative px-4 md:px-12"
+                    className="w-full relative"
                 >
-                    <CarouselContent className="-ml-4 md:-ml-6">
-                        {teachers.map((teacher) => (
-                            <CarouselItem key={teacher.id} className="pl-4 md:pl-6 md:basis-1/2 lg:basis-1/3">
-                                <div className="group relative bg-card rounded-[2.5rem] overflow-hidden border border-border shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col">
-                                    {/* Image Container with creative effect */}
-                                    <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+                    <CarouselContent className="-ml-6 md:-ml-10">
+                        {teachers.map((teacher, index) => (
+                            <CarouselItem key={teacher.id} className="pl-6 md:pl-10 md:basis-1/2 lg:basis-1/3">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                    className="group relative bg-[#111827] rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-300 h-full flex flex-col hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/5"
+                                >
+                                    <div className="relative aspect-[4/5] overflow-hidden">
                                         <img
                                             src={teacher.image}
                                             alt={teacher.name}
                                             loading="lazy"
-                                            decoding="async"
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                             onError={(e) => {
-                                                // Fallback to a placeholder avatar
-                                                e.currentTarget.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(teacher.name) + '&size=400&background=4f46e5&color=fff';
+                                                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(teacher.name)}&size=400&background=FACC15&color=0B0F1A`;
                                             }}
-                                            className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
                                         />
-                                        <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity`} />
-
-                                        {/* Social Links Overlay */}
-                                        <div className="absolute top-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                                            <button className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all">
-                                                <Instagram className="w-5 h-5" />
-                                            </button>
-                                            <button className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all">
-                                                <Linkedin className="w-5 h-5" />
-                                            </button>
-                                            <button className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-white hover:text-primary transition-all">
-                                                <Github className="w-5 h-5" />
-                                            </button>
-                                        </div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/30 to-transparent opacity-80" />
 
                                         <div className="absolute bottom-8 left-8 right-8 text-white">
-                                            <div className={`w-12 h-1 h-1 bg-gradient-to-r ${teacher.color} mb-4 rounded-full group-hover:w-20 transition-all duration-500`} />
-                                            <h3 className="text-2xl font-black leading-tight mb-1 group-hover:text-primary transition-colors">{teacher.name}</h3>
-                                            <p className="text-sm text-white/70 font-bold uppercase tracking-widest">{teacher.role}</p>
+                                            <div className="w-12 h-1 bg-primary mb-4 rounded-full group-hover:w-20 transition-all duration-500" />
+                                            <h3 className="text-2xl font-black leading-tight mb-2 group-hover:text-primary transition-colors font-cinzel">{teacher.name}</h3>
+                                            <p className="text-xs text-primary/80 font-black uppercase tracking-widest">{teacher.role}</p>
                                         </div>
                                     </div>
 
-                                    <div className="p-8 flex flex-col flex-1 relative">
-                                        <Quote className="absolute top-4 right-8 w-12 h-12 text-muted/30 group-hover:text-primary/10 transition-colors" />
+                                    <div className="p-8 flex flex-col flex-1 relative bg-[#111827]">
+                                        <Quote className="absolute top-4 right-8 w-12 h-12 text-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         <div className="flex flex-wrap gap-2 mb-6">
-                                            {teacher.companies.map((company, i) => (
-                                                <Badge key={i} variant="secondary" className="px-3 py-0.5 text-[10px] font-black uppercase bg-muted text-muted-foreground border-0">
+                                            {teacher.companies.map((company: string, i: number) => (
+                                                <Badge key={i} variant="outline" className="px-3 py-1 text-[10px] font-black uppercase bg-white/5 text-[#64748B] border-white/10">
                                                     {company}
                                                 </Badge>
                                             ))}
                                         </div>
-                                        <p className="text-xs text-muted-foreground font-medium mb-4 flex items-center gap-1">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                            Hogwords Mentor
+                                        <p className="text-sm text-[#94A3B8] font-medium mb-8 line-clamp-3 italic leading-relaxed">
+                                            "{teacher.bio || t('teachers.default_bio', "Kelajak bunyodkorlariga bilim ulashish yo'lida.")}"
                                         </p>
-                                        <div className="mt-auto pt-6 border-t border-border/50 flex items-center justify-between">
+                                        <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 shadow-inner">
+                                                <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20">
                                                     <CheckCircle className="w-4 h-4" />
                                                 </div>
-                                                <span className="text-sm font-black text-foreground">
-                                                    {teacher.experience} {t('teachers.experience_suffix')}
+                                                <span className="text-xs font-black text-white uppercase tracking-widest">
+                                                    {teacher.experience} {t('teachers.experience_suffix', 'YIL TAJRIBA')}
                                                 </span>
                                             </div>
                                             <Link to={`/teacher-profile/${teacher.id}`}>
-                                                <Button variant="ghost" size="sm" className="font-bold text-primary hover:bg-primary/5 rounded-xl group/btn transition-all">
+                                                <Button variant="ghost" className="h-10 px-4 font-black text-primary hover:bg-primary/5 rounded-xl group/btn transition-all uppercase tracking-widest text-[10px]">
                                                     {t('teachers.more', 'Batafsil')}
                                                     <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                                                 </Button>
                                             </Link>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             </CarouselItem>
                         ))}
                     </CarouselContent>
 
-                    {/* Centered Controls for premium look */}
-                    <div className="flex items-center justify-center gap-4 mt-12">
-                        <CarouselPrevious className="static translate-y-0 h-14 w-14 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all" />
-                        <CarouselNext className="static translate-y-0 h-14 w-14 rounded-2xl border-2 border-border hover:border-primary hover:bg-primary/5 transition-all" />
+                    <div className="flex items-center justify-center gap-6 mt-16">
+                        <CarouselPrevious className="static translate-y-0 h-14 w-14 rounded-2xl bg-white/5 border border-white/10 hover:border-primary hover:bg-white/10 text-white transition-all shadow-lg shadow-black/20" />
+                        <CarouselNext className="static translate-y-0 h-14 w-14 rounded-2xl bg-white/5 border border-white/10 hover:border-primary hover:bg-white/10 text-white transition-all shadow-lg shadow-black/20" />
                     </div>
                 </Carousel>
 

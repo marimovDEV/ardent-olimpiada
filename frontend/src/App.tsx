@@ -137,6 +137,7 @@ const App = () => {
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
                   <Route path="/teacher-profile/:id" element={<PublicTeacherProfilePage />} />
+                  <Route path="/teachers" element={<PublicTeachersPage />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />
