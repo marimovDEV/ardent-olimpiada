@@ -5,11 +5,12 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
-    BookOpen, MoreVertical, Plus, Users, Clock, Star, Edit, Trash2, Eye
+    BookOpen, MoreVertical, Plus, Users, Clock, Star, Edit, Trash2, Eye, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { API_URL, getAuthHeader } from "@/services/api";
