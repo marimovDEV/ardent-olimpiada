@@ -117,18 +117,4 @@ const SubjectsSection = () => {
     </section>
   );
 };
-
-{
-  displaySubjects.length === 0 && !loading && (
-    <div className="col-span-3 text-center py-12 text-muted-foreground">
-      {t('subjectsSection.empty', 'Fanlar topilmadi. Admin panel orqali qo\'shing.')}
-    </div>
-  )
-}
-        </div >
-      </div >
-    </section >
-  );
-};
-
 export default SubjectsSection;
