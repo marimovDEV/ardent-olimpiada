@@ -190,82 +190,82 @@ const DailyGoals = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
-                <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-6">
-                    🎯 Bugungi maqsadlar
-                </h2>
-                <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                </div>
-            </div>
-        );
-    }
-
-    if (goals.length === 0) {
-        return (
-            <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
-                <h2 className="text-xl font-bold text-foreground flex items-center gap-2 mb-6">
-                    🎯 Bugungi maqsadlar
-                </h2>
-                <div className="flex flex-col items-center justify-center text-center py-8">
-                    <Target className="w-12 h-12 text-muted-foreground mb-3" />
-                    <p className="text-muted-foreground mb-2">Bugungi reja bo'sh</p>
-                    <Link to="/courses">
-                        <Button className="bg-blue-600 hover:bg-blue-700">
-                            Kurslarni ko'rish
-                        </Button>
-                    </Link>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-                        🎯 Bugungi maqsadlar
-                    </h2>
-                    <p className="text-sm text-muted-foreground">Bugungi rejangiz: {goals.length} ta vazifa</p>
-                </div>
-                <div className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
-                    {completedCount}/{goals.length} bajarildi
-                </div>
-            </div>
+        <div className="bg-[#111827] rounded-[2.5rem] p-10 shadow-2xl border border-white/5 relative overflow-hidden group h-full">
+            {/* Background Glow */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full opacity-50 group-hover:bg-primary/10 transition-colors" />
 
-            <div className="space-y-3">
-                {goals.map((goal) => (
-                    <div key={goal.id} className={`group flex items-center p-3 rounded-2xl transition-all ${goal.completed ? 'bg-green-50/50 dark:bg-green-900/20' : 'bg-muted hover:bg-muted/80'
-                        }`}>
-                        <button className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mr-4 transition-colors ${goal.completed ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300 dark:border-gray-600 group-hover:border-blue-400'
-                            }`}>
-                            {goal.completed ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4 text-transparent" />}
-                        </button>
-
-                        <div className="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-3 text-blue-600 dark:text-blue-400">
-                            {getGoalIcon(goal.type)}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                            <h3 className={`font-bold text-sm truncate ${goal.completed ? 'text-muted-foreground line-through' : 'text-foreground'
-                                }`}>
-                                {goal.title}
-                            </h3>
-                            <p className="text-xs text-muted-foreground truncate">{goal.subtitle}</p>
-                        </div>
-
-                        {!goal.completed && goal.link && (
-                            <Link to={goal.link}>
-                                <Button size="sm" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity text-blue-600 hover:text-blue-700 hover:bg-blue-100">
-                                    Bajarish <ArrowRight className="w-4 h-4 ml-1" />
-                                </Button>
-                            </Link>
-                        )}
+            <div className="relative z-10 flex flex-col h-full">
+                <div className="flex items-center justify-between mb-10">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-black text-white flex items-center gap-3 font-cinzel tracking-tight">
+                            <Target className="w-8 h-8 text-primary" />
+                            BUGUNGI MAQSADINGIZ
+                        </h2>
+                        <p className="text-[10px] text-secondary font-black uppercase tracking-[0.3em] opacity-60">Success is a habit</p>
                     </div>
-                ))}
+                    <div className="text-[11px] font-black text-primary bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full uppercase tracking-widest leading-none">
+                        {completedCount}/{goals.length} Bajarildi
+                    </div>
+                </div>
+
+                <div className="space-y-4 flex-1">
+                    {goals.map((goal, index) => (
+                        <motion.div
+                            key={goal.id}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className={`group/item flex items-center p-5 rounded-[1.5rem] border transition-all duration-300 ${goal.completed
+                                    ? 'bg-primary/5 border-primary/20 opacity-60'
+                                    : 'bg-white/5 border-white/5 hover:border-primary/30 hover:bg-white/[0.08]'
+                                }`}
+                        >
+                            <button className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center mr-5 transition-all duration-500 ${goal.completed
+                                    ? 'border-primary bg-primary text-background shadow-gold scale-110'
+                                    : 'border-white/20 group-hover/item:border-primary'
+                                }`}>
+                                {goal.completed ? <CheckCircle2 className="w-5 h-5" /> : <div className="w-2 h-2 rounded-full bg-transparent group-hover/item:bg-primary transition-colors" />}
+                            </button>
+
+                            <div className="w-12 h-12 rounded-xl bg-[#0B0F1A] border border-white/10 flex items-center justify-center mr-4 text-primary group-hover/item:scale-110 transition-transform">
+                                {getGoalIcon(goal.type)}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                                <h3 className={`font-black text-sm uppercase tracking-tight ${goal.completed ? 'text-secondary line-through' : 'text-white'
+                                    }`}>
+                                    {goal.title}
+                                </h3>
+                                <p className="text-[10px] text-secondary font-bold uppercase tracking-widest opacity-60 truncate">{goal.subtitle}</p>
+                            </div>
+
+                            {!goal.completed && goal.link && (
+                                <Link to={goal.link} className="ml-4">
+                                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover/item:bg-primary group-hover/item:text-background transition-all opacity-0 group-hover/item:opacity-100 -translate-x-2 group-hover/item:translate-x-0">
+                                        <ArrowRight className="w-5 h-5" />
+                                    </div>
+                                </Link>
+                            )}
+                        </motion.div>
+                    ))}
+                </div>
+
+                <div className="mt-10 pt-8 border-t border-white/5">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] opacity-60">Kunlik Progress</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{Math.round((completedCount / goals.length) * 100)}%</span>
+                    </div>
+                    <div className="h-2 bg-white/5 rounded-full overflow-hidden border border-white/5 p-[2px]">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(completedCount / goals.length) * 100}%` }}
+                            className="h-full bg-primary rounded-full shadow-gold overflow-hidden relative"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                        </motion.div>
+                    </div>
+                </div>
             </div>
         </div>
     );

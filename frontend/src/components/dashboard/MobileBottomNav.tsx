@@ -6,29 +6,43 @@ const MobileBottomNav = () => {
     const { t } = useTranslation();
 
     const navItems = [
-        { path: "/dashboard", label: t("nav.home"), icon: LayoutGrid },
-        { path: "/courses", label: t("nav.courses"), icon: BookOpen },
-        { path: "/olympiads", label: t("nav.olympiads"), icon: Trophy },
-        { path: "/results", label: t("nav.ranking"), icon: Award },
-        { path: "/profile", label: t("nav.profile"), icon: User },
+        { path: "/dashboard", label: "Home", icon: LayoutGrid },
+        { path: "/courses", label: "Kurslar", icon: BookOpen },
+        { path: "/olympiads", label: "Olimpiada", icon: Trophy },
+        { path: "/results", label: "Reyting", icon: Award },
+        { path: "/profile", label: "Profil", icon: User },
     ];
 
     return (
-        <nav className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-fit bg-[#111827]/80 backdrop-blur-xl border border-[#FACC15]/20 px-6 pt-2 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
-            <div className="flex items-center justify-center gap-1 h-16">
+        <nav className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-sm bg-[#111827]/90 backdrop-blur-2xl border border-white/10 px-4 py-2 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.8)] border-primary/20">
+            <div className="flex items-center justify-between h-16 px-2">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) =>
-                            `flex flex-col items-center justify-center gap-1 min-w-[64px] transition-all duration-300 ${isActive ? "text-[#FACC15] scale-110" : "text-[#64748B] hover:text-white/80"
+                            `flex flex-col items-center justify-center gap-1.5 min-w-[56px] transition-all duration-500 ${isActive
+                                ? "text-primary scale-110"
+                                : "text-secondary/60 hover:text-white"
                             }`
                         }
                     >
-                        <item.icon className="w-5 h-5 transition-transform duration-300" />
-                        <span className="text-[10px] font-bold uppercase tracking-tight truncate w-full text-center">
-                            {item.label}
-                        </span>
+                        {({ isActive }) => (
+                            <>
+                                <div className={`relative ${isActive ? 'gold-glow' : ''}`}>
+                                    <item.icon className={`w-5 h-5 transition-all duration-500 ${isActive ? 'stroke-[2.5px]' : 'stroke-[2px]'}`} />
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="mobile-active-dot"
+                                            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary shadow-gold"
+                                        />
+                                    )}
+                                </div>
+                                <span className={`text-[8px] font-black uppercase tracking-[0.1em] transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-40'}`}>
+                                    {item.label}
+                                </span>
+                            </>
+                        )}
                     </NavLink>
                 ))}
             </div>
