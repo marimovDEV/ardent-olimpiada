@@ -1929,7 +1929,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             'result_time': olympiad.result_time 
         })
 
-    @action(detail=True, methods=['get'], url_path='result_detail/(?P<user_id>\d+)', permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    @action(detail=True, methods=['get'], url_path=r'result_detail/(?P<user_id>\d+)', permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def result_detail(self, request, pk=None, user_id=None):
         """Get detailed result analysis for a specific user"""
         olympiad = self.get_object()
