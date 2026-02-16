@@ -255,38 +255,4 @@ const OlympiadSection = () => {
   );
 };
 
-
-
-{/* Olympiad Carousel */ }
-<Carousel
-  opts={{
-    align: "start",
-    loop: true,
-  }}
-  plugins={[
-    Autoplay({
-      delay: 3000,
-      stopOnMouseEnter: true,
-      stopOnInteraction: false,
-    }),
-  ]}
-  className="w-full"
->
-  <CarouselContent className="-ml-6 pb-4">
-    {upcomingOlympiads.map((olympiad) => (
-      <CarouselItem key={olympiad.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
-        <OlympiadCard olympiad={olympiad} t={t} />
-      </CarouselItem>
-    ))}
-  </CarouselContent>
-  <div className="flex justify-end gap-2 mt-4">
-    <CarouselPrevious className="static translate-y-0" />
-    <CarouselNext className="static translate-y-0" />
-  </div>
-</Carousel>
-      </div >
-    </section >
-  );
-};
-
 export default OlympiadSection;
