@@ -86,7 +86,7 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     avatar_url = serializers.SerializerMethodField()
-    teacher_profile = TeacherProfileSerializer(read_only=True)
+    teacher_profile = serializers.SerializerMethodField()
     subjects = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
     
@@ -111,6 +111,13 @@ class UserSerializer(serializers.ModelSerializer):
             except:
                 return None
         return None
+
+    def get_teacher_profile(self, obj):
+        try:
+            profile = obj.teacher_profile
+            return TeacherProfileSerializer(profile).data
+        except:
+            return None
 
     def get_subjects(self, obj):
         if obj.role == 'TEACHER':
@@ -707,8 +714,8 @@ class PrizeAddressSerializer(serializers.ModelSerializer):
 class WinnerPrizeSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.get_full_name', read_only=True)
     olympiad_title = serializers.CharField(source='olympiad.title', read_only=True)
-    address = PrizeAddressSerializer(read_only=True)
-    prize_item_name = serializers.CharField(source='prize_item.name', read_only=True)
+    address = serializers.SerializerMethodField()
+    prize_item_name = serializers.SerializerMethodField()
     status_display = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
@@ -716,6 +723,18 @@ class WinnerPrizeSerializer(serializers.ModelSerializer):
         fields = ['id', 'olympiad', 'olympiad_title', 'student', 'student_name', 
                   'position', 'status', 'status_display', 'prize_item', 'prize_item_name', 
                   'address', 'awarded_at', 'updated_at']
+
+    def get_address(self, obj):
+        try:
+            addr = obj.address
+            return PrizeAddressSerializer(addr).data
+        except:
+            return None
+
+    def get_prize_item_name(self, obj):
+        if obj.prize_item:
+            return obj.prize_item.name
+        return None
 
 
 class OlympiadSerializer(serializers.ModelSerializer):
