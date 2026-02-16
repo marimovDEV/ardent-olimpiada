@@ -142,6 +142,7 @@ const LeadForm = () => {
                                     {t('leadForm.form.privacy')}
                                 </p>
                             </form>
+                        </div>
                     </motion.div>
                 </div>
             </div>
