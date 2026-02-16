@@ -568,8 +568,8 @@ class ModuleSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    subject_name = serializers.CharField(source='subject.name', read_only=True)
-    teacher_name = serializers.CharField(source='teacher.full_name', read_only=True)
+    subject_name = serializers.SerializerMethodField()
+    teacher_name = serializers.SerializerMethodField()
     teacher_avatar = serializers.SerializerMethodField()
     
     class Meta:
@@ -580,6 +580,16 @@ class CourseSerializer(serializers.ModelSerializer):
             'is_active', 'status', 'lessons_count', 'students_count',
             'rating', 'teacher_name', 'teacher_avatar', 'created_at'
         ]
+
+    def get_subject_name(self, obj):
+        if obj.subject:
+            return obj.subject.name
+        return None
+
+    def get_teacher_name(self, obj):
+        if obj.teacher:
+            return obj.teacher.full_name or obj.teacher.get_full_name() or obj.teacher.username
+        return None
 
     def get_teacher_avatar(self, obj):
         if obj.teacher and obj.teacher.avatar:
@@ -605,6 +615,11 @@ class CourseDetailSerializer(serializers.ModelSerializer):
                   'teacher_percentage', 'platform_percentage',
                   'rating', 'students_count', 'is_featured', 'is_active', 'xp_reward',
                   'is_enrolled', 'enrollment', 'created_at', 'updated_at', 'lessons', 'modules']
+
+    def get_subject_name(self, obj):
+        if obj.subject:
+            return obj.subject.name
+        return None
 
     def get_is_enrolled(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None

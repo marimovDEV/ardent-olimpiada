@@ -4879,7 +4879,11 @@ class TeacherViewSet(viewsets.ViewSet):
         
         for enroll in enrollments:
             try:
-                # We might show duplicate students if they are in multiple courses
+                # Basic safety check to ensure enrollment has both user and course
+                if not enroll.user or not enroll.course:
+                    print(f"Skipping enrollment {enroll.id} due to missing user/course")
+                    continue
+                    
                 data.append({
                     'id': enroll.id,
                     'student_id': enroll.user.id,
