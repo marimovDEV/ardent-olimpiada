@@ -10,7 +10,7 @@ from .models import (
     Testimonial, Winner, Banner, AIAssistantFAQ,
     NotificationTemplate, NotificationBroadcast,
     AIConversation, AIMessage, AIUnansweredQuestion, OlympiadPrize, WinnerPrize, PrizeAddress,
-    TeacherWallet, Transaction, Payout
+    TeacherWallet, Transaction, Payout, LessonContent, Homework, HomeworkSubmission
 )
 
 # ============= CMS SERIALIZERS =============

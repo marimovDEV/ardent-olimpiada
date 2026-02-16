@@ -823,7 +823,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                 # Count existing courses
                 existing_courses = Course.objects.filter(teacher=user).count()
                 if existing_courses >= 1:
-                    raise serializers.ValidationError({
+                    raise ValidationError({
                         'detail': "Sizda faqat 1 ta kurs yaratish imkoniyati bor. Ko'proq kurs yaratish uchun Premium obuna sotib oling."
                     })
         
@@ -5473,16 +5473,16 @@ class PayoutViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         user = self.request.user
         if user.role != 'TEACHER':
-            raise serializers.ValidationError({"detail": "Faqat o'qituvchilar pul yechish so'rovini yubora olishadi."})
+            raise ValidationError({"detail": "Faqat o'qituvchilar pul yechish so'rovini yubora olishadi."})
         
         amount = serializer.validated_data.get('amount')
         wallet, created = TeacherWallet.objects.get_or_create(teacher=user)
         
         if wallet.balance < amount:
-            raise serializers.ValidationError({"detail": "Balansda yetarli mablag' mavjud emas."})
+            raise ValidationError({"detail": "Balansda yetarli mablag' mavjud emas."})
             
         if amount < 100000:
-            raise serializers.ValidationError({"detail": "Minimal yechib olish miqdori 100,000 so'm."})
+            raise ValidationError({"detail": "Minimal yechib olish miqdori 100,000 so'm."})
             
         # Deduct from wallet immediately
         wallet.balance -= amount
