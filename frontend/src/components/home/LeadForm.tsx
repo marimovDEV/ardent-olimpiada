@@ -25,7 +25,6 @@ const LeadForm = () => {
     const onSubmit = async (data: LeadFormData) => {
         setIsLoading(true);
         try {
-            // Using api.post directly to our 'leads' endpoint
             await api.post('/leads/', data);
             toast.success(t('leadForm.form.success'), {
                 description: t('leadForm.form.success_desc')
@@ -42,106 +41,111 @@ const LeadForm = () => {
     };
 
     return (
-        <section className="py-20 bg-primary/5">
-            <div className="container px-4 md:px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <section className="py-24 relative bg-[#0B0F1A] overflow-hidden">
+            <div className="absolute top-1/2 left-0 w-[600px] h-[600px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" />
+
+            <div className="container px-4 relative z-10 mx-auto">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="space-y-6"
+                        className="space-y-8"
                     >
-                        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-2">
-                            {t('leadForm.badge')}
+                        <div className="space-y-6">
+                            <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
+                                FREE CONSULTATION SECTION
+                            </Badge>
+                            <h2 className="text-4xl md:text-6xl font-black text-white font-cinzel leading-tight tracking-tighter">
+                                {t('leadForm.title')} <br />
+                                <span className="text-primary italic gold-glow">{t('leadForm.titleAccent')}</span>
+                            </h2>
+                            <p className="text-xl text-secondary font-medium leading-relaxed">
+                                {t('leadForm.description')}
+                            </p>
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
-                            {t('leadForm.title')} <br />
-                            <span className="text-primary">{t('leadForm.titleAccent')}</span>
-                        </h2>
-                        <p className="text-lg text-muted-foreground leading-relaxed">
-                            {t('leadForm.description')}
-                        </p>
 
-                        <div className="flex flex-col gap-4 text-sm text-muted-foreground bg-background/50 p-6 rounded-xl border border-dashed">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">1</div>
-                                <span>{t('leadForm.steps.1')}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">2</div>
-                                <span>{t('leadForm.steps.2')}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold">3</div>
-                                <span>{t('leadForm.steps.3')}</span>
-                            </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            {[1, 2, 3].map((step) => (
+                                <div key={step} className="bg-white/5 border border-white/5 p-6 rounded-2xl flex flex-col items-center text-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-primary text-background font-black flex items-center justify-center shadow-lg">
+                                        {step}
+                                    </div>
+                                    <span className="text-[10px] font-black text-white/70 uppercase tracking-widest leading-snug">
+                                        {t(`leadForm.steps.${step}`)}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                     </motion.div>
 
                     <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="bg-background rounded-3xl p-8 shadow-xl border relative overflow-hidden"
+                        className="relative"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10"></div>
+                        {/* Gold Frame Effect */}
+                        <div className="absolute -inset-1 bg-gradient-to-tr from-primary/30 via-transparent to-primary/30 blur-sm rounded-[2.5rem]" />
 
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 relative z-10">
-                            <h3 className="text-xl font-bold mb-4">{t('leadForm.form.title')}</h3>
+                        <div className="relative bg-[#111827] rounded-[2.5rem] border border-white/10 p-10 md:p-12 shadow-2xl">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                                <h3 className="text-2xl font-black text-white font-cinzel mb-8 text-center">{t('leadForm.form.title')}</h3>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="name">{t('leadForm.form.name')}</Label>
-                                <Input
-                                    id="name"
-                                    placeholder={t('leadForm.form.name_ph')}
-                                    className="bg-muted/30"
-                                    {...register("name", { required: true })}
-                                />
-                                {errors.name && <span className="text-xs text-red-500">{t('leadForm.form.error_name')}</span>}
-                            </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-secondary uppercase tracking-widest ml-1">{t('leadForm.form.name')}</Label>
+                                    <Input
+                                        id="name"
+                                        placeholder={t('leadForm.form.name_ph')}
+                                        className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
+                                        {...register("name", { required: true })}
+                                    />
+                                    {errors.name && <span className="text-xs text-red-500">{t('leadForm.form.error_name')}</span>}
+                                </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">{t('leadForm.form.phone')}</Label>
-                                <Input
-                                    id="phone"
-                                    placeholder={t('leadForm.form.phone_ph')}
-                                    className="bg-muted/30"
-                                    {...register("phone", { required: true })}
-                                />
-                                {errors.phone && <span className="text-xs text-red-500">{t('leadForm.form.error_phone')}</span>}
-                            </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-secondary uppercase tracking-widest ml-1">{t('leadForm.form.phone')}</Label>
+                                    <Input
+                                        id="phone"
+                                        placeholder={t('leadForm.form.phone_ph')}
+                                        className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
+                                        {...register("phone", { required: true })}
+                                    />
+                                    {errors.phone && <span className="text-xs text-red-500">{t('leadForm.form.error_phone')}</span>}
+                                </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="telegram">{t('leadForm.form.telegram')}</Label>
-                                <Input
-                                    id="telegram"
-                                    placeholder={t('leadForm.form.telegram_ph', { defaultValue: '@username' })}
-                                    className="bg-muted/30"
-                                    {...register("telegram_username")}
-                                />
-                            </div>
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black text-secondary uppercase tracking-widest ml-1">{t('leadForm.form.telegram')}</Label>
+                                    <Input
+                                        id="telegram"
+                                        placeholder="@username"
+                                        className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
+                                        {...register("telegram_username")}
+                                    />
+                                </div>
 
-                            <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
-                                {isLoading ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        {t('leadForm.form.submitting')}
-                                    </>
-                                ) : (
-                                    <>
-                                        {t('leadForm.form.submit')} <Send className="ml-2 h-4 w-4" />
-                                    </>
-                                )}
-                            </Button>
+                                <Button type="submit" size="lg" className="w-full h-16 mt-4 bg-primary text-background font-black rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all" disabled={isLoading}>
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                            {t('leadForm.form.submitting')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {t('leadForm.form.submit')} <Send className="ml-2 h-5 w-5" />
+                                        </>
+                                    )}
+                                </Button>
 
-                            <p className="text-xs text-center text-muted-foreground mt-4">
-                                {t('leadForm.form.privacy')}
-                            </p>
-                        </form>
-                    </motion.div>
+                                <p className="text-[10px] text-center text-secondary/50 font-medium">
+                                    {t('leadForm.form.privacy')}
+                                </p>
+                            </form>
+                        </div>
                 </div>
             </div>
-        </section>
+        </div>
+        </section >
     );
 };
 

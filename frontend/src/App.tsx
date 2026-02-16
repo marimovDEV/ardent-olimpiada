@@ -76,6 +76,8 @@ import SubjectsPage from "./pages/SubjectsPage";
 import AboutPage from "./pages/AboutPage";
 import OlympiadLeaderboardPage from "./pages/OlympiadLeaderboardPage";
 import GuidePage from "./pages/GuidePage";
+import PublicTeacherProfilePage from "./pages/PublicTeacherProfilePage";
+import PublicTeachersPage from "./pages/PublicTeachersPage";
 
 
 const queryClient = new QueryClient();
@@ -134,6 +136,7 @@ const App = () => {
                   <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
+                  <Route path="/teacher-profile/:id" element={<PublicTeacherProfilePage />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />

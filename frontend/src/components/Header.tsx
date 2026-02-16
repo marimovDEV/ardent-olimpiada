@@ -111,9 +111,9 @@ const Header = () => {
             <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
               {t('nav.ranking')}
             </NavLink>
-            <a href="/#mentors" className="nav-link-premium font-cinzel">
+            <NavLink to="/teachers" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
               {t('nav.mentors')}
-            </a>
+            </NavLink>
           </nav>
 
           {/* Desktop Actions */}
@@ -246,14 +246,14 @@ const Header = () => {
                   <Trophy className="w-5 h-5 text-primary" />
                   <span className="font-medium">{t('nav.ranking')}</span>
                 </Link>
-                <a
-                  href="/#mentors"
+                <Link
+                  to="/teachers"
                   className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <User className="w-5 h-5 text-primary" />
                   <span className="font-medium">{t('nav.mentors')}</span>
-                </a>
+                </Link>
               </nav>
 
               {/* Language & Theme */}

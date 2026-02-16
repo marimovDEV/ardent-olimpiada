@@ -198,6 +198,10 @@ export const homepageService = {
         const res = await api.get(`/homepage/mentors/`);
         return res.data;
     },
+    getMentorById: async (id: number | string) => {
+        const res = await api.get(`/homepage/mentors/${id}/`);
+        return res.data;
+    },
     getFeaturedSubjects: async () => {
         const res = await api.get(`/homepage/featured-subjects/`);
         return res.data;

@@ -66,23 +66,32 @@ const TeachersSection = () => {
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 blur-[150px] rounded-full -mr-48 -mb-48" />
 
             <div className="container relative z-10">
-                <div className="text-center mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                    >
-                        <Badge variant="outline" className="mb-6 px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-bold uppercase tracking-widest">
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            {t('teachers.badge', "Kuchli Jamoa")}
-                        </Badge>
-                    </motion.div>
-                    <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-foreground">
-                        {t('teachers.title')} <span className="text-primary italic">{t('teachers.mentors', 'Mentorlar')}</span>
-                    </h2>
-                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">
-                        {t('teachers.description', "O'z sohasining haqiqiy professionallaridan bilim oling va maqsadlaringizga tezroq erishing.")}
-                    </p>
+                <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
+                    <div className="text-left">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                        >
+                            <Badge variant="outline" className="mb-6 px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-bold uppercase tracking-widest">
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                {t('teachers.badge', "Kuchli Jamoa")}
+                            </Badge>
+                        </motion.div>
+                        <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white leading-tight">
+                            {t('teachers.title')} <span className="text-primary italic">{t('teachers.mentors', 'Mentorlar')}</span>
+                        </h2>
+                        <p className="text-xl text-secondary max-w-2xl font-medium leading-relaxed">
+                            {t('teachers.description', "O'z sohasining haqiqiy professionallaridan bilim oling va maqsadlaringizga tezroq erishing.")}
+                        </p>
+                    </div>
+
+                    <Link to="/teachers" className="shrink-0">
+                        <Button variant="outline" className="h-14 px-8 rounded-2xl border-white/10 hover:border-primary/50 text-white font-black group">
+                            Barcha mentorlar
+                            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </Link>
                 </div>
 
                 <Carousel
@@ -156,10 +165,12 @@ const TeachersSection = () => {
                                                     {teacher.experience} {t('teachers.experience_suffix')}
                                                 </span>
                                             </div>
-                                            <Button variant="ghost" size="sm" className="font-bold text-primary hover:bg-primary/5 rounded-xl group/btn transition-all">
-                                                {t('teachers.more', 'Batafsil')}
-                                                <ExternalLink className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                                            </Button>
+                                            <Link to={`/teacher-profile/${teacher.id}`}>
+                                                <Button variant="ghost" size="sm" className="font-bold text-primary hover:bg-primary/5 rounded-xl group/btn transition-all">
+                                                    {t('teachers.more', 'Batafsil')}
+                                                    <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                                                </Button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

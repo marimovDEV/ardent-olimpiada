@@ -15,184 +15,119 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 
 const HeroSection = () => {
-  const { t, i18n } = useTranslation();
-  const lang = (i18n.language === 'ru' ? 'ru' : 'uz') as 'uz' | 'ru';
-  const [hero, setHero] = useState<HeroConfig | null>(null);
-  const [banners, setBanners] = useState<Banner[]>([]);
-  const plugin = useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: true })
-  );
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [heroData, bannerData] = await Promise.all([
-          homepageService.getHero(),
-          homepageService.getBanners()
-        ]);
-
-        const activeHero = Array.isArray(heroData) ? (heroData.find((h: any) => h.is_active) || heroData[0]) : heroData;
-        setHero(activeHero);
-
-        const activeBanners = Array.isArray(bannerData) ? bannerData.filter((b: Banner) => b.is_active) : (bannerData.results || []).filter((b: Banner) => b.is_active);
-        setBanners(activeBanners);
-      } catch (err) {
-        console.error("Failed to fetch hero/banners", err);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // Prioritize translation keys to ensure proper localization
-  const title = t('hero.title1', { defaultValue: hero ? ((hero as any)[`title_${lang}`] || hero.hero_title) : '' });
-  const subtitle = t('hero.subtitle', { defaultValue: hero ? ((hero as any)[`subtitle_${lang}`] || hero.hero_subtitle) : '' });
-  const btnText = t('hero.cta_primary', { defaultValue: hero ? ((hero as any)[`button_text_${lang}`] || hero.hero_button_text) : '' });
-  const btnLink = hero ? hero.hero_button_link || hero.button_link : "/all-olympiads";
-
-  // Render Banner Slider if banners exist
-  if (banners.length > 0) {
-    return (
-      <section className="relative pt-28 pb-12 md:pt-32 md:pb-20 overflow-hidden bg-background">
-        <div className="container px-4">
-          <Carousel
-            plugins={[plugin.current]}
-            className="w-full relative shadow-2xl rounded-3xl overflow-hidden"
-            onMouseEnter={plugin.current.stop}
-            onMouseLeave={plugin.current.reset}
-            opts={{ loop: true }}
-          >
-            <CarouselContent>
-              {banners.map((banner) => (
-                <CarouselItem key={banner.id} className="relative aspect-[16/9] md:aspect-[21/9] lg:aspect-[2.5/1]">
-                  <div className="absolute inset-0">
-                    <img
-                      src={banner.image}
-                      alt={banner.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-                  </div>
-                  <div className="absolute inset-0 flex items-center p-8 md:p-16">
-                    <div className="max-w-2xl text-white space-y-6">
-                      <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight"
-                      >
-                        {banner.title}
-                      </motion.h2>
-                      {banner.subtitle && (
-                        <p className="text-lg md:text-xl text-white/90 line-clamp-3">
-                          {banner.subtitle}
-                        </p>
-                      )}
-                      {(banner.button_text) && (
-                        <Button size="lg" className="rounded-full text-lg px-8 mt-4" asChild>
-                          <Link to={banner.button_link || '#'}>{banner.button_text}</Link>
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 border-none text-white" />
-            <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 border-none text-white" />
-          </Carousel>
-        </div>
-      </section>
-    )
-  }
-
-  // Fallback to Standard Hero (Config based)
   return (
-    <section className="relative pt-24 pb-12 md:pt-48 md:pb-32 overflow-hidden bg-background min-h-[60vh] md:min-h-screen flex items-center">
-      {/* Background Effects */}
+    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-[#0B0F1A] min-h-screen flex items-center">
+      {/* Background Visuals */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-primary/5 to-transparent opacity-30" />
-        <div className="absolute -top-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-primary/10 blur-[100px] animate-pulse" />
-        <div className="absolute top-[20%] -left-[10%] w-[500px] h-[500px] rounded-full bg-secondary-light/10 blur-[100px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full opacity-20 animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-500/10 blur-[150px] rounded-full opacity-10" />
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]" />
       </div>
 
       <div className="container relative z-10 px-4">
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-          {/* Badge */}
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Content */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] md:text-sm font-semibold mb-6 md:mb-8"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-10"
           >
-            <Trophy className="w-3 h-3 md:w-4 md:h-4" />
-            <span className="tracking-wide uppercase">{t('hero.badge', 'Eng yaxshi olimpiadalar platformasi')}</span>
-          </motion.div>
+            <div className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest"
+              >
+                <Trophy className="w-4 h-4" />
+                {t('hero.badge', 'Eng yaxshi olimpiadalar platformasi')}
+              </motion.div>
 
-          {/* Main Title */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-8xl lg:text-9xl font-black font-cinzel leading-[1.1] tracking-tight mb-4 md:mb-8"
-          >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-light to-primary animate-pulse-soft">
-              Hogwords
-            </span>
-          </motion.h1>
+              <h1 className="text-6xl md:text-8xl font-black font-cinzel leading-[1.05] tracking-tighter text-white">
+                Kelajagingizni <br />
+                <span className="text-primary italic gold-glow">Olimpiada</span> <br />
+                G'alabalari bilan Quring
+              </h1>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-base md:text-2xl font-medium italic text-muted-foreground/80 max-w-2xl mb-8 md:mb-10 leading-relaxed font-cinzel"
-          >
-            "Magic of Knowledge & Olympiad Excellence"
-          </motion.p>
-
-          {/* Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto px-4 md:px-0"
-          >
-            <Button size="lg" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all hover:scale-105" asChild>
-              <Link to={btnLink}>
-                {btnText} <ArrowRight className="ml-2 w-5 h-5" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="h-12 md:h-14 px-8 text-base md:text-lg rounded-full border-2 hover:bg-muted/50 transition-all" asChild>
-              <Link to="/all-courses">
-                {t('hero.cta_secondary')}
-              </Link>
-            </Button>
-          </motion.div>
-
-          {/* Trust/Stats Mini Bar - Hidden on mobile if not needed or redesigned */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            className="hidden md:grid mt-16 pt-8 border-t border-border/50 grid-cols-3 gap-8 md:gap-16 w-full"
-          >
-            <div className="flex flex-col items-center">
-              <span className="text-2xl md:text-3xl font-bold">10k+</span>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">{t('hero.stats_students')}</span>
+              <p className="text-xl md:text-2xl font-medium italic text-secondary leading-relaxed font-cinzel max-w-xl">
+                "Magic of Knowledge & <br /> Olympiad Excellence"
+              </p>
             </div>
-            <div className="flex flex-col items-center">
-              <span className="text-2xl md:text-3xl font-bold flex items-center gap-1">50 <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" /></span>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">{t('hero.stats_olympiads')}</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <span className="text-2xl md:text-3xl font-bold">100%</span>
-              <span className="text-sm text-muted-foreground uppercase tracking-wider">{t('hero.stats_transparency')}</span>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" className="h-16 px-10 text-lg rounded-2xl bg-primary text-background font-black shadow-gold hover:scale-105 transition-all" asChild>
+                <Link to="/all-olympiads">
+                  🟢 Olimpiadaga qatnashish
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="h-16 px-10 text-lg rounded-2xl border-white/10 text-white font-black hover:bg-white/5 transition-all" asChild>
+                <Link to="/all-courses">
+                  ⚪ Tayyorgarlik kurslari
+                </Link>
+              </Button>
             </div>
           </motion.div>
+
+          {/* Right: Floating 3D Elements */}
+          <div className="relative hidden lg:block perspective-1000">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotateY: 20 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ duration: 1 }}
+              className="relative aspect-square"
+            >
+              {/* Main "Floating" Shield/Logo Card */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-96 bg-[#111827] rounded-[3rem] border-2 border-primary/30 shadow-2xl overflow-hidden animate-float rotate-y-12 gold-glow">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
+                <div className="relative h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
+                  <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20">
+                    <Trophy className="w-12 h-12 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWORDS PRESTIGE</div>
+                    <div className="text-2xl font-black text-white font-cinzel">ELITE MEMBER</div>
+                  </div>
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <div className="w-2/3 h-full bg-primary" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Smaller Floating Cards */}
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-0 right-0 w-48 h-48 bg-[#1F2937]/80 backdrop-blur-md rounded-[2.5rem] border border-white/10 p-6 shadow-xl animate-tilt translate-x-12 -translate-y-12"
+              >
+                <div className="h-full flex flex-col justify-between">
+                  <Star className="w-8 h-8 text-primary fill-primary" />
+                  <div className="space-y-2">
+                    <div className="text-xs font-black text-white italic">Sertifikatlar</div>
+                    <div className="w-full h-1.5 bg-white/10 rounded-full" />
+                    <div className="w-1/2 h-1.5 bg-white/10 rounded-full" />
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [0, 20, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-0 left-0 w-56 h-32 bg-[#1F2937]/80 backdrop-blur-md rounded-[2rem] border border-white/10 p-6 shadow-xl -translate-x-16 translate-y-8"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-green-500" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black text-[#94A3B8] uppercase">Muvaffaqiyat</div>
+                    <div className="text-lg font-black text-white">100% Shaffof</div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -18,23 +18,28 @@ import { memo } from "react";
 
 const ProfessionCard = memo(({ prof, t }: { prof: any; t: any }) => {
     return (
-        <Link to={`/profession/${prof.id}`} className="block h-full">
-            <div className="group h-full p-4 md:p-6 bg-card rounded-2xl border hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer flex flex-col items-center text-center">
-                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-2xl ${prof.color} bg-opacity-10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform`}>
-                    <div className={`bg-white/20 p-3 rounded-xl`}>
-                        <prof.icon className={`w-8 h-8 text-white`} />
-                    </div>
+        <Link to={`/profession/${prof.id}`} className="block h-full group">
+            <div className="h-full bg-[#111827] rounded-[2.5rem] border border-white/5 p-8 transition-all duration-500 hover:border-primary/40 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/5 relative overflow-hidden flex flex-col items-center text-center gold-glow-hover">
+
+                {/* Gold Accent Line */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className={`w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-primary/20`}>
+                    <prof.icon className="w-10 h-10 text-primary" />
                 </div>
 
-                <h3 className="font-bold text-lg mb-1">{prof.name}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{prof.coursesCount} {t('professions.courses_count')}</p>
+                <h3 className="text-xl font-black text-white mb-2 group-hover:text-primary transition-colors font-cinzel line-clamp-1">{prof.name}</h3>
+                <p className="text-xs font-black text-secondary tracking-widest uppercase mb-6">
+                    {prof.coursesCount} {t('professions.courses_count')}
+                </p>
 
-                <div className="mt-auto w-full">
-                    <div className="text-xs text-muted-foreground mb-3 bg-muted py-1 px-3 rounded-full inline-block">
-                        {t('professions.avg_salary')}: <span className="font-semibold text-foreground">{prof.salary}</span>
+                <div className="mt-auto w-full space-y-6">
+                    <div className="text-[10px] font-black text-secondary uppercase tracking-widest bg-white/5 py-2 px-4 rounded-xl inline-block border border-white/5">
+                        {t('professions.avg_salary')}: <span className="text-primary">{prof.salary}</span>
                     </div>
-                    <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-white transition-colors">
+                    <Button variant="outline" className="w-full h-12 rounded-xl border-white/10 text-white font-black hover:bg-primary hover:text-background transition-all group-hover:border-primary/50">
                         {t('professions.view_roadmap')}
+                        <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Button>
                 </div>
             </div>
