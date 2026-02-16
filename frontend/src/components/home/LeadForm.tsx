@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import api from "@/services/api";
 
 interface LeadFormData {
@@ -141,7 +142,7 @@ const LeadForm = () => {
                                     {t('leadForm.form.privacy')}
                                 </p>
                             </form>
-                        </div>
+                    </motion.div>
                 </div>
             </div>
         </section>

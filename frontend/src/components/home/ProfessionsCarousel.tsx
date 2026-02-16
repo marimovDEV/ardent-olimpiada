@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { ChevronRight, Code, Palette, Calculator, Database, Globe } from "lucide-react";
 import { homepageService } from "@/services/homepageService";
 import {

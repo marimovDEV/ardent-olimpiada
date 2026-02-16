@@ -9,9 +9,12 @@ import {
     Star,
     Sparkles,
     Medal,
-    Crown
+    Crown,
+    Calendar,
+    Users
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Badge } from '@/components/ui/badge';
 import { homepageService } from '@/services/homepageService';
 
 interface Winner {

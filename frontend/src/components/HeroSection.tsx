@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Trophy, ArrowRight, Star, ChevronRight, ChevronLeft } from "lucide-react";
+import { Trophy, ArrowRight, Star, ChevronRight, ChevronLeft, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
 import { useState, useEffect, useRef } from "react";
 import { homepageService, HeroConfig, Banner } from "@/services/homepageService";
 import {
