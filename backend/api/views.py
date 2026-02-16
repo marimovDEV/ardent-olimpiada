@@ -4419,6 +4419,12 @@ class HomePageViewSet(viewsets.ViewSet):
             })
         return Response(data)
     
+    @action(detail=False, methods=['get'], url_path='featured-subjects')
+    def featured_subjects(self, request):
+        """Get featured subjects for interactive grid"""
+        subjects = Subject.objects.filter(is_active=True, is_featured=True).order_by('order')[:6]
+        return Response(SubjectSerializer(subjects, many=True, context={'request': request}).data)
+    
     @action(detail=False, methods=['post', 'put'])
     def update_config(self, request):
         """Update homepage configuration (Admin)"""

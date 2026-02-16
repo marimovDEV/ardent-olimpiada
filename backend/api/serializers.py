@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Sum
 from django.contrib.auth.hashers import make_password
 from .models import (
     OlympiadRegistration, TestResult, Certificate, SupportTicket,
@@ -325,10 +326,18 @@ class SubjectSerializer(serializers.ModelSerializer):
     olympiads_count = serializers.SerializerMethodField()
     professions_count = serializers.SerializerMethodField()
     
+    stats = serializers.SerializerMethodField()
+    
     class Meta:
         model = Subject
         fields = ['id', 'name', 'slug', 'description', 'icon', 'color', 'xp_reward', 
-                  'is_featured', 'is_active', 'order', 'courses_count', 'olympiads_count', 'professions_count']
+                  'is_featured', 'is_active', 'order', 'courses_count', 'olympiads_count', 'professions_count', 'stats']
+    
+    def get_stats(self, obj):
+        return {
+            'students': obj.courses.filter(is_active=True).aggregate(count=Sum('students_count'))['count'] or 0,
+            'olympiads': obj.olympiads_api.count()
+        }
     
     def get_courses_count(self, obj):
         return obj.courses.filter(is_active=True).count()
