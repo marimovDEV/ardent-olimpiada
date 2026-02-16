@@ -211,6 +211,7 @@ const App = () => {
 
                 {/* Teacher Routes */}
                 <Route path="/teacher/login" element={<TeacherLoginPage />} />
+                <Route path="/teacher/admin" element={<Navigate to="/admin" replace />} />
                 <Route path="/teacher" element={<TeacherLayout />}>
                   <Route path="dashboard" element={<TeacherDashboard />} />
                   <Route path="courses" element={<TeacherCoursesPage />} />

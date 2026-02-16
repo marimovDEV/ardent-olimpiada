@@ -50,7 +50,9 @@ api.interceptors.response.use(
             }
 
             // Role-based redirect logic
-            if (path.startsWith('/teacher')) {
+            if (path.startsWith('/teacher/admin')) {
+                window.location.href = '/admin/login';
+            } else if (path.startsWith('/teacher')) {
                 window.location.href = '/teacher/login';
             } else if (path.startsWith('/admin')) {
                 window.location.href = '/admin/login';
