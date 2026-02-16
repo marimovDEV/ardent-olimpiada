@@ -58,7 +58,7 @@ const TeacherDashboard = () => {
 
     const fetchRecentWinners = async () => {
         try {
-            const res = await axios.get(`${API_URL}/winner-prizes/?limit=5`, { headers: getAuthHeader() });
+            const res = await axios.get(`${API_URL}/winner_prizes/?limit=5`, { headers: getAuthHeader() });
             setRecentWinners(res.data.results || []);
         } catch (error) {
             console.error(error);
@@ -193,9 +193,9 @@ const TeacherDashboard = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${winner.status === 'COMPLETED' ? 'bg-green-500/10 text-green-500' :
-                                                        winner.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-500' :
-                                                            winner.status === 'ADDRESS_RECEIVED' ? 'bg-orange-500/10 text-orange-500' :
-                                                                'bg-muted text-muted-foreground'
+                                                    winner.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-500' :
+                                                        winner.status === 'ADDRESS_RECEIVED' ? 'bg-orange-500/10 text-orange-500' :
+                                                            'bg-muted text-muted-foreground'
                                                     }`}>
                                                     {t(`teacher.prizes.${winner.status.toLowerCase()}`)}
                                                 </span>
