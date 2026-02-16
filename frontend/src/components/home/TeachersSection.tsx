@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, CheckCircle, Quote, Sparkles, Instagram, Github, Linkedin } from "lucide-react";
+import { ExternalLink, CheckCircle, Quote, Sparkles, Instagram, Github, Linkedin, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import {
     Carousel,
     CarouselContent,

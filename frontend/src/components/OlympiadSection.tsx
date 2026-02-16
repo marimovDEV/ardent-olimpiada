@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
-import { Trophy, Calendar, Users, Clock, ArrowRight, Star, Timer } from "lucide-react";
+import { Trophy, Calendar, Users, Clock, ArrowRight, Star, Timer, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
