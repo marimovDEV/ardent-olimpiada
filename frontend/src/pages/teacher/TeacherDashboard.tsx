@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, BookOpen, Star, Clock, Video, Plus, Send, Loader2 } from "lucide-react";
+import { Users, BookOpen, Star, Clock, Video, Plus, Send, Loader2, Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
