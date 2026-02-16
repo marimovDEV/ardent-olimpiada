@@ -154,7 +154,6 @@ SPECTACULAR_SETTINGS = {
 # JWT Settings
 JWT_SECRET_KEY = SECRET_KEY
 JWT_ALGORITHM = 'HS256'
-JWT_ALGORITHM = 'HS256'
 JWT_EXPIRATION_DAYS = 7
 
 
@@ -193,6 +192,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://ardent-olimpiada-course.vercel.app",
     "https://course.ardentsoft.uz",
     "https://api.ardentsoft.uz",
+    "https://test.api.ardentsoft.uz",
 ]
 
 

@@ -58,7 +58,7 @@ const TeacherDashboard = () => {
 
     const fetchRecentWinners = async () => {
         try {
-            const res = await axios.get(`${API_URL}/winner_prizes/?limit=5`, { headers: getAuthHeader() });
+            const res = await axios.get(`${API_URL}/winner-prizes/?limit=5`, { headers: getAuthHeader() });
             setRecentWinners(res.data.results || []);
         } catch (error) {
             console.error(error);

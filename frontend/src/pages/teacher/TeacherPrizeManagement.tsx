@@ -37,7 +37,7 @@ const TeacherPrizeManagement = () => {
     const fetchPrizes = async () => {
         setLoading(true);
         try {
-            let url = `${API_URL}/winner_prizes/`;
+            let url = `${API_URL}/winner-prizes/`;
             if (statusFilter !== "ALL") {
                 url += `?status=${statusFilter}`;
             }
@@ -53,7 +53,7 @@ const TeacherPrizeManagement = () => {
 
     const updateStatus = async (id: number, status: string) => {
         try {
-            await axios.post(`${API_URL}/winner_prizes/${id}/update_status/`, { status }, { headers: getAuthHeader() });
+            await axios.post(`${API_URL}/winner-prizes/${id}/update_status/`, { status }, { headers: getAuthHeader() });
             toast.success(t('teacher.prizes.statusUpdated'));
             fetchPrizes();
         } catch (error) {
