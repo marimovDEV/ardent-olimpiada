@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 
 const CountdownTimer = () => {
   const { t } = useTranslation();
-  const [timeLeft, setTimeLeft] = useState({ days: 2, hours: 14, minutes: 45, seconds: 30 });
+  const [timeLeft, setTimeLeft] = useState({ days: 12, hours: 14, minutes: 45, seconds: 30 });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -34,26 +34,19 @@ const CountdownTimer = () => {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 mt-2">
-      <div className="flex flex-col items-center bg-white/10 rounded-lg p-2 min-w-[60px]">
-        <span className="text-xl font-bold">{timeLeft.days}</span>
-        <span className="text-xs uppercase opacity-70">{t('olympiadsSection.days')}</span>
-      </div>
-      <span className="text-xl font-bold">:</span>
-      <div className="flex flex-col items-center bg-white/10 rounded-lg p-2 min-w-[60px]">
-        <span className="text-xl font-bold">{timeLeft.hours}</span>
-        <span className="text-xs uppercase opacity-70">{t('olympiadsSection.hours')}</span>
-      </div>
-      <span className="text-xl font-bold">:</span>
-      <div className="flex flex-col items-center bg-white/10 rounded-lg p-2 min-w-[60px]">
-        <span className="text-xl font-bold">{timeLeft.minutes}</span>
-        <span className="text-xs uppercase opacity-70">{t('olympiadsSection.minutes')}</span>
-      </div>
-      <span className="text-xl font-bold">:</span>
-      <div className="flex flex-col items-center bg-white/10 rounded-lg p-2 min-w-[60px]">
-        <span className="text-xl font-bold">{timeLeft.seconds}</span>
-        <span className="text-xs uppercase opacity-70">{t('olympiadsSection.seconds')}</span>
-      </div>
+    <div className="flex items-center justify-center gap-3 mt-4">
+      {['days', 'hours', 'minutes', 'seconds'].map((unit, idx) => (
+        <div key={unit} className="flex flex-col items-center">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-sm">
+            <span className="text-2xl md:text-3xl font-black text-primary">
+              {timeLeft[unit as keyof typeof timeLeft].toString().padStart(2, '0')}
+            </span>
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-[#64748B] mt-2">
+            {t(`olympiadsSection.${unit}`, unit)}
+          </span>
+        </div>
+      ))}
     </div>
   );
 };
@@ -62,85 +55,58 @@ import { memo } from "react";
 
 const OlympiadCard = memo(({ olympiad, t }: { olympiad: any; t: any }) => {
   return (
-    <div className="group relative h-full bg-[#111827] rounded-[2.5rem] border border-white/5 overflow-hidden transition-all duration-500 hover:border-primary/50 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/5 gold-glow-hover flex flex-col">
+    <div className="group relative h-full bg-[#111827] rounded-[2.5rem] border border-white/5 overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-2xl flex flex-col">
       {/* Featured Badge */}
-      {olympiad.featured && (
-        <div className="absolute top-6 right-6 z-20">
-          <Badge className="bg-primary text-background font-black px-4 py-1.5 rounded-full shadow-lg shadow-primary/20 animate-pulse-soft">
-            <Star className="w-3 h-3 mr-2 fill-background" />
-            PREMIUM
-          </Badge>
-        </div>
-      )}
+      <div className="absolute top-6 right-6 z-20">
+        <Badge className="bg-primary text-background font-black px-4 py-1.5 rounded-full shadow-lg">
+          {olympiad.featured ? "PREMIUM" : "HOT"}
+        </Badge>
+      </div>
 
       {/* Media Area */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-56 overflow-hidden">
         <img
           src={olympiad.thumbnail?.startsWith('http') ? olympiad.thumbnail : `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${olympiad.thumbnail}`}
           alt={olympiad.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/40 to-transparent" />
-
-        {/* Subject & Level Overlay */}
-        <div className="absolute bottom-6 left-8 right-8">
-          <div className="flex items-center gap-3 mb-3">
-            <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest px-3">
-              {olympiad.subject}
-            </Badge>
-            <div className="text-[10px] font-black text-white/50 uppercase tracking-widest">
-              {olympiad.level}
-            </div>
-          </div>
-          <h3 className="text-2xl font-black text-white leading-tight font-cinzel line-clamp-2">
-            {olympiad.title}
-          </h3>
-        </div>
       </div>
 
       {/* Details */}
       <div className="p-8 flex-1 flex flex-col">
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="space-y-1">
-            <div className="text-[10px] font-black text-secondary uppercase tracking-widest flex items-center gap-1.5">
-              <Calendar className="w-3 h-3" /> Sana
-            </div>
-            <div className="text-sm font-black text-white">{olympiad.date}</div>
-          </div>
-          <div className="space-y-1">
-            <div className="text-[10px] font-black text-secondary uppercase tracking-widest flex items-center gap-1.5">
-              <Clock className="w-3 h-3" /> Vaqt
-            </div>
-            <div className="text-sm font-black text-white">{olympiad.time}</div>
-          </div>
+        <div className="flex items-center gap-2 mb-4">
+          <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest px-3">
+            {olympiad.subject}
+          </Badge>
+          <span className="text-[10px] font-black text-white/40 uppercase tracking-widest font-cinzel">
+            {olympiad.level}
+          </span>
         </div>
 
-        {/* Participation Bar */}
-        <div className="mb-8 space-y-3">
-          <div className="flex justify-between items-end">
-            <span className="text-[10px] font-black text-secondary uppercase tracking-widest">Ishtirokchilar</span>
-            <span className="text-sm font-black text-primary">{olympiad.participants}/{olympiad.maxParticipants}</span>
+        <h3 className="text-xl font-black text-white leading-tight font-cinzel mb-6 line-clamp-2 min-h-[3rem]">
+          {olympiad.title}
+        </h3>
+
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="flex items-center gap-2 text-xs font-bold text-secondary">
+            <Calendar className="w-4 h-4 text-primary" /> {olympiad.date}
           </div>
-          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: `${(olympiad.participants / olympiad.maxParticipants) * 100}%` }}
-              className="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(250,204,21,0.5)]"
-            />
+          <div className="flex items-center gap-2 text-xs font-bold text-secondary">
+            <Users className="w-4 h-4 text-primary" /> {olympiad.participants}
           </div>
         </div>
 
         {/* Footer */}
         <div className="mt-auto flex items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="text-[10px] font-black text-secondary uppercase tracking-widest">Narxi</div>
-            <div className="text-xl font-black text-white">{olympiad.price} <span className="text-xs text-primary">{t('olympiadsSection.currency')}</span></div>
+          <div className="text-xl font-black text-white">
+            {olympiad.price} <span className="text-xs text-primary">{t('olympiadsSection.currency')}</span>
           </div>
 
           <Link to={olympiad.is_registered ? `/olympiad/${olympiad.id}` : "/auth"} className="flex-1">
-            <Button className="w-full h-14 rounded-2xl bg-primary text-background font-black shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all group/btn">
-              {olympiad.is_registered ? "Kirish" : "Qatnashish"}
-              <ArrowRight className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+            <Button className="w-full h-12 rounded-xl bg-primary text-background font-black shadow-lg hover:bg-yellow-500 transition-all active:scale-95">
+              Qatnashish
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
         </div>
@@ -154,16 +120,13 @@ const OlympiadSection = () => {
   const [upcomingOlympiads, setUpcomingOlympiads] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Translation helper remains the same (simplified for brevity)
-  const tr = (text: string) => text;
-
   useEffect(() => {
     const fetchOlympiads = async () => {
       setIsLoading(true);
       try {
         const response = await axios.get(`${API_URL}/olympiads/upcoming/`);
         if (response.data.success) {
-          const langCode = i18n.language === 'uz' ? 'uz-UZ' : 'ru-RU';
+          const langCode = i18n.language === 'uz' ? 'uz' : 'ru';
           const mapped = response.data.olympiads.map((item: any) => {
             const startDate = new Date(item.start_date);
             return {
@@ -198,34 +161,24 @@ const OlympiadSection = () => {
 
   return (
     <section id="olympiad" className="py-24 relative bg-[#0B0F1A] overflow-hidden">
-      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full" />
-
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-12 mb-20">
-          <div className="space-y-6 max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-            >
-              <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
-                <Trophy className="w-4 h-4 mr-2" />
-                OLYMPIAD LUXURY SHOWCASE
-              </Badge>
-            </motion.div>
-            <h2 className="text-5xl md:text-7xl font-black text-white font-cinzel leading-none tracking-tighter">
-              Nufuzli <span className="text-primary italic gold-glow">Olimpiadalar</span>
-            </h2>
-            <p className="text-xl text-secondary font-medium italic">
-              O'z mahoratingizni nufuzli olimpiadalarda sinab ko'ring va xalqaro miqyosdagi sertifikatlarga ega bo'ling.
-            </p>
-          </div>
-          <Link to="/all-olympiads" className="shrink-0">
-            <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-white font-black hover:bg-primary hover:text-background transition-all hover:scale-105 shadow-xl">
-              Barcha olimpiadalar
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </Link>
+        {/* Urgency Section */}
+        <div className="text-center mb-20 space-y-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-primary font-black uppercase tracking-[0.3em] text-[10px]"
+          >
+            Keyingi Respublika Olimpiadasiga:
+          </motion.div>
+          <CountdownTimer />
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-black text-white font-cinzel pt-6"
+          >
+            Nufuzli <span className="text-primary italic">Olimpiadalar</span>
+          </motion.h2>
         </div>
 
         {isLoading ? (
@@ -238,14 +191,14 @@ const OlympiadSection = () => {
             plugins={[Autoplay({ delay: 5000 })]}
             className="w-full"
           >
-            <CarouselContent className="-ml-8 pb-12">
+            <CarouselContent className="-ml-6 pb-12">
               {upcomingOlympiads.map((olympiad) => (
-                <CarouselItem key={olympiad.id} className="pl-8 md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={olympiad.id} className="pl-6 md:basis-1/2 lg:basis-1/3">
                   <OlympiadCard olympiad={olympiad} t={t} />
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-center gap-4 mt-8">
+            <div className="flex justify-center gap-4">
               <CarouselPrevious className="static translate-y-0 h-12 w-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-primary hover:text-background" />
               <CarouselNext className="static translate-y-0 h-12 w-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-primary hover:text-background" />
             </div>

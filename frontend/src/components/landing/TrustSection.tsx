@@ -1,156 +1,83 @@
-import { ShieldCheck, Users, Building2, CheckCircle2, Star } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { homepageService, HomeAdvantage } from "@/services/homepageService";
-import * as Icons from "lucide-react";
 import { motion } from "framer-motion";
-
-// Helper to render dynamic icon
-const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
-    const Icon = (Icons as any)[name] || Star;
-    return <Icon className={className} />;
-};
-
-// Mock Avatars
-const teachers = [
-    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=100&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop"
-];
+import { ShieldCheck, GraduationCap, Trophy, CheckCircle2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
 
 const TrustSection = () => {
     const { t } = useTranslation();
-    const [advantages, setAdvantages] = useState<HomeAdvantage[]>([]);
 
-    useEffect(() => {
-        const fetchAdvantages = async () => {
-            try {
-                const data = await homepageService.getAdvantages();
-                if (data && data.length > 0) {
-                    setAdvantages(data.filter((s: HomeAdvantage) => s.is_active));
-                }
-            } catch (err) {
-                console.error("Failed to load advantages", err);
-            }
-        };
-        fetchAdvantages();
-    }, []);
-
-    const defaultAdvantages = [
+    const features = [
         {
-            icon: "ShieldCheck",
-            title: t('trust.qrTitle'),
-            description: t('trust.qrDesc'),
-            colorClass: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+            icon: ShieldCheck,
+            title: "Shaffof natijalar",
+            description: "Barcha olimpiada natijalari real vaqt rejimida hisoblanadi va blokcheyn kabi shaffof tizimda saqlanadi.",
+            color: "text-blue-400",
+            bg: "bg-blue-400/10"
         },
         {
-            icon: "Users",
-            title: t('trust.teacherTitle'),
-            description: t('trust.teacherDesc'),
-            colorClass: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+            icon: GraduationCap,
+            title: "Professional mentorlar",
+            description: "Xalqaro darajadagi tajribaga ega bo'lgan mutaxassislar va fan olimpiadalari g'oliblaridan bilim oling.",
+            color: "text-primary",
+            bg: "bg-primary/10"
         },
         {
-            icon: "Building2",
-            title: t('trust.schoolTitle'),
-            description: t('trust.schoolDesc'),
-            colorClass: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+            icon: Trophy,
+            title: "Real mukofotlar",
+            description: "G'oliblar nafaqat bilim, balki qimmatbaho sovg'alar va xalqaro sertifikatlarga ega bo'lishadi.",
+            color: "text-orange-400",
+            bg: "bg-orange-400/10"
         }
     ];
 
-    const displayAdvantages = defaultAdvantages; // advantages.length > 0 ? advantages : defaultAdvantages;
-
-    const getColorClass = (index: number) => {
-        const colors = [
-            "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
-            "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-            "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-        ];
-        return colors[index % colors.length];
-    };
-
     return (
-        <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="py-16 bg-muted/30 border-y border-border transition-colors duration-300"
-        >
-            <div className="container mx-auto px-4">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <section className="py-24 relative bg-[#0B0F1A] overflow-hidden">
+            <div className="container mx-auto px-4 relative z-10">
+                <div className="text-center mb-16 space-y-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                    >
+                        <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
+                            Nega HOGWORDS?
+                        </Badge>
+                    </motion.div>
+                    <h2 className="text-4xl md:text-6xl font-black text-white font-cinzel tracking-tight">
+                        G‘alaba <span className="text-primary italic">Tasodif</span> Emas
+                    </h2>
+                </div>
 
-                    {/* Left: Stats & Text */}
-                    <div>
-                        <h2 className="text-3xl font-bold mb-6 text-foreground">
-                            {t('trust.title')}
-                        </h2>
-                        <p className="text-lg text-muted-foreground mb-8">
-                            {t('trust.description')}
-                        </p>
-
-                        <div className="space-y-4">
-                            {displayAdvantages.map((adv, idx) => (
-                                <div key={idx} className="flex items-start gap-4">
-                                    <div className={`${(adv as any).colorClass || getColorClass(idx)} p-2 rounded-lg mt-1`}>
-                                        <DynamicIcon name={(adv as any).icon} className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-foreground">{adv.title}</h4>
-                                        <p className="text-sm text-muted-foreground">{(adv as any).description}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Right: Visual Proof */}
-                    <div className="bg-card rounded-[2rem] p-8 shadow-xl shadow-muted/50 border border-border relative transition-colors">
-                        {/* Floating Badges */}
-                        <div className="absolute -top-6 -right-6 bg-yellow-400 text-yellow-900 font-bold px-4 py-2 rounded-xl shadow-lg rotate-3 z-10 flex items-center gap-2">
-                            <CheckCircle2 className="w-5 h-5" />
-                            {t('trust.halal')}
-                        </div>
-
-                        <div className="text-center mb-8">
-                            <div className="flex justify-center -space-x-4 mb-4">
-                                {teachers.map((img, i) => (
-                                    <img
-                                        key={i}
-                                        src={img}
-                                        alt="Teacher"
-                                        loading="lazy"
-                                        decoding="async"
-                                        className="w-14 h-14 rounded-full border-4 border-card object-cover"
-                                    />
-                                ))}
-                                <div className="w-14 h-14 rounded-full border-4 border-card bg-muted flex items-center justify-center font-bold text-muted-foreground text-xs">
-                                    +15
-                                </div>
+                <div className="grid md:grid-cols-3 gap-8">
+                    {features.map((feature, idx) => (
+                        <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            viewport={{ once: true }}
+                            className="p-8 rounded-[2.5rem] bg-[#111827] border border-white/5 hover:border-primary/20 transition-all duration-300 group"
+                        >
+                            <div className={`w-16 h-16 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                                <feature.icon className={`w-8 h-8 ${feature.color}`} />
                             </div>
-                            <p className="text-sm font-medium text-muted-foreground">
-                                {t('trust.team')}
+                            <h3 className="text-2xl font-black text-white mb-4 font-cinzel">{feature.title}</h3>
+                            <p className="text-secondary font-medium leading-relaxed">
+                                {feature.description}
                             </p>
-                        </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-muted rounded-xl p-4 text-center">
-                                <div className="text-2xl font-black text-foreground mb-1">10,000+</div>
-                                <div className="text-xs font-bold text-muted-foreground uppercase">{t('trust.students')}</div>
-                            </div>
-                            <div className="bg-muted rounded-xl p-4 text-center">
-                                <div className="text-2xl font-black text-primary mb-1">₽ 500mln</div>
-                                <div className="text-xs font-bold text-muted-foreground uppercase">{t('trust.prizeFund')}</div>
-                            </div>
-                            <div className="bg-muted rounded-xl p-4 text-center col-span-2">
-                                <div className="text-2xl font-black text-green-600 dark:text-green-400 mb-1">4.9/5</div>
-                                <div className="text-xs font-bold text-muted-foreground uppercase">{t('trust.rating')}</div>
-                            </div>
-                        </div>
-                    </div>
-
+                            <ul className="mt-8 space-y-3">
+                                {[1, 2].map((_, i) => (
+                                    <li key={i} className="flex items-center gap-2 text-xs font-bold text-white/40">
+                                        <CheckCircle2 className="w-4 h-4 text-primary" /> Verified System
+                                    </li>
+                                ))}
+                            </ul>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
-        </motion.section>
+        </section>
     );
 };
 

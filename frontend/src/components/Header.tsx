@@ -70,48 +70,44 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0B132B] backdrop-blur-md">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0B0F1A]/80 backdrop-blur-xl">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a
             href="/"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 group"
             onClick={(e) => {
               e.preventDefault();
-              // Try multiple scrolling methods
               window.scrollTo({ top: 0, behavior: 'smooth' });
-              document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
-              document.body.scrollTo({ top: 0, behavior: 'smooth' });
-
               if (window.location.pathname !== '/') {
                 window.location.href = '/';
               }
             }}
           >
-            <img src="/logo.jpg" alt="Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain" />
+            <div className="relative">
+              <img src="/logo.jpg" alt="Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
             <span className="text-xl md:text-2xl font-black font-cinzel tracking-wider text-primary">
               HOGWORDS
             </span>
           </a>
 
           <nav className="hidden lg:flex items-center gap-6">
-            <NavLink to="/" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+            <NavLink to="/" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.home')}
             </NavLink>
-            <NavLink to="/all-olympiads" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+            <NavLink to="/all-olympiads" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.olympiads')}
             </NavLink>
-            <NavLink to="/all-courses" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+            <NavLink to="/all-courses" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.courses')}
             </NavLink>
-            <NavLink to="/guide" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
-              {t('nav.guides')}
-            </NavLink>
-            <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+            <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.ranking')}
             </NavLink>
-            <NavLink to="/teachers" className={({ isActive }) => `nav-link-premium font-cinzel ${isActive ? 'nav-link-premium-active' : ''}`}>
+            <NavLink to="/teachers" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.mentors')}
             </NavLink>
           </nav>
@@ -121,45 +117,35 @@ const Header = () => {
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
+                <Button variant="ghost" size="icon" className="rounded-full text-white/60 hover:text-primary transition-colors">
                   <Globe className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => changeLanguage('uz')}>
+              <DropdownMenuContent align="end" className="bg-[#111827] border-white/10 text-white">
+                <DropdownMenuItem onClick={() => changeLanguage('uz')} className="hover:bg-primary/10">
                   <span className="mr-2">🇺🇿</span> O'zbekcha
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => changeLanguage('ru')}>
+                <DropdownMenuItem onClick={() => changeLanguage('ru')} className="hover:bg-primary/10">
                   <span className="mr-2">🇷🇺</span> Русский
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             {/* Theme Toggle */}
-            <Button variant="ghost" size="icon" className="rounded-full" onClick={toggleTheme}>
+            <Button variant="ghost" size="icon" className="rounded-full text-white/60 hover:text-primary transition-colors" onClick={toggleTheme}>
               <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
             </Button>
 
             {isLoggedIn ? (
               <div className="flex items-center gap-2 md:gap-3">
-                {/* Mobile Stats Widget */}
-                <div className="flex flex-col items-end md:hidden mr-1">
-                  <div className="flex items-center gap-1.5 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                    <Zap className="w-3 h-3 text-primary fill-primary" />
-                    <span className="text-[10px] font-bold text-primary">{user?.xp || 0} XP</span>
-                  </div>
-                  <ArdCoin amount={user?.coins || 0} size="sm" showAmount={true} className="text-[10px] gap-1" />
-                </div>
-
                 <Link to="/dashboard" className="hidden md:block">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="font-bold text-white/60 hover:text-primary">
                     {t('nav.dashboard', 'Dashboard')}
                   </Button>
                 </Link>
                 <Link to="/profile">
-                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold border-2 border-background shadow-sm overflow-hidden shrink-0">
+                  <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-primary via-yellow-500 to-orange-500 flex items-center justify-center text-background font-bold border-2 border-primary/20 shadow-lg overflow-hidden shrink-0">
                     {user?.avatar ? (
                       <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (

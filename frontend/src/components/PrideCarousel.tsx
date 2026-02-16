@@ -135,73 +135,84 @@ const PrideCarousel = () => {
                     </p>
                 </div>
 
-                {activeOlympiad && (
-                    <div className="grid lg:grid-cols-2 gap-16 items-center">
-                        {/* Left: Olympiad Info */}
-                        <motion.div
-                            key={activeOlympiad.id}
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="space-y-8"
-                        >
-                            <div className="space-y-4">
-                                <Badge className="bg-primary/20 text-primary border-primary/30 font-black px-4 py-1 rounded-xl">
-                                    {activeOlympiad.subject} • {activeOlympiad.stage}
-                                </Badge>
-                                <h3 className="text-4xl md:text-6xl font-black text-white font-cinzel leading-tight tracking-tighter">
-                                    {activeOlympiad.title}
-                                </h3>
-                                <div className="flex items-center gap-4 text-secondary font-bold uppercase tracking-widest text-xs">
-                                    <Calendar className="w-4 h-4" /> {activeOlympiad.date}
-                                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                    <Users className="w-4 h-4" /> {activeOlympiad.participants_count} Ishtirokchi
+                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                    {/* Left: Olympiad Info & CTA */}
+                    <motion.div
+                        key={activeOlympiad.id}
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="space-y-10"
+                    >
+                        <div className="space-y-6">
+                            <Badge className="bg-primary/20 text-primary border-primary/30 font-black px-4 py-1.5 rounded-xl uppercase tracking-widest text-[10px]">
+                                {activeOlympiad.subject} • {activeOlympiad.stage}
+                            </Badge>
+                            <h3 className="text-5xl md:text-7xl font-black text-white font-cinzel leading-[1.1] tracking-tighter">
+                                {activeOlympiad.title}
+                            </h3>
+                            <div className="flex items-center gap-6 text-secondary font-bold uppercase tracking-widest text-[10px]">
+                                <div className="flex items-center gap-2">
+                                    <Calendar className="w-4 h-4 text-primary" /> {activeOlympiad.date}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Users className="w-4 h-4 text-primary" /> {activeOlympiad.participants_count} Ishtirokchi
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="pt-8">
+                        <div className="p-8 rounded-[2.5rem] bg-primary/5 border border-primary/20 space-y-6">
+                            <div className="text-xl font-black text-white font-cinzel italic">
+                                "Keyingi g'olib siz bo'lishingiz mumkin. Bugun tayyorgarlikni boshlang va o'z bilimingizni isbotlang!"
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <Link to="/auth/register">
+                                    <Button className="h-14 px-8 rounded-xl bg-primary text-background font-black shadow-lg hover:scale-105 transition-all">
+                                        G'oliblar safiga qo'shilish
+                                    </Button>
+                                </Link>
                                 <Link to={`/olympiad/${activeOlympiad.id}/results`}>
-                                    <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-white font-black hover:bg-primary hover:text-background transition-all hover:scale-105 shadow-xl group">
-                                        Barcha natijalarni ko'rish
-                                        <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    <Button variant="outline" className="h-14 px-8 rounded-xl border-white/10 text-white font-black hover:bg-white/5 transition-all">
+                                        Natijalarni ko'rish
                                     </Button>
                                 </Link>
                             </div>
-                        </motion.div>
-
-                        {/* Right: Podium / Top 3 */}
-                        <div className="grid grid-cols-1 gap-6 perspective-1000">
-                            {activeOlympiad.winners.slice(0, 3).map((winner, i) => {
-                                const medal = getMedalStyle(winner.rank, t);
-                                return (
-                                    <motion.div
-                                        key={winner.id}
-                                        initial={{ opacity: 0, y: 20, rotateX: -10 }}
-                                        animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className={`group relative bg-[#111827] rounded-[2rem] border border-white/5 p-6 flex items-center gap-6 transition-all duration-500 hover:border-primary/50 gold-glow-hover ${winner.rank === 1 ? 'scale-110 lg:translate-x-12 z-20 border-primary/30 shadow-2xl' : 'opacity-80'}`}
-                                    >
-                                        <div className={`w-16 h-16 rounded-2xl ${medal.bg} flex items-center justify-center text-3xl shadow-xl flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                                            {medal.icon}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="text-xl font-black text-white truncate tracking-tight">{winner.student_name}</div>
-                                            <div className="text-xs font-black text-secondary tracking-widest uppercase">
-                                                {winner.region} • <span className="text-primary">{winner.score} ball</span>
-                                            </div>
-                                        </div>
-                                        {winner.rank === 1 && (
-                                            <div className="absolute -top-3 -right-3">
-                                                <Badge className="bg-primary text-background font-black rounded-full h-8 px-4 shadow-gold">
-                                                    CHAMPION
-                                                </Badge>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                );
-                            })}
                         </div>
+                    </motion.div>
+
+                    {/* Right: Podium / Top 3 */}
+                    <div className="grid grid-cols-1 gap-6">
+                        {activeOlympiad.winners.slice(0, 3).map((winner, i) => {
+                            const medal = getMedalStyle(winner.rank, t);
+                            const isFirst = winner.rank === 1;
+                            return (
+                                <motion.div
+                                    key={winner.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className={`group relative bg-[#111827] rounded-[2rem] border border-white/5 p-6 flex items-center gap-6 transition-all duration-300 hover:border-primary/40 ${isFirst ? 'scale-105 md:translate-x-6 border-primary/30 shadow-2xl z-10' : 'opacity-80'}`}
+                                >
+                                    <div className={`w-16 h-16 rounded-2xl ${medal.bg} flex items-center justify-center text-3xl shadow-xl flex-shrink-0 group-hover:scale-105 transition-transform`}>
+                                        {medal.icon}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={`text-xl font-black text-white truncate tracking-tight ${isFirst ? 'text-2xl' : ''}`}>{winner.student_name}</div>
+                                        <div className="text-[10px] font-black text-secondary tracking-widest uppercase mt-1">
+                                            {winner.region} • <span className="text-primary">{winner.score} ball</span>
+                                        </div>
+                                    </div>
+                                    {isFirst && (
+                                        <div className="absolute -top-3 -right-3">
+                                            <Badge className="bg-primary text-background font-black rounded-full h-8 px-4 shadow-gold animate-pulse-soft">
+                                                CHAMPION
+                                            </Badge>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            );
+                        })}
                     </div>
-                )}
+                </div>
             </div>
         </section>
     );

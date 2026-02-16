@@ -76,43 +76,54 @@ const SubjectsSection = () => {
               viewport={{ once: true }}
               className="group"
             >
-              <Link to={`/all-courses?subject=${subject.id}`}>
-                <div className="h-full bg-[#111827] rounded-[2.5rem] border border-white/5 p-8 transition-all duration-500 hover:border-primary/40 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/5 relative overflow-hidden flex flex-col items-start gold-glow-hover">
+              <div className="h-full bg-[#111827] rounded-[2.5rem] border border-white/5 p-8 transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-2xl relative overflow-hidden flex flex-col items-start">
 
-                  {/* Icon & XP */}
-                  <div className="flex justify-between items-start w-full mb-8">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500 border border-primary/20">
-                      <DynamicIcon name={subject.icon} className="w-8 h-8" />
-                    </div>
+                {/* Icon & XP */}
+                <div className="flex justify-between items-start w-full mb-8">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform duration-300 border border-primary/20">
+                    <DynamicIcon name={subject.icon} className="w-8 h-8" />
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
                     <Badge className="bg-primary/10 text-primary border-primary/20 font-black h-8 px-4 rounded-xl">
                       +{subject.xp_reward || 50} XP
                     </Badge>
                   </div>
+                </div>
 
-                  {/* Content */}
-                  <h3 className="text-2xl font-black text-white mb-3 group-hover:text-primary transition-colors font-cinzel">{subject.name}</h3>
-                  <p className="text-secondary text-sm font-medium leading-relaxed mb-8 line-clamp-2">
-                    {subject.description || "Ushbu fan bo'yicha eng sara kurslar va olimpiadalar to'plami."}
-                  </p>
+                {/* Content */}
+                <h3 className="text-2xl font-black text-white mb-3 group-hover:text-primary transition-colors font-cinzel">{subject.name}</h3>
+                <p className="text-secondary text-sm font-medium leading-relaxed mb-8 line-clamp-2">
+                  {subject.description || "Ushbu fan bo'yicha eng sara kurslar va nufuzli olimpiadalar to'plami."}
+                </p>
 
-                  {/* Footer Stats */}
-                  <div className="mt-auto pt-6 border-t border-white/5 w-full grid grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-lg font-black text-white">{subject.stats?.students || "1k+"}</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{t('subjectsSection.student')}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-lg font-black text-white">{subject.stats?.olympiads || "5+"}</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-secondary">{t('subjectsSection.olympiad')}</span>
-                    </div>
+                {/* Stats */}
+                <div className="w-full flex items-center gap-6 mb-8 py-4 border-y border-white/5">
+                  <div className="flex flex-col">
+                    <span className="text-lg font-black text-white">{subject.stats?.students || "1k+"}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#64748B]">O‘quvchi</span>
                   </div>
-
-                  {/* Hover Arrow */}
-                  <div className="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
-                    <ArrowRight className="w-6 h-6 text-primary" />
+                  <div className="flex flex-col">
+                    <span className="text-lg font-black text-white">{subject.stats?.olympiads || "5+"}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#64748B]">Olimpiada</span>
                   </div>
                 </div>
-              </Link>
+
+                {/* Primary CTA */}
+                <Link to={`/all-courses?subject=${subject.id}`} className="w-full">
+                  <Button className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-white font-black hover:bg-primary hover:text-background hover:border-primary transition-all active:scale-95 flex items-center justify-center gap-2 group/btn">
+                    Kursni boshlash
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                  </Button>
+                </Link>
+
+                {/* Secondary Engagement Link */}
+                <Link
+                  to={`/all-olympiads?subject=${subject.id}`}
+                  className="w-full text-center mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#64748B] hover:text-primary transition-colors"
+                >
+                  Olimpiadalarni ko'rish
+                </Link>
+              </div>
             </motion.div>
           ))}
         </div>

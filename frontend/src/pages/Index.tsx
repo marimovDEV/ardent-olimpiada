@@ -16,6 +16,7 @@ const ProfessionsCarousel = lazy(() => import("@/components/home/ProfessionsCaro
 const TeachersSection = lazy(() => import("@/components/home/TeachersSection"));
 const LeadForm = lazy(() => import("@/components/home/LeadForm"));
 const SubjectsSection = lazy(() => import("@/components/SubjectsSection"));
+const TrustSection = lazy(() => import("@/components/landing/TrustSection"));
 
 import { homepageService, HomePageConfig } from "@/services/homepageService";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ const Index = () => {
   const { t, i18n } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-[#0B0F1A] selection:bg-primary selection:text-background">
+    <div className="min-h-screen bg-[#0B0F1A] selection:bg-primary selection:text-background font-inter">
       <Helmet>
         <title>HOGWORDS | Nufuzli va Professional Olimpiada Platformasi</title>
         <meta name="description" content="Eng sara mentorlar va nufuzli olimpiadalar platformasi." />
@@ -42,7 +43,7 @@ const Index = () => {
       {/* 1. Cinematic Hero Section */}
       <HeroSection />
 
-      {/* 2. Trust Bar */}
+      {/* 2. Trust Bar (Social Proof) */}
       <TrustBar />
 
       <main className="relative">
@@ -50,13 +51,13 @@ const Index = () => {
           {/* 3. Subjects Interactive Grid */}
           <SubjectsSection />
 
-          {/* 4. TimelineSection */}
-          <TimelineSection />
+          {/* 4. Deep Trust (Nega HOGWORDS?) */}
+          <TrustSection />
 
           {/* 5. TeachersSection (Elite Mentors) */}
           <TeachersSection />
 
-          {/* 6. OlympiadSection (Luxury Showcase) */}
+          {/* 6. OlympiadSection (Luxury Showcase with Countdown) */}
           <OlympiadSection />
 
           {/* 7. Winners Wall (PrideCarousel) */}
