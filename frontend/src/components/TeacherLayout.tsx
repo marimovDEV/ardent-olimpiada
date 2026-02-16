@@ -8,7 +8,8 @@ import {
     User,
     MessageSquare,
     Bell,
-    Globe
+    Globe,
+    Wallet
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
