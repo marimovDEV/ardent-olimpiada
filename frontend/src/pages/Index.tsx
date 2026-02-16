@@ -3,18 +3,16 @@ import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import StatsBlock from "@/components/home/StatsBlock";
+import TrustBar from "@/components/home/TrustBar";
+import TimelineSection from "@/components/home/TimelineSection";
+import FinalCTA from "@/components/home/FinalCTA";
 import Footer from "@/components/Footer";
 import AIChatWidget from "@/components/AIChatWidget";
 
-// Lazy load below-the-fold components
+// Lazy load redesigned sections
 const PrideCarousel = lazy(() => import("@/components/PrideCarousel"));
 const OlympiadSection = lazy(() => import("@/components/OlympiadSection"));
-const CoursesCarousel = lazy(() => import("@/components/home/CoursesCarousel"));
-const TeaserBlock = lazy(() => import("@/components/home/TeaserBlock"));
 const ProfessionsCarousel = lazy(() => import("@/components/home/ProfessionsCarousel"));
-const ReviewsCarousel = lazy(() => import("@/components/home/ReviewsCarousel"));
-const FreeCoursesSection = lazy(() => import("@/components/home/FreeCoursesSection"));
 const TeachersSection = lazy(() => import("@/components/home/TeachersSection"));
 const LeadForm = lazy(() => import("@/components/home/LeadForm"));
 const SubjectsSection = lazy(() => import("@/components/SubjectsSection"));
@@ -23,7 +21,7 @@ import { homepageService, HomePageConfig } from "@/services/homepageService";
 import { useEffect, useState } from "react";
 
 const SectionSkeleton = () => (
-  <div className="w-full h-96 animate-pulse bg-muted/20 rounded-3xl mb-8" />
+  <div className="w-full h-[600px] animate-pulse bg-white/5 rounded-[3rem] my-12" />
 );
 
 const Index = () => {
@@ -35,48 +33,46 @@ const Index = () => {
   const { t, i18n } = useTranslation();
 
   return (
-    <>
+    <div className="min-h-screen bg-[#0B0F1A] selection:bg-primary selection:text-background">
       <Helmet>
-        <title>{config ? (config as any)[`title_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_title : "Hogwords Olimpiada - Kelajagingizni quring"}</title>
-        <meta name="description" content={config ? (config as any)[`subtitle_${i18n.language === 'ru' ? 'ru' : 'uz'}`] || config.hero_subtitle : "O'zbekistonning eng nufuzli olimpiadalar portali"} />
-        <meta property="og:title" content="OlimpiadaUZ - Online Olimpiada Platformasi" />
-        <meta property="og:description" content="Maktab o'quvchilari uchun online ta'lim va olimpiada platformasi" />
-        <meta property="og:image" content="https://hogwords.uz/logo.jpg" />
+        <title>HOGWORDS | Nufuzli va Professional Olimpiada Platformasi</title>
+        <meta name="description" content="Eng sara mentorlar va nufuzli olimpiadalar platformasi." />
       </Helmet>
 
-      <main>
-        <HeroSection />
+      {/* 1. Cinematic Hero Section */}
+      <HeroSection />
 
-        {(!config || config.show_stats) && <StatsBlock />}
+      {/* 2. Trust Bar */}
+      <TrustBar />
 
+      <main className="relative">
         <Suspense fallback={<SectionSkeleton />}>
+          {/* 3. Subjects Interactive Grid */}
           <SubjectsSection />
-        </Suspense>
 
-        <Suspense fallback={<SectionSkeleton />}>
-          {/* Conditionally Render Sections */}
-          {(!config || config.show_winners) && ( // Assuming winners is part of PrideCarousel or missing field, sticking to default TRUE if config missing
-            <div className="py-8"><PrideCarousel /></div>
-          )}
+          {/* 4. TimelineSection */}
+          <TimelineSection />
 
-          {(!config || config.show_olympiads) && <OlympiadSection />}
+          {/* 5. TeachersSection (Elite Mentors) */}
+          <TeachersSection />
 
-          {(!config || config.show_courses) && <CoursesCarousel />}
+          {/* 6. OlympiadSection (Luxury Showcase) */}
+          <OlympiadSection />
 
-          {(!config || config.show_courses) && <TeaserBlock />}
+          {/* 7. Winners Wall (PrideCarousel) */}
+          <PrideCarousel />
 
-          {(!config || config.show_professions) && <ProfessionsCarousel />}
+          {/* 8. ProfessionsCarousel */}
+          <ProfessionsCarousel />
 
-          {(!config || config.show_testimonials) && <ReviewsCarousel />}
+          {/* 9. LeadForm (Free Consultation) */}
+          <LeadForm />
 
-          <FreeCoursesSection />
-
-          {(!config || config.show_mentors) && <TeachersSection />}
-
-          {(!config || config.show_cta) && <LeadForm />}
+          {/* 10. Final CTA */}
+          <FinalCTA />
         </Suspense>
       </main>
-    </>
+    </div>
   );
 };
 
