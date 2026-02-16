@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
+import { getBaseUrl } from "@/services/api";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -21,7 +22,7 @@ const TeaserBlock = () => {
     const subtitle = isRu ? config.teaser_subtitle_ru : config.teaser_subtitle_uz;
     const buttonText = isRu ? config.teaser_button_text_ru : config.teaser_button_text_uz;
     const buttonLink = config.teaser_button_link || "/auth/register";
-    const imageUrl = config.teaser_image ? (config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'https://api.hogwords.uz'}${config.teaser_image}`) : null;
+    const imageUrl = config.teaser_image ? (config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || getBaseUrl()}${config.teaser_image}`) : null;
 
     return (
         <section className="py-12 bg-primary/5 border-y border-primary/10">

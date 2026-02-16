@@ -12,6 +12,7 @@ import { Trash2, Plus, GripVertical, Save, Edit2, Image as ImageIcon } from "luc
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import AdminFreeCourseCMS from "./AdminFreeCourseCMS";
+import { getBaseUrl } from "@/services/api";
 
 const AdminHomeCMSPage = () => {
     const { t } = useTranslation();
@@ -186,7 +187,7 @@ const AdminHomeCMSPage = () => {
                                                 <div className="flex items-center gap-4">
                                                     {config.teaser_image && (
                                                         <img
-                                                            src={config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'https://api.hogwords.uz'}${config.teaser_image}`}
+                                                            src={config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || getBaseUrl()}${config.teaser_image}`}
                                                             className="w-20 h-20 object-cover rounded-lg border"
                                                         />
                                                     )}

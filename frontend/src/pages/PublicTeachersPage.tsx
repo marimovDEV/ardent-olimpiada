@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { homepageService, Mentor } from "@/services/homepageService";
+import { getBaseUrl } from "@/services/api";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ const PublicTeachersPage = () => {
                 const data = await homepageService.getMentors();
                 const lang = i18n.language === 'ru' ? 'ru' : 'uz';
                 const mapped = data.map((item: any) => {
-                    const baseUrl = 'https://api.hogwords.uz';
+                    const baseUrl = getBaseUrl();
                     const imageUrl = item.image
                         ? (item.image.startsWith('http') ? item.image : `${baseUrl}${item.image}`)
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&size=600&background=FACC15&color=0B0F1A`;

@@ -1,6 +1,15 @@
 import axios from "axios";
 
-export const API_URL = "https://api.hogwords.uz/api";
+export const getBaseUrl = () => {
+    if (typeof window === 'undefined') return "https://api.hogwords.uz";
+    const hostname = window.location.hostname;
+    if (hostname.includes('ardentsoft.uz')) {
+        return "https://test.api.ardentsoft.uz";
+    }
+    return "https://api.hogwords.uz";
+};
+
+export const API_URL = `${getBaseUrl()}/api`;
 
 const api = axios.create({
     baseURL: API_URL,

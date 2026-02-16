@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, Send, Bot, Sparkles, MessageSquare } from "lucide-react";
 import { AnimatePresence, motion, useDragControls } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { getBaseUrl } from "@/services/api";
 
 interface Message {
     id: number;
@@ -59,7 +60,7 @@ const AIChatWidget = () => {
             const lang = localStorage.getItem('i18nextLng') || 'uz';
             const normalizedLang = lang.startsWith('ru') ? 'ru' : 'uz';
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://api.hogwords.uz/api'}/ai-assistant-faq/query/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || `${getBaseUrl()}/api`}/ai-assistant-faq/query/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

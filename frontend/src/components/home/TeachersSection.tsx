@@ -13,7 +13,8 @@ import {
 import { useRef, useState, useEffect } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion";
-import { homepageService } from "@/services/homepageService";
+import { homepageService, Mentor } from "@/services/homepageService";
+import { getBaseUrl } from "@/services/api";
 import { API_URL } from "@/services/api";
 import BecomeTeacherForm from "./BecomeTeacherForm";
 
@@ -32,7 +33,7 @@ const TeachersSection = () => {
                 const data = await homepageService.getMentors();
                 const lang = i18n.language === 'ru' ? 'ru' : 'uz';
                 const mapped = data.map((item: any) => {
-                    const baseUrl = 'https://api.hogwords.uz';
+                    const baseUrl = getBaseUrl();
                     const imageUrl = item.image
                         ? (item.image.startsWith('http') ? item.image : `${baseUrl}${item.image}`)
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&size=400&background=FACC15&color=0B0F1A`;
