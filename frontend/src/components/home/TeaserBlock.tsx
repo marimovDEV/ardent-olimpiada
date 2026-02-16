@@ -21,7 +21,7 @@ const TeaserBlock = () => {
     const subtitle = isRu ? config.teaser_subtitle_ru : config.teaser_subtitle_uz;
     const buttonText = isRu ? config.teaser_button_text_ru : config.teaser_button_text_uz;
     const buttonLink = config.teaser_button_link || "/auth/register";
-    const imageUrl = config.teaser_image ? (config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'https://test.api.ardentsoft.uz'}${config.teaser_image}`) : null;
+    const imageUrl = config.teaser_image ? (config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'https://api.hogwords.uz'}${config.teaser_image}`) : null;
 
     return (
         <section className="py-12 bg-primary/5 border-y border-primary/10">

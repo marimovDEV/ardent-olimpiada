@@ -186,7 +186,7 @@ const AdminHomeCMSPage = () => {
                                                 <div className="flex items-center gap-4">
                                                     {config.teaser_image && (
                                                         <img
-                                                            src={config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'https://test.api.ardentsoft.uz'}${config.teaser_image}`}
+                                                            src={config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || 'https://api.hogwords.uz'}${config.teaser_image}`}
                                                             className="w-20 h-20 object-cover rounded-lg border"
                                                         />
                                                     )}

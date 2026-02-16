@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_URL = "https://test.api.ardentsoft.uz/api";
+export const API_URL = "https://api.hogwords.uz/api";
 
 const api = axios.create({
     baseURL: API_URL,

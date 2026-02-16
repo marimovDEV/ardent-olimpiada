@@ -30,7 +30,7 @@ const PublicTeachersPage = () => {
                 const data = await homepageService.getMentors();
                 const lang = i18n.language === 'ru' ? 'ru' : 'uz';
                 const mapped = data.map((item: any) => {
-                    const baseUrl = 'https://test.api.ardentsoft.uz';
+                    const baseUrl = 'https://api.hogwords.uz';
                     const imageUrl = item.image
                         ? (item.image.startsWith('http') ? item.image : `${baseUrl}${item.image}`)
                         : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.name)}&size=600&background=FACC15&color=0B0F1A`;

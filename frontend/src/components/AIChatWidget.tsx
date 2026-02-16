@@ -59,7 +59,7 @@ const AIChatWidget = () => {
             const lang = localStorage.getItem('i18nextLng') || 'uz';
             const normalizedLang = lang.startsWith('ru') ? 'ru' : 'uz';
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://test.api.ardentsoft.uz/api'}/ai-assistant-faq/query/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'https://api.hogwords.uz/api'}/ai-assistant-faq/query/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -95,7 +95,7 @@ const PublicTeacherProfilePage = () => {
                                 <div className="absolute -inset-6 bg-primary/20 rounded-[3rem] blur-3xl group-hover:bg-primary/30 transition-all duration-700 opacity-40" />
                                 <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl">
                                     <img
-                                        src={mentor.image?.startsWith('http') ? mentor.image : `https://test.api.ardentsoft.uz${mentor.image}`}
+                                        src={mentor.image?.startsWith('http') ? mentor.image : `https://api.hogwords.uz${mentor.image}`}
                                         alt={mentor.name}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         onError={(e) => {
@@ -202,7 +202,7 @@ const PublicTeacherProfilePage = () => {
                                                 <div key={course.id} className="group bg-[#111827] rounded-[2.5rem] border border-white/5 overflow-hidden hover:border-primary/30 transition-all duration-300 flex flex-col hover:-translate-y-1 hover:shadow-2xl">
                                                     <div className="h-56 relative overflow-hidden">
                                                         <img
-                                                            src={course.thumbnail ? (course.thumbnail.startsWith('http') ? course.thumbnail : `https://test.api.ardentsoft.uz${course.thumbnail}`) : theme.fallbackImage}
+                                                            src={course.thumbnail ? (course.thumbnail.startsWith('http') ? course.thumbnail : `https://api.hogwords.uz${course.thumbnail}`) : theme.fallbackImage}
                                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                             alt={course.title}
                                                             loading="lazy"
