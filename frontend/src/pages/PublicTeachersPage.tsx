@@ -189,8 +189,6 @@ const PublicTeachersPage = () => {
                 )}
             </div>
         </main>
-            </div >
-        </main >
     );
 };
 
