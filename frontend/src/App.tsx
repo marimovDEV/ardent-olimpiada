@@ -140,7 +140,7 @@ const App = () => {
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
                   <Route path="/teacher-profile/:id" element={<PublicTeacherProfilePage />} />
-                  <Route path="/teachers" element={<PublicTeachersPage />} />
+                  <Route path="/teachers" element={<Navigate to="/teacher/login" replace />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />
