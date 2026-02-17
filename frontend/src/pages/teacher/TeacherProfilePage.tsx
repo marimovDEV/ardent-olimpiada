@@ -166,7 +166,7 @@ const TeacherProfilePage = () => {
             {/* Header Profile Card */}
             <div className="bg-card rounded-2xl shadow-xl border border-border overflow-hidden transition-all duration-500">
                 <div className="h-40 bg-gradient-to-r from-secondary-light via-secondary to-background relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[url('/magic-pattern.png')] opacity-10"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] bg-[length:24px_24px] opacity-20"></div>
                     <div className="absolute top-6 right-6">
                         <Badge className="bg-primary/20 text-primary border border-primary/30 backdrop-blur-md px-4 py-1 font-cinzel tracking-widest">
                             ID: {user.username}
