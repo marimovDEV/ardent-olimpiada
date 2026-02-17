@@ -6,6 +6,7 @@ import { ArrowLeft, Save, CheckCircle, ChevronRight, ChevronLeft } from "lucide-
 import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
+import authService from "@/services/authService";
 
 // Steps
 import Step1Info from "./steps/Step1Info";
@@ -85,6 +86,7 @@ const AdminOlympiadWizard = () => {
     const isEdit = !!id;
     const [loading, setLoading] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
+    const [baseRoute, setBaseRoute] = useState("/admin");
 
     const [formData, setFormData] = useState<OlympiadFormState>({
         title: "",
@@ -136,6 +138,12 @@ const AdminOlympiadWizard = () => {
 
     useEffect(() => {
         if (isEdit) fetchOlympiad();
+
+        // Check for role
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const role = user.role || 'ADMIN';
+        const root = role === 'TEACHER' ? '/teacher' : '/admin';
+        setBaseRoute(root);
 
         // Check for step param
         const params = new URLSearchParams(window.location.search);
@@ -264,7 +272,7 @@ const AdminOlympiadWizard = () => {
                     toast.success("Qoralama saqlandi. Endi davom etishingiz mumkin.");
 
                     // Navigate to edit page with step 2
-                    navigate(`/admin/olympiads/${res.data.id}/edit?step=2`, { replace: true });
+                    navigate(`${baseRoute}/olympiads/${res.data.id}/edit?step=2`, { replace: true });
                     return;
 
                 } catch (error: any) {
@@ -337,7 +345,7 @@ const AdminOlympiadWizard = () => {
                 });
                 if (!stayOnPage) {
                     toast.success("Olimpiada muvaffaqiyatli saqlandi");
-                    navigate("/admin/olympiads");
+                    navigate(`${baseRoute}/olympiads`);
                 } else {
                     // Quiet success for auto-save, or small toast
                     // toast.success("Saqlandi"); 
@@ -349,7 +357,7 @@ const AdminOlympiadWizard = () => {
                     headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
                 });
                 toast.success("Olimpiada yaratildi");
-                navigate("/admin/olympiads");
+                navigate(`${baseRoute}/olympiads`);
                 return true;
             }
         } catch (error: any) {
@@ -393,7 +401,7 @@ const AdminOlympiadWizard = () => {
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" onClick={() => navigate("/admin/olympiads")}>
+                    <Button variant="ghost" onClick={() => navigate(`${baseRoute}/olympiads`)}>
                         <ArrowLeft className="w-4 h-4 mr-2" /> Ortga
                     </Button>
                     <div>

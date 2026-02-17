@@ -40,8 +40,10 @@ const TeacherOlympiadsPage = () => {
                     <p className="text-muted-foreground">{t('teacherOlympiads.subtitle')}</p>
                 </div>
                 {/* Note: Create Logic for Olympiads is complex, for now link to a create page or admin like page */}
-                <Button className="gap-2">
-                    <Plus className="w-4 h-4" /> {t('teacherOlympiads.create')}
+                <Button className="gap-2" asChild>
+                    <Link to="/teacher/olympiads/new">
+                        <Plus className="w-4 h-4" /> {t('teacherOlympiads.create')}
+                    </Link>
                 </Button>
             </div>
 
@@ -57,7 +59,9 @@ const TeacherOlympiadsPage = () => {
                             <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
                             <h3 className="text-lg font-medium mb-1">{t('teacherOlympiads.empty.title')}</h3>
                             <p className="text-muted-foreground mb-4">{t('teacherOlympiads.empty.description')}</p>
-                            <Button>{t('teacherOlympiads.empty.button')}</Button>
+                            <Button asChild>
+                                <Link to="/teacher/olympiads/new">{t('teacherOlympiads.empty.button')}</Link>
+                            </Button>
                         </div>
                     ) : (
                         <div className="rounded-md border overflow-hidden">
@@ -107,8 +111,10 @@ const TeacherOlympiadsPage = () => {
                                                             {t('teacherOlympiads.table.results')}
                                                         </Link>
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary">
-                                                        <Edit className="w-4 h-4 text-primary" />
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary" asChild>
+                                                        <Link to={`/teacher/olympiads/${oly.id}/edit`}>
+                                                            <Edit className="w-4 h-4 text-primary" />
+                                                        </Link>
                                                     </Button>
                                                 </div>
                                             </TableCell>

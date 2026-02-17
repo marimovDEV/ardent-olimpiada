@@ -214,6 +214,8 @@ const App = () => {
                   <Route path="courses/:id/edit" element={<TeacherCourseEditor />} />
                   <Route path="students" element={<TeacherStudentsPage />} />
                   <Route path="olympiads" element={<TeacherOlympiadsPage />} />
+                  <Route path="olympiads/new" element={<AdminOlympiadWizard />} />
+                  <Route path="olympiads/:id/edit" element={<AdminOlympiadWizard />} />
                   <Route path="olympiads/:id/results" element={<TeacherOlympiadResultsPage />} />
                   <Route path="messages" element={<TeacherMessagesPage />} />
                   <Route path="prizes" element={<TeacherPrizeManagement />} />
