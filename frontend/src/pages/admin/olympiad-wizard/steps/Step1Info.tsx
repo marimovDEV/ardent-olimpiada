@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { RefreshCw, Wand2, Plus, Loader2 } from "lucide-react";
+import { RefreshCw, Plus, Loader2 } from "lucide-react";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import { toast } from "sonner";
@@ -60,14 +60,6 @@ const Step1Info = ({ data, update }: { data: any, update: (d: any) => void }) =>
         }
     };
 
-    const generateSlug = () => {
-        if (!data.title) return;
-        const slug = data.title
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/\s+/g, '-');
-        update({ slug });
-    };
 
     const handleCreateSubject = async () => {
         if (!newSubjectName.trim()) return;
@@ -180,7 +172,14 @@ const Step1Info = ({ data, update }: { data: any, update: (d: any) => void }) =>
                         <Label>Olimpiada Nomi <span className="text-red-500">*</span></Label>
                         <Input
                             value={data.title}
-                            onChange={(e) => update({ title: e.target.value })}
+                            onChange={(e) => {
+                                const title = e.target.value;
+                                const slug = title
+                                    .toLowerCase()
+                                    .replace(/[^\w\s-]/g, '')
+                                    .replace(/\s+/g, '-');
+                                update({ title, slug });
+                            }}
                             placeholder="Masalan: Respublika Matematika Olimpiadasi 2024"
                             className="text-lg font-medium"
                         />
@@ -188,19 +187,14 @@ const Step1Info = ({ data, update }: { data: any, update: (d: any) => void }) =>
 
                     <div className="space-y-2">
                         <Label>Havola (Slug)</Label>
-                        <div className="flex gap-2">
-                            <Input
-                                value={data.slug}
-                                onChange={(e) => update({ slug: e.target.value })}
-                                placeholder="respublika-matematika-2024"
-                                className="font-mono text-sm bg-muted/50"
-                            />
-                            <Button variant="outline" onClick={generateSlug} title="Avtomatik yaratish">
-                                <Wand2 className="w-4 h-4" />
-                            </Button>
-                        </div>
+                        <Input
+                            value={data.slug}
+                            onChange={(e) => update({ slug: e.target.value })}
+                            placeholder="respublika-matematika-2024"
+                            className="font-mono text-sm bg-muted/50"
+                        />
                         <p className="text-xs text-muted-foreground">
-                            Olimpiada manzili: sardor.uz/olympiads/<strong>{data.slug || '...'}</strong>
+                            Olimpiada manzili: hogwords.uz/olympiads/<strong>{data.slug || '...'}</strong>
                         </p>
                     </div>
 
