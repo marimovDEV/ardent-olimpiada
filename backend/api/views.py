@@ -385,7 +385,7 @@ def complete_registration(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     # Create username from phone
-    username = f"user_{phone.replace('+', '').replace(' ', '')}"
+    username = phone.replace('+', '').replace(' ', '')
     
     # Create user with all info
     from django.contrib.auth.hashers import make_password
