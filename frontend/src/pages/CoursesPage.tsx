@@ -275,12 +275,12 @@ const CoursesPage = () => {
 
                 {/* Title */}
                 <h3 className="font-bold text-xl text-foreground leading-tight mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                  {i18n.exists(`courses.${course.title}`) ? t(`courses.${course.title}`) : course.title}
+                  {t(`courses.${course.title}`, { defaultValue: course.title })}
                 </h3>
 
                 {/* Description */}
                 <p className="text-muted-foreground mb-5 line-clamp-2 flex-1">
-                  {i18n.exists(`courses.${course.description}`) ? t(`courses.${course.description}`) : (course.description || t('dashboard.coursesPage.defaultDesc'))}
+                  {t(`courses.${course.description}`, { defaultValue: course.description || t('dashboard.coursesPage.defaultDesc') })}
                 </p>
 
                 {/* Stats */}

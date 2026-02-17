@@ -269,10 +269,7 @@ const CourseDetailPage = () => {
                   <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold border border-white/10">
                     {(() => {
                       const sub = String(course.subject_name || course.subject || "").toLowerCase();
-                      if (i18n.exists(`subjects.${sub}`)) return t(`subjects.${sub}`);
-                      if (i18n.exists(course.subject_name)) return t(course.subject_name);
-                      if (i18n.exists(course.subject)) return t(course.subject);
-                      return course.subject_name || course.subject || t('common.general');
+                      return t(`subjects.${sub}`, { defaultValue: course.subject_name || course.subject || t('common.general') });
                     })()}
                   </span>
                   <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold border border-white/10">
@@ -287,15 +284,15 @@ const CourseDetailPage = () => {
                 </div>
 
                 <h1 className="text-4xl lg:text-5xl font-black leading-tight drop-shadow-md">
-                  {i18n.exists(`courses.${course.title}`)
-                    ? t(`courses.${course.title}`)
-                    : (i18n.exists(course.title) ? t(course.title) : course.title)}
+                  {t(`courses.${course.title}`, { defaultValue: course.title })}
                 </h1>
 
                 <p className="text-xl text-white/90 leading-relaxed max-w-2xl drop-shadow-sm">
-                  {i18n.exists(`courses.${course.description}`)
-                    ? t(`courses.${course.description}`)
-                    : (i18n.exists(course.description) ? t(course.description) : (course.description || t('dashboard.courseDetail.defaultDesc')))}
+                  {t(`courses.${course.description}`, {
+                    defaultValue: t(course.description || "", {
+                      defaultValue: course.description || t('dashboard.courseDetail.defaultDesc')
+                    })
+                  })}
                 </p>
 
                 {/* Stats */}
@@ -484,9 +481,7 @@ const CourseDetailPage = () => {
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">
                             {module.order}
                           </div>
-                          {i18n.exists(`modules.${module.title}`)
-                            ? t(`modules.${module.title}`)
-                            : (i18n.exists(module.title) ? t(module.title) : module.title)}
+                          {t(`modules.${module.title}`, { defaultValue: module.title })}
                         </span>
                         {expandedModules.includes(module.id) ? (
                           <ChevronUp className="w-5 h-5 text-muted-foreground" />
@@ -513,9 +508,7 @@ const CourseDetailPage = () => {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm font-medium">
-                                      {i18n.exists(`lessons.${lesson.title}`)
-                                        ? t(`lessons.${lesson.title}`)
-                                        : (i18n.exists(lesson.title) ? t(lesson.title) : lesson.title)}
+                                      {t(`lessons.${lesson.title}`, { defaultValue: lesson.title })}
                                     </span>
                                     {lesson.is_free && !isEnrolled && (
                                       <span className="text-[10px] uppercase font-bold bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full">
