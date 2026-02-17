@@ -14,14 +14,15 @@ const PublicOlympiadsPage = () => {
         const fetchOlympiads = async () => {
             try {
                 const data = await homepageService.getPublicOlympiads();
-                const mapped = (Array.isArray(data) ? data : data.results || []).map((o: any) => ({
+                const items = data.olympiads || (Array.isArray(data) ? data : data.results || []);
+                const mapped = items.map((o: any) => ({
                     id: o.id,
                     title: o.title,
-                    subject: o.subject_name || o.subject?.name,
+                    subject: o.subject || o.subject_name || o.subject_id_display || o.subject?.name,
                     date: o.start_date,
                     participants: o.participants_count || 0,
-                    price: Number(o.price).toLocaleString(),
-                    gradient: getGradientForSubject(o.subject_name || o.subject?.name),
+                    price: o.price === "0.00" || o.price === 0 ? t('common.free') : parseFloat(o.price).toLocaleString(),
+                    gradient: getGradientForSubject(o.subject || o.subject_name || o.subject?.name),
                     iconColor: "text-white"
                 }));
                 setOlympiads(mapped);
