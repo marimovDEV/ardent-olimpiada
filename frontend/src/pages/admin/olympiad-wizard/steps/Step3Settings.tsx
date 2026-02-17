@@ -80,7 +80,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                         <p className="text-sm text-muted-foreground">Ishtirok etish uchun to'lov talab qilish</p>
                     </div>
                     <Switch
-                        checked={data.is_paid}
+                        checked={!!data.is_paid}
                         onCheckedChange={(checked) => update({ is_paid: checked })}
                     />
                 </div>
@@ -123,7 +123,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             <p className="text-xs text-muted-foreground">Savollar o'rnini almashtirish</p>
                         </div>
                         <Switch
-                            checked={data.is_random}
+                            checked={!!data.is_random}
                             onCheckedChange={(c) => update({ is_random: c })}
                         />
                     </div>
@@ -134,7 +134,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             <p className="text-xs text-muted-foreground">To'liq ekran rejimini talab qilish</p>
                         </div>
                         <Switch
-                            checked={data.required_full_screen}
+                            checked={!!data.required_full_screen}
                             onCheckedChange={(c) => update({ required_full_screen: c })}
                         />
                     </div>
@@ -145,7 +145,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             <p className="text-xs text-muted-foreground">Matnni ko'chirish va joylashni taqiqlash</p>
                         </div>
                         <Switch
-                            checked={data.disable_copy_paste}
+                            checked={!!data.disable_copy_paste}
                             onCheckedChange={(c) => update({ disable_copy_paste: c })}
                         />
                     </div>
@@ -156,7 +156,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             <p className="text-xs text-muted-foreground">Oldingi savolga qaytishni taqiqlash</p>
                         </div>
                         <Switch
-                            checked={data.cannot_go_back}
+                            checked={!!data.cannot_go_back}
                             onCheckedChange={(c) => update({ cannot_go_back: c })}
                         />
                     </div>
@@ -167,7 +167,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             <p className="text-xs text-muted-foreground">Veb-kamerani yoqishni talab qilish</p>
                         </div>
                         <Switch
-                            checked={data.required_camera}
+                            checked={!!data.required_camera}
                             onCheckedChange={(c) => update({ required_camera: c })}
                         />
                     </div>

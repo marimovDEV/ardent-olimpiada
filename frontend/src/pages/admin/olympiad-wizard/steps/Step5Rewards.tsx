@@ -112,7 +112,7 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
                         <p className="text-sm text-muted-foreground">Ishtirokchilarga avtomatik sertifikat generatsiya qilish</p>
                     </div>
                     <Switch
-                        checked={certConfig.enabled}
+                        checked={!!certConfig.enabled}
                         onCheckedChange={(c) => updateCert('enabled', c)}
                     />
                 </div>

@@ -167,7 +167,15 @@ const AdminOlympiadWizard = () => {
                 start_date: data.start_date ? data.start_date.slice(0, 16) : "",
                 end_date: data.end_date ? data.end_date.slice(0, 16) : "",
                 max_participants: data.max_participants || "",
-                // Ensure new fields are handled if backend sends them (or defaults)
+                // Ensure boolean fields are always boolean (prevent uncontrolled Switch)
+                is_paid: !!data.is_paid,
+                is_random: !!data.is_random,
+                cannot_go_back: !!data.cannot_go_back,
+                required_camera: !!data.required_camera,
+                required_full_screen: !!data.required_full_screen,
+                disable_copy_paste: !!data.disable_copy_paste,
+                is_active: data.is_active !== false,
+                // Ensure new fields are handled
                 eligibility_grades: data.eligibility_grades || [],
                 eligibility_regions: data.eligibility_regions || [],
                 technical_config: data.technical_config || { internet_policy: 'allow_resume' },
@@ -309,57 +317,102 @@ const AdminOlympiadWizard = () => {
 
         setLoading(true);
         try {
-            const payload = new FormData();
-            Object.entries(formData).forEach(([key, value]) => {
-                // Skip null/undefined values entirely
-                if (value === null || value === undefined) return;
+            const hasNewFile = formData.thumbnail instanceof File;
 
-                // Handle File upload
-                if (key === 'thumbnail') {
-                    if (value instanceof File) payload.append(key, value);
-                    return;
-                }
+            if (hasNewFile) {
+                // Use FormData only when uploading a file
+                const payload = new FormData();
+                Object.entries(formData).forEach(([key, value]) => {
+                    if (value === null || value === undefined) return;
 
-                const strValue = String(value);
-
-                // Fix for 400 Bad Request: Do not send empty strings for optional dates OR foreign keys
-                if (strValue.trim() === "") {
-                    // Skip empty strings for optional fields
-                    if (['start_date', 'end_date', 'result_time', 'max_participants', 'subject_id', 'profession', 'course', 'slug'].includes(key)) {
+                    if (key === 'thumbnail') {
+                        if (value instanceof File) payload.append(key, value);
                         return;
                     }
-                }
 
-                // Handle JSON fields for FormData
-                if (['eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config'].includes(key)) {
-                    payload.append(key, JSON.stringify(value));
-                    return;
-                }
+                    const strValue = String(value);
 
-                payload.append(key, strValue);
-            });
+                    if (strValue.trim() === "") {
+                        if (['start_date', 'end_date', 'result_time', 'max_participants', 'subject_id', 'profession', 'course', 'slug'].includes(key)) {
+                            return;
+                        }
+                    }
 
-            if (isEdit) {
-                await axios.put(`${API_URL}/olympiads/${id}/`, payload, {
-                    headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
+                    if (['eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config'].includes(key)) {
+                        payload.append(key, JSON.stringify(value));
+                        return;
+                    }
+
+                    payload.append(key, strValue);
                 });
-                if (!stayOnPage) {
-                    toast.success("Olimpiada muvaffaqiyatli saqlandi");
-                    navigate(`${baseRoute}/olympiads`);
+
+                if (isEdit) {
+                    await axios.put(`${API_URL}/olympiads/${id}/`, payload, {
+                        headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
+                    });
                 } else {
-                    // Quiet success for auto-save, or small toast
-                    // toast.success("Saqlandi"); 
+                    const res = await axios.post(`${API_URL}/olympiads/`, payload, {
+                        headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
+                    });
+                    toast.success("Olimpiada yaratildi");
+                    navigate(`${baseRoute}/olympiads`);
+                    return true;
                 }
-                return true;
             } else {
-                // This path might be less used now if we auto-save, but still valid for direct submit
-                const res = await axios.post(`${API_URL}/olympiads/`, payload, {
-                    headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
-                });
-                toast.success("Olimpiada yaratildi");
-                navigate(`${baseRoute}/olympiads`);
-                return true;
+                // Use JSON for better type handling (no string coercion for booleans/numbers)
+                const payload: any = { ...formData };
+
+                // Remove thumbnail if it's a URL string (not a new file)
+                if (typeof payload.thumbnail === 'string') delete payload.thumbnail;
+                if (!payload.thumbnail) delete payload.thumbnail;
+
+                // Clean empty/null values for JSON
+                if (!payload.slug) delete payload.slug;
+                if (!payload.start_date) payload.start_date = null;
+                if (!payload.end_date) payload.end_date = null;
+                if (!payload.result_time) payload.result_time = null;
+                if (!payload.subject_id) payload.subject_id = null;
+                if (!payload.profession) payload.profession = null;
+                if (!payload.course) payload.course = null;
+                if (payload.max_participants === "") payload.max_participants = null;
+                if (payload.duration === "") payload.duration = 60;
+                if (payload.price === "") payload.price = 0;
+                if (payload.discount_percent === "") payload.discount_percent = 0;
+                if (payload.max_attempts === "") payload.max_attempts = 1;
+                if (payload.tab_switch_limit === "") payload.tab_switch_limit = 3;
+                if (payload.time_limit_per_question === "") payload.time_limit_per_question = 0;
+                if (payload.xp_reward === "") payload.xp_reward = 50;
+
+                // Remove read-only fields that backend doesn't accept on write
+                delete payload.questions_count;
+                delete payload.participants_count;
+                delete payload.status_display;
+                delete payload.time_remaining;
+                delete payload.is_registered;
+                delete payload.is_completed;
+                delete payload.created_at;
+                delete payload.start_time;
+                delete payload.prizes;
+
+                if (isEdit) {
+                    await axios.put(`${API_URL}/olympiads/${id}/`, payload, {
+                        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' }
+                    });
+                } else {
+                    const res = await axios.post(`${API_URL}/olympiads/`, payload, {
+                        headers: { ...getAuthHeader(), 'Content-Type': 'application/json' }
+                    });
+                    toast.success("Olimpiada yaratildi");
+                    navigate(`${baseRoute}/olympiads`);
+                    return true;
+                }
             }
+
+            if (!stayOnPage) {
+                toast.success("Olimpiada muvaffaqiyatli saqlandi");
+                navigate(`${baseRoute}/olympiads`);
+            }
+            return true;
         } catch (error: any) {
             console.error(error);
             const errData = error.response?.data;
@@ -371,8 +424,7 @@ const AdminOlympiadWizard = () => {
                 } else if (errData.detail) {
                     msg = errData.detail;
                 } else {
-                    // Collect field errors
-                    const fields = Object.keys(errData).map(key => `${key}: ${errData[key]}`).join(', ');
+                    const fields = Object.keys(errData).map(key => `${key}: ${Array.isArray(errData[key]) ? errData[key].join(', ') : errData[key]}`).join('; ');
                     msg = `Xatolik: ${fields}`;
                 }
             }
