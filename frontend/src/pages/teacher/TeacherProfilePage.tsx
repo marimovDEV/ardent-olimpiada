@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
@@ -148,18 +148,16 @@ const TeacherProfilePage = () => {
         }
     };
 
-    const getAvatarUrl = (url: string | null) => {
-        if (!url) return '';
-        if (url.startsWith('http') || url.startsWith('blob:')) return url;
-        // Strip /api from API_URL to get base URL
-        const baseUrl = API_URL.replace('/api', '');
-        return `${baseUrl}${url}`;
+    const getAvatarSrc = (path: string | null) => {
+        if (!path) return '';
+        if (path.startsWith('blob:')) return path;
+        return getImageUrl(path);
     };
 
     if (loading) return <div className="flex justify-center p-10"><Loader2 className="animate-spin" /></div>;
     if (!user) return <div>User not found</div>;
 
-    const displayAvatar = avatarPreview || getAvatarUrl(user.avatar_url || user.avatar);
+    const displayAvatar = avatarPreview || getAvatarSrc(user.avatar_url || user.avatar);
 
     return (
         <div className="container mx-auto p-6 max-w-5xl space-y-8 animate-fade-in">

@@ -4,6 +4,24 @@ export const getBaseUrl = () => {
     return "https://api.hogwords.uz";
 };
 
+export const getImageUrl = (path: string | null | undefined) => {
+    if (!path) return "/placeholder-avatar.png"; // Fallback image
+    if (path.startsWith('http')) return path;
+
+    // Remove leading dot or other weirdness if present (e.g. .hogwords.uz/...)
+    let cleanPath = path;
+    if (cleanPath.startsWith('.')) {
+        cleanPath = cleanPath.substring(cleanPath.indexOf('/'));
+    }
+
+    // Ensure path starts with /
+    if (!cleanPath.startsWith('/')) {
+        cleanPath = '/' + cleanPath;
+    }
+
+    return `${getBaseUrl()}${cleanPath}`;
+};
+
 export const API_URL = `${getBaseUrl()}/api`;
 
 const api = axios.create({

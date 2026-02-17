@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { API_URL, getBaseUrl } from "@/services/api";
+import { API_URL, getBaseUrl, getImageUrl } from "@/services/api";
 import {
   Carousel,
   CarouselContent,
@@ -66,7 +66,7 @@ const OlympiadCard = memo(({ olympiad, t }: { olympiad: any; t: any }) => {
       {/* Media Area */}
       <div className="relative h-56 overflow-hidden">
         <img
-          src={olympiad.thumbnail?.startsWith('http') ? olympiad.thumbnail : `${getBaseUrl()}${olympiad.thumbnail}`}
+          src={getImageUrl(olympiad.thumbnail)}
           alt={olympiad.title}
           className="w-full h-full object-cover"
         />

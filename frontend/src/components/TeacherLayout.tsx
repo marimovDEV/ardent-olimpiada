@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { API_URL } from "@/services/api";
+import { API_URL, getBaseUrl, getImageUrl } from "@/services/api";
 import NotificationBell from './NotificationBell';
 import { useTranslation } from "react-i18next";
 import authService from "@/services/authService";
@@ -190,22 +190,15 @@ const TeacherLayout = () => {
                     <div className="flex items-center gap-4">
                         <NotificationBell />
                         {user?.avatar_url || user?.avatar ? (
-                            <img
-                                src={
-                                    user.avatar_url?.startsWith('http')
-                                        ? user.avatar_url
-                                        : user.avatar?.startsWith('http')
-                                            ? user.avatar
-                                            : `${API_URL.replace('/api', '')}${user.avatar_url || user.avatar}`
-                                }
-                                alt={user.first_name || 'Teacher'}
-                                className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100"
-                                onError={(e) => {
-                                    const target = e.currentTarget;
-                                    target.style.display = 'none';
-                                    const fallback = target.nextElementSibling as HTMLElement;
-                                    if (fallback) fallback.classList.remove('hidden');
-                                }}
+                            src = { getImageUrl(user.avatar_url || user.avatar)}
+                        alt={user.first_name || 'Teacher'}
+                        className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100"
+                        onError={(e) => {
+                            const target = e.currentTarget;
+                            target.style.display = 'none';
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) fallback.classList.remove('hidden');
+                        }}
                             />
                         ) : null}
                         <div className={`w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold ${(user?.avatar_url || user?.avatar) ? 'hidden' : ''}`}>
