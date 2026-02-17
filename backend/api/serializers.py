@@ -18,10 +18,17 @@ from .models import (
 
 class WinnerSerializer(serializers.ModelSerializer):
     subject_name = serializers.CharField(source='subject.name', read_only=True)
+    image = serializers.SerializerMethodField()
     
     class Meta:
         model = Winner
         fields = ['id', 'subject', 'subject_name', 'stage', 'student_name', 'region', 'score', 'position', 'image', 'is_featured']
+    
+    def get_image(self, obj):
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return obj.image.url if obj.image else None
 
 
 class AIAssistantFAQSerializer(serializers.ModelSerializer):
@@ -105,12 +112,10 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_full_name() or obj.username
     
     def get_avatar_url(self, obj):
-        if obj.avatar:
-            try:
-                return obj.avatar.url
-            except:
-                return None
-        return None
+        request = self.context.get('request')
+        if obj.avatar and request:
+            return request.build_absolute_uri(obj.avatar.url)
+        return obj.avatar.url if obj.avatar else None
 
     def get_teacher_profile(self, obj):
         try:
@@ -262,6 +267,9 @@ class UserMiniSerializer(serializers.ModelSerializer):
 
 
 class HomePageConfigSerializer(serializers.ModelSerializer):
+    hero_image = serializers.SerializerMethodField()
+    teaser_image = serializers.SerializerMethodField()
+
     class Meta:
         model = HomePageConfig
         fields = ['id', 'hero_title', 'hero_subtitle', 'hero_button_text', 
@@ -273,6 +281,18 @@ class HomePageConfigSerializer(serializers.ModelSerializer):
                   'show_stats', 'show_olympiads', 'show_courses', 'show_professions',
                   'show_testimonials', 'show_mentors', 'show_winners', 'show_steps', 'show_cta', 'show_faq']
         read_only_fields = ['id', 'updated_at']
+
+    def get_hero_image(self, obj):
+        request = self.context.get('request')
+        if obj.hero_image and request:
+            return request.build_absolute_uri(obj.hero_image.url)
+        return obj.hero_image.url if obj.hero_image else None
+
+    def get_teaser_image(self, obj):
+        request = self.context.get('request')
+        if obj.teaser_image and request:
+            return request.build_absolute_uri(obj.teaser_image.url)
+        return obj.teaser_image.url if obj.teaser_image else None
 
 
 class HomeStatSerializer(serializers.ModelSerializer):
@@ -306,9 +326,17 @@ class FreeCourseLessonCardSerializer(serializers.ModelSerializer):
 
 
 class LessonContentSerializer(serializers.ModelSerializer):
+    resources_file = serializers.SerializerMethodField()
+    
     class Meta:
         model = LessonContent
         fields = ['id', 'lesson', 'text_content', 'resources_file', 'created_by', 'created_at', 'updated_at']
+
+    def get_resources_file(self, obj):
+        request = self.context.get('request')
+        if obj.resources_file and request:
+            return request.build_absolute_uri(obj.resources_file.url)
+        return obj.resources_file.url if obj.resources_file else None
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
@@ -319,9 +347,17 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
 class HomeworkSubmissionSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
+    file_url = serializers.SerializerMethodField()
+    
     class Meta:
         model = HomeworkSubmission
         fields = ['id', 'student', 'student_name', 'homework', 'file_url', 'grade', 'feedback', 'status', 'submitted_at']
+
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if obj.file_url and request:
+            return request.build_absolute_uri(obj.file_url.url)
+        return obj.file_url.url if obj.file_url else None
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -571,6 +607,7 @@ class CourseSerializer(serializers.ModelSerializer):
     subject_name = serializers.SerializerMethodField()
     teacher_name = serializers.SerializerMethodField()
     teacher_avatar = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
     
     class Meta:
         model = Course
@@ -592,9 +629,16 @@ class CourseSerializer(serializers.ModelSerializer):
         return None
 
     def get_teacher_avatar(self, obj):
-        if obj.teacher and obj.teacher.avatar:
-            return obj.teacher.avatar.url
-        return None
+        request = self.context.get('request')
+        if obj.teacher and obj.teacher.avatar and request:
+            return request.build_absolute_uri(obj.teacher.avatar.url)
+        return obj.teacher.avatar.url if obj.teacher and obj.teacher.avatar else None
+
+    def get_thumbnail(self, obj):
+        request = self.context.get('request')
+        if obj.thumbnail and request:
+            return request.build_absolute_uri(obj.thumbnail.url)
+        return obj.thumbnail.url if obj.thumbnail else None
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
@@ -715,9 +759,17 @@ class TeacherCourseDetailSerializer(serializers.ModelSerializer):
 
 
 class OlympiadPrizeSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    
     class Meta:
         model = OlympiadPrize
         fields = ['id', 'olympiad', 'name', 'image', 'description', 'condition', 'value']
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return obj.image.url if obj.image else None
 
 
 class PrizeAddressSerializer(serializers.ModelSerializer):
@@ -762,6 +814,8 @@ class OlympiadSerializer(serializers.ModelSerializer):
     prizes = OlympiadPrizeSerializer(many=True, read_only=True)
     start_time = serializers.SerializerMethodField()
     
+    thumbnail = serializers.SerializerMethodField()
+    
     class Meta:
         model = Olympiad
         fields = ['id', 'title', 'slug', 'description', 'thumbnail', 'subject', 'subject_id', 'profession', 'course',
@@ -773,6 +827,12 @@ class OlympiadSerializer(serializers.ModelSerializer):
                   'max_attempts', 'tab_switch_limit', 'required_camera', 'required_full_screen', 'disable_copy_paste',
                   'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'created_at',
                   'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time']
+    
+    def get_thumbnail(self, obj):
+        request = self.context.get('request')
+        if obj.thumbnail and request:
+            return request.build_absolute_uri(obj.thumbnail.url)
+        return obj.thumbnail.url if obj.thumbnail else None
     
     def get_start_time(self, obj):
         return obj.start_date
@@ -949,6 +1009,9 @@ class CertificateSerializer(serializers.ModelSerializer):
     title = serializers.CharField(read_only=True)
     verify_url = serializers.CharField(read_only=True)
     
+    qr_code = serializers.SerializerMethodField()
+    pdf_file = serializers.SerializerMethodField()
+    
     class Meta:
         model = Certificate
         fields = ['id', 'cert_number', 'cert_type', 'type_display', 'user', 'user_id',
@@ -956,6 +1019,18 @@ class CertificateSerializer(serializers.ModelSerializer):
                   'title', 'source', 'grade', 'score', 'status', 'status_display', 
                   'issued_at', 'verified_at', 'verified_by', 'verified_by_name',
                   'rejection_reason', 'verify_url', 'qr_code', 'pdf_file']
+
+    def get_qr_code(self, obj):
+        request = self.context.get('request')
+        if obj.qr_code and request:
+            return request.build_absolute_uri(obj.qr_code.url)
+        return obj.qr_code.url if obj.qr_code else None
+
+    def get_pdf_file(self, obj):
+        request = self.context.get('request')
+        if obj.pdf_file and request:
+            return request.build_absolute_uri(obj.pdf_file.url)
+        return obj.pdf_file.url if obj.pdf_file else None
     
     def get_source(self, obj):
         if obj.course:
@@ -1091,12 +1166,19 @@ class PaymentSerializer(serializers.ModelSerializer):
     user = UserMiniSerializer(read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     reference_title = serializers.SerializerMethodField()
+    receipt_image = serializers.SerializerMethodField()
     
     class Meta:
         model = Payment
         fields = ['id', 'user', 'amount', 'type', 'reference_id', 
                   'reference_title', 'method', 'status', 'status_display',
-                  'transaction_id', 'created_at', 'completed_at']
+                  'transaction_id', 'receipt_image', 'created_at', 'completed_at']
+
+    def get_receipt_image(self, obj):
+        request = self.context.get('request')
+        if obj.receipt_image and request:
+            return request.build_absolute_uri(obj.receipt_image.url)
+        return obj.receipt_image.url if obj.receipt_image else None
     
     def get_reference_title(self, obj):
         if obj.type == 'COURSE':
@@ -1209,9 +1291,17 @@ class LeadSerializer(serializers.ModelSerializer):
 # ============= CMS SERIALIZERS =============
 
 class TestimonialSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    
     class Meta:
         model = Testimonial
         fields = ['id', 'name', 'profession', 'text_uz', 'text_ru', 'image', 'instagram_url', 'rating', 'is_active', 'is_highlighted', 'created_at']
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return obj.image.url if obj.image else None
         extra_kwargs = {
             'rating': {'required': False},
             'is_active': {'required': False},
@@ -1221,9 +1311,24 @@ class TestimonialSerializer(serializers.ModelSerializer):
         }
 
 class BannerSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    mobile_image = serializers.SerializerMethodField()
+    
     class Meta:
         model = Banner
         fields = ['id', 'title', 'subtitle', 'image', 'mobile_image', 'button_text', 'button_link', 'order', 'is_active', 'created_at']
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        if obj.image and request:
+            return request.build_absolute_uri(obj.image.url)
+        return obj.image.url if obj.image else None
+
+    def get_mobile_image(self, obj):
+        request = self.context.get('request')
+        if obj.mobile_image and request:
+            return request.build_absolute_uri(obj.mobile_image.url)
+        return obj.mobile_image.url if obj.mobile_image else None
 
 
 # Import Settings Serializers

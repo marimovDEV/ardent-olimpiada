@@ -5,16 +5,17 @@ export const getBaseUrl = () => {
 };
 
 export const getImageUrl = (path: string | null | undefined) => {
-    if (!path) return "/placeholder-avatar.png"; // Fallback image
-    if (path.startsWith('http')) return path;
+    if (!path) return "/placeholder-avatar.png";
+    if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:')) {
+        return path;
+    }
 
-    // Remove leading dot or other weirdness if present (e.g. .hogwords.uz/...)
+    // Ensure path starts with /
     let cleanPath = path;
     if (cleanPath.startsWith('.')) {
         cleanPath = cleanPath.substring(cleanPath.indexOf('/'));
     }
 
-    // Ensure path starts with /
     if (!cleanPath.startsWith('/')) {
         cleanPath = '/' + cleanPath;
     }

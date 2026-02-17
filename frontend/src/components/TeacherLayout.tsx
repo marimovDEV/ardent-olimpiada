@@ -190,15 +190,16 @@ const TeacherLayout = () => {
                     <div className="flex items-center gap-4">
                         <NotificationBell />
                         {user?.avatar_url || user?.avatar ? (
-                            src = { getImageUrl(user.avatar_url || user.avatar)}
-                        alt={user.first_name || 'Teacher'}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100"
-                        onError={(e) => {
-                            const target = e.currentTarget;
-                            target.style.display = 'none';
-                            const fallback = target.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.classList.remove('hidden');
-                        }}
+                            <img
+                                src={getImageUrl(user.avatar_url || user.avatar)}
+                                alt={user.first_name || 'Teacher'}
+                                className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100"
+                                onError={(e) => {
+                                    const target = e.currentTarget;
+                                    target.style.display = 'none';
+                                    const fallback = target.nextElementSibling as HTMLElement;
+                                    if (fallback) fallback.classList.remove('hidden');
+                                }}
                             />
                         ) : null}
                         <div className={`w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold ${(user?.avatar_url || user?.avatar) ? 'hidden' : ''}`}>
