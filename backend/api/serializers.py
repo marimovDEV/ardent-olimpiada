@@ -840,22 +840,19 @@ class OlympiadSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """
         Custom validation for Olympiad.
-        Ensure it has questions before moving beyond DRAFT status.
+        Ensure it has questions before activating (PUBLISHED, UPCOMING, ONGOING).
+        Allow DRAFT, CANCELED, PAUSED, COMPLETED, CHECKING without question check.
         """
         status = data.get('status')
-        # Check if status is being changed to something other than DRAFT
-        if status and status not in ['DRAFT', 'CANCELED']:
-            # If we are creating, we might not have questions yet, but we shouldn't allow UPCOMING/PUBLISHED status immediately
-            # If we are updating, we can check existing questions
+        # Only block activation-type statuses if no questions
+        activation_statuses = ['PUBLISHED', 'UPCOMING', 'ONGOING']
+        if status and status in activation_statuses:
             if self.instance:
-                if self.instance.questions.count() == 0:
+                q_count = self.instance.questions.count()
+                if q_count == 0:
                     raise serializers.ValidationError({
-                        "status": "Savollar qo'shilmagan olimpiadani aktivlashtirib bo'lmaydi. Avval savollarni qo'shing."
+                        "status": f"Savollar qo'shilmagan olimpiadani aktivlashtirib bo'lmaydi. Avval savollarni qo'shing. (Hozirda: {q_count} ta savol)"
                     })
-            else:
-                # For creation, if status is not DRAFT, it's risky. Force DRAFT for new ones if no questions.
-                # But creation usually doesn't include questions yet in the same request.
-                pass
         return data
 
     def to_representation(self, instance):

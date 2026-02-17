@@ -154,9 +154,23 @@ const AdminOlympiadsPage = () => {
 
             toast({ title: t('common.success'), description: t('admin.olympiads.statusChangeSuccess') });
             setStatusDialog(null);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            toast({ title: t('common.error'), description: t('admin.olympiads.statusChangeError'), variant: "destructive" });
+            const errData = error.response?.data;
+            let description = t('admin.olympiads.statusChangeError');
+
+            if (errData) {
+                if (errData.status) {
+                    // Field-level validation error from serializer
+                    description = Array.isArray(errData.status) ? errData.status.join(', ') : errData.status;
+                } else if (errData.detail) {
+                    description = errData.detail;
+                } else if (typeof errData === 'string') {
+                    description = errData;
+                }
+            }
+
+            toast({ title: t('common.error'), description, variant: "destructive" });
         }
     };
 

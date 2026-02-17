@@ -601,7 +601,8 @@ class Olympiad(models.Model):
 
     def clean(self):
         from django.core.exceptions import ValidationError
-        if self.status not in ['DRAFT', 'CANCELED'] and self.pk:
+        activation_statuses = ['PUBLISHED', 'UPCOMING', 'ONGOING']
+        if self.status in activation_statuses and self.pk:
             if not self.questions.exists():
                 raise ValidationError("Savollar qo'shilmagan olimpiadani aktivlashtirib bo'lmaydi.")
         super().clean()
