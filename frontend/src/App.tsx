@@ -84,13 +84,6 @@ import PublicTeachersPage from "./pages/PublicTeachersPage";
 
 const queryClient = new QueryClient();
 
-const DomainTeachersRedirect = () => {
-  const hostname = window.location.hostname;
-  if (hostname.includes('ardentsoft.uz')) {
-    return <Navigate to="/teacher/login" replace />;
-  }
-  return <PublicTeachersPage />;
-};
 
 const App = () => {
   useEffect(() => {
@@ -147,7 +140,7 @@ const App = () => {
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
                   <Route path="/teacher-profile/:id" element={<PublicTeacherProfilePage />} />
-                  <Route path="/teachers" element={<DomainTeachersRedirect />} />
+                  <Route path="/teachers" element={<PublicTeachersPage />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />

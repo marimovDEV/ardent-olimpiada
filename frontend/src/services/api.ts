@@ -1,11 +1,6 @@
 import axios from "axios";
 
 export const getBaseUrl = () => {
-    if (typeof window === 'undefined') return "https://api.hogwords.uz";
-    const hostname = window.location.hostname;
-    if (hostname.includes('ardentsoft.uz')) {
-        return "https://test.api.ardentsoft.uz";
-    }
     return "https://api.hogwords.uz";
 };
 

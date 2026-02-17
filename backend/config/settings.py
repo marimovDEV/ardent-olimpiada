@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-olimpiada-platform-secret-key-change-in-production
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['test.api.ardentsoft.uz', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['test.api.ardentsoft.uz', 'api.hogwords.uz', 'hogwords.uz', 'localhost', '127.0.0.1', '*']
 
 
 # Application definition
@@ -110,6 +110,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://test.api.ardentsoft.uz",
     "https://test.api.ardentsoft.uz",
+    "https://api.hogwords.uz",
+    "https://hogwords.uz",
     "https://ardent-olimpiada-course.vercel.app",
     "https://course.ardentsoft.uz",
     "http://localhost:5173",
@@ -194,6 +196,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://course.ardentsoft.uz",
     "https://api.ardentsoft.uz",
     "https://test.api.ardentsoft.uz",
+    "https://api.hogwords.uz",
+    "https://hogwords.uz",
 ]
 
 
