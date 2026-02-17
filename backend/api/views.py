@@ -5444,7 +5444,8 @@ def upcoming_olympiads(request):
     """
     try:
         olympiads = Olympiad.objects.filter(
-            status__in=['UPCOMING', 'ONGOING']
+            status__in=['UPCOMING', 'ONGOING', 'PUBLISHED'],
+            is_active=True
         ).select_related('subject_id').order_by('start_date')[:8]
         
         serializer = OlympiadSerializer(olympiads, many=True, context={'request': request})

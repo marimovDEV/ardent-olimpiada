@@ -456,7 +456,16 @@ const AdminOlympiadWizard = () => {
                     </Button>
 
                     {currentStep === 5 ? (
-                        <Button onClick={() => handleSubmit(false)} disabled={loading} className="w-40 gap-2 bg-green-600 hover:bg-green-700">
+                        <Button
+                            onClick={() => {
+                                if (formData.status === 'DRAFT') {
+                                    updateData({ status: 'PUBLISHED' });
+                                }
+                                handleSubmit(false);
+                            }}
+                            disabled={loading}
+                            className="w-40 gap-2 bg-green-600 hover:bg-green-700"
+                        >
                             <CheckCircle className="w-4 h-4" />
                             {loading ? "Saqlanmoqda..." : "Nashr qilish"}
                         </Button>

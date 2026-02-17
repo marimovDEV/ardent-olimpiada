@@ -57,6 +57,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="DRAFT">Qoralama (Draft)</SelectItem>
+                                <SelectItem value="PUBLISHED">E'lon qilingan (Published)</SelectItem>
                                 <SelectItem value="UPCOMING">Kutilmoqda (Upcoming)</SelectItem>
                                 <SelectItem value="ONGOING">Jarayonda (Live)</SelectItem>
                                 <SelectItem value="PAUSED">To'xtatilgan</SelectItem>
