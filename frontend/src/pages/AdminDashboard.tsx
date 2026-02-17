@@ -111,8 +111,8 @@ const AdminDashboard = () => {
     ];
 
     const alerts = [
-        { label: t('admin.pendingCourses'), value: data?.alerts?.pending_courses || 0, icon: BookOpen, color: "text-yellow-600", bg: "bg-yellow-100", link: "/admin/courses" },
-        { label: t('admin.openTickets'), value: data?.alerts?.open_tickets || 0, icon: Megaphone, color: "text-red-600", bg: "bg-red-100", link: "/admin/support" },
+        { label: t('admin.pendingCourses'), value: data?.alerts?.pending_courses || 0, icon: BookOpen, color: "text-yellow-500", bg: "bg-yellow-500/10", link: "/admin/courses" },
+        { label: t('admin.openTickets'), value: data?.alerts?.open_tickets || 0, icon: Megaphone, color: "text-red-500", bg: "bg-red-500/10", link: "/admin/support" },
         { label: t('admin.pendingCertificates'), value: data?.alerts?.pending_certificates || 0, icon: Award, color: "text-primary", bg: "bg-primary/10", link: "/admin/certificates" },
     ];
 
