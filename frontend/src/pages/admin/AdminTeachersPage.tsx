@@ -111,6 +111,7 @@ const AdminTeachersPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Message State
+    const [messageDialogOpen, setMessageDialogOpen] = useState(false);
     const [messageTitle, setMessageTitle] = useState("");
     const [messageText, setMessageText] = useState("");
 
