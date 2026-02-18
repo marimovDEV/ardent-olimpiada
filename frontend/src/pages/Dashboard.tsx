@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import ArdCoin from "@/components/ArdCoin";
 
 import QuickActions from "@/components/dashboard/QuickActions";
 import RecentActivity from "@/components/dashboard/RecentActivity";
@@ -157,8 +158,7 @@ const Dashboard = () => {
             <div className="flex flex-wrap items-center gap-12 pt-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-3">
-                  <span className="text-4xl font-black text-white italic font-cinzel">150,000</span>
-                  <span className="text-sm font-black text-primary uppercase tracking-tighter">AC</span>
+                  <ArdCoin amount={data.hero?.balance || 0} size="xl" className="scale-125" />
                 </div>
               </div>
               <div className="w-px h-12 bg-white/10 hidden md:block" />

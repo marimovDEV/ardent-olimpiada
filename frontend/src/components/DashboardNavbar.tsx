@@ -169,9 +169,6 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                         onClick={() => setPaymentOpen(true)}
                     >
                         <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-110 group-hover:rotate-12 transition-transform duration-500" />
-                        <span className="text-sm font-black text-white leading-none tracking-tight">
-                            {parseFloat(user.balance || 0).toLocaleString()}
-                        </span>
                     </div>
 
                     <PaymentModal
