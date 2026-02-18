@@ -177,8 +177,4 @@ const SubjectCard = ({ subject, index, t }: { subject: any, index: number, t: an
     </div>
   </motion.div>
 );
-      </div >
-    </section >
-  );
-};
 export default SubjectsSection;
