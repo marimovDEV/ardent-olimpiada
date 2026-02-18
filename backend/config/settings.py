@@ -107,6 +107,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # CORS Settings
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://test.api.ardentsoft.uz",
     "https://test.api.ardentsoft.uz",
@@ -117,6 +119,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://course.ardentsoft.uz",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://hogwords.uz",
+    "http://www.hogwords.uz",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
