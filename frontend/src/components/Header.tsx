@@ -107,7 +107,7 @@ const Header = () => {
             <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.ranking')}
             </NavLink>
-            <NavLink to="/teachers" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
+            <NavLink to="/all-teachers" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.mentors')}
             </NavLink>
           </nav>
@@ -233,7 +233,7 @@ const Header = () => {
                   <span className="font-medium">{t('nav.ranking')}</span>
                 </Link>
                 <Link
-                  to="/teachers"
+                  to="/all-teachers"
                   className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
