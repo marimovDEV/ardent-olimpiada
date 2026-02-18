@@ -4673,7 +4673,7 @@ class HomePageViewSet(viewsets.ViewSet):
                 'id': m.id,
                 'name': m.get_full_name() or m.username,
                 'position': pos,
-                'company': "Hogwords Mentor", # Branding updated
+                'company': "Hogwarts Mentor", # Branding updated
                 'experience': exp,
                 'bio_uz': bio,
                 'bio_ru': bio,

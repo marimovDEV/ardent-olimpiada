@@ -148,7 +148,7 @@ const Dashboard = () => {
 
             <div className="space-y-4">
               <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-none font-cinzel">
-                👋 Salom, <span className="gold-glow italic">{data.hero?.user_name || 'Hogwordian'}</span>
+                👋 Salom, <span className="gold-glow italic">{data.hero?.user_name || 'Hogwartian'}</span>
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl font-medium italic font-cinzel opacity-80">
                 {t('dashboard.hero.subtitle', "Bugun sizni katta yutuqlar va yangi bilimlar kutmoqda. Tayyormisiz?")}
