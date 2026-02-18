@@ -608,6 +608,7 @@ class CourseSerializer(serializers.ModelSerializer):
     teacher_name = serializers.SerializerMethodField()
     teacher_avatar = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
+    is_enrolled = serializers.SerializerMethodField()
     
     class Meta:
         model = Course

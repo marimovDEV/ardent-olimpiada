@@ -4,3 +4,20 @@ git pull origin main
 
 sudo systemctl restart ardenttest
 sudo systemctl restart ardent-bot
+
+
+eGJ&757%j*Ap
+
+
+# O'zgarishlarni vaqtincha saqlash
+git stash
+
+# Yangi kodni yuklab olish
+git pull origin main
+
+# Saqlangan o'zgarishlarni qaytarish (agar kerak bo'lsa)
+git stash pop
+
+# Keyin restart berish
+sudo systemctl restart ardenttest
+sudo systemctl restart ardent-bot

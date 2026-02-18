@@ -108,11 +108,7 @@ class Command(BaseCommand):
         asyncio.set_event_loop(loop)
         loop.run_until_complete(main())
 
-    @discord_sync_to_async
-    # Wait, we can't use sync_to_async decorator directly inside class without import
-    # But management commands run in sync context by default unless we handle async carefully.
-    # Actually, we can just use `sync_to_async` helper.
-    pass
+    # The process_payment method below handles the sync-to-async transition internally.
 
     async def process_payment(self, amount, raw_text):
         """
