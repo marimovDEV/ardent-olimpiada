@@ -48,20 +48,20 @@ const Index = () => {
 
       <main className="relative">
         <Suspense fallback={<SectionSkeleton />}>
-          {/* 3. Subjects Interactive Grid */}
-          <SubjectsSection />
-
-          {/* 4. Deep Trust (Nega HOGWORDS?) */}
-          <TrustSection />
-
-          {/* 5. TeachersSection (Elite Mentors) */}
-          <TeachersSection />
-
-          {/* 6. OlympiadSection (Luxury Showcase with Countdown) */}
+          {/* 3. OlympiadSection (Luxury Showcase with Countdown) - MOVED UP */}
           <OlympiadSection />
 
-          {/* 7. Winners Wall (PrideCarousel) */}
+          {/* 4. Winners Wall (PrideCarousel) - MOVED UP */}
           <PrideCarousel />
+
+          {/* 5. Deep Trust (Nega HOGWORDS?) */}
+          <TrustSection />
+
+          {/* 6. Subjects Interactive Grid / Carousel */}
+          <SubjectsSection />
+
+          {/* 7. TeachersSection (Elite Mentors) */}
+          <TeachersSection />
 
           {/* 8. ProfessionsCarousel */}
           <ProfessionsCarousel />

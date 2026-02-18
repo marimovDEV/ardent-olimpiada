@@ -127,7 +127,7 @@ const PrideCarousel = () => {
                             WINNERS WALL & PRESTIGE
                         </Badge>
                     </motion.div>
-                    <h2 className="text-4xl md:text-6xl font-black text-white font-cinzel tracking-tight leading-tight">
+                    <h2 className="text-3xl md:text-6xl font-black text-white font-cinzel tracking-tight leading-tight">
                         G'oliblar <span className="text-primary italic gold-glow">Maydoni</span>
                     </h2>
                     <p className="text-xl text-secondary max-w-2xl mx-auto font-medium">
@@ -147,7 +147,7 @@ const PrideCarousel = () => {
                             <Badge className="bg-primary/20 text-primary border-primary/30 font-black px-4 py-1.5 rounded-xl uppercase tracking-widest text-[10px]">
                                 {activeOlympiad.subject} • {activeOlympiad.stage}
                             </Badge>
-                            <h3 className="text-5xl md:text-7xl font-black text-white font-cinzel leading-[1.1] tracking-tighter">
+                            <h3 className="text-3xl md:text-7xl font-black text-white font-cinzel leading-[1.1] tracking-tighter">
                                 {activeOlympiad.title}
                             </h3>
                             <div className="flex items-center gap-6 text-secondary font-bold uppercase tracking-widest text-[10px]">
@@ -161,7 +161,7 @@ const PrideCarousel = () => {
                         </div>
 
                         <div className="p-8 rounded-[2.5rem] bg-primary/5 border border-primary/20 space-y-6">
-                            <div className="text-xl font-black text-white font-cinzel italic">
+                            <div className="text-lg md:text-xl font-black text-white font-cinzel italic">
                                 "Keyingi g'olib siz bo'lishingiz mumkin. Bugun tayyorgarlikni boshlang va o'z bilimingizni isbotlang!"
                             </div>
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -190,9 +190,9 @@ const PrideCarousel = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`group relative bg-[#111827] rounded-[2rem] border border-white/5 p-6 flex items-center gap-6 transition-all duration-300 hover:border-primary/40 ${isFirst ? 'scale-105 md:translate-x-6 border-primary/30 shadow-2xl z-10' : 'opacity-80'}`}
+                                    className={`group relative bg-[#111827] rounded-[1.5rem] md:rounded-[2rem] border border-white/5 p-4 md:p-6 flex items-center gap-4 md:gap-6 transition-all duration-300 hover:border-primary/40 ${isFirst ? 'scale-105 md:translate-x-6 border-primary/30 shadow-2xl z-10' : 'opacity-80'}`}
                                 >
-                                    <div className={`w-16 h-16 rounded-2xl ${medal.bg} flex items-center justify-center text-3xl shadow-xl flex-shrink-0 group-hover:scale-105 transition-transform`}>
+                                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl ${medal.bg} flex items-center justify-center text-2xl md:text-3xl shadow-xl flex-shrink-0 group-hover:scale-105 transition-transform`}>
                                         {medal.icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
