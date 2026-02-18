@@ -139,8 +139,8 @@ const SmartCourseList = ({ courses }: { courses?: Enrollment[] }) => {
                     if (!course) return null;
 
                     return (
-                        <div key={enrollment.id} className="group flex gap-4 p-3 rounded-2xl hover:bg-muted transition-colors border border-transparent hover:border-border">
-                            <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600">
+                        <div key={enrollment.id} className="group flex gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                            <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary to-primary-dark shadow-gold">
                                 {course.thumbnail ? (
                                     <img
                                         src={course.thumbnail}
@@ -159,7 +159,7 @@ const SmartCourseList = ({ courses }: { courses?: Enrollment[] }) => {
                             <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                                 <div>
                                     {tag && (
-                                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block mb-1 ${status === 'warning' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full inline-block mb-1 ${status === 'warning' ? 'bg-orange-500/10 text-orange-500 border border-orange-500/20' : 'bg-primary/10 text-primary border border-primary/20'
                                             }`}>
                                             {tag}
                                         </span>
@@ -171,8 +171,8 @@ const SmartCourseList = ({ courses }: { courses?: Enrollment[] }) => {
                                     <div className="flex items-center gap-1">
                                         <Clock className="w-3 h-3" /> {getTimeAgo(enrollment.created_at)}
                                     </div>
-                                    <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden max-w-[60px]">
-                                        <div className={`h-full rounded-full ${status === 'warning' ? 'bg-orange-500' : 'bg-blue-600'
+                                    <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden max-w-[60px]">
+                                        <div className={`h-full rounded-full ${status === 'warning' ? 'bg-orange-500' : 'bg-primary shadow-gold'
                                             }`} style={{ width: `${progress}%` }} />
                                     </div>
                                     <span className="text-xs font-medium">{progress.toFixed(0)}%</span>
@@ -185,9 +185,9 @@ const SmartCourseList = ({ courses }: { courses?: Enrollment[] }) => {
                                     {enrollment.xp_earned || '0'} / {enrollment.total_xp_available || '500'} XP
                                 </div>
                                 <Link to={`/course/${course.id}`}>
-                                    <Button size="icon" className={`rounded-full shadow-md ${status === 'warning' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'
+                                    <Button size="icon" className={`rounded-full shadow-md ${status === 'warning' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/20' : 'btn-primary h-8 w-8'
                                         }`}>
-                                        <Play className="w-4 h-4 ml-0.5 fill-white" />
+                                        <Play className="w-4 h-4 ml-0.5 fill-current" />
                                     </Button>
                                 </Link>
                             </div>

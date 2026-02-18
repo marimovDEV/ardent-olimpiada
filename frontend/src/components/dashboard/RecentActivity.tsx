@@ -19,10 +19,10 @@ const activities: Activity[] = [
 const RecentActivity = () => {
     const getIcon = (type: string) => {
         switch (type) {
-            case 'course': return <Play className="w-4 h-4 text-secondary" />;
+            case 'course': return <Play className="w-4 h-4 text-primary shadow-gold" />;
             case 'xp': return <Zap className="w-4 h-4 text-primary" />;
-            case 'olympiad': return <Trophy className="w-4 h-4 text-orange-400" />;
-            case 'certificate': return <Award className="w-4 h-4 text-green-500" />;
+            case 'olympiad': return <Trophy className="w-4 h-4 text-primary" />;
+            case 'certificate': return <Award className="w-4 h-4 text-primary" />;
             default: return <CheckCircle2 className="w-4 h-4 text-primary" />;
         }
     };
@@ -58,7 +58,7 @@ const RecentActivity = () => {
                 ))}
             </div>
 
-            <button className="w-full py-4 text-[10px] font-black text-secondary hover:text-primary transition-colors uppercase tracking-[0.3em] border-t border-white/5">
+            <button className="w-full py-4 text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.3em] border-t border-white/5 font-cinzel">
                 Barcha faoliyatni ko'rish
             </button>
         </div>

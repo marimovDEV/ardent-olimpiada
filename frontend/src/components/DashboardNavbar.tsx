@@ -106,7 +106,7 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                         <input
                             type="text"
                             placeholder={t('dashboard.navbar.search')}
-                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-white placeholder:text-[#64748B]"
+                            className="w-full h-11 pl-11 pr-5 rounded-2xl bg-white/5 border border-white/5 focus:bg-white/[0.08] focus:border-primary/30 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-sm text-white placeholder:text-muted-foreground/60"
                         />
                     </div>
                 </div>
@@ -132,9 +132,9 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                                     <div className="w-1 h-1 rounded-full bg-white/20" />
                                     <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">{t('dashboard.navbar.xpLeft', { xp: xpLeft })}</span>
                                 </div>
-                                <div className="h-1.5 w-24 bg-white/10 rounded-full overflow-hidden">
+                                <div className="h-1.5 w-24 bg-white/5 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] rounded-full transition-all duration-1000 group-hover:animate-pulse"
+                                        className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-1000 group-hover:animate-pulse shadow-[0_0_10px_rgba(250,204,21,0.3)]"
                                         style={{ width: `${progressPercent}%` }}
                                     />
                                 </div>
@@ -165,14 +165,13 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
 
                     {/* ArdCoin Balance */}
                     <div
-                        className="flex items-center gap-3 bg-gradient-to-br from-yellow-500/10 to-orange-500/5 px-4 py-2 rounded-2xl border border-yellow-500/20 cursor-pointer hover:bg-yellow-500/20 transition-all group shadow-lg"
+                        className="flex items-center gap-2 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-2xl border border-primary/10 cursor-pointer transition-all group shadow-lg"
                         onClick={() => setPaymentOpen(true)}
                     >
-                        <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-125 group-hover:rotate-12 transition-transform duration-500" />
-                        <div className="hidden sm:flex flex-col">
-                            <span className="text-xs font-black text-white leading-none tracking-tighter">{parseFloat(user.balance || 0).toLocaleString()}</span>
-                            <span className="text-[8px] font-black text-yellow-500 uppercase tracking-widest mt-0.5">Coins</span>
-                        </div>
+                        <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-110 group-hover:rotate-12 transition-transform duration-500" />
+                        <span className="text-sm font-black text-white leading-none tracking-tight">
+                            {parseFloat(user.balance || 0).toLocaleString()}
+                        </span>
                     </div>
 
                     <PaymentModal

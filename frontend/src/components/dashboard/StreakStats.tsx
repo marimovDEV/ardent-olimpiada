@@ -108,7 +108,7 @@ const StreakStats = () => {
                 {/* Freeze Status */}
                 <div className="flex flex-col items-end gap-2">
                     <div
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 cursor-pointer hover:bg-primary/20 transition-colors"
                         onClick={buyFreeze}
                         title="Muzlatish (Kun o'tkazib yuborilganda asqatadi)"
                     >

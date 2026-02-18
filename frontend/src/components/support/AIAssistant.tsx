@@ -51,8 +51,8 @@ const AIAssistant = ({ onTalkToAdmin, onClose }: AIAssistantProps) => {
         setHistory([{
             type: 'bot',
             content: lang.startsWith('ru')
-                ? "Здравствуйте! Я Hogwords AI — ваш помощник. Выберите вопрос или напишите мне."
-                : "Assalomu alaykum! Men Hogwords AI yordamchingizman. Quyidagi savollardan birini tanlang yoki savolingizni yozing."
+                ? "Здравствуйте! Я Hogwarts AI — ваш помощник. Выберите вопрос или напишите мне."
+                : "Assalomu alaykum! Men Hogwarts AI yordamchingizman. Quyidagi savollardan birini tanlang yoki savolingizni yozing."
         }]);
     }, []);
 
@@ -144,7 +144,7 @@ const AIAssistant = ({ onTalkToAdmin, onClose }: AIAssistantProps) => {
                         <Sparkles className="w-7 h-7 text-yellow-200" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg leading-tight">Hogwords AI</h3>
+                        <h3 className="font-bold text-lg leading-tight">Hogwarts AI</h3>
                         <div className="flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
                             <p className="text-[10px] text-blue-100 dark:text-blue-200 uppercase tracking-widest font-bold">Online Assistant</p>

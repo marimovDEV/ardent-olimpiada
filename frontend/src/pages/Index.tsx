@@ -36,7 +36,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#0B0F1A] selection:bg-primary selection:text-background font-inter">
       <Helmet>
-        <title>HOGWORDS | Nufuzli va Professional Olimpiada Platformasi</title>
+        <title>HOGWARTS | Nufuzli va Professional Olimpiada Platformasi</title>
         <meta name="description" content="Eng sara mentorlar va nufuzli olimpiadalar platformasi." />
       </Helmet>
 
@@ -51,7 +51,7 @@ const Index = () => {
           {/* 3. Subjects Interactive Grid / Carousel */}
           <SubjectsSection />
 
-          {/* 4. Deep Trust (Nega HOGWORDS?) - Carousel */}
+          {/* 4. Deep Trust (Nega HOGWARTS?) - Carousel */}
           <TrustSection />
 
           {/* 5. OlympiadSection (Luxury Showcase with Countdown) */}

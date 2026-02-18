@@ -4,8 +4,8 @@ export const getBaseUrl = () => {
     return "https://api.hogwords.uz";
 };
 
-export const getImageUrl = (path: string | null | undefined) => {
-    if (!path) return "/placeholder-avatar.png";
+export const getImageUrl = (path: string | null | undefined, name?: string) => {
+    if (!path) return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'U')}&size=600&background=FACC15&color=0B0F1A`;
     if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:')) {
         return path;
     }

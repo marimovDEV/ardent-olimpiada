@@ -115,7 +115,7 @@ const TeacherLayout = () => {
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shadow-gold">
                         <img src="/logo.jpg" alt="Logo" className="w-7 h-7 object-contain" />
                     </div>
-                    <span className="font-black font-cinzel text-xl text-primary tracking-tighter">Hogwords Mentor</span>
+                    <span className="font-black font-cinzel text-xl text-primary tracking-tighter">Hogwarts Mentor</span>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-hide">

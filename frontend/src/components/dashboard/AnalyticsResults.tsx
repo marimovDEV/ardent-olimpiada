@@ -121,9 +121,9 @@ const AnalyticsResults = () => {
     if (isLoading) {
         return (
             <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
-                <h2 className="text-xl font-bold text-foreground mb-6">📈 {t('dashboard.analytics.title')}</h2>
+                <h2 className="text-xl font-black text-foreground mb-6 font-cinzel">📈 {t('dashboard.analytics.title')}</h2>
                 <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
             </div>
         );
@@ -133,13 +133,13 @@ const AnalyticsResults = () => {
         return (
             <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-foreground">📈 {t('dashboard.analytics.title')}</h2>
-                    <Link to="/results" className="text-sm font-semibold text-blue-600 hover:text-blue-700">{t('dashboard.analytics.all')}</Link>
+                    <h2 className="text-xl font-black text-foreground font-cinzel">📈 {t('dashboard.analytics.title')}</h2>
+                    <Link to="/results" className="text-sm font-semibold text-primary hover:text-primary/80">{t('dashboard.analytics.all')}</Link>
                 </div>
                 <div className="flex flex-col items-center justify-center text-center py-8">
                     <Target className="w-12 h-12 text-muted-foreground mb-3" />
                     <p className="text-muted-foreground mb-2">{t('dashboard.analytics.empty')}</p>
-                    <Link to="/olympiads" className="text-blue-600 hover:underline text-sm">
+                    <Link to="/olympiads" className="text-primary hover:underline text-sm font-bold">
                         {t('dashboard.analytics.joinOlympiads')}
                     </Link>
                 </div>
@@ -150,8 +150,8 @@ const AnalyticsResults = () => {
     return (
         <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-foreground">📈 {t('dashboard.analytics.title')}</h2>
-                <Link to="/results" className="text-sm font-semibold text-blue-600 hover:text-blue-700">{t('dashboard.analytics.all')}</Link>
+                <h2 className="text-xl font-black text-foreground font-cinzel">📈 {t('dashboard.analytics.title')}</h2>
+                <Link to="/results" className="text-sm font-semibold text-primary hover:text-primary/80">{t('dashboard.analytics.all')}</Link>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -185,9 +185,9 @@ const AnalyticsResults = () => {
                         </div>
 
                         {/* Progress bar */}
-                        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                            <div className={`h-full rounded-full ${stat.status === 'kuchli' ? 'bg-green-500' :
-                                stat.status === 'zaif' ? 'bg-red-400' : 'bg-blue-400'
+                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5 p-[1px]">
+                            <div className={`h-full rounded-full ${stat.status === 'kuchli' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]' :
+                                stat.status === 'zaif' ? 'bg-red-500' : 'bg-primary shadow-gold'
                                 }`} style={{ width: stat.score }} />
                         </div>
                     </div>
@@ -202,8 +202,8 @@ const AnalyticsResults = () => {
                         {results.slice(0, 3).map(result => (
                             <div key={result.id} className="flex items-center justify-between text-sm py-1 border-b border-border/10 last:border-0 hover:bg-muted/30 px-1 rounded transition-colors">
                                 <span className="text-muted-foreground truncate flex-1 pr-4">{result.olympiad?.title || result.olympiad_title || 'Test'}</span>
-                                <span className={`font-bold ${result.percentage >= 80 ? 'text-green-600' :
-                                    result.percentage < 50 ? 'text-red-500' : 'text-blue-600'
+                                <span className={`font-bold ${result.percentage >= 80 ? 'text-green-500' :
+                                    result.percentage < 50 ? 'text-red-500' : 'text-primary'
                                     }`}>
                                     {result.percentage}%
                                 </span>

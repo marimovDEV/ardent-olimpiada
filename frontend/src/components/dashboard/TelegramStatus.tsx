@@ -34,10 +34,10 @@ const TelegramStatus = ({ status, onConnect, isLoading }: TelegramProps) => {
     }
 
     return (
-        <div className="bg-gradient-to-r from-blue-600/20 to-blue-500/10 border border-blue-500/30 rounded-xl p-4 animate-pulse-soft">
+        <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 animate-pulse-soft">
             <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                    <Send className="w-5 h-5 text-blue-400 -translate-x-0.5 translate-y-0.5" />
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Send className="w-5 h-5 text-primary -translate-x-0.5 translate-y-0.5" />
                 </div>
                 <div className="flex-1">
                     <h4 className="font-bold text-foreground text-sm">{t('dashboard.telegram.connectTitle')}</h4>
@@ -48,7 +48,7 @@ const TelegramStatus = ({ status, onConnect, isLoading }: TelegramProps) => {
                         onClick={onConnect}
                         disabled={isLoading}
                         size="sm"
-                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs h-8 shadow-lg shadow-blue-900/20"
+                        className="w-full bg-primary hover:bg-primary-dark text-background font-black text-xs h-8 shadow-gold"
                     >
                         {isLoading ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : <Send className="w-3 h-3 mr-2" />}
                         {t('dashboard.telegram.connectBtn')}

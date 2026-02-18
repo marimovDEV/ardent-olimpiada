@@ -82,7 +82,7 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
         { icon: BookOpen, title: "Darsni tugatish", xp: "+10 XP", color: "text-primary", bg: "bg-primary/10" },
         { icon: Target, title: "Testdan o'tish", xp: "+20 XP", color: "text-green-500", bg: "bg-green-500/10" },
         { icon: Trophy, title: "Olimpiada ishtiroki", xp: "+50 XP", color: "text-primary", bg: "bg-primary/20" },
-        { icon: Flame, title: "Kunlik streak", xp: "+10 XP", color: "text-orange-500", bg: "bg-orange-500/10" },
+        { icon: Flame, title: "Kunlik streak", xp: "+10 XP", color: "text-primary", bg: "bg-primary/10" },
     ];
 
     return (
@@ -137,7 +137,7 @@ const LevelProgressModal: React.FC<LevelProgressModalProps> = ({ isOpen, onClose
                                         initial={{ width: 0 }}
                                         animate={{ width: `${progress.progress_percent}%` }}
                                         transition={{ duration: 1.5, ease: "easeOut" }}
-                                        className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] rounded-full shadow-gold"
+                                        className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full shadow-gold"
                                     />
                                 </div>
 

@@ -63,7 +63,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img src="/logo.jpg" alt="Logo" className="h-8 w-auto" />
               <span className="text-2xl font-black font-cinzel tracking-wider text-primary">
-                Hogwords
+                Hogwarts
               </span>
             </Link>
             <p className="text-muted-foreground/80 text-sm leading-relaxed max-w-xs">
@@ -143,7 +143,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm text-muted-foreground/60">
-          <p className="font-medium">&copy; {new Date().getFullYear()} Hogwords. Barcha huquqlar himoyalangan.</p>
+          <p className="font-medium">&copy; {new Date().getFullYear()} Hogwarts. Barcha huquqlar himoyalangan.</p>
           <div className="flex gap-6">
             <Link to="/terms" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
             <Link to="/privacy" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>

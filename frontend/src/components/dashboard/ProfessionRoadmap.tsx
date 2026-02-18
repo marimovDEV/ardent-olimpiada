@@ -61,7 +61,7 @@ const ProfessionRoadmap: React.FC<ProfessionRoadmapProps> = ({ profession }) => 
 
     return (
         <div className="bg-card border border-border rounded-3xl overflow-hidden">
-            <div className="p-6 bg-gradient-to-br from-primary/5 to-purple-500/5 border-b border-border">
+            <div className="p-6 bg-gradient-to-br from-primary/5 to-transparent border-b border-white/5">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">

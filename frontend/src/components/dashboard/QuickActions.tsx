@@ -19,9 +19,9 @@ const QuickActions = () => {
             desc: "To'xtagan joyingizdan boshlang",
             icon: PlayCircle,
             link: "/my-courses",
-            color: "from-secondary/20 to-secondary/5",
-            borderColor: "border-secondary/20",
-            iconColor: "text-secondary"
+            color: "from-primary/10 to-transparent",
+            borderColor: "border-primary/10",
+            iconColor: "text-primary"
         },
         {
             title: "Sertifikatlarim",
@@ -54,7 +54,7 @@ const QuickActions = () => {
                                         <h3 className="text-xl font-black text-white font-cinzel tracking-tight group-hover:text-primary transition-colors">
                                             {action.title}
                                         </h3>
-                                        <p className="text-sm text-secondary font-medium italic mt-1 uppercase tracking-widest text-[10px]">
+                                        <p className="text-sm text-muted-foreground font-medium italic mt-1 uppercase tracking-widest text-[10px]">
                                             {action.desc}
                                         </p>
                                     </div>

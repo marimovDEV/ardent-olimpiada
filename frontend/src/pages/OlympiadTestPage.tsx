@@ -399,7 +399,7 @@ const OlympiadTestPage = () => {
                         <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
                             <CheckCircle className="w-5 h-5" />
                         </div>
-                        <span className="hidden sm:inline">Hogwords</span>
+                        <span className="hidden sm:inline">Hogwarts</span>
                     </div>
                     <div className="h-6 w-px bg-border hidden sm:block"></div>
                     <h2 className="font-bold text-sm sm:text-base truncate max-w-[150px] sm:max-w-xs ">{olympiad?.title}</h2>

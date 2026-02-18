@@ -18,7 +18,7 @@ export const AuthGuideSide = () => {
                         <Trophy className="w-6 h-6 text-primary" />
                     </div>
                     <span className="text-2xl font-black tracking-tight text-primary font-cinzel">
-                        Hogwords
+                        Hogwarts
                     </span>
                 </div>
 

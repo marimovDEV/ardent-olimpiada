@@ -141,17 +141,16 @@ const StudentProfileCard = () => {
     return (
         <div className="relative group perspective-1000">
             {/* Main Card Container */}
-            <div className="relative overflow-hidden rounded-[32px] p-1 transition-all duration-500 hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(59,130,246,0.2)]">
-
+            <div className="relative overflow-hidden rounded-[32px] p-1 transition-all duration-500 hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(250,204,21,0.2)]">
                 {/* Animated Border Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 opacity-20 group-hover:opacity-40 transition-opacity duration-500 blur-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary-dark to-orange-500 opacity-20 group-hover:opacity-40 transition-opacity duration-500 blur-xl"></div>
 
                 {/* Inner Glass Card */}
                 <div className="relative bg-card bg-opacity-90 backdrop-blur-2xl border border-border rounded-[28px] p-6 md:p-8 overflow-hidden">
 
                     {/* Background Blobs */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] -ml-24 -mb-24 pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-500/10 rounded-full blur-[100px] -ml-24 -mb-24 pointer-events-none"></div>
 
                     <div className="relative z-10 flex flex-col gap-6 items-center">
 
@@ -159,7 +158,7 @@ const StudentProfileCard = () => {
                         <div className="flex flex-col items-center gap-4 text-center w-full">
                             <div className="relative">
                                 {/* Rotating Ring */}
-                                <div className="absolute inset-0 rounded-full border-2 border-dashed border-blue-500/30 animate-[spin_10s_linear_infinite]" />
+                                <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/30 animate-[spin_10s_linear_infinite]" />
                                 <div className="absolute -inset-2 rounded-full border border-primary/5 animate-ping opacity-20" />
 
                                 {user.avatar ? (
@@ -171,7 +170,7 @@ const StudentProfileCard = () => {
                                         className="w-24 h-24 rounded-full object-cover border-4 border-card shadow-2xl relative z-10"
                                     />
                                 ) : (
-                                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-3xl font-black text-white border-4 border-card shadow-2xl relative z-10">
+                                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-3xl font-black text-background border-4 border-card shadow-2xl relative z-10">
                                         {initials}
                                     </div>
                                 )}
@@ -188,7 +187,7 @@ const StudentProfileCard = () => {
                                 onClick={() => setIsProgressModalOpen(true)}
                             >
                                 <h2 className="text-xl font-black text-foreground tracking-tight">{fullName}</h2>
-                                <p className="text-blue-500 font-medium text-xs flex items-center justify-center gap-1 mt-1 group-hover/xp:text-primary transition-colors">
+                                <p className="text-primary font-medium text-xs flex items-center justify-center gap-1 mt-1 group-hover/xp:text-primary transition-colors italic">
                                     <Trophy className="w-3 h-3" />
                                     {user.xp || 0} XP
                                 </p>
@@ -215,10 +214,10 @@ const StudentProfileCard = () => {
                             {/* Quick Stats Grid */}
                             <div className="grid grid-cols-2 gap-2">
                                 {[
-                                    { label: t('dashboard.profile.region'), val: user.region, icon: MapPin, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                                    { label: t('dashboard.profile.school'), val: user.school, icon: School, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                                    { label: t('dashboard.profile.grade'), val: getGradeLabel(user.grade), icon: GraduationCap, color: 'text-pink-400', bg: 'bg-pink-500/10' },
-                                    { label: t('dashboard.profile.phone'), val: user.phone, icon: Phone, color: 'text-green-400', bg: 'bg-green-500/10' },
+                                    { label: t('dashboard.profile.region'), val: user.region, icon: MapPin, color: 'text-primary', bg: 'bg-primary/10' },
+                                    { label: t('dashboard.profile.school'), val: user.school, icon: School, color: 'text-primary', bg: 'bg-primary/10' },
+                                    { label: t('dashboard.profile.grade'), val: getGradeLabel(user.grade), icon: GraduationCap, color: 'text-primary', bg: 'bg-primary/10' },
+                                    { label: t('dashboard.profile.phone'), val: user.phone, icon: Phone, color: 'text-primary', bg: 'bg-primary/10' },
                                 ].map((item, i) => (
                                     <div key={i} className="bg-muted/30 hover:bg-muted/50 transition-colors border border-border/50 rounded-xl p-2 flex flex-col justify-between h-20">
                                         <div className={`w-6 h-6 rounded-lg ${item.bg} flex items-center justify-center mb-1`}>

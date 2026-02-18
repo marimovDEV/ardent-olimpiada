@@ -74,8 +74,8 @@ const DashboardEmptyState = ({
         {
             icon: Award,
             title: t('dashboard.emptyState.benefits.certificate', 'Sertifikat oling'),
-            color: 'text-purple-500',
-            bg: 'bg-purple-500/10'
+            color: 'text-primary',
+            bg: 'bg-primary/10'
         }
     ];
 
@@ -104,13 +104,13 @@ const DashboardEmptyState = ({
                 <Button
                     size="lg"
                     onClick={() => navigate('/courses')}
-                    className="group relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all"
+                    className="group relative overflow-hidden bg-gradient-to-r from-primary to-primary-dark text-background px-8 py-6 text-lg font-black rounded-2xl shadow-gold hover:scale-105 transition-all font-cinzel"
                 >
                     <span className="relative z-10 flex items-center gap-2">
                         {t('dashboard.emptyState.cta', 'Kurslarni ko\'rish')}
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Button>
             </motion.div>
 
@@ -164,8 +164,9 @@ const DashboardEmptyState = ({
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                     </div>
                                 ) : (
-                                    <div className={`h-40 ${course.subject?.color || 'bg-blue-600'} flex items-center justify-center`}>
-                                        <BookOpen className="w-16 h-16 text-white/50" />
+                                    <div className={`h-40 ${course.subject?.color || 'bg-primary/20'} flex items-center justify-center relative overflow-hidden`}>
+                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+                                        <BookOpen className="w-16 h-16 text-primary/50 relative z-10" />
                                     </div>
                                 )}
 
@@ -247,12 +248,12 @@ const DashboardEmptyState = ({
                                 className="group p-6 bg-gradient-to-br from-card to-accent/5 border border-border rounded-2xl hover:border-primary/30 transition-all cursor-pointer"
                             >
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${prof.color || 'bg-blue-500/10 text-blue-500'}`}>
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${prof.color || 'bg-primary/10 text-primary'}`}>
                                         {prof.icon ? <DynamicIcon name={prof.icon} className="w-6 h-6" /> : <Zap className="w-6 h-6" />}
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">{prof.name}</h3>
-                                        <div className="flex items-center gap-1 text-xs text-primary font-medium">
+                                        <div className="flex items-center gap-1 text-xs text-primary font-bold italic">
                                             <span>Roadmap ko'rish</span>
                                             <ArrowRight className="w-3 h-3" />
                                         </div>

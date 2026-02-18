@@ -680,7 +680,7 @@
     },
     "ai": {
       "title": "AI Yordamchi",
-      "controlCenter": "Hogwords AI Boshqaruv Markazi",
+      "controlCenter": "Hogwarts AI Boshqaruv Markazi",
       "analyticsSubtitle": "Analitika, FAQ boshqaruvi va AI sinov maydoni",
       "newKnowledge": "Yangi bilim",
       "knowledgeBase": "Bilimlar Bazasi",
@@ -1056,9 +1056,9 @@
     "course": "Kurs"
   },
   "aiChat": {
-    "title": "Hogwords AI",
+    "title": "Hogwarts AI",
     "status": "Online • Yordamchi",
-    "greeting": "Assalomu alaykum! Men Hogwords AI yordamchiman. Sizga qanday yordam bera olaman?",
+    "greeting": "Assalomu alaykum! Men Hogwarts AI yordamchiman. Sizga qanday yordam bera olaman?",
     "quickQuestions": "Tezkor savollar:",
     "placeholder": "Savolingizni yozing...",
     "suggestions": {
@@ -1155,7 +1155,7 @@
       "help": "Yordam"
     },
     "rightSide": {
-      "title": "Hogwordsga Xush Kelibsiz",
+      "title": "Hogwartsga Xush Kelibsiz",
       "subtitle": "Bilim va g'alabalar sari yo'lingiz shu yerdan boshlanadi",
       "badge": "Ta'lim Platformasi №1",
       "loginTitle": "Xush Ko'rdik!",
@@ -1916,7 +1916,7 @@
       "qr_title": "QR-kodli Sertifikatlar",
       "qr_desc": "Yutuqlarni soxtalashtirib bo'lmaydi. Istalgan vaqtda QR-kod orqali tekshirish imkoniyati."
     },
-    "whyUs": "Nega aynan Hogwords Olimpiada?",
+    "whyUs": "Nega aynan Hogwarts Olimpiada?",
     "subtitle": "Bizning maqsadimiz - O'zbekiston yoshlarini xalqaro darajadagi bilim bilan ta'minlash.",
     "problem": {
       "badge": "Muammo",
@@ -1940,12 +1940,12 @@
   "guide": {
     "hero": {
       "badge": "Platforma Qo'llanmasi",
-      "title": "Hogwords platformasidan qanday foydalaniladi?",
+      "title": "Hogwarts platformasidan qanday foydalaniladi?",
       "subtitle": "2–3 daqiqada platformani to‘liq tushunib oling va o‘qishni boshlang 🎓"
     },
     "platform": {
-      "title": "Hogwords nima?",
-      "description": "Hogwords - bu zamonaviy ta'lim platformasi. Bu yerda siz professional kurslarni o'rganishingiz, olimpiadalarda qatnashishingiz va o'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.",
+      "title": "Hogwarts nima?",
+      "description": "Hogwarts - bu zamonaviy ta'lim platformasi. Bu yerda siz professional kurslarni o'rganishingiz, olimpiadalarda qatnashishingiz va o'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.",
       "courses": "Kurslar",
       "coursesDesc": "Professional ustozlardan video darslar, amaliy mashg'ulotlar va testlar",
       "olympiads": "Olimpiadalar",
@@ -2077,7 +2077,7 @@
       "email": "Email yuborish"
     },
     "nav": {
-      "overview": "Hogwords nima?",
+      "overview": "Hogwarts nima?",
       "gettingStarted": "Boshlash",
       "courses": "Kurslar",
       "olympiads": "Olimpiadalar",
@@ -2093,7 +2093,7 @@
     }
   },
   "auth_guide": {
-    "title": "Hogwords — Bilim va Olimpiadalar Platformasi",
+    "title": "Hogwarts — Bilim va Olimpiadalar Platformasi",
     "subtitle": "Qanday ishlaydi? Juda oddiy 👇",
     "step1": "Kiring yoki ro‘yxatdan o‘ting",
     "step2": "Kurs yoki olimpiadani tanlang",

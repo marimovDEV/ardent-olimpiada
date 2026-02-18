@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* HOGWORDS Unified Color System - Premium Midnight Magic */
+    /* HOGWARTS Unified Color System - Premium Midnight Magic */
     --background: 225 40% 7%;
     /* #0B0F1A */
     --background-secondary: 225 40% 10%;
@@ -67,8 +67,8 @@
     --warning-foreground: 210 40% 98%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, #7C3AED 0%, #22D3EE 100%);
-    --gradient-purple: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
+    --gradient-primary: linear-gradient(135deg, #FACC15 0%, #CA8A04 100%);
+    --gradient-purple: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
     --gradient-gold: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
     --gradient-dark: linear-gradient(135deg, #0B0F1A 0%, #111827 100%);
 

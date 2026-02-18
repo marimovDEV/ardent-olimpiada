@@ -127,7 +127,7 @@ const HeroSection = () => {
                     <Trophy className="w-12 h-12 text-primary" />
                   </div>
                   <div>
-                    <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWORDS PRESTIGE</div>
+                    <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWARTS PRESTIGE</div>
                     <div className="text-2xl font-black text-white font-cinzel">ELITE MEMBER</div>
                   </div>
                   <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">

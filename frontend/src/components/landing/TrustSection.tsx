@@ -47,7 +47,7 @@ const TrustSection = () => {
                         viewport={{ once: true }}
                     >
                         <Badge variant="outline" className="px-6 py-1.5 text-xs md:text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
-                            Nega HOGWORDS?
+                            Nega HOGWARTS?
                         </Badge>
                     </motion.div>
                     <h2 className="text-3xl md:text-6xl font-black text-white font-cinzel tracking-tight leading-tight px-4">

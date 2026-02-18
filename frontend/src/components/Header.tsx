@@ -92,7 +92,7 @@ const Header = () => {
               <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <span className="text-xl md:text-2xl font-black font-cinzel tracking-wider text-primary">
-              HOGWORDS
+              HOGWARTS
             </span>
           </a>
 
@@ -111,6 +111,9 @@ const Header = () => {
             </NavLink>
             <NavLink to="/all-teachers" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.mentors')}
+            </NavLink>
+            <NavLink to="/guide" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
+              {t('nav.guides')}
             </NavLink>
           </nav>
 
@@ -199,7 +202,7 @@ const Header = () => {
                       <SheetTitle className="text-left">
                         <div className="flex items-center gap-2">
                           <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
-                          <span className="text-xl font-black font-cinzel tracking-wider text-primary">Hogwords</span>
+                          <span className="text-xl font-black font-cinzel tracking-wider text-primary">HOGWARTS</span>
                         </div>
                       </SheetTitle>
                     </SheetHeader>
@@ -261,6 +264,17 @@ const Header = () => {
                       >
                         <User className="w-5 h-5" />
                         <span className="font-bold tracking-wide">{t('nav.mentors')}</span>
+                      </NavLink>
+                      <NavLink
+                        to="/guide"
+                        className={({ isActive }) => cn(
+                          "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
+                          isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <BookOpen className="w-5 h-5" />
+                        <span className="font-bold tracking-wide">{t('nav.guides')}</span>
                       </NavLink>
                     </nav>
                   </ScrollArea>

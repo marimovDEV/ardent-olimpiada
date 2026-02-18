@@ -20,11 +20,11 @@ const StreakCalendar = ({ calendar }: { calendar: DayStatus[] }) => {
 
                             <div className={`
                                 w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all duration-300 border
-                                ${day.status === 'COMPLETED' ? 'bg-orange-500/20 border-orange-500/40 text-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.3)] scale-110' : ''}
+                                ${day.status === 'COMPLETED' ? 'bg-primary/20 border-primary/40 text-primary shadow-gold scale-110' : ''}
                                 ${day.status === 'MISSED' ? 'bg-red-500/10 border-red-500/20 text-muted-foreground opacity-50' : ''}
                                 ${day.status === 'PENDING' ? 'bg-muted border-muted-foreground/20 text-muted-foreground border-dashed' : ''}
                             `}>
-                                {day.status === 'COMPLETED' && <Flame className="w-4 h-4 md:w-5 md:h-5 fill-orange-500" />}
+                                {day.status === 'COMPLETED' && <Flame className="w-4 h-4 md:w-5 md:h-5 fill-primary" />}
                                 {day.status === 'MISSED' && <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-muted-foreground" />}
                                 {day.status === 'PENDING' && <Circle className="w-3 h-3 md:w-4 md:h-4" />}
                             </div>

@@ -105,9 +105,9 @@ const GamificationStats = () => {
 
     if (isLoading) {
         return (
-            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-[#111827] to-[#0B0F1A] rounded-3xl p-6 text-white shadow-gold relative overflow-hidden border border-white/5">
                 <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-white/70" />
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
             </div>
         );
@@ -123,7 +123,7 @@ const GamificationStats = () => {
     const progressPercent = Math.min(100, (xpInCurrentLevel / xpNeededForLevel) * 100);
 
     return (
-        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#111827] to-[#0B0F1A] rounded-3xl p-6 text-white shadow-gold relative overflow-hidden border border-white/5">
             {/* Decorative Background */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-8 -mt-8 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -ml-6 -mb-6 pointer-events-none" />
@@ -133,15 +133,15 @@ const GamificationStats = () => {
                     <Trophy className="w-8 h-8 text-yellow-300" />
                 </div>
                 <div>
-                    <div className="text-indigo-200 text-sm font-medium uppercase tracking-wider mb-1">Mening darajam</div>
-                    <h2 className="text-2xl font-black tracking-tight">Level {level} - {getLevelTitle(level)}</h2>
+                    <div className="text-primary/60 text-sm font-black uppercase tracking-widest mb-1 italic">Mening darajam</div>
+                    <h2 className="text-2xl font-black tracking-tight font-cinzel">Level {level} - {getLevelTitle(level)}</h2>
                 </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="mb-2 flex justify-between text-xs font-bold text-indigo-100">
+            <div className="mb-2 flex justify-between text-[10px] font-black text-primary uppercase tracking-widest">
                 <span>{xp.toLocaleString()} XP</span>
-                <span>Keyingi level: {nextLevelXp.toLocaleString()} XP</span>
+                <span>Next: {nextLevelXp.toLocaleString()} XP</span>
             </div>
             <div className="h-3 bg-black/20 rounded-full overflow-hidden mb-4 border border-white/5">
                 <div
@@ -158,7 +158,7 @@ const GamificationStats = () => {
                     <span className="font-bold">{rank}</span>
                 </div>
                 <div className="bg-white/10 rounded-xl p-2 flex items-center gap-2 border border-white/5">
-                    <Zap className="w-4 h-4 text-blue-300" />
+                    <Zap className="w-4 h-4 text-primary" />
                     <span className="font-bold">{streak > 0 ? `${streak} kun strike` : 'Yangi'}</span>
                 </div>
             </div>

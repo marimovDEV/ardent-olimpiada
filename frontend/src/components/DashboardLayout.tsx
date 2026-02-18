@@ -82,8 +82,8 @@ const DashboardLayout = () => {
     return (
         <div className="min-h-screen bg-background flex overflow-hidden selection:bg-primary/30 selection:text-white">
             {/* Background Decorations */}
-            <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full -ml-[250px] -mt-[250px] pointer-events-none" />
-            <div className="fixed bottom-0 right-0 w-[600px] h-[600px] bg-secondary/5 blur-[120px] rounded-full -mr-[300px] -mb-[300px] pointer-events-none" />
+            <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-primary/3 blur-[120px] rounded-full -ml-[250px] -mt-[250px] pointer-events-none" />
+            <div className="fixed bottom-0 right-0 w-[600px] h-[600px] bg-primary/2 blur-[120px] rounded-full -mr-[300px] -mb-[300px] pointer-events-none" />
 
             {/* Mobile Overlay */}
             {isMobileMenuOpen && (
@@ -99,13 +99,13 @@ const DashboardLayout = () => {
             >
                 <div className="p-8 pb-4">
                     <Link to="/" className="flex items-center gap-3 mb-8 group">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary p-0.5 shadow-purple group-hover:scale-110 transition-all duration-500 hover:rotate-6">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary-dark p-0.5 shadow-gold group-hover:scale-110 transition-all duration-500 hover:rotate-6">
                             <div className="w-full h-full bg-[#0B0F1A] rounded-[14px] flex items-center justify-center overflow-hidden">
                                 <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-xl font-black font-cinzel text-white tracking-tighter group-hover:text-primary transition-colors leading-none">HOGWORDS</span>
+                            <span className="text-xl font-black font-cinzel text-white tracking-tighter group-hover:text-primary transition-colors leading-none">HOGWARTS</span>
                             <span className="text-[10px] font-bold text-[#FACC15] uppercase tracking-[0.2em] mt-1">Academy</span>
                         </div>
                     </Link>
@@ -139,7 +139,7 @@ const DashboardLayout = () => {
                             className="flex-1 justify-center gap-2 rounded-xl bg-white/5 border-white/5 hover:bg-white/10 text-white font-bold h-10"
                             onClick={toggleLanguage}
                         >
-                            <Globe className="w-4 h-4 text-secondary" />
+                            <Globe className="w-4 h-4 text-primary" />
                             <span className="text-xs uppercase">{i18n.language === 'uz' ? 'UZ' : 'RU'}</span>
                         </Button>
                         <Button

@@ -149,14 +149,13 @@ const Dashboard = () => {
               <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-none font-cinzel">
                 👋 Salom, <span className="gold-glow italic">{data.hero?.user_name || 'Hogwordian'}</span>
               </h1>
-              <p className="text-xl md:text-2xl text-secondary max-w-2xl font-medium italic font-cinzel opacity-80">
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl font-medium italic font-cinzel opacity-80">
                 {t('dashboard.hero.subtitle', "Bugun sizni katta yutuqlar va yangi bilimlar kutmoqda. Tayyormisiz?")}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-12 pt-4">
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] opacity-60">Balance</span>
                 <div className="flex items-center gap-3">
                   <span className="text-4xl font-black text-white italic font-cinzel">150,000</span>
                   <span className="text-sm font-black text-primary uppercase tracking-tighter">AC</span>
@@ -198,7 +197,7 @@ const Dashboard = () => {
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-cinzel">Next Level Progress</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-4xl font-black text-white italic font-cinzel leading-none">{data.level.xp_current}</span>
-                <span className="text-sm font-black text-secondary uppercase opacity-60">/ 500 XP</span>
+                <span className="text-sm font-black text-muted-foreground uppercase opacity-60">/ 500 XP</span>
               </div>
             </div>
             <div className="text-right space-y-1">
@@ -243,7 +242,7 @@ const Dashboard = () => {
           value="#12"
           icon={Crown}
           trend="🏆 Top 5%"
-          color="cyan"
+          color="primary"
         />
         <DashboardStatCard
           label={t('dashboard.stats.certificates', 'CERTIFICATES')}
@@ -272,7 +271,7 @@ const Dashboard = () => {
                   <BookOpen className="w-10 h-10 text-primary" />
                   O'RGANISHNI DAVOM ETTIRING
                 </h2>
-                <p className="text-[10px] text-secondary font-black uppercase tracking-[0.3em] opacity-60">Never stop growing</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-60">Never stop growing</p>
               </div>
               <Link to="/my-courses">
                 <Button variant="ghost" className="h-12 px-6 rounded-xl border border-white/5 hover:bg-white/5 text-secondary font-black uppercase tracking-widest text-[10px] transition-all">
