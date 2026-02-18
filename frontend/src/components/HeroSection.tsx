@@ -40,30 +40,30 @@ const HeroSection = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest"
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold tracking-wider"
               >
                 <Trophy className="w-4 h-4" />
-                {t('hero.badge', 'G‘alaba Tasodif Emas')}
+                {t('hero.badge', 'G‘alaba tasodif emas')}
               </motion.div>
 
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-5xl md:text-8xl font-black font-cinzel leading-[1.1] tracking-tighter text-white"
+                className="text-4xl md:text-7xl lg:text-8xl font-black font-cinzel leading-[1.2] tracking-tight text-white"
               >
                 Kelajagingizni <br />
-                <span className="text-primary italic gold-glow">Bugun</span> <br className="md:hidden" />
-                Boshlang
+                <span className="text-primary italic gold-glow px-1">bugun</span> <br className="md:hidden" />
+                boshlang
               </motion.h1>
 
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-lg md:text-2xl font-medium italic text-secondary leading-relaxed font-cinzel max-w-xl"
+                className="text-base md:text-xl lg:text-2xl font-medium text-secondary/90 leading-relaxed font-cinzel max-w-xl"
               >
-                Professional tayyorgarlik + Shaffof olimpiadalar + Real mukofotlar
+                Professional tayyorgarlik • Shaffof olimpiadalar • Real mukofotlar
               </motion.p>
 
               {/* Mobile Stats Grid - 2x2 */}
@@ -74,20 +74,20 @@ const HeroSection = () => {
                 className="grid grid-cols-2 gap-4 md:flex md:flex-wrap md:gap-6 pt-2"
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-black text-primary">10,000+</div>
-                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.students', 'O‘quvchi')}</div>
+                  <div className="text-xl md:text-sm font-bold text-primary">10,000+</div>
+                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">o'quvchi</div>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-black text-primary">50+</div>
-                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.olympiads', 'Olimpiada')}</div>
+                  <div className="text-xl md:text-sm font-bold text-primary">50+</div>
+                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">olimpiada</div>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-black text-primary">4.9</div>
-                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.rating', 'Baho')}</div>
+                  <div className="text-xl md:text-sm font-bold text-primary">4.9</div>
+                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">baho</div>
                 </div>
                 <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-black text-primary">100%</div>
-                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.transparency', 'Shaffoflik')}</div>
+                  <div className="text-xl md:text-sm font-bold text-primary">100%</div>
+                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">shaffoflik</div>
                 </div>
               </motion.div>
             </div>
@@ -98,14 +98,14 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4 pt-4"
             >
-              <Button size="lg" className="h-16 md:h-20 px-10 text-lg md:text-xl rounded-2xl bg-primary text-background font-black shadow-gold hover:-translate-y-1 transition-all active:scale-95 w-full sm:w-auto" asChild>
+              <Button size="lg" className="h-14 md:h-16 px-10 text-base md:text-lg rounded-xl bg-primary text-background font-bold shadow-lg hover:-translate-y-1 transition-all active:scale-95 w-full sm:w-auto" asChild>
                 <Link to="/all-olympiads">
-                  Olimpiadaga Qatnashish
+                  Olimpiadada qatnashish
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-16 md:h-20 px-10 text-lg md:text-xl rounded-2xl border-white/10 text-primary font-black hover:bg-white/5 transition-all active:scale-95 w-full sm:w-auto" asChild>
+              <Button size="lg" variant="outline" className="h-14 md:h-16 px-10 text-base md:text-lg rounded-xl border-white/10 text-primary font-bold hover:bg-white/5 transition-all active:scale-95 w-full sm:w-auto" asChild>
                 <Link to="/all-courses">
-                  Tayyorgarlikni Boshlash
+                  Tayyorgarlikni boshlash
                 </Link>
               </Button>
             </motion.div>

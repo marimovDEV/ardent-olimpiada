@@ -83,23 +83,23 @@ const TeachersSection = () => {
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                         >
-                            <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
+                            <Badge variant="outline" className="px-6 py-1.5 text-[10px] md:text-xs border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-bold tracking-wider">
                                 <Sparkles className="w-4 h-4 mr-2" />
-                                {t('teachers.badge', "KUCHLI JAMOA")}
+                                {t('teachers.badge', "Kuchli jamoa")}
                             </Badge>
                         </motion.div>
-                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none font-cinzel">
-                            {t('teachers.title')} <span className="text-primary italic gold-glow">{t('teachers.mentors', 'Mentorlar')}</span>
+                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight font-cinzel">
+                            {t('teachers.title')} <span className="text-primary italic gold-glow">{t('teachers.mentors', 'mentorlar')}</span>
                         </h2>
-                        <p className="text-xl text-[#94A3B8] max-w-2xl font-medium italic font-cinzel leading-relaxed">
-                            {t('teachers.description', "O'z sohasining haqiqiy professionallaridan bilim oling va maqsadlaringizga tezroq erishing.")}
+                        <p className="text-lg text-[#94A3B8] max-w-2xl font-medium text-secondary/80 font-cinzel leading-relaxed">
+                            {t('teachers.description', "O'z sohasining haqiqiy professionallaridan bilim oling.")}
                         </p>
                     </div>
 
                     <Link to="/teachers" className="shrink-0">
-                        <Button className="h-16 px-10 rounded-2xl bg-white/5 border border-white/10 text-white font-black hover:border-primary/50 hover:bg-white/10 transition-all group active:scale-95 shadow-lg">
+                        <Button className="h-12 md:h-14 px-8 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:border-primary/50 hover:bg-white/10 transition-all group active:scale-95 shadow-sm">
                             Barcha mentorlar
-                            <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
                     </Link>
                 </div>
@@ -179,8 +179,8 @@ const TeachersSection = () => {
                                                     <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 border border-green-500/20">
                                                         <CheckCircle className="w-4 h-4" />
                                                     </div>
-                                                    <span className="text-xs font-black text-white uppercase tracking-widest">
-                                                        {teacher.experience} {t('teachers.experience_suffix', 'YIL TAJRIBA')}
+                                                    <span className="text-[10px] font-bold text-white tracking-wider">
+                                                        {teacher.experience} {t('teachers.experience_suffix', 'yil tajriba')}
                                                     </span>
                                                 </div>
                                                 <Link to={`/teacher-profile/${teacher.id}`}>

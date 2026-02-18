@@ -108,7 +108,7 @@ const PrideCarousel = () => {
     const activeOlympiad = olympiads[index] || mockOlympiads[0];
 
     return (
-        <section className="relative py-24 bg-[#0B0F1A] overflow-hidden min-h-[800px] flex items-center">
+        <section className="relative py-16 md:py-24 bg-[#0B0F1A] overflow-hidden min-h-[700px] flex items-center">
             {/* Parallax Background Effect */}
             <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20" />
@@ -180,7 +180,7 @@ const PrideCarousel = () => {
                     </motion.div>
 
                     {/* Right: Podium / Top 3 */}
-                    <div className="grid grid-cols-1 gap-6">
+                    <div className="grid grid-cols-1 gap-4 md:gap-6">
                         {activeOlympiad.winners.slice(0, 3).map((winner, i) => {
                             const medal = getMedalStyle(winner.rank, t);
                             const isFirst = winner.rank === 1;
@@ -190,20 +190,20 @@ const PrideCarousel = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className={`group relative bg-[#111827] rounded-[1.5rem] md:rounded-[2rem] border border-white/5 p-4 md:p-6 flex items-center gap-4 md:gap-6 transition-all duration-300 hover:border-primary/40 ${isFirst ? 'scale-105 md:translate-x-6 border-primary/30 shadow-2xl z-10' : 'opacity-80'}`}
+                                    className={`group relative bg-[#111827] rounded-[1rem] md:rounded-[1.5rem] border border-white/5 p-4 md:p-6 flex items-center gap-4 md:gap-6 transition-all duration-300 hover:border-primary/40 ${isFirst ? 'scale-105 md:translate-x-4 border-primary/30 shadow-2xl z-10' : 'opacity-80'}`}
                                 >
-                                    <div className={`w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl ${medal.bg} flex items-center justify-center text-2xl md:text-3xl shadow-xl flex-shrink-0 group-hover:scale-105 transition-transform`}>
+                                    <div className={`w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl ${medal.bg} flex items-center justify-center text-xl md:text-3xl shadow-xl flex-shrink-0 group-hover:scale-105 transition-transform`}>
                                         {medal.icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`text-xl font-black text-white truncate tracking-tight ${isFirst ? 'text-2xl' : ''}`}>{winner.student_name}</div>
-                                        <div className="text-[10px] font-black text-secondary tracking-widest uppercase mt-1">
+                                        <div className={`text-lg md:text-xl font-bold text-white truncate tracking-tight ${isFirst ? 'text-xl md:text-2xl' : ''}`}>{winner.student_name}</div>
+                                        <div className="text-[10px] font-bold text-secondary/60 tracking-widest uppercase mt-1">
                                             {winner.region} • <span className="text-primary">{winner.score} ball</span>
                                         </div>
                                     </div>
                                     {isFirst && (
                                         <div className="absolute -top-3 -right-3">
-                                            <Badge className="bg-primary text-background font-black rounded-full h-8 px-4 shadow-gold animate-pulse-soft">
+                                            <Badge className="bg-primary text-background font-bold rounded-full h-8 px-4 shadow-gold">
                                                 CHAMPION
                                             </Badge>
                                         </div>

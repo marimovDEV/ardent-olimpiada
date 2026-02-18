@@ -48,22 +48,22 @@ const Index = () => {
 
       <main className="relative">
         <Suspense fallback={<SectionSkeleton />}>
-          {/* 3. OlympiadSection (Luxury Showcase with Countdown) - MOVED UP */}
-          <OlympiadSection />
-
-          {/* 4. Winners Wall (PrideCarousel) - MOVED UP */}
-          <PrideCarousel />
-
-          {/* 5. Deep Trust (Nega HOGWORDS?) */}
-          <TrustSection />
-
-          {/* 6. Subjects Interactive Grid / Carousel */}
+          {/* 3. Subjects Interactive Grid / Carousel */}
           <SubjectsSection />
 
-          {/* 7. TeachersSection (Elite Mentors) */}
+          {/* 4. Deep Trust (Nega HOGWORDS?) - Carousel */}
+          <TrustSection />
+
+          {/* 5. OlympiadSection (Luxury Showcase with Countdown) */}
+          <OlympiadSection />
+
+          {/* 6. Winners Wall (PrideCarousel) */}
+          <PrideCarousel />
+
+          {/* 7. TeachersSection (Elite Mentors) - Carousel */}
           <TeachersSection />
 
-          {/* 8. ProfessionsCarousel */}
+          {/* 8. ProfessionsCarousel - Niche specialized paths */}
           <ProfessionsCarousel />
 
           {/* 9. LeadForm (Free Consultation) */}

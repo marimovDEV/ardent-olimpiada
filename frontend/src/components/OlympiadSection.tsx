@@ -42,7 +42,7 @@ const CountdownTimer = () => {
               {timeLeft[unit as keyof typeof timeLeft].toString().padStart(2, '0')}
             </span>
           </div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-[#64748B] mt-2">
+          <span className="text-[10px] font-bold tracking-wider text-[#64748B] mt-2">
             {t(`olympiadsSection.${unit}`, unit)}
           </span>
         </div>
@@ -58,8 +58,8 @@ const OlympiadCard = memo(({ olympiad, t }: { olympiad: any; t: any }) => {
     <div className="group relative h-full bg-[#111827] rounded-[2.5rem] border border-white/5 overflow-hidden transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-2xl flex flex-col">
       {/* Featured Badge */}
       <div className="absolute top-6 right-6 z-20">
-        <Badge className="bg-primary text-background font-black px-4 py-1.5 rounded-full shadow-lg">
-          {olympiad.featured ? "PREMIUM" : "HOT"}
+        <Badge className="bg-primary text-background font-bold px-4 py-1.5 rounded-full shadow-lg">
+          {olympiad.featured ? "Premium" : "Hot"}
         </Badge>
       </div>
 
@@ -76,10 +76,10 @@ const OlympiadCard = memo(({ olympiad, t }: { olympiad: any; t: any }) => {
       {/* Details */}
       <div className="p-8 flex-1 flex flex-col">
         <div className="flex items-center gap-2 mb-4">
-          <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-black uppercase tracking-widest px-3">
+          <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 font-bold tracking-wider px-3">
             {olympiad.subject}
           </Badge>
-          <span className="text-[10px] font-black text-white/40 uppercase tracking-widest font-cinzel">
+          <span className="text-[10px] font-bold text-white/40 tracking-wider font-cinzel">
             {olympiad.level}
           </span>
         </div>
@@ -160,24 +160,24 @@ const OlympiadSection = () => {
   if (!isLoading && upcomingOlympiads.length === 0) return null;
 
   return (
-    <section id="olympiad" className="py-24 relative bg-[#0B0F1A] overflow-hidden">
+    <section id="olympiad" className="py-16 md:py-24 relative bg-[#0B0F1A] overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         {/* Urgency Section */}
-        <div className="text-center mb-20 space-y-4">
+        <div className="text-center mb-10 md:mb-16 space-y-4">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            className="text-primary font-black uppercase tracking-[0.3em] text-[10px]"
+            className="text-primary font-bold tracking-widest text-[10px]"
           >
-            Keyingi Respublika Olimpiadasiga:
+            Keyingi respublika olimpiadasiga:
           </motion.div>
           <CountdownTimer />
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-black text-white font-cinzel pt-6"
+            className="text-3xl md:text-5xl font-black text-white font-cinzel pt-6"
           >
-            Nufuzli <span className="text-primary italic">Olimpiadalar</span>
+            Nufuzli <span className="text-primary italic">olimpiadalar</span>
           </motion.h2>
         </div>
 
