@@ -48,7 +48,7 @@ const TrustSection = () => {
                     </h2>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="flex flex-col md:grid md:grid-cols-3 gap-6 md:gap-8">
                     {features.map((feature, idx) => (
                         <motion.div
                             key={idx}
@@ -56,23 +56,23 @@ const TrustSection = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
                             viewport={{ once: true }}
-                            className="p-8 rounded-[2.5rem] bg-[#111827] border border-white/5 hover:border-primary/20 transition-all duration-300 group"
+                            className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-[#111827] border border-white/5 hover:border-primary/20 transition-all duration-300 group flex items-start md:flex-col gap-6 md:gap-0"
                         >
-                            <div className={`w-16 h-16 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                                <feature.icon className={`w-8 h-8 ${feature.color}`} />
+                            <div className={`w-14 h-14 md:w-16 md:h-16 shrink-0 rounded-2xl ${feature.bg} flex items-center justify-center md:mb-6 group-hover:scale-110 transition-transform`}>
+                                <feature.icon className={`w-7 h-7 md:w-8 md:h-8 ${feature.color}`} />
                             </div>
-                            <h3 className="text-2xl font-black text-white mb-4 font-cinzel">{feature.title}</h3>
-                            <p className="text-secondary font-medium leading-relaxed">
-                                {feature.description}
-                            </p>
+                            <div>
+                                <h3 className="text-xl md:text-2xl font-black text-white mb-2 md:mb-4 font-cinzel">{feature.title}</h3>
+                                <p className="text-secondary text-sm md:text-base font-medium leading-relaxed">
+                                    {feature.description}
+                                </p>
 
-                            <ul className="mt-8 space-y-3">
-                                {[1, 2].map((_, i) => (
-                                    <li key={i} className="flex items-center gap-2 text-xs font-bold text-white/40">
-                                        <CheckCircle2 className="w-4 h-4 text-primary" /> Verified System
-                                    </li>
-                                ))}
-                            </ul>
+                                <div className="mt-4 md:mt-8 flex flex-wrap gap-3">
+                                    <div className="flex items-center gap-1.5 text-[10px] md:text-xs font-bold text-white/40">
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-primary" /> Verified System
+                                    </div>
+                                </div>
+                            </div>
                         </motion.div>
                     ))}
                 </div>

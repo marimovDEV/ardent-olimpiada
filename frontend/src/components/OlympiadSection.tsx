@@ -34,9 +34,9 @@ const CountdownTimer = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center gap-3 mt-4">
+    <div className="grid grid-cols-2 md:flex items-center justify-center gap-4 md:gap-3 mt-4 max-w-[320px] md:max-w-none mx-auto">
       {['days', 'hours', 'minutes', 'seconds'].map((unit, idx) => (
-        <div key={unit} className="flex flex-col items-center">
+        <div key={unit} className="flex flex-col items-center p-3 md:p-0 bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none rounded-2xl md:rounded-none">
           <div className="w-16 h-16 md:w-20 md:h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center shadow-xl backdrop-blur-sm">
             <span className="text-2xl md:text-3xl font-black text-primary">
               {timeLeft[unit as keyof typeof timeLeft].toString().padStart(2, '0')}
@@ -198,7 +198,7 @@ const OlympiadSection = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="flex justify-center gap-4">
+            <div className="hidden md:flex justify-center gap-4">
               <CarouselPrevious className="static translate-y-0 h-12 w-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-primary hover:text-background" />
               <CarouselNext className="static translate-y-0 h-12 w-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-primary hover:text-background" />
             </div>

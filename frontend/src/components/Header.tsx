@@ -170,138 +170,168 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button with Sheet */}
-          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden rounded-full"
-              >
-                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[350px]">
-              <SheetHeader>
-                <SheetTitle className="text-left">
-                  <div className="flex items-center gap-2">
-                    <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
-                    <span className="text-xl font-black font-cinzel tracking-wider text-primary">Hogwords</span>
-                  </div>
-                </SheetTitle>
-              </SheetHeader>
-
-              <nav className="flex flex-col gap-1 mt-6">
-                <Link
-                  to="/"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Globe className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{t('nav.home')}</span>
-                </Link>
-                <Link
-                  to="/all-olympiads"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Trophy className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{t('nav.olympiads')}</span>
-                </Link>
-                <Link
-                  to="/all-courses"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <BookOpen className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{t('nav.courses')}</span>
-                </Link>
-                <Link
-                  to="/guide"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <BookOpen className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{t('nav.guides')}</span>
-                </Link>
-                <Link
-                  to="/winners"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Trophy className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{t('nav.ranking')}</span>
-                </Link>
-                <Link
-                  to="/all-teachers"
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <User className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{t('nav.mentors')}</span>
-                </Link>
-              </nav>
-
-              {/* Language & Theme */}
-              <div className="flex items-center justify-between px-4 py-4 mt-4 border-t border-border">
-                <div className="flex gap-2">
-                  <Button
-                    variant={i18n.language === 'uz' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => changeLanguage('uz')}
-                    className="min-h-10"
-                  >
-                    🇺🇿 UZ
-                  </Button>
-                  <Button
-                    variant={i18n.language === 'ru' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => changeLanguage('ru')}
-                    className="min-h-10"
-                  >
-                    🇷🇺 RU
-                  </Button>
-                </div>
-                <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full min-h-10 min-w-10">
-                  <Sun className="h-5 w-5 dark:hidden" />
-                  <Moon className="h-5 w-5 hidden dark:block" />
+          {/* Mobile Actions - Simplified */}
+          <div className="flex md:hidden items-center gap-2">
+            {!isLoggedIn && (
+              <Link to="/auth/register">
+                <Button variant="default" size="sm" className="h-9 px-4 text-xs font-black shadow-gold rounded-xl">
+                  {t('nav.register')}
                 </Button>
-              </div>
+              </Link>
+            )}
 
-              {/* Auth Buttons */}
-              <div className="flex flex-col gap-3 mt-4 px-4">
-                {isLoggedIn ? (
-                  <>
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="hero" className="w-full min-h-12">
-                        <User className="w-5 h-5 mr-2" />
-                        {t('nav.dashboard', 'Dashboard')}
-                      </Button>
-                    </Link>
-                    <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="outline" className="w-full min-h-12">
-                        {t('nav.profile', 'Profil')}
-                      </Button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="outline" className="w-full min-h-12 font-bold">
-                        <User className="w-5 h-5 mr-2" />
-                        {t('nav.login')}
-                      </Button>
-                    </Link>
-                    <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="default" className="w-full min-h-12 font-bold shadow-gold">
-                        {t('nav.register')}
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+            <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full w-10 h-10 hover:bg-white/5"
+                >
+                  <Menu className="w-5 h-5 text-primary" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:w-[350px] bg-[#0B0F1A] border-white/5 p-0">
+                <div className="flex flex-col h-full">
+                  <div className="p-6 border-b border-white/5">
+                    <SheetHeader>
+                      <SheetTitle className="text-left">
+                        <div className="flex items-center gap-2">
+                          <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
+                          <span className="text-xl font-black font-cinzel tracking-wider text-primary">Hogwords</span>
+                        </div>
+                      </SheetTitle>
+                    </SheetHeader>
+                  </div>
+
+                  <ScrollArea className="flex-1 px-4 py-6">
+                    <nav className="flex flex-col gap-2">
+                      <NavLink
+                        to="/"
+                        className={({ isActive }) => cn(
+                          "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
+                          isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Globe className="w-5 h-5" />
+                        <span className="font-bold tracking-wide">{t('nav.home')}</span>
+                      </NavLink>
+                      <NavLink
+                        to="/all-olympiads"
+                        className={({ isActive }) => cn(
+                          "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
+                          isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Trophy className="w-5 h-5" />
+                        <span className="font-bold tracking-wide">{t('nav.olympiads')}</span>
+                      </NavLink>
+                      <NavLink
+                        to="/all-courses"
+                        className={({ isActive }) => cn(
+                          "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
+                          isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <BookOpen className="w-5 h-5" />
+                        <span className="font-bold tracking-wide">{t('nav.courses')}</span>
+                      </NavLink>
+                      <NavLink
+                        to="/winners"
+                        className={({ isActive }) => cn(
+                          "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
+                          isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Zap className="w-5 h-5" />
+                        <span className="font-bold tracking-wide">{t('nav.ranking')}</span>
+                      </NavLink>
+                      <NavLink
+                        to="/all-teachers"
+                        className={({ isActive }) => cn(
+                          "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
+                          isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
+                        )}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User className="w-5 h-5" />
+                        <span className="font-bold tracking-wide">{t('nav.mentors')}</span>
+                      </NavLink>
+                    </nav>
+                  </ScrollArea>
+
+                  <div className="p-6 border-t border-white/5 bg-white/[0.02]">
+                    <div className="flex flex-col gap-4">
+                      {/* Language & Theme Selectors */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-2">
+                          <Button
+                            variant={i18n.language === 'uz' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => changeLanguage('uz')}
+                            className="h-10 rounded-xl px-4"
+                          >
+                            🇺🇿 UZ
+                          </Button>
+                          <Button
+                            variant={i18n.language === 'ru' ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => changeLanguage('ru')}
+                            className="h-10 rounded-xl px-4"
+                          >
+                            🇷🇺 RU
+                          </Button>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={toggleTheme}
+                          className="rounded-xl w-10 h-10 border-white/10"
+                        >
+                          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                        </Button>
+                      </div>
+
+                      {/* User Actions */}
+                      <div className="grid grid-cols-1 gap-3 pt-2">
+                        {isLoggedIn ? (
+                          <>
+                            <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                              <Button className="w-full h-12 rounded-2xl bg-primary text-background font-black shadow-gold">
+                                <Zap className="w-4 h-4 mr-2" />
+                                {t('nav.dashboard')}
+                              </Button>
+                            </Link>
+                            <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                              <Button variant="outline" className="w-full h-12 rounded-2xl border-white/10 font-bold">
+                                {t('nav.profile', 'Profil')}
+                              </Button>
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
+                              <Button variant="outline" className="w-full h-12 rounded-2xl border-white/10 font-bold">
+                                {t('nav.login')}
+                              </Button>
+                            </Link>
+                            <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
+                              <Button className="w-full h-12 rounded-2xl bg-primary text-background font-black shadow-gold">
+                                {t('nav.register')}
+                              </Button>
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>

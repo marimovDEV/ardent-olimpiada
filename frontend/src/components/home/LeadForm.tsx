@@ -89,43 +89,43 @@ const LeadForm = () => {
                         {/* Gold Frame Effect */}
                         <div className="absolute -inset-1 bg-gradient-to-tr from-primary/30 via-transparent to-primary/30 blur-sm rounded-[2.5rem]" />
 
-                        <div className="relative bg-[#111827] rounded-[2.5rem] border border-white/10 p-10 md:p-12 shadow-2xl">
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                                <h3 className="text-2xl font-black text-white font-cinzel mb-8 text-center">{t('leadForm.form.title')}</h3>
+                        <div className="relative bg-[#111827] rounded-[2rem] md:rounded-[2.5rem] border border-white/10 p-6 md:p-12 shadow-2xl">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
+                                <h3 className="text-xl md:text-2xl font-black text-white font-cinzel mb-4 md:mb-8 text-center">{t('leadForm.form.title')}</h3>
 
-                                <div className="space-y-2">
+                                <div className="space-y-1.5 md:space-y-2">
                                     <Label className="text-[10px] font-black text-secondary uppercase tracking-widest ml-1">{t('leadForm.form.name')}</Label>
                                     <Input
                                         id="name"
                                         placeholder={t('leadForm.form.name_ph')}
-                                        className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
+                                        className="h-[52px] md:h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
                                         {...register("name", { required: true })}
                                     />
                                     {errors.name && <span className="text-xs text-red-500">{t('leadForm.form.error_name')}</span>}
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-1.5 md:space-y-2">
                                     <Label className="text-[10px] font-black text-secondary uppercase tracking-widest ml-1">{t('leadForm.form.phone')}</Label>
                                     <Input
                                         id="phone"
                                         placeholder={t('leadForm.form.phone_ph')}
-                                        className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
+                                        className="h-[52px] md:h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
                                         {...register("phone", { required: true })}
                                     />
                                     {errors.phone && <span className="text-xs text-red-500">{t('leadForm.form.error_phone')}</span>}
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-1.5 md:space-y-2">
                                     <Label className="text-[10px] font-black text-secondary uppercase tracking-widest ml-1">{t('leadForm.form.telegram')}</Label>
                                     <Input
                                         id="telegram"
                                         placeholder="@username"
-                                        className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
+                                        className="h-[52px] md:h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-primary focus:border-primary placeholder:text-white/20"
                                         {...register("telegram_username")}
                                     />
                                 </div>
 
-                                <Button type="submit" size="lg" className="w-full h-16 mt-4 bg-primary text-background font-black rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all" disabled={isLoading}>
+                                <Button type="submit" size="lg" className="w-full h-[52px] md:h-16 mt-2 bg-primary text-background font-black rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all" disabled={isLoading}>
                                     {isLoading ? (
                                         <>
                                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -138,7 +138,7 @@ const LeadForm = () => {
                                     )}
                                 </Button>
 
-                                <p className="text-[10px] text-center text-secondary/50 font-medium">
+                                <p className="text-[9px] md:text-[10px] text-center text-secondary/50 font-medium pt-2">
                                     {t('leadForm.form.privacy')}
                                 </p>
                             </form>

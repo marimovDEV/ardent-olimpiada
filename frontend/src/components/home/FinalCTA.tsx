@@ -40,15 +40,15 @@ const FinalCTA = () => {
                         "O'z bilimingizni isbotlash va nufuzli g'oliblar safiga qo'shilish vaqti keldi."
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
-                        <Link to="/auth/register">
-                            <Button size="lg" className="h-16 px-12 rounded-2xl bg-primary text-background font-black text-xl shadow-gold hover:-translate-y-1 transition-all active:scale-95 group">
+                    <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center pt-8">
+                        <Link to="/auth/register" className="w-full sm:w-auto">
+                            <Button size="lg" className="h-16 md:h-20 px-12 rounded-2xl bg-primary text-background font-black text-xl shadow-gold hover:-translate-y-1 transition-all active:scale-95 group w-full">
                                 Ro‘yxatdan O‘tish
                                 <ArrowRight className="w-6 h-6 ml-3 transition-transform group-hover:translate-x-1" />
                             </Button>
                         </Link>
-                        <Link to="/all-olympiads">
-                            <Button size="lg" variant="outline" className="h-16 px-12 rounded-2xl border-white/10 text-white font-black hover:bg-white/5 transition-all active:scale-95">
+                        <Link to="/all-olympiads" className="w-full sm:w-auto">
+                            <Button size="lg" variant="outline" className="h-16 md:h-20 px-12 rounded-2xl border-white/10 text-white font-black hover:bg-white/5 transition-all active:scale-95 w-full">
                                 Olimpiadalarni Ko‘rish
                             </Button>
                         </Link>

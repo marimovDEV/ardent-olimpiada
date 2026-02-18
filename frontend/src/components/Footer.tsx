@@ -112,11 +112,7 @@ const Footer = () => {
               </ul>
             </FooterSection>
 
-            {/* Contact Column - More compact */}
-            <div className="pt-6 md:pt-0">
-              <h4 className="font-bold text-sm md:text-base uppercase tracking-wider text-foreground/90 mb-4 md:mb-6">
-                {t('footer.contact_title')}
-              </h4>
+            <FooterSection title={t('footer.contact_title')} id="contact">
               <ul className="space-y-4 text-sm text-muted-foreground/80">
                 <li className="flex items-center gap-3 group">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
@@ -142,7 +138,7 @@ const Footer = () => {
                   </span>
                 </li>
               </ul>
-            </div>
+            </FooterSection>
           </div>
         </div>
 

@@ -50,10 +50,10 @@ const HeroSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-6xl md:text-8xl font-black font-cinzel leading-[1.05] tracking-tighter text-white"
+                className="text-5xl md:text-8xl font-black font-cinzel leading-[1.1] tracking-tighter text-white"
               >
                 Kelajagingizni <br />
-                <span className="text-primary italic gold-glow">Bugun</span> <br />
+                <span className="text-primary italic gold-glow">Bugun</span> <br className="md:hidden" />
                 Boshlang
               </motion.h1>
 
@@ -61,26 +61,33 @@ const HeroSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl md:text-2xl font-medium italic text-secondary leading-relaxed font-cinzel max-w-xl"
+                className="text-lg md:text-2xl font-medium italic text-secondary leading-relaxed font-cinzel max-w-xl"
               >
                 Professional tayyorgarlik + Shaffof olimpiadalar + Real mukofotlar
               </motion.p>
 
-              {/* Trust Text */}
+              {/* Mobile Stats Grid - 2x2 */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="flex flex-wrap gap-4 pt-2"
+                className="grid grid-cols-2 gap-4 md:flex md:flex-wrap md:gap-6 pt-2"
               >
-                <div className="flex items-center gap-2 text-xs font-bold text-white/60">
-                  <CheckCircle className="w-4 h-4 text-primary" /> 10,000+ o‘quvchi
+                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
+                  <div className="text-xl md:text-sm font-black text-primary">10,000+</div>
+                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.students', 'O‘quvchi')}</div>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-white/60">
-                  <CheckCircle className="w-4 h-4 text-primary" /> 50+ real olimpiada
+                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
+                  <div className="text-xl md:text-sm font-black text-primary">50+</div>
+                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.olympiads', 'Olimpiada')}</div>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-bold text-white/60">
-                  <CheckCircle className="w-4 h-4 text-primary" /> Sertifikat beriladi
+                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
+                  <div className="text-xl md:text-sm font-black text-primary">4.9</div>
+                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.rating', 'Baho')}</div>
+                </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
+                  <div className="text-xl md:text-sm font-black text-primary">100%</div>
+                  <div className="text-[10px] md:text-xs font-bold text-white/40 md:text-white/60 uppercase tracking-widest">{t('hero.transparency', 'Shaffoflik')}</div>
                 </div>
               </motion.div>
             </div>
@@ -89,16 +96,16 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col sm:flex-row gap-4 pt-4"
             >
-              <Button size="lg" className="h-16 px-10 text-lg rounded-2xl bg-primary text-background font-black shadow-gold hover:-translate-y-1 transition-all active:scale-95" asChild>
+              <Button size="lg" className="h-16 md:h-20 px-10 text-lg md:text-xl rounded-2xl bg-primary text-background font-black shadow-gold hover:-translate-y-1 transition-all active:scale-95 w-full sm:w-auto" asChild>
                 <Link to="/all-olympiads">
                   Olimpiadaga Qatnashish
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-16 px-10 text-lg rounded-2xl border-white/10 text-primary font-black hover:bg-white/5 transition-all active:scale-95" asChild>
+              <Button size="lg" variant="outline" className="h-16 md:h-20 px-10 text-lg md:text-xl rounded-2xl border-white/10 text-primary font-black hover:bg-white/5 transition-all active:scale-95 w-full sm:w-auto" asChild>
                 <Link to="/all-courses">
-                  Tayyorgarlik Kursini Boshlash
+                  Tayyorgarlikni Boshlash
                 </Link>
               </Button>
             </motion.div>
