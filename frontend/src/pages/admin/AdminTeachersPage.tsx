@@ -109,6 +109,11 @@ const AdminTeachersPage = () => {
     const [rejectionReason, setRejectionReason] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // Message State
+    const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+    const [messageTitle, setMessageTitle] = useState("");
+    const [messageText, setMessageText] = useState("");
+
     // Create/Edit State
     const [dialogOpen, setDialogOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
@@ -252,6 +257,32 @@ const AdminTeachersPage = () => {
         setFormData({ first_name: "", last_name: "", username: "", phone: "", password: "" });
         setEditMode(false);
         setSelectedTeacher(null);
+    };
+
+    const handleSendMessage = async () => {
+        if (!selectedTeacher || !messageTitle || !messageText) {
+            toast.error(t('common.fillFields'));
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await axios.post(`${API_URL}/users/${selectedTeacher.id}/send_notification/`, {
+                title: messageTitle,
+                message: messageText,
+                channel: 'ALL'
+            }, { headers: getAuthHeader() });
+
+            toast.success(t('admin.messageSentSuccessfully') || "Xabar muvaffaqiyatli yuborildi");
+            setMessageDialogOpen(false);
+            setMessageTitle("");
+            setMessageText("");
+        } catch (error) {
+            console.error(error);
+            toast.error(t('admin.messageSendError') || "Xabar yuborishda xatolik yuz berdi");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const filteredTeachers = useMemo(() => {
@@ -606,7 +637,11 @@ const AdminTeachersPage = () => {
                                             </p>
                                         </div>
                                         <div className="flex gap-3">
-                                            <Button variant="outline" className="rounded-xl h-12 px-6 font-bold border-2">
+                                            <Button
+                                                variant="outline"
+                                                className="rounded-xl h-12 px-6 font-bold border-2"
+                                                onClick={() => setMessageDialogOpen(true)}
+                                            >
                                                 <MessageSquare className="w-4 h-4 mr-2" /> {t('admin.writeMessage')}
                                             </Button>
                                             {selectedTeacher.teacher_profile?.verification_status === 'PENDING' && (
@@ -717,6 +752,7 @@ const AdminTeachersPage = () => {
 
             {/* Rejection Dialog */}
             <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+                {/* ... existing rejection dialog content ... */}
                 <DialogContent className="sm:max-w-md rounded-3xl">
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-black tracking-tight">{t('admin.rejectionReason')}</DialogTitle>
@@ -740,6 +776,53 @@ const AdminTeachersPage = () => {
                             className="rounded-2xl h-12 px-8 font-black shadow-lg shadow-red-500/20"
                         >
                             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t('admin.confirmRejection')}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Message Dialog */}
+            <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+                <DialogContent className="sm:max-w-md rounded-[32px] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                    <DialogHeader className="p-10 pb-4">
+                        <DialogTitle className="text-3xl font-black tracking-tight">{t('admin.writeMessage')}</DialogTitle>
+                        <DialogDescription className="text-base font-medium">
+                            {t('admin.sendMessageDesc') || "O'qituvchiga tizim xabari yoki Telegram orqali xabar yuboring."}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="p-10 pt-4 space-y-6">
+                        <div className="space-y-3">
+                            <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">{t('admin.messageTitle') || "Xabar sarlavhasi"} *</Label>
+                            <Input
+                                className="h-14 rounded-2xl bg-muted/30 border-2 border-transparent focus:border-primary/20 font-bold"
+                                value={messageTitle}
+                                onChange={(e) => setMessageTitle(e.target.value)}
+                                placeholder={t('admin.messageTitlePlaceholder') || "Masalan: Hujjatlar bo'yicha"}
+                            />
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">{t('admin.messageBody') || "Xabar matni"} *</Label>
+                            <Textarea
+                                className="min-h-[150px] rounded-2xl bg-muted/30 border-2 border-transparent focus:border-primary/20 font-bold p-6"
+                                value={messageText}
+                                onChange={(e) => setMessageText(e.target.value)}
+                                placeholder={t('admin.messageBodyPlaceholder') || "Xabaringizni yozing..."}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="p-10 pt-0 gap-3">
+                        <Button variant="outline" onClick={() => setMessageDialogOpen(false)} className="h-14 px-8 rounded-2xl font-bold border-2">{t('common.cancel')}</Button>
+                        <Button
+                            onClick={handleSendMessage}
+                            disabled={isSubmitting || !messageTitle || !messageText}
+                            className="h-14 px-10 rounded-2xl font-black bg-primary shadow-xl shadow-primary/20 flex items-center gap-3"
+                        >
+                            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                                <>
+                                    <Send className="w-5 h-5" />
+                                    {t('common.send') || "Yuborish"}
+                                </>
+                            )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

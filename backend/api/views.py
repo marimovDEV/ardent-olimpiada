@@ -64,6 +64,7 @@ from .telegram_service import TelegramService, generate_verification_code, forma
 from .utils import generate_unique_id
 
 
+from .services.notification_service import NotificationService
 from .services.olympiad_service import OlympiadService
 from .services.email_service import EmailService
 from .bot_service import BotService
@@ -3598,6 +3599,40 @@ class UserViewSet(viewsets.ModelViewSet):
         if 'last_name' in data: user.last_name = data['last_name']
         if 'avatar' in request.FILES:
             user.avatar = request.FILES['avatar']
+            
+        user.save()
+        return Response({'success': True, 'message': 'Profil yangilandi'})
+
+    @action(detail=True, methods=['post'])
+    def send_notification(self, request, pk=None):
+        """Send a manual notification to a user"""
+        user = self.get_object()
+        title = request.data.get('title')
+        message = request.data.get('message')
+        notification_type = request.data.get('type', 'SYSTEM')
+        channel = request.data.get('channel', 'WEB') # WEB, TELEGRAM, ALL
+        
+        if not title or not message:
+            return Response({'error': 'Sarlavha va xabar talab qilinadi'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        notification = NotificationService.create_notification(
+            user=user,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+            channel=channel
+        )
+        
+        if notification:
+            return Response({
+                'success': True,
+                'message': 'Xabar muvaffaqiyatli yuborildi'
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': 'Xabar yuborishda xatolik yuz berdi'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user.save()
         
         return Response({'success': True, 'message': 'Profil muvaffaqiyatli yangilandi'})
