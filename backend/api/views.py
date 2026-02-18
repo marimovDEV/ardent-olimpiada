@@ -4496,6 +4496,8 @@ class GamificationViewSet(viewsets.ViewSet):
             'featured_subjects': featured_subjects,
             'featured_professions': featured_professions,
             'hero': {
+                'user_name': user.first_name or user.username,
+                'balance': float(user.balance),
                 'title': f"{streak_data.current_streak}",
                 'subtitle': "dashboard.streak.warning_msg" if not streak_data.is_active_today else "dashboard.streak.saved_msg",
                 'streak_count': streak_data.current_streak,
