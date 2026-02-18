@@ -217,7 +217,7 @@ const CoursesPage = () => {
 
                 {/* Badges */}
                 <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-                  {course.enrolled_count > 100 && (
+                  {course.students_count > 100 && (
                     <span className="bg-red-500 text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
                       <Flame className="w-3.5 h-3.5" /> {t('badges.popular')}
                     </span>
@@ -269,7 +269,7 @@ const CoursesPage = () => {
                   <div className="flex items-center gap-1.5 text-sm">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                     <span className="font-bold text-foreground">{Number(course.rating || 0).toFixed(1)}</span>
-                    <span className="text-muted-foreground">({course.enrolled_count || 0})</span>
+                    <span className="text-muted-foreground">({course.students_count || 0})</span>
                   </div>
                 </div>
 
@@ -295,7 +295,7 @@ const CoursesPage = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-primary" />
-                    <span>{course.enrolled_count || 0}</span>
+                    <span>{course.students_count || 0}</span>
                   </div>
                 </div>
 

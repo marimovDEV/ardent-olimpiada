@@ -1047,8 +1047,6 @@ class CourseViewSet(viewsets.ModelViewSet):
             course=course,
             current_lesson=first_lesson
         )
-        course.students_count += 1
-        course.save(update_fields=['students_count'])
         
         # Add XP
         user.add_xp(50, 'COURSE_ENROLL', f"Kursga yozildi: {course.title}")
@@ -4209,8 +4207,6 @@ class WalletViewSet(viewsets.GenericViewSet):
                 course=item,
                 current_lesson=first_lesson
             )
-            item.students_count += 1
-            item.save()
             # No immediate XP for buying course, only for completion? User said "hp har bir oquvchi bir kurs tugatganida beriladi" -> OK. 
             # But "olimpiadada qancha hp berislhari" -> usually participation XP?
             # Let's give minimal XP for purchase action itself? No, stick to completion/participation.

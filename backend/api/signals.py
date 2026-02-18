@@ -196,3 +196,14 @@ def update_course_stats(sender, instance, **kwargs):
     course.duration = f"{minutes} min"
     
     course.save(update_fields=['lessons_count', 'duration'])
+
+
+@receiver(post_save, sender='api.Enrollment')
+@receiver(post_delete, sender='api.Enrollment')
+def update_course_students_count(sender, instance, **kwargs):
+    """
+    Update students_count for a Course when an Enrollment is added/deleted
+    """
+    course = instance.course
+    course.students_count = course.enrollments.count()
+    course.save(update_fields=['students_count'])

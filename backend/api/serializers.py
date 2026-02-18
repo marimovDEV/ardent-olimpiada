@@ -611,11 +611,10 @@ class CourseSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Course
-        fields = [
             'id', 'title', 'admin', 'description', 'thumbnail', 'subject', 'subject_name',
             'level', 'price', 'teacher_percentage', 'platform_percentage',
             'is_active', 'status', 'lessons_count', 'students_count',
-            'rating', 'teacher_name', 'teacher_avatar', 'created_at'
+            'rating', 'teacher_name', 'teacher_avatar', 'is_enrolled', 'created_at'
         ]
 
     def get_subject_name(self, obj):
@@ -639,6 +638,12 @@ class CourseSerializer(serializers.ModelSerializer):
         if obj.thumbnail and request:
             return request.build_absolute_uri(obj.thumbnail.url)
         return obj.thumbnail.url if obj.thumbnail else None
+
+    def get_is_enrolled(self, obj):
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and user.is_authenticated:
+            return Enrollment.objects.filter(user=user, course=obj).exists()
+        return False
 
 
 class CourseDetailSerializer(serializers.ModelSerializer):
