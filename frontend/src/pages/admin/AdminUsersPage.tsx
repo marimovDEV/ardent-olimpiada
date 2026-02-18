@@ -56,7 +56,8 @@ import {
     Square,
     XCircle,
     Copy,
-    ArrowUpDown
+    ArrowUpDown,
+    Lock
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -100,6 +101,12 @@ const AdminUsersPage = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+
+    // Password Reset State
+    const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [newPass, setNewPass] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
 
     const dateLocale = i18n.language === 'ru' ? ru : uz;
 
@@ -211,6 +218,34 @@ const AdminUsersPage = () => {
             setEditingUser(null);
         } catch (e) {
             toast.error(t('common.error'));
+        }
+    };
+
+    const handleResetPassword = async () => {
+        if (!selectedUser) return;
+        if (newPass.length < 6) {
+            toast.error(t('common.resetPasswordDesc'));
+            return;
+        }
+        if (newPass !== confirmPass) {
+            toast.error(t('common.passwordsDoNotMatch'));
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await axios.post(`${API_URL}/users/${selectedUser.id}/reset_password/`, {
+                new_password: newPass
+            }, { headers: getAuthHeader() });
+
+            toast.success(t('common.passwordResetSuccess'));
+            setPasswordResetDialogOpen(false);
+            setNewPass("");
+            setConfirmPass("");
+        } catch (error) {
+            toast.error(t('common.passwordResetError'));
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -490,6 +525,15 @@ const AdminUsersPage = () => {
                                                         <CheckCircle className="w-4 h-4" /> {t('common.activate')}
                                                     </DropdownMenuItem>
                                                 )}
+
+                                                <DropdownMenuSeparator className="my-1 border-white/5" />
+
+                                                <DropdownMenuItem
+                                                    className="cursor-pointer gap-2 rounded-xl focus:bg-primary/10 transition-all font-bold"
+                                                    onClick={() => { setSelectedUser(user); setPasswordResetDialogOpen(true); }}
+                                                >
+                                                    <Lock className="w-4 h-4 text-orange-500" /> {t('common.resetPassword')}
+                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
@@ -606,6 +650,48 @@ const AdminUsersPage = () => {
                             </Button>
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Password Reset Dialog */}
+            <Dialog open={passwordResetDialogOpen} onOpenChange={setPasswordResetDialogOpen}>
+                <DialogContent className="sm:max-w-md rounded-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-black tracking-tight">{t('common.resetPasswordTitle')}</DialogTitle>
+                        <DialogDescription>{t('common.resetPasswordDesc')}</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">{t('common.newPassword')}</label>
+                            <Input
+                                type="password"
+                                placeholder="••••••"
+                                className="rounded-xl h-11"
+                                value={newPass}
+                                onChange={(e) => setNewPass(e.target.value)}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">{t('common.confirmNewPassword')}</label>
+                            <Input
+                                type="password"
+                                placeholder="••••••"
+                                className="rounded-xl h-11"
+                                value={confirmPass}
+                                onChange={(e) => setConfirmPass(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setPasswordResetDialogOpen(false)} className="rounded-xl h-11">{t('common.cancel')}</Button>
+                        <Button
+                            onClick={handleResetPassword}
+                            disabled={isSubmitting || !newPass || newPass !== confirmPass}
+                            className="rounded-xl h-11 bg-primary px-8"
+                        >
+                            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : t('common.confirm')}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div>

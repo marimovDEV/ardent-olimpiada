@@ -25,7 +25,8 @@ import {
     Globe,
     Instagram,
     Youtube,
-    Send
+    Send,
+    Lock
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -110,9 +111,13 @@ const AdminTeachersPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Message State
-    const [messageDialogOpen, setMessageDialogOpen] = useState(false);
     const [messageTitle, setMessageTitle] = useState("");
     const [messageText, setMessageText] = useState("");
+
+    // Password Reset State
+    const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState(false);
+    const [newPass, setNewPass] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
 
     // Create/Edit State
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -239,6 +244,33 @@ const AdminTeachersPage = () => {
             setIsSubmitting(false);
         }
     };
+    const handleResetPassword = async () => {
+        if (!selectedTeacher) return;
+        if (newPass.length < 6) {
+            toast.error(t('common.resetPasswordDesc'));
+            return;
+        }
+        if (newPass !== confirmPass) {
+            toast.error(t('common.passwordsDoNotMatch'));
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            await axios.post(`${API_URL}/users/${selectedTeacher.id}/reset_password/`, {
+                new_password: newPass
+            }, { headers: getAuthHeader() });
+
+            toast.success(t('common.passwordResetSuccess'));
+            setPasswordResetDialogOpen(false);
+            setNewPass("");
+            setConfirmPass("");
+        } catch (error) {
+            toast.error(t('common.passwordResetError'));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const openEdit = (teacher: Teacher) => {
         setSelectedTeacher(teacher);
@@ -301,8 +333,15 @@ const AdminTeachersPage = () => {
 
     const getStatusBadge = (status?: string) => {
         switch (status) {
+            case 'APPROVED':
+                return <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/30">{t('common.approved')}</Badge>;
+            case 'REJECTED':
+                return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30">{t('common.rejected')}</Badge>;
+            case 'BLOCKED':
+                return <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800/30">{t('common.blocked')}</Badge>;
+            case 'PENDING':
             default:
-                return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800/30">{t('admin.pending')}</Badge>;
+                return <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800/30">{t('common.pending')}</Badge>;
         }
     };
 
@@ -476,6 +515,24 @@ const AdminTeachersPage = () => {
 
                                         <DropdownMenuSeparator className="my-2" />
 
+                                        {teacher.teacher_profile?.verification_status === 'PENDING' && (
+                                            <>
+                                                <DropdownMenuItem
+                                                    className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-green-600 focus:text-green-600 focus:bg-green-50 dark:focus:bg-green-900/20 font-bold"
+                                                    onClick={() => handleVerifyStatus(teacher.id, 'APPROVED')}
+                                                >
+                                                    <CheckCircle className="w-4 h-4" /> {t('common.approve')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20 font-bold"
+                                                    onClick={() => { setSelectedTeacher(teacher); setRejectDialogOpen(true); }}
+                                                >
+                                                    <XCircle className="w-4 h-4" /> {t('common.reject')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator className="my-2" />
+                                            </>
+                                        )}
+
                                         {teacher.is_active ? (
                                             <DropdownMenuItem
                                                 className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20 font-bold"
@@ -499,6 +556,15 @@ const AdminTeachersPage = () => {
                                             onClick={() => handleDeleteTeacher(teacher.id)}
                                         >
                                             <Trash2 className="w-4 h-4" /> {t('common.delete')}
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuSeparator className="my-2" />
+
+                                        <DropdownMenuItem
+                                            className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 focus:bg-primary/5 font-bold"
+                                            onClick={() => { setSelectedTeacher(teacher); setPasswordResetDialogOpen(true); }}
+                                        >
+                                            <Lock className="w-4 h-4 text-orange-500" /> {t('common.resetPassword')}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -645,12 +711,21 @@ const AdminTeachersPage = () => {
                                                 <MessageSquare className="w-4 h-4 mr-2" /> {t('admin.writeMessage')}
                                             </Button>
                                             {selectedTeacher.teacher_profile?.verification_status === 'PENDING' && (
-                                                <Button
-                                                    className="rounded-xl h-12 px-6 font-black bg-green-600 hover:bg-green-700 text-white shadow-xl shadow-green-600/20"
-                                                    onClick={() => handleVerifyStatus(selectedTeacher.id, 'APPROVED')}
-                                                >
-                                                    <CheckCircle className="w-4 h-4 mr-2" /> {t('common.approve')}
-                                                </Button>
+                                                <>
+                                                    <Button
+                                                        className="rounded-xl h-12 px-6 font-black bg-green-600 hover:bg-green-700 text-white shadow-xl shadow-green-600/20"
+                                                        onClick={() => handleVerifyStatus(selectedTeacher.id, 'APPROVED')}
+                                                    >
+                                                        <CheckCircle className="w-4 h-4 mr-2" /> {t('common.approve')}
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        className="rounded-xl h-12 px-6 font-bold border-2 border-red-500/50 text-red-500 hover:bg-red-500/10"
+                                                        onClick={() => setRejectDialogOpen(true)}
+                                                    >
+                                                        <XCircle className="w-4 h-4 mr-2" /> {t('common.reject')}
+                                                    </Button>
+                                                </>
                                             )}
                                         </div>
                                     </div>
@@ -825,6 +900,59 @@ const AdminTeachersPage = () => {
                             )}
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Password Reset Dialog */}
+            <Dialog open={passwordResetDialogOpen} onOpenChange={setPasswordResetDialogOpen}>
+                <DialogContent className="sm:max-w-md rounded-[32px] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                    <DialogHeader className="p-10 pb-4">
+                        <DialogTitle className="text-3xl font-black tracking-tight">{t('common.resetPasswordTitle')}</DialogTitle>
+                        <DialogDescription className="text-base font-medium">
+                            {t('common.resetPasswordDesc')}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="p-10 pt-0 space-y-6">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">{t('common.newPassword')}</Label>
+                                <Input
+                                    type="password"
+                                    placeholder="••••••"
+                                    className="rounded-2xl h-14 border-2 focus-visible:ring-primary/20 bg-muted/20 font-bold"
+                                    value={newPass}
+                                    onChange={(e) => setNewPass(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">{t('common.confirmNewPassword')}</Label>
+                                <Input
+                                    type="password"
+                                    placeholder="••••••"
+                                    className="rounded-2xl h-14 border-2 focus-visible:ring-primary/20 bg-muted/20 font-bold"
+                                    value={confirmPass}
+                                    onChange={(e) => setConfirmPass(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4 pt-4">
+                            <Button
+                                variant="outline"
+                                className="flex-1 rounded-2xl h-14 font-bold border-2"
+                                onClick={() => setPasswordResetDialogOpen(false)}
+                            >
+                                {t('common.cancel')}
+                            </Button>
+                            <Button
+                                className="flex-1 rounded-2xl h-14 font-black bg-primary text-primary-foreground shadow-xl shadow-primary/20"
+                                onClick={handleResetPassword}
+                                disabled={isSubmitting || !newPass || newPass !== confirmPass}
+                            >
+                                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : t('common.confirm')}
+                            </Button>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

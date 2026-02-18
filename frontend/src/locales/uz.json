@@ -58,6 +58,8 @@
     "edit": "Tahrirlash",
     "save": "Saqlash",
     "cancel": "Bekor qilish",
+    "approve": "Tasdiqlash",
+    "reject": "Rad etish",
     "loading": "Yuklanmoqda...",
     "type": "Turi",
     "date": "Sana",
@@ -131,7 +133,15 @@
     "tryDifferentFilter": "Boshqa filtrlar yordamida qidirib ko'ring",
     "min": "daq",
     "time": "vaqt",
-    "required": "To'ldirilishi shart"
+    "required": "To'ldirilishi shart",
+    "resetPassword": "Parolni yangilash",
+    "resetPasswordTitle": "Foydalanuvchi parolini yangilash",
+    "resetPasswordDesc": "Foydalanuvchi uchun yangi parol o'rnating. Parol kamida 6 ta belgidan iborat bo'lishi shart.",
+    "newPassword": "Yangi parol",
+    "confirmNewPassword": "Yangi parolni tasdiqlang",
+    "passwordResetSuccess": "Parol muvaffaqiyatli yangilandi",
+    "passwordResetError": "Parolni yangilashda xatolik yuz berdi",
+    "passwordsDoNotMatch": "Parollar mos kelmadi"
   },
   "success": {
     "purchase_completed": "Muvaffaqiyatli sotib olindi",
