@@ -45,10 +45,14 @@ const OlympiadResultPage = () => {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setResult(data);
-                    if (data.my_result?.percentage >= 70 && data.status !== 'DISQUALIFIED') {
-                        setShowConfetti(true);
-                        setTimeout(() => setShowConfetti(false), 8000);
+                    if (data.success === false && data.status === 'NO_RESULT') {
+                        setResult(null); // Explicitly null to show "Not Found" UI
+                    } else {
+                        setResult(data);
+                        if (data.my_result?.percentage >= 70 && data.status !== 'DISQUALIFIED') {
+                            setShowConfetti(true);
+                            setTimeout(() => setShowConfetti(false), 8000);
+                        }
                     }
                 } else if (res.status === 404) {
                     toast.error(t('olympiadResult.notFinished'));

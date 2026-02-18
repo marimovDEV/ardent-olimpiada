@@ -1815,8 +1815,9 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         except TestResult.DoesNotExist:
             return Response({
                 'success': False,
+                'status': 'NO_RESULT',
                 'error': 'Siz hali imtihon topshirmagansiz'
-            }, status=status.HTTP_404_NOT_FOUND)
+            }, status=status.HTTP_200_OK)
 
         # Check result_time logic
         now = timezone.now()
