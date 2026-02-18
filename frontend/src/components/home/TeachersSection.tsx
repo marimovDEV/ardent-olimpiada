@@ -16,7 +16,6 @@ import { motion } from "framer-motion";
 import { homepageService, Mentor } from "@/services/homepageService";
 import { getBaseUrl } from "@/services/api";
 import { API_URL } from "@/services/api";
-import BecomeTeacherForm from "./BecomeTeacherForm";
 
 const TeachersSection = () => {
     const { t, i18n } = useTranslation();
@@ -202,11 +201,6 @@ const TeachersSection = () => {
                         <CarouselNext className="static translate-y-0 h-14 w-14 rounded-2xl bg-white/5 border border-white/10 hover:border-primary hover:bg-white/10 text-white transition-all shadow-lg shadow-black/20" />
                     </div>
                 </Carousel>
-
-                {/* Become a Teacher Form Integration */}
-                <div className="mt-24">
-                    <BecomeTeacherForm />
-                </div>
             </div>
         </section>
     );

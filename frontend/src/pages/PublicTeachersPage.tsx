@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import BecomeTeacherForm from "@/components/home/BecomeTeacherForm";
 
 const PublicTeachersPage = () => {
     const { t, i18n } = useTranslation();
@@ -188,6 +189,11 @@ const PublicTeachersPage = () => {
                         <p className="text-[#64748B] mt-2 font-medium">Tez orada yangi mentorlar qo'shiladi.</p>
                     </div>
                 )}
+
+                {/* Become a Teacher Form Integration */}
+                <div className="mt-32">
+                    <BecomeTeacherForm />
+                </div>
             </div>
         </main>
     );
