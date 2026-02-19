@@ -76,12 +76,11 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="DRAFT">Qoralama</SelectItem>
-                                <SelectItem value="PUBLISHED">E'lon qilingan</SelectItem>
-                                <SelectItem value="UPCOMING">Kutilmoqda</SelectItem>
-                                <SelectItem value="ONGOING">Jarayonda</SelectItem>
-                                <SelectItem value="PAUSED">To'xtatilgan</SelectItem>
-                                <SelectItem value="COMPLETED">Tugagan</SelectItem>
-                                <SelectItem value="CANCELED">Bekor qilingan</SelectItem>
+                                <SelectItem value="REGISTRATION_OPEN">Ro'yxatga olish boshlandi</SelectItem>
+                                <SelectItem value="REGISTRATION_CLOSED">Ro'yxatdan o'tish tugadi</SelectItem>
+                                <SelectItem value="ONGOING">Olimpiada boshladi</SelectItem>
+                                <SelectItem value="CHECKING">Tekshirilmoqda</SelectItem>
+                                <SelectItem value="PUBLISHED">Natijalar e'lon qilindi</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

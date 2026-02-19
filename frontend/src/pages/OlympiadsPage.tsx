@@ -164,7 +164,7 @@ const OlympiadsPage = () => {
                   </h3>
 
                   {/* Timeline / Urgency */}
-                  {olympiad.status === 'UPCOMING' && !olympiad.is_registered && (
+                  {olympiad.status === 'REGISTRATION_OPEN' && !olympiad.is_registered && (
                     <div className="flex items-center gap-2 mt-4 text-orange-300 text-sm font-bold bg-orange-400/10 inline-flex px-3 py-1 rounded-lg border border-orange-400/20">
                       <Clock className="w-4 h-4" />
                       {diffDays > 0 ? `${diffDays} ${t('olympiadsPage.badges.daysLeft')}` : t('olympiadsPage.badges.closingSoon')}

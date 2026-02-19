@@ -58,7 +58,7 @@ interface Olympiad {
     end_date: string;
     duration: number;
     price: number;
-    status: "DRAFT" | "UPCOMING" | "REGISTRATION_OPEN" | "ONGOING" | "CHECKING" | "PUBLISHED" | "COMPLETED" | "CANCELED";
+    status: "DRAFT" | "REGISTRATION_OPEN" | "REGISTRATION_CLOSED" | "ONGOING" | "CHECKING" | "PUBLISHED";
     is_active: boolean;
     questions_count: number;
     participants_count: number;
@@ -121,14 +121,12 @@ const AdminOlympiadsPage = () => {
     const [statusDialog, setStatusDialog] = useState<{ id: number; status: string; currentStatus: string } | null>(null);
 
     const STATUS_TRANSITIONS: Record<string, string[]> = {
-        'DRAFT': ['UPCOMING', 'CANCELED'],
-        'UPCOMING': ['ONGOING', 'PAUSED', 'CANCELED'],
-        'ONGOING': ['PAUSED', 'CHECKING', 'CANCELED'],
-        'PAUSED': ['ONGOING', 'UPCOMING', 'CANCELED'],
-        'CHECKING': ['PUBLISHED', 'CANCELED'],
-        'PUBLISHED': ['COMPLETED'],
-        'COMPLETED': [],
-        'CANCELED': ['DRAFT']
+        'DRAFT': ['REGISTRATION_OPEN'],
+        'REGISTRATION_OPEN': ['REGISTRATION_CLOSED'],
+        'REGISTRATION_CLOSED': ['ONGOING'],
+        'ONGOING': ['CHECKING'],
+        'CHECKING': ['PUBLISHED'],
+        'PUBLISHED': []
     };
 
     useEffect(() => {
@@ -265,25 +263,21 @@ const AdminOlympiadsPage = () => {
 
     const getStatusBadge = (status: string) => {
         const labels: Record<string, string> = {
-            'ONGOING': 'Jarayonda',
-            'UPCOMING': t('admin.upcoming'),
-            'REGISTRATION_OPEN': "Ro'yxat ochiq",
-            'PUBLISHED': t('admin.published'),
-            'CHECKING': t('admin.checking'),
-            'COMPLETED': t('admin.completed'),
-            'DRAFT': t('admin.draft'),
-            'CANCELED': 'Bekor qilingan'
+            'DRAFT': 'Qoralama',
+            'REGISTRATION_OPEN': "Ro'yxatga olish",
+            'REGISTRATION_CLOSED': "Ro'yxat tugadi",
+            'ONGOING': 'Boshlandi',
+            'CHECKING': 'Tekshirilmoqda',
+            'PUBLISHED': 'Natijalar'
         };
 
         const colors: Record<string, string> = {
-            'ONGOING': 'bg-green-100 text-green-700 border-green-200 animate-pulse',
-            'UPCOMING': 'bg-blue-100 text-blue-700 border-blue-200',
-            'REGISTRATION_OPEN': 'bg-indigo-100 text-indigo-700 border-indigo-200',
-            'PUBLISHED': 'bg-purple-100 text-purple-700 border-purple-200',
-            'CHECKING': 'bg-amber-100 text-amber-700 border-amber-200',
-            'COMPLETED': 'bg-gray-100 text-gray-700 border-gray-200',
             'DRAFT': 'border-dashed border-muted-foreground text-muted-foreground',
-            'CANCELED': 'bg-red-100 text-red-700 border-red-200'
+            'REGISTRATION_OPEN': 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            'REGISTRATION_CLOSED': 'bg-amber-100 text-amber-700 border-amber-200',
+            'ONGOING': 'bg-green-100 text-green-700 border-green-200 animate-pulse',
+            'CHECKING': 'bg-orange-100 text-orange-700 border-orange-200',
+            'PUBLISHED': 'bg-purple-100 text-purple-700 border-purple-200'
         };
 
         return <Badge className={cn("px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase", colors[status] || "bg-gray-100 text-gray-600")}>{labels[status] || status}</Badge>;
@@ -297,7 +291,7 @@ const AdminOlympiadsPage = () => {
     const OlympiadCard = ({ oly }: { oly: Olympiad }) => {
         const countdown = useCountdown(oly.status === 'REGISTRATION_OPEN' ? oly.start_date : oly.registration_start);
         const isLive = oly.status === 'ONGOING';
-        const isUpcoming = oly.status === 'UPCOMING' || oly.status === 'REGISTRATION_OPEN';
+        const isUpcoming = oly.status === 'REGISTRATION_OPEN' || oly.status === 'REGISTRATION_CLOSED';
 
         return (
             <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-border bg-card relative">
@@ -479,7 +473,7 @@ const AdminOlympiadsPage = () => {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-black text-blue-500">{(adminStats?.status_counts?.UPCOMING || 0) + (adminStats?.status_counts?.REGISTRATION_OPEN || 0)}</div>
+                        <div className="text-2xl font-black text-blue-500">{(adminStats?.status_counts?.REGISTRATION_OPEN || 0) + (adminStats?.status_counts?.REGISTRATION_CLOSED || 0)}</div>
                         <p className="text-[10px] text-muted-foreground mt-1">{t('admin.olympiads.scheduledEvents')}</p>
                     </CardContent>
                 </Card>
@@ -536,9 +530,11 @@ const AdminOlympiadsPage = () => {
                     <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-auto">
                         <TabsList className="bg-muted">
                             <TabsTrigger value="all" className="text-xs">{t('admin.all')}</TabsTrigger>
-                            <TabsTrigger value="ONGOING" className="text-xs">{t('admin.active')}</TabsTrigger>
-                            <TabsTrigger value="UPCOMING" className="text-xs">{t('admin.upcoming')}</TabsTrigger>
-                            <TabsTrigger value="COMPLETED" className="text-xs">{t('admin.past')}</TabsTrigger>
+                            <TabsTrigger value="DRAFT" className="text-xs">Qoralama</TabsTrigger>
+                            <TabsTrigger value="REGISTRATION_OPEN" className="text-xs">Ro'yxat</TabsTrigger>
+                            <TabsTrigger value="ONGOING" className="text-xs">Boshlandi</TabsTrigger>
+                            <TabsTrigger value="CHECKING" className="text-xs">Tekshiruv</TabsTrigger>
+                            <TabsTrigger value="PUBLISHED" className="text-xs">Natijalar</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
@@ -704,10 +700,10 @@ const AdminOlympiadsPage = () => {
                                                 <div className={cn(
                                                     "w-2 h-2 rounded-full",
                                                     s === 'ONGOING' ? "bg-green-500" :
-                                                        s === 'UPCOMING' ? "bg-blue-500" :
-                                                            s === 'PUBLISHED' ? "bg-purple-500" :
-                                                                s === 'CHECKING' ? "bg-amber-500" :
-                                                                    s === 'COMPLETED' ? "bg-gray-500" : "bg-red-500"
+                                                        s === 'REGISTRATION_OPEN' ? "bg-indigo-500" :
+                                                            s === 'REGISTRATION_CLOSED' ? "bg-amber-500" :
+                                                                s === 'PUBLISHED' ? "bg-purple-500" :
+                                                                    s === 'CHECKING' ? "bg-orange-500" : "bg-gray-500"
                                                 )} />
                                                 <span className="font-bold">{t(`admin.status_${s.toLowerCase()}`, s)}</span>
                                             </div>

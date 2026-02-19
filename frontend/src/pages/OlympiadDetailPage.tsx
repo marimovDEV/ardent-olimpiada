@@ -383,7 +383,7 @@ const OlympiadDetailPage = () => {
                   </div>
                 </div>
 
-                {!isRegistered && (olympiad.status === 'UPCOMING' || olympiad.status === 'ONGOING') ? (
+                {!isRegistered && (olympiad.status === 'REGISTRATION_OPEN' || olympiad.status === 'ONGOING') ? (
                   <>
                     {/* Agreement */}
                     <label className="flex items-start gap-3 mb-6 cursor-pointer group select-none">
@@ -428,7 +428,7 @@ const OlympiadDetailPage = () => {
                 ) : isRegistered ? (
                   <div className="space-y-6">
                     {/* Status Sections for Registered Users */}
-                    {olympiad.status === 'UPCOMING' && (
+                    {olympiad.status === 'REGISTRATION_OPEN' && (
                       <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-500/20 text-center">
                         <Clock className="w-12 h-12 text-blue-500 mx-auto mb-4" />
                         <h3 className="text-sm uppercase tracking-wider text-muted-foreground mb-4">

@@ -40,7 +40,7 @@ export interface OlympiadFormState {
     duration: number;
 
     // Config
-    status: "DRAFT" | "UPCOMING" | "ONGOING" | "PAUSED" | "COMPLETED" | "CANCELED";
+    status: "DRAFT" | "REGISTRATION_OPEN" | "REGISTRATION_CLOSED" | "ONGOING" | "CHECKING" | "PUBLISHED";
     level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
     difficulty: "EASY" | "MEDIUM" | "HARD";
     grade_range: string;
