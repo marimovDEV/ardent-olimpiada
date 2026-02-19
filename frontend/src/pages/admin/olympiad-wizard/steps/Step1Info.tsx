@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { RefreshCw, Plus, Loader2 } from "lucide-react";
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -423,9 +423,9 @@ const Step1Info = ({ data, update }: { data: any, update: (d: any) => void }) =>
                     <div className="space-y-2">
                         <Label>Muqova Rasm (Thumbnail)</Label>
                         <div className="flex items-center gap-4">
-                            {data.thumbnail && typeof data.thumbnail !== 'string' && (
+                            {data.thumbnail && (
                                 <img
-                                    src={URL.createObjectURL(data.thumbnail)}
+                                    src={typeof data.thumbnail === 'string' ? getImageUrl(data.thumbnail) : URL.createObjectURL(data.thumbnail)}
                                     className="w-16 h-16 rounded-md object-cover border"
                                     alt="Preview"
                                 />

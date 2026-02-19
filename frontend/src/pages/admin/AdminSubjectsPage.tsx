@@ -4,7 +4,7 @@ import { Plus, Edit2, Trash2, Zap, Trophy, BookOpen, Eye, EyeOff, GraduationCap 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -160,6 +160,9 @@ const AdminSubjectsPage = () => {
                     <DialogContent className="max-w-lg">
                         <DialogHeader>
                             <DialogTitle>{editingSubject ? t('admin.editSubject') : t('admin.newSubject')}</DialogTitle>
+                            <DialogDescription className="sr-only">
+                                {editingSubject ? "Edit subject details" : "Create a new subject"}
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="space-y-2">

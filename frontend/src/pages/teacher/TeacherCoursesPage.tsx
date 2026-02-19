@@ -13,7 +13,7 @@ import {
     BookOpen, MoreVertical, Plus, Users, Clock, Star, Edit, Trash2, Eye, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
@@ -129,7 +129,7 @@ const TeacherCoursesPage = () => {
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden shrink-0 border border-border shadow-sm group-hover:shadow-gold transition-all duration-300">
                                                         {course.thumbnail ? (
-                                                            <img src={course.thumbnail} alt="" className="w-full h-full object-cover" />
+                                                            <img src={getImageUrl(course.thumbnail)} alt="" className="w-full h-full object-cover" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center text-primary/40 bg-primary/5">
                                                                 <BookOpen className="w-6 h-6" />

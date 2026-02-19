@@ -42,7 +42,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import { cn } from "@/lib/utils";
 
 // API Data Types
@@ -309,7 +309,7 @@ const AdminOlympiadsPage = () => {
 
                 <div className="aspect-video relative overflow-hidden bg-muted">
                     {oly.thumbnail ? (
-                        <img src={oly.thumbnail as any} alt={oly.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src={getImageUrl(oly.thumbnail as any)} alt={oly.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20">
                             <Trophy className="w-12 h-12 text-indigo-500/40" />

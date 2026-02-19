@@ -18,6 +18,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { getSubjectTheme } from "@/lib/course-themes";
 import * as Icons from "lucide-react";
+import { getImageUrl } from "@/services/api";
 
 interface Course {
   id: number;
@@ -209,7 +210,7 @@ const CoursesPage = () => {
               {/* Cover Image - LARGER */}
               <div className="h-56 relative overflow-hidden">
                 <img
-                  src={course.thumbnail || theme.fallbackImage}
+                  src={getImageUrl(course.thumbnail) || theme.fallbackImage}
                   alt={course.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />

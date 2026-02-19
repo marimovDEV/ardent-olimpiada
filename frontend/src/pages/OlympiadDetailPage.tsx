@@ -1,4 +1,4 @@
-import { API_URL as API_BASE } from "@/services/api";
+import { API_URL as API_BASE, getImageUrl } from "@/services/api";
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -264,7 +264,7 @@ const OlympiadDetailPage = () => {
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-inner">
                       {olympiad.thumbnail ? (
-                        <img src={olympiad.thumbnail} alt="" className="w-full h-full object-cover rounded-2xl" />
+                        <img src={getImageUrl(olympiad.thumbnail)} alt="" className="w-full h-full object-cover rounded-2xl" />
                       ) : (
                         <Trophy className="w-8 h-8 text-white" />
                       )}

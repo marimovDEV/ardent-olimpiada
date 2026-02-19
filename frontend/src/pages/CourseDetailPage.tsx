@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import api from "@/services/api";
 import { API_URL } from "@/services/api";
 import { getSubjectTheme as getTheme } from "@/lib/course-themes";
+import { getImageUrl } from "@/lib/utils";
 
 const API_BASE = API_URL;
 
@@ -340,7 +341,7 @@ const CourseDetailPage = () => {
                   {/* Course Image */}
                   <div className="h-48 relative">
                     <img
-                      src={course.thumbnail || courseTheme.fallbackImage}
+                      src={getImageUrl(course.thumbnail) || courseTheme.fallbackImage}
                       alt={course.title}
                       className="w-full h-full object-cover"
                     />

@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import { Badge } from "@/components/ui/badge";
 
 interface Course {
@@ -43,7 +43,7 @@ const CourseThumbnail = ({ src, title, className, placeholderClassName, iconSize
     if (src && !error) {
         return (
             <img
-                src={src}
+                src={getImageUrl(src)}
                 alt={title}
                 className={className}
                 onError={() => setError(true)}

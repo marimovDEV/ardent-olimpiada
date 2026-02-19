@@ -26,6 +26,7 @@ import {
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
@@ -326,6 +327,9 @@ const MyCertificatesPage = () => {
                             <Share2 className="w-5 h-5" />
                             Sertifikatni Ulashish
                         </DialogTitle>
+                        <DialogDescription>
+                            Sertifikat havolasini ijtimoiy tarmoqlarda ulashing yoki nusxalab oling.
+                        </DialogDescription>
                     </DialogHeader>
                     {selectedCert && (
                         <div className="space-y-4 py-4">

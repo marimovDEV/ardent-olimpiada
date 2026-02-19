@@ -47,7 +47,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import CourseWizard from "@/components/admin/CourseWizard";
 import CourseContentManager from "@/components/admin/CourseContentManager";
 
@@ -348,7 +348,7 @@ const AdminCoursesPage = () => {
                         {/* Course Thumbnail */}
                         <div className="relative h-48 w-full overflow-hidden bg-muted">
                             {course.thumbnail_url ? (
-                                <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                <img src={getImageUrl(course.thumbnail_url)} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-blue-500/10">
                                     <GraduationCap className="w-16 h-16 text-primary/20" />
@@ -386,7 +386,7 @@ const AdminCoursesPage = () => {
                                 <div className="flex -space-x-3 overflow-hidden">
                                     <div className="w-8 h-8 rounded-full border-2 border-card bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary overflow-hidden">
                                         {course.teacher_avatar ? (
-                                            <img src={course.teacher_avatar} className="w-full h-full object-cover" />
+                                            <img src={getImageUrl(course.teacher_avatar, course.teacher_name)} className="w-full h-full object-cover" />
                                         ) : (
                                             course.teacher_name?.substring(0, 1) || 'T'
                                         )}

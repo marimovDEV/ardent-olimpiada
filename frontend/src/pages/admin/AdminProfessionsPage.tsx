@@ -4,7 +4,7 @@ import { Plus, Edit2, Trash2, Search, Briefcase, Map, Star, GraduationCap } from
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
@@ -172,6 +172,9 @@ const AdminProfessionsPage = () => {
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>{editingProfession ? t('admin.editProfession') : t('admin.newProfession')}</DialogTitle>
+                            <DialogDescription className="sr-only">
+                                Kasb ma'lumotlarini tahrirlash yoki yangi kasb qo'shish formasi.
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="space-y-2">

@@ -53,7 +53,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 
 interface Certificate {
     id: number;
@@ -747,7 +747,7 @@ const AdminCertificatesPage = () => {
                                 {previewCert.pdf_file ? (
                                     <div className="border rounded-lg overflow-hidden bg-muted aspect-[1.414/1] relative group">
                                         <iframe
-                                            src={`${previewCert.pdf_file}#toolbar=0`}
+                                            src={`${getImageUrl(previewCert.pdf_file)}#toolbar=0`}
                                             className="w-full h-full border-none"
                                             title="Certificate PDF"
                                         />

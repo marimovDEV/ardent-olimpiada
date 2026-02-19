@@ -61,7 +61,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -368,6 +368,9 @@ const AdminTeachersPage = () => {
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[600px] rounded-[32px] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                        <DialogDescription className="sr-only">
+                            O'qituvchi ma'lumotlarini tahrirlash yoki yangi o'qituvchi qo'shish formasi.
+                        </DialogDescription>
                         <DialogHeader className="p-10 pb-4">
                             <DialogTitle className="text-3xl font-black tracking-tight">{editMode ? t('admin.editTeacher') : t('admin.addTeacher')}</DialogTitle>
                             <DialogDescription className="text-base font-medium">
@@ -487,7 +490,7 @@ const AdminTeachersPage = () => {
                                     <div className="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center text-primary font-black text-2xl uppercase border-2 border-primary/10">
                                         {teacher.avatar_url ? (
                                             <img
-                                                src={teacher.avatar_url.startsWith('http') ? teacher.avatar_url : `${BASE_URL}${teacher.avatar_url}`}
+                                                src={getImageUrl(teacher.avatar_url, `${teacher.first_name} ${teacher.last_name}`)}
                                                 className="w-full h-full object-cover rounded-2xl"
                                                 alt=""
                                             />
@@ -660,6 +663,9 @@ const AdminTeachersPage = () => {
             {/* Detailed Profile View Modal */}
             <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
                 <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden rounded-[32px] border-none bg-background shadow-2xl">
+                    <DialogDescription className="sr-only">
+                        O'qituvchi haqida to'liq ma'lumotlar va statistika.
+                    </DialogDescription>
                     {selectedTeacher && (
                         <div className="flex flex-col h-full max-h-[90vh]">
                             {/* Modal Header/Hero */}
@@ -669,7 +675,7 @@ const AdminTeachersPage = () => {
                                         <div className="w-full h-full rounded-[22px] bg-muted flex items-center justify-center text-3xl font-black text-primary border-4 border-muted overflow-hidden">
                                             {selectedTeacher.avatar_url ? (
                                                 <img
-                                                    src={selectedTeacher.avatar_url.startsWith('http') ? selectedTeacher.avatar_url : `${BASE_URL}${selectedTeacher.avatar_url}`}
+                                                    src={getImageUrl(selectedTeacher.avatar_url, `${selectedTeacher.first_name} ${selectedTeacher.last_name}`)}
                                                     className="w-full h-full object-cover"
                                                     alt=""
                                                 />
@@ -830,6 +836,9 @@ const AdminTeachersPage = () => {
             <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
                 {/* ... existing rejection dialog content ... */}
                 <DialogContent className="sm:max-w-md rounded-3xl">
+                    <DialogDescription className="sr-only">
+                        O'qituvchi parolini o'zgartirish.
+                    </DialogDescription>
                     <DialogHeader>
                         <DialogTitle className="text-2xl font-black tracking-tight">{t('admin.rejectionReason')}</DialogTitle>
                         <DialogDescription className="font-medium">{t('admin.rejectionReasonDesc')}</DialogDescription>

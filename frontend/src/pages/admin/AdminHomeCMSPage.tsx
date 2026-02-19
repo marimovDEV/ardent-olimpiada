@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { homepageService, HomePageConfig, HomeStat, HomeStep, HomeAdvantage, Banner, Testimonial } from "@/services/homepageService";
 import { Trash2, Plus, GripVertical, Save, Edit2, Image as ImageIcon } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import AdminFreeCourseCMS from "./AdminFreeCourseCMS";
-import { getBaseUrl } from "@/services/api";
+import { getBaseUrl, getImageUrl } from "@/services/api";
 
 const AdminHomeCMSPage = () => {
     const { t } = useTranslation();
@@ -187,7 +187,7 @@ const AdminHomeCMSPage = () => {
                                                 <div className="flex items-center gap-4">
                                                     {config.teaser_image && (
                                                         <img
-                                                            src={config.teaser_image.startsWith('http') ? config.teaser_image : `${import.meta.env.VITE_API_BASE_URL || getBaseUrl()}${config.teaser_image}`}
+                                                            src={getImageUrl(config.teaser_image)}
                                                             className="w-20 h-20 object-cover rounded-lg border"
                                                         />
                                                     )}
@@ -290,7 +290,10 @@ const AdminHomeCMSPage = () => {
                         <h2 className="text-xl font-bold">{t('admin.stats')}</h2>
                         <Dialog>
                             <DialogTrigger asChild><Button><Plus className="w-4 h-4 mr-2" /> {t('common.add')}</Button></DialogTrigger>
-                            <DialogContent><StatsForm onSuccess={fetchData} /></DialogContent>
+                            <DialogContent>
+                                <DialogDescription className="sr-only">Statistika qo'shish formasi.</DialogDescription>
+                                <StatsForm onSuccess={fetchData} />
+                            </DialogContent>
                         </Dialog>
                     </div>
                     <div className="grid gap-4">
@@ -315,7 +318,10 @@ const AdminHomeCMSPage = () => {
                         <h2 className="text-xl font-bold">{t('admin.showSteps')}</h2>
                         <Dialog>
                             <DialogTrigger asChild><Button><Plus className="w-4 h-4 mr-2" /> {t('common.add')}</Button></DialogTrigger>
-                            <DialogContent><StepsForm onSuccess={fetchData} /></DialogContent>
+                            <DialogContent>
+                                <DialogDescription className="sr-only">Step qo'shish formasi.</DialogDescription>
+                                <StepsForm onSuccess={fetchData} />
+                            </DialogContent>
                         </Dialog>
                     </div>
                     <div className="grid gap-4">
@@ -339,7 +345,10 @@ const AdminHomeCMSPage = () => {
                         <h2 className="text-xl font-bold">{t('admin.advantages')}</h2>
                         <Dialog>
                             <DialogTrigger asChild><Button><Plus className="w-4 h-4 mr-2" /> {t('common.add')}</Button></DialogTrigger>
-                            <DialogContent><AdvantageForm onSuccess={fetchData} /></DialogContent>
+                            <DialogContent>
+                                <DialogDescription className="sr-only">Afzallik qo'shish formasi.</DialogDescription>
+                                <AdvantageForm onSuccess={fetchData} />
+                            </DialogContent>
                         </Dialog>
                     </div>
                     <div className="grid gap-4">
@@ -364,7 +373,10 @@ const AdminHomeCMSPage = () => {
                         <h2 className="text-xl font-bold">{t('admin.testimonials')}</h2>
                         <Dialog>
                             <DialogTrigger asChild><Button><Plus className="w-4 h-4 mr-2" /> {t('common.add')}</Button></DialogTrigger>
-                            <DialogContent><TestimonialForm onSuccess={fetchData} /></DialogContent>
+                            <DialogContent>
+                                <DialogDescription className="sr-only">Fikr-mulohaza qo'shish formasi.</DialogDescription>
+                                <TestimonialForm onSuccess={fetchData} />
+                            </DialogContent>
                         </Dialog>
                     </div>
                     <div className="grid gap-4">
@@ -372,7 +384,7 @@ const AdminHomeCMSPage = () => {
                             <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
                                 <div className="flex items-center gap-4">
                                     {item.image ? (
-                                        <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded-full" />
+                                        <img src={getImageUrl(item.image)} alt={item.name} className="w-10 h-10 object-cover rounded-full" />
                                     ) : <div className="w-10 h-10 bg-muted rounded-full"></div>}
                                     <div>
                                         <div className="font-bold">{item.name}</div>

@@ -490,6 +490,9 @@ const AdminAIAssistantPage = () => {
                 <DialogContent className="max-w-2xl px-6 py-8">
                     <DialogHeader className="mb-4">
                         <DialogTitle className="text-xl font-black">{editingFaq ? t('admin.ai.editKnowledge') : t('admin.ai.addKnowledge')}</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            AI yordamchisi uchun bilimlar bazasini tahrirlash yoki yangi ma'lumot qo'shish formasi.
+                        </DialogDescription>
                     </DialogHeader>
                     <div className="grid grid-cols-2 gap-6 py-4">
                         <div className="space-y-4">

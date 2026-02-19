@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 
 interface PlatformSettings {
     id?: number;
@@ -373,7 +373,7 @@ const AdminSettingsPage = () => {
                                     <Label>{t('admin.logo')}</Label>
                                     <div className="flex items-center gap-4">
                                         {platformSettings.logo && (
-                                            <img src={platformSettings.logo} alt="Logo" className="w-20 h-20 object-contain border rounded-lg p-2" />
+                                            <img src={getImageUrl(platformSettings.logo)} alt="Logo" className="w-20 h-20 object-contain border rounded-lg p-2" />
                                         )}
                                         <div>
                                             <Input
@@ -396,7 +396,7 @@ const AdminSettingsPage = () => {
                                     <Label>{t('admin.favicon')}</Label>
                                     <div className="flex items-center gap-4">
                                         {platformSettings.favicon && (
-                                            <img src={platformSettings.favicon} alt="Favicon" className="w-12 h-12 object-contain border rounded-lg p-1" />
+                                            <img src={getImageUrl(platformSettings.favicon)} alt="Favicon" className="w-12 h-12 object-contain border rounded-lg p-1" />
                                         )}
                                         <div>
                                             <Input
