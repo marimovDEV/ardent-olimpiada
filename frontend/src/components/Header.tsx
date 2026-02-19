@@ -16,6 +16,7 @@ import {
   Zap
 } from "lucide-react";
 import ArdCoin from "./ArdCoin";
+import { getImageUrl } from "@/services/api";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -152,7 +153,7 @@ const Header = () => {
                 <Link to="/profile">
                   <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-primary via-yellow-500 to-orange-500 flex items-center justify-center text-background font-bold border-2 border-primary/20 shadow-lg overflow-hidden shrink-0">
                     {user?.avatar ? (
-                      <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={getImageUrl(user.avatar)} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       (user?.first_name?.[0] || user?.username?.[0] || 'U').toUpperCase()
                     )}

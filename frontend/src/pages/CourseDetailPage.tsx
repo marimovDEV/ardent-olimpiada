@@ -10,10 +10,8 @@ import {
 import ArdCoin from "@/components/ArdCoin";
 import PaymentModal from "@/components/payment/PaymentModal";
 import { toast } from "sonner";
-import api from "@/services/api";
-import { API_URL } from "@/services/api";
+import api, { API_URL, getImageUrl } from "@/services/api";
 import { getSubjectTheme as getTheme } from "@/lib/course-themes";
-import { getImageUrl } from "@/lib/utils";
 
 const API_BASE = API_URL;
 

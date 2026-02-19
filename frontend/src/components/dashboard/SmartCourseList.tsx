@@ -1,4 +1,4 @@
-import { API_URL as API_BASE } from "@/services/api";
+import { API_URL as API_BASE, getImageUrl } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Play, Clock, BookOpen, Loader2 } from "lucide-react";
@@ -143,7 +143,7 @@ const SmartCourseList = ({ courses }: { courses?: Enrollment[] }) => {
                             <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary to-primary-dark shadow-gold">
                                 {course.thumbnail ? (
                                     <img
-                                        src={course.thumbnail}
+                                        src={getImageUrl(course.thumbnail)}
                                         alt={course.title}
                                         loading="lazy"
                                         decoding="async"

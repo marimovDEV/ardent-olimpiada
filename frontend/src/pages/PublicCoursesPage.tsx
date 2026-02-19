@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { homepageService } from "@/services/homepageService";
+import { getImageUrl } from "@/services/api";
 import { Button } from "@/components/ui/button";
 // ... other imports
 import {
@@ -155,7 +156,7 @@ const PublicCoursesPage = () => {
                                 {/* Card Image */}
                                 <div className="h-52 relative flex items-center justify-center overflow-hidden">
                                     <img
-                                        src={course.thumbnail || theme.fallbackImage}
+                                        src={getImageUrl(course.thumbnail) || theme.fallbackImage}
                                         alt={course.title}
                                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     />

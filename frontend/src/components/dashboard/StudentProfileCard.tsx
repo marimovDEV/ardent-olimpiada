@@ -1,4 +1,4 @@
-import { API_URL as API_BASE } from "@/services/api";
+import { API_URL as API_BASE, getImageUrl } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { User, MapPin, School, GraduationCap, Calendar, Phone, Trophy, Star, Zap, Edit3, Smartphone, Check, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -163,7 +163,7 @@ const StudentProfileCard = () => {
 
                                 {user.avatar ? (
                                     <img
-                                        src={user.avatar}
+                                        src={getImageUrl(user.avatar)}
                                         alt={fullName}
                                         loading="lazy"
                                         decoding="async"
