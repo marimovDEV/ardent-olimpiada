@@ -25,10 +25,16 @@ interface DashboardData {
   recommended_courses?: any[];
   featured_subjects?: any[];
   featured_professions?: any[];
-  hero: any;
   mission: any;
   calendar: any[];
   level: any;
+  hero: {
+    user_name: string;
+    balance: number;
+    ranking: number;
+    certificates_count: number;
+    [key: string]: any;
+  };
   telegram: any;
   subject_stats: any[];
   active_profession: any;
@@ -166,7 +172,7 @@ const Dashboard = () => {
                 <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] opacity-60">Current Rank</span>
                 <div className="flex items-center gap-3">
                   <Crown className="w-6 h-6 text-primary" />
-                  <span className="text-4xl font-black text-white italic font-cinzel">#12</span>
+                  <span className="text-4xl font-black text-white italic font-cinzel">#{data.hero?.ranking || 0}</span>
                 </div>
               </div>
             </div>
@@ -239,14 +245,14 @@ const Dashboard = () => {
         />
         <DashboardStatCard
           label={t('dashboard.stats.rank', 'RANKING')}
-          value="#12"
+          value={`#${data.hero?.ranking || 0}`}
           icon={Crown}
           trend="🏆 Top 5%"
           color="primary"
         />
         <DashboardStatCard
           label={t('dashboard.stats.certificates', 'CERTIFICATES')}
-          value="4"
+          value={`${data.hero?.certificates_count || 0}`}
           icon={Award}
           trend="✨ Certified"
           color="yellow"

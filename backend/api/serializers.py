@@ -101,10 +101,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'full_name',
                   'phone', 'avatar', 'avatar_url', 'role', 'xp', 'level', 'level_progress', 'balance',
+                  'ranking', 'certificates_count',
                   'birth_date', 'region', 'school', 'grade', 'language', 'password',
                   'telegram_id', 'telegram_linking_token', 'telegram_connected_at',
                   'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'teacher_profile', 'subjects']
         read_only_fields = ['id', 'date_joined', 'xp', 'level', 'last_login', 
+                            'ranking', 'certificates_count',
                             'telegram_id', 'telegram_linking_token', 'telegram_connected_at',
                             'teacher_profile', 'subjects']
     

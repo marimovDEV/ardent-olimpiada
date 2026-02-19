@@ -44,6 +44,8 @@ interface UserData {
     school?: string;
     grade?: string;
     balance?: string;
+    ranking?: number;
+    certificates_count?: number;
     level_progress?: {
         current: number;
         next: number;
@@ -924,7 +926,7 @@ const ProfilePage = () => {
                                     <Trophy className="w-8 h-8 text-primary shadow-gold" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-black text-white whitespace-nowrap">0</p>
+                                    <p className="text-3xl font-black text-white whitespace-nowrap">{user.certificates_count || 0}</p>
                                     <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.achievements')}</p>
                                 </div>
                             </div>

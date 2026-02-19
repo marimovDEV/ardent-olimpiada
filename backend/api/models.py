@@ -158,6 +158,26 @@ class User(AbstractUser):
             'roadmap': roadmap
         }
 
+    @property
+    def ranking(self):
+        """Returns the user's rank based on XP among students"""
+        if self.role != 'STUDENT' and not self.is_superuser:
+            return 0
+        
+        # Rank is 1 + number of students with more XP than this user
+        # In case of equal XP, users are ranked by ID/Date Joined (consistent)
+        higher_xp_count = User.objects.filter(
+            role='STUDENT',
+            xp__gt=self.xp
+        ).count()
+        
+        return higher_xp_count + 1
+
+    @property
+    def certificates_count(self):
+        """Returns the count of verified certificates for this user"""
+        return self.certificates.filter(status='VERIFIED').count()
+
 
 class Subject(models.Model):
     """Subject/Category Model for CMS"""
