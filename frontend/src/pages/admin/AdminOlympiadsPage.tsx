@@ -38,6 +38,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
+import { cn } from "@/lib/utils";
 
 // API Data Types
 interface Olympiad {
@@ -78,7 +79,18 @@ const AdminOlympiadsPage = () => {
 
     // UI States
     const [deleteId, setDeleteId] = useState<number | null>(null);
-    const [statusDialog, setStatusDialog] = useState<{ id: number; status: string } | null>(null);
+    const [statusDialog, setStatusDialog] = useState<{ id: number; status: string; currentStatus: string } | null>(null);
+
+    const STATUS_TRANSITIONS: Record<string, string[]> = {
+        'DRAFT': ['UPCOMING', 'CANCELED'],
+        'UPCOMING': ['ONGOING', 'PAUSED', 'CANCELED'],
+        'ONGOING': ['PAUSED', 'CHECKING', 'CANCELED'],
+        'PAUSED': ['ONGOING', 'UPCOMING', 'CANCELED'],
+        'CHECKING': ['PUBLISHED', 'CANCELED'],
+        'PUBLISHED': ['COMPLETED'],
+        'COMPLETED': [],
+        'CANCELED': ['DRAFT']
+    };
 
     useEffect(() => {
         fetchOlympiads();
@@ -360,7 +372,7 @@ const AdminOlympiadsPage = () => {
 
                                             <DropdownMenuSeparator className="bg-border" />
 
-                                            <DropdownMenuItem className="cursor-pointer" onClick={() => setStatusDialog({ id: oly.id, status: oly.status })}>
+                                            <DropdownMenuItem className="cursor-pointer" onClick={() => setStatusDialog({ id: oly.id, status: oly.status, currentStatus: oly.status })}>
                                                 <Activity className="w-4 h-4 mr-2" /> {t('admin.olympiads.changeStatus')}
                                             </DropdownMenuItem>
 
@@ -428,18 +440,30 @@ const AdminOlympiadsPage = () => {
                                 value={statusDialog?.status}
                                 onValueChange={(val) => setStatusDialog(prev => prev ? ({ ...prev, status: val }) : null)}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="h-12 rounded-xl">
                                     <SelectValue placeholder={t('admin.olympiads.selectStatus')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="DRAFT">DRAFT ({t('admin.draft')})</SelectItem>
-                                    <SelectItem value="UPCOMING">UPCOMING ({t('admin.upcoming')} - {t('admin.time')})</SelectItem>
-                                    <SelectItem value="ONGOING">ONGOING ({t('admin.active')} - Live)</SelectItem>
-                                    <SelectItem value="PAUSED">PAUSED ({t('admin.olympiads.paused')})</SelectItem>
-                                    <SelectItem value="CHECKING">CHECKING ({t('admin.checking')})</SelectItem>
-                                    <SelectItem value="PUBLISHED">PUBLISHED ({t('admin.published')})</SelectItem>
-                                    <SelectItem value="COMPLETED">COMPLETED ({t('admin.completed')})</SelectItem>
-                                    <SelectItem value="CANCELED">CANCELED ({t('admin.olympiads.canceled')})</SelectItem>
+                                    {statusDialog && STATUS_TRANSITIONS[statusDialog.currentStatus]?.map(s => (
+                                        <SelectItem key={s} value={s} className="py-3">
+                                            <div className="flex items-center gap-2">
+                                                <div className={cn(
+                                                    "w-2 h-2 rounded-full",
+                                                    s === 'ONGOING' ? "bg-green-500" :
+                                                        s === 'UPCOMING' ? "bg-blue-500" :
+                                                            s === 'PUBLISHED' ? "bg-purple-500" :
+                                                                s === 'CHECKING' ? "bg-amber-500" :
+                                                                    s === 'COMPLETED' ? "bg-gray-500" : "bg-red-500"
+                                                )} />
+                                                <span className="font-bold">{t(`admin.status_${s.toLowerCase()}`, s)}</span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                    {statusDialog && STATUS_TRANSITIONS[statusDialog.currentStatus]?.length === 0 && (
+                                        <div className="p-4 text-center text-sm text-muted-foreground">
+                                            {t('admin.olympiads.noTransitions', 'Keyingi holatlar mavjud emas')}
+                                        </div>
+                                    )}
                                 </SelectContent>
                             </Select>
                         </div>
