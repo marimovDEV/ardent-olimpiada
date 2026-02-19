@@ -98,20 +98,6 @@ const OlympiadResultPage = () => {
         </div>
     );
 
-    if (!result) return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center space-y-6">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-4">
-                <Target className="w-10 h-10 text-muted-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold">{t('olympiadResult.notFound')}</h1>
-            <p className="text-muted-foreground max-w-md">
-                {t('olympiadResult.notFinished')}
-            </p>
-            <Button asChild>
-                <Link to="/olympiads">{t('olympiadResult.backToOlympiads')}</Link>
-            </Button>
-        </div>
-    );
 
     // Initial Waiting State UI
     if (result.status === 'WAITING_RESULTS') {
@@ -212,6 +198,7 @@ const OlympiadResultPage = () => {
     const percentage = safePercentage(result.my_result?.percentage);
     const isPassed = percentage >= 70;
     const isDisqualified = result.my_result?.status === 'DISQUALIFIED';
+    const hasParticipated = !!result.my_result;
 
     const handleDownloadCertificate = () => {
         // Simple printable cert for now
@@ -230,14 +217,20 @@ const OlympiadResultPage = () => {
                         {tr(olympiad?.title) || t('common.olympiad')}
                     </div>
                     <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                        {isDisqualified ? t('olympiadResult.disqualifiedTitle') : t('olympiadResult.yourResult')}
+                        {!hasParticipated
+                            ? t('olympiadResult.globalResults', 'Olimpiada Natijalari')
+                            : isDisqualified
+                                ? t('olympiadResult.disqualifiedTitle')
+                                : t('olympiadResult.yourResult')}
                     </h1>
                     <p className="text-muted-foreground">
-                        {isDisqualified
-                            ? t('olympiadResult.disqualifiedMsg')
-                            : isPassed
-                                ? t('olympiadResult.passedMsg')
-                                : t('olympiadResult.recordedMsg')}
+                        {!hasParticipated
+                            ? t('olympiadResult.notParticipatedDesc', 'Siz ushbu olimpiadada ishtirok etmadingiz, lekin umumiy natijalarni ko\'rishingiz mumkin.')
+                            : isDisqualified
+                                ? t('olympiadResult.disqualifiedMsg')
+                                : isPassed
+                                    ? t('olympiadResult.passedMsg')
+                                    : t('olympiadResult.recordedMsg')}
                     </p>
                 </div>
 
@@ -266,50 +259,62 @@ const OlympiadResultPage = () => {
                 )}
 
                 {/* Main Score & Percentage */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Score Card */}
-                    <Card className="relative overflow-hidden p-8 flex flex-col items-center justify-center border-2 border-primary/20 shadow-xl bg-gradient-to-br from-card to-primary/5 group transition-all hover:border-primary/40">
-                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-                            <Target className="w-24 h-24" />
-                        </div>
-                        <div className="relative z-10 text-center space-y-2">
-                            <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{t('olympiadResult.scoreEarned')}</div>
-                            <div className="text-6xl font-black text-primary tabular-nums">
-                                {result.my_result?.score}
+                {hasParticipated ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Score Card */}
+                        <Card className="relative overflow-hidden p-8 flex flex-col items-center justify-center border-2 border-primary/20 shadow-xl bg-gradient-to-br from-card to-primary/5 group transition-all hover:border-primary/40">
+                            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+                                <Target className="w-24 h-24" />
                             </div>
-                            <div className="text-xs text-muted-foreground font-medium uppercase tracking-tighter italic opacity-60">{t('olympiadResult.avgScore')} {result.avg_score}</div>
-                        </div>
-                    </Card>
+                            <div className="relative z-10 text-center space-y-2">
+                                <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{t('olympiadResult.scoreEarned')}</div>
+                                <div className="text-6xl font-black text-primary tabular-nums">
+                                    {result.my_result?.score}
+                                </div>
+                                <div className="text-xs text-muted-foreground font-medium uppercase tracking-tighter italic opacity-60">{t('olympiadResult.avgScore')} {result.avg_score}</div>
+                            </div>
+                        </Card>
 
-                    {/* Efficiency Card */}
-                    <Card className={cn(
-                        "relative overflow-hidden p-8 flex flex-col items-center justify-center border-2 shadow-xl bg-gradient-to-br transition-all hover:scale-[1.02]",
-                        isPassed && !isDisqualified ? "border-green-500/20 from-card to-green-500/5 hover:border-green-500/40" : "border-yellow-500/20 from-card to-yellow-500/5 hover:border-yellow-500/40",
-                        isDisqualified && "border-red-500/20 from-card to-red-500/5"
-                    )}>
-                        <div className="relative z-10 w-full text-center space-y-4">
-                            <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{t('olympiadResult.efficiency')}</div>
-                            <div className={cn(
-                                "text-6xl font-black tabular-nums",
-                                isPassed && !isDisqualified ? "text-green-600" : "text-yellow-600",
-                                isDisqualified && "text-red-600"
-                            )}>
-                                {percentage}%
+                        {/* Efficiency Card */}
+                        <Card className={cn(
+                            "relative overflow-hidden p-8 flex flex-col items-center justify-center border-2 shadow-xl bg-gradient-to-br transition-all hover:scale-[1.02]",
+                            isPassed && !isDisqualified ? "border-green-500/20 from-card to-green-500/5 hover:border-green-500/40" : "border-yellow-500/20 from-card to-yellow-500/5 hover:border-yellow-500/40",
+                            isDisqualified && "border-red-500/20 from-card to-red-500/5"
+                        )}>
+                            <div className="relative z-10 w-full text-center space-y-4">
+                                <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest">{t('olympiadResult.efficiency')}</div>
+                                <div className={cn(
+                                    "text-6xl font-black tabular-nums",
+                                    isPassed && !isDisqualified ? "text-green-600" : "text-yellow-600",
+                                    isDisqualified && "text-red-600"
+                                )}>
+                                    {percentage}%
+                                </div>
+                                {/* Progress bar */}
+                                <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                                    <div
+                                        className={cn(
+                                            "h-full transition-all duration-1000",
+                                            isPassed && !isDisqualified ? "bg-green-500" : "bg-yellow-500",
+                                            isDisqualified && "bg-red-500"
+                                        )}
+                                        style={{ width: `${percentage}%` }}
+                                    />
+                                </div>
                             </div>
-                            {/* Progress bar */}
-                            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                                <div
-                                    className={cn(
-                                        "h-full transition-all duration-1000",
-                                        isPassed && !isDisqualified ? "bg-green-500" : "bg-yellow-500",
-                                        isDisqualified && "bg-red-500"
-                                    )}
-                                    style={{ width: `${percentage}%` }}
-                                />
-                            </div>
+                        </Card>
+                    </div>
+                ) : (
+                    <Card className="p-8 border-2 border-dashed border-muted flex flex-col items-center justify-center text-center space-y-4 bg-muted/5">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
+                            <BarChart3 className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold">{t('olympiadResult.noPersonalResult', 'Shaxsiy natija mavjud emas')}</h3>
+                            <p className="text-sm text-muted-foreground">{t('olympiadResult.noPersonalResultDesc', 'Siz ushbu olimpiadada ishtirok etmadingiz yoki testingiz hali yakunlanmagan.')}</p>
                         </div>
                     </Card>
-                </div>
+                )}
 
                 {/* LEADERBOARD PREVIEW */}
                 <Card className="overflow-hidden border-border bg-card/30 backdrop-blur-sm">
@@ -367,20 +372,20 @@ const OlympiadResultPage = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <Card className="p-4 flex flex-col items-center justify-center space-y-1 text-center bg-card/50">
                         <Clock className="w-5 h-5 text-primary mb-1" />
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('olympiadResult.time')}</span>
-                        <span className="text-sm font-black tabular-nums uppercase">{formatTime(result.my_result?.time_taken)}</span>
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('olympiadResult.avgScore')}</span>
+                        <span className="text-sm font-black tabular-nums uppercase">{result.avg_score || 0}%</span>
                     </Card>
 
                     <Card className="p-4 flex flex-col items-center justify-center space-y-1 text-center bg-card/50">
                         <Trophy className="w-5 h-5 text-amber-500 mb-1" />
                         <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('olympiadResult.rank')}</span>
-                        <span className="text-sm font-black tabular-nums">#{result.my_result?.rank}</span>
+                        <span className="text-sm font-black tabular-nums">{hasParticipated ? `#${result.my_result?.rank}` : '-'}</span>
                     </Card>
 
                     <Card className="p-4 flex flex-col items-center justify-center space-y-1 text-center bg-card/50">
                         <LayoutDashboard className="w-5 h-5 text-primary/60 mb-1" />
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('common.id', 'ID')}</span>
-                        <span className="text-sm font-black tabular-nums opacity-50">#{result.my_result?.id}</span>
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('olympiadResult.participants')}</span>
+                        <span className="text-sm font-black tabular-nums">{result.participants_count}</span>
                     </Card>
 
                     <Card className="p-4 flex flex-col items-center justify-center space-y-1 text-center bg-card/50">
@@ -388,9 +393,9 @@ const OlympiadResultPage = () => {
                         <span className="text-[10px] font-bold text-muted-foreground uppercase">{t('olympiadResult.status')}</span>
                         <span className={cn(
                             "text-[10px] font-black uppercase px-2 py-0.5 rounded-full",
-                            isDisqualified ? "bg-red-500/10 text-red-600" : "bg-green-500/10 text-green-600"
+                            hasParticipated && isDisqualified ? "bg-red-500/10 text-red-600" : "bg-green-500/10 text-green-600"
                         )}>
-                            {isDisqualified
+                            {hasParticipated && isDisqualified
                                 ? t('olympiadResult.disqualified')
                                 : t(`olympiadResult.status_${String(result.status || "").toLowerCase()}`, { defaultValue: result.status })}
                         </span>

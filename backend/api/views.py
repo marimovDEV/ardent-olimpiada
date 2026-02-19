@@ -1806,20 +1806,33 @@ class OlympiadViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def result(self, request, pk=None):
-        """Get user's result for this olympiad"""
+        """Get user's result for this olympiad including global leaderboard"""
         olympiad = self.get_object()
         user = request.user
         
+        # 1. Base Stats (Global)
+        completed_results = TestResult.objects.filter(
+            olympiad=olympiad,
+            status='COMPLETED'
+        ).select_related('user')
+        
+        avg_score = completed_results.aggregate(models.Avg('score'))['score__avg'] or 0
+        participants_count = TestResult.objects.filter(olympiad=olympiad).count()
+        
+        # 2. Personal Result
+        my_result_full = None
         try:
-            result = TestResult.objects.get(user=user, olympiad=olympiad)
+            my_res = TestResult.objects.get(user=user, olympiad=olympiad)
+            my_result_full = TestResultSerializer(my_res).data
+            # Calculate Rank
+            my_result_full['rank'] = completed_results.filter(
+                models.Q(score__gt=my_res.score) | 
+                models.Q(score=my_res.score, time_taken__lt=my_res.time_taken)
+            ).count() + 1
         except TestResult.DoesNotExist:
-            return Response({
-                'success': False,
-                'status': 'NO_RESULT',
-                'error': 'Siz hali imtihon topshirmagansiz'
-            }, status=status.HTTP_200_OK)
+            pass
 
-        # Check result_time logic
+        # 3. Result Time Logic
         now = timezone.now()
         is_results_open = True
         if olympiad.result_time and now < olympiad.result_time:
@@ -1830,21 +1843,36 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'status': 'WAITING_RESULTS',
                 'result_time': olympiad.result_time,
-                'message': 'Natijalar tez orada e\'lon qilinadi'
+                'message': 'Natijalar tez orada e\'lon qilinadi',
+                'my_result': my_result_full,
+                'avg_score': round(float(avg_score), 1),
+                'participants_count': participants_count
             })
             
-        rank = TestResult.objects.filter(
-            olympiad=olympiad, 
-            score__gt=result.score
-        ).count() + 1
-        
-        data = TestResultSerializer(result).data
-        data['rank'] = rank
-        
+        # 4. Leaderboard Data (Top 5 for preview)
+        leaderboard_data = []
+        if is_results_open:
+            total_points = sum(q.points for q in olympiad.questions.all())
+            qs = completed_results.order_by('-score', 'time_taken')[:5]
+            for idx, res in enumerate(qs):
+                name = res.user.get_full_name().strip() or res.user.username
+                leaderboard_data.append({
+                    'rank': idx + 1,
+                    'student': name,
+                    'score': res.score,
+                    'max_score': total_points,
+                    'time_taken': res.time_taken,
+                    'region': res.user.region or "",
+                    'avatar': res.user.avatar.url if res.user.avatar else None
+                })
+
         return Response({
             'success': True,
             'status': 'RESULTS_OPEN',
-            'my_result': data
+            'my_result': my_result_full,
+            'leaderboard': leaderboard_data,
+            'avg_score': round(float(avg_score), 1),
+            'participants_count': participants_count
         })
 
     @action(detail=True, methods=['get'], permission_classes=[AllowAny])
