@@ -24,12 +24,14 @@ class CertificateGenerator:
     # Certificate dimensions (A4 Landscape)
     PAGE_WIDTH, PAGE_HEIGHT = landscape(A4)
     
-    # Colors
-    PRIMARY_COLOR = colors.HexColor('#7C3AED')  # Purple
-    SECONDARY_COLOR = colors.HexColor('#4F46E5')  # Indigo
-    GOLD_COLOR = colors.HexColor('#F59E0B')  # Amber/Gold
-    TEXT_COLOR = colors.HexColor('#1F2937')  # Dark gray
-    LIGHT_TEXT = colors.HexColor('#6B7280')  # Muted text
+    # Premium Colors
+    PRIMARY_COLOR = colors.HexColor('#2E1065')  # Deep Indigo
+    SECONDARY_COLOR = colors.HexColor('#4338CA')  # Indigo
+    ACCENT_COLOR = colors.HexColor('#7C3AED')    # Purple
+    GOLD_COLOR = colors.HexColor('#D97706')     # Rich Amber/Gold
+    TEXT_COLOR = colors.HexColor('#111827')     # Nero / Dark gray
+    LIGHT_TEXT = colors.HexColor('#4B5563')     # Slate gray
+    BORDER_COLOR = colors.HexColor('#E5E7EB')   # Light border
     
     def __init__(self, certificate):
         self.cert = certificate
@@ -53,74 +55,79 @@ class CertificateGenerator:
         return self.buffer
     
     def _draw_background(self):
-        """Draw gradient-like background with decorative elements"""
+        """Draw sophisticated background with decorative elements"""
         c = self.c
         
-        # Light gradient effect with rectangles
-        for i in range(20):
-            alpha = 0.02 - (i * 0.001)
-            c.setFillColor(colors.Color(0.486, 0.227, 0.929, alpha))
-            c.rect(0, self.PAGE_HEIGHT - (i * 20), self.PAGE_WIDTH, 20, fill=True, stroke=False)
+        # Subtle parchment-like background
+        c.setFillColor(colors.HexColor('#FCFDFE'))
+        c.rect(0, 0, self.PAGE_WIDTH, self.PAGE_HEIGHT, fill=True, stroke=False)
         
-        # Decorative corner patterns
-        c.setStrokeColor(self.PRIMARY_COLOR)
-        c.setStrokeAlpha(0.1)
-        c.setLineWidth(2)
+        # Decorative abstract shapes (high-end look)
+        c.setStrokeAlpha(0.04)
+        c.setFillColor(self.ACCENT_COLOR)
+        c.setFillAlpha(0.03)
         
-        # Top left corner
-        for i in range(5):
-            c.arc(20 + i*15, self.PAGE_HEIGHT - 80 - i*15, 80 + i*15, self.PAGE_HEIGHT - 20 + i*15, 0, 90)
+        # Top-left large circle
+        c.circle(0, self.PAGE_HEIGHT, 300, fill=True, stroke=True)
+        # Bottom-right large circle
+        c.circle(self.PAGE_WIDTH, 0, 250, fill=True, stroke=True)
         
-        # Bottom right corner
-        for i in range(5):
-            c.arc(self.PAGE_WIDTH - 80 - i*15, 20 - i*15, self.PAGE_WIDTH - 20 + i*15, 80 + i*15, 180, 270)
-        
-        c.setStrokeAlpha(1)
+        # Reset alphas
+        c.setStrokeAlpha(1.0)
+        c.setFillAlpha(1.0)
         
     def _draw_border(self):
-        """Draw elegant double border"""
+        """Draw elegant multi-line border"""
         c = self.c
-        margin = 25
+        margin = 30
         
-        # Outer border
+        # Outer Gold Border
         c.setStrokeColor(self.GOLD_COLOR)
-        c.setLineWidth(3)
-        c.roundRect(margin, margin, self.PAGE_WIDTH - 2*margin, self.PAGE_HEIGHT - 2*margin, 15)
+        c.setLineWidth(2.5)
+        c.roundRect(margin, margin, self.PAGE_WIDTH - 2*margin, self.PAGE_HEIGHT - 2*margin, 20)
         
-        # Inner border
-        c.setStrokeColor(self.PRIMARY_COLOR)
-        c.setLineWidth(1)
-        c.roundRect(margin + 10, margin + 10, self.PAGE_WIDTH - 2*margin - 20, self.PAGE_HEIGHT - 2*margin - 20, 10)
+        # Inner thin Indigo Border
+        c.setStrokeColor(self.SECONDARY_COLOR)
+        c.setLineWidth(0.5)
+        c.roundRect(margin + 8, margin + 8, self.PAGE_WIDTH - 2*margin - 16, self.PAGE_HEIGHT - 2*margin - 16, 15)
         
     def _draw_header(self):
-        """Draw certificate header with logo and title"""
+        """Draw certificate header"""
         c = self.c
         center_x = self.PAGE_WIDTH / 2
         
-        # Logo placeholder (circular)
-        c.setFillColor(self.PRIMARY_COLOR)
-        c.circle(center_x, self.PAGE_HEIGHT - 80, 30, fill=True, stroke=False)
+        # Elegant Logo (Shield-like)
+        c.setFillColor(self.ACCENT_COLOR)
+        # Draw a pentagon-like shield shape
+        path = c.beginPath()
+        path.moveTo(center_x, self.PAGE_HEIGHT - 60)
+        path.lineTo(center_x + 25, self.PAGE_HEIGHT - 75)
+        path.lineTo(center_x + 20, self.PAGE_HEIGHT - 110)
+        path.lineTo(center_x - 20, self.PAGE_HEIGHT - 110)
+        path.lineTo(center_x - 25, self.PAGE_HEIGHT - 75)
+        path.close()
+        c.drawPath(path, fill=True, stroke=False)
         
-        # "A" letter in logo
+        # "A" letter in shield
         c.setFillColor(colors.white)
-        c.setFont("Helvetica-Bold", 32)
-        c.drawCentredString(center_x, self.PAGE_HEIGHT - 92, "A")
+        c.setFont("Helvetica-Bold", 30)
+        c.drawCentredString(center_x, self.PAGE_HEIGHT - 100, "A")
         
-        # Platform name
+        # Platform name - Sized properly
         c.setFillColor(self.TEXT_COLOR)
         c.setFont("Helvetica-Bold", 14)
-        c.drawCentredString(center_x, self.PAGE_HEIGHT - 125, "ARDENT OLIMPIADA")
+        c.drawCentredString(center_x, self.PAGE_HEIGHT - 135, "ARDENT OLIMPIADA")
         
-        # Certificate type
+        # Certificate Subtitle
+        c.setFillColor(self.SECONDARY_COLOR)
+        c.setFont("Helvetica-Bold", 36)
         cert_type_text = self._get_type_text()
-        c.setFillColor(self.PRIMARY_COLOR)
-        c.setFont("Helvetica-Bold", 28)
-        c.drawCentredString(center_x, self.PAGE_HEIGHT - 165, cert_type_text)
+        c.drawCentredString(center_x, self.PAGE_HEIGHT - 185, cert_type_text)
         
-        # Decorative line
+        # Stylish Accent Line
         c.setStrokeColor(self.GOLD_COLOR)
-        c.setLineWidth(2)
-        c.line(center_x - 100, self.PAGE_HEIGHT - 180, center_x + 100, self.PAGE_HEIGHT - 180)
+        c.setLineWidth(1.5)
+        c.line(center_x - 120, self.PAGE_HEIGHT - 200, center_x + 120, self.PAGE_HEIGHT - 200)
         
     def _get_type_text(self):
         """Get certificate type display text"""
@@ -132,151 +139,168 @@ class CertificateGenerator:
         return type_map.get(self.cert.cert_type, 'SERTIFIKAT')
     
     def _draw_recipient(self):
-        """Draw recipient name with decorative elements"""
+        """Draw recipient name with normalization"""
         c = self.c
         center_x = self.PAGE_WIDTH / 2
         
-        # "This certifies that" text
+        # "Ushbu sertifikat..." text
         c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 12)
-        c.drawCentredString(center_x, self.PAGE_HEIGHT - 220, "Ushbu sertifikat quyidagi shaxsga berildi:")
+        c.setFont("Helvetica", 13)
+        c.drawCentredString(center_x, self.PAGE_HEIGHT - 245, "Ushbu sertifikat quyidagi shaxsga berildi:")
         
-        # Recipient name - LARGE
-        user_name = self.cert.user.get_full_name() or self.cert.user.username
+        # Recipient Name - Properly Capitalized
+        user_full_name = self.cert.user.get_full_name() or self.cert.user.username
+        display_name = user_full_name.title() # Capitalize Each Word
+        
         c.setFillColor(self.TEXT_COLOR)
-        c.setFont("Helvetica-Bold", 36)
-        c.drawCentredString(center_x, self.PAGE_HEIGHT - 265, user_name.upper())
+        c.setFont("Helvetica-Bold", 42)
+        c.drawCentredString(center_x, self.PAGE_HEIGHT - 295, display_name.upper())
         
-        # Decorative underline
-        name_width = c.stringWidth(user_name.upper(), "Helvetica-Bold", 36)
+        # Decorative underline with spacing
+        name_width = c.stringWidth(display_name.upper(), "Helvetica-Bold", 42)
         c.setStrokeColor(self.GOLD_COLOR)
         c.setLineWidth(2)
-        c.line(center_x - name_width/2, self.PAGE_HEIGHT - 275, center_x + name_width/2, self.PAGE_HEIGHT - 275)
+        c.line(center_x - name_width/2 - 10, self.PAGE_HEIGHT - 308, center_x + name_width/2 + 10, self.PAGE_HEIGHT - 308)
         
     def _draw_course_info(self):
-        """Draw course/olympiad information"""
+        """Draw course info with capitalized title"""
         c = self.c
         center_x = self.PAGE_WIDTH / 2
         
-        # "For completing" text
         c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 12)
+        c.setFont("Helvetica", 13)
         
         if self.cert.cert_type == 'OLYMPIAD':
-            c.drawCentredString(center_x, self.PAGE_HEIGHT - 310, "quyidagi olimpiadada muvaffaqiyatli ishtirok etgani uchun:")
+            c.drawCentredString(center_x, self.PAGE_HEIGHT - 345, "quyidagi olimpiadada muvaffaqiyatli ishtirok etgani uchun:")
         else:
-            c.drawCentredString(center_x, self.PAGE_HEIGHT - 310, "quyidagi kursni muvaffaqiyatli tugatgani uchun:")
+            c.drawCentredString(center_x, self.PAGE_HEIGHT - 345, "quyidagi kursni muvaffaqiyatli tugatgani uchun:")
         
-        # Course/Olympiad title
+        # Title - Capitalized properly
         title = self.cert.title
+        if title:
+            # Capitalize first letter if it's a single word subject, else handle carefully
+            display_title = title.capitalize() if len(title.split()) == 1 else title
+        else:
+            display_title = "Olimpiada"
+            
         c.setFillColor(self.SECONDARY_COLOR)
-        c.setFont("Helvetica-Bold", 22)
-        c.drawCentredString(center_x, self.PAGE_HEIGHT - 345, f'"{title}"')
+        c.setFont("Helvetica-Bold", 26)
+        c.drawCentredString(center_x, self.PAGE_HEIGHT - 385, f'"{display_title}"')
         
     def _draw_grade(self):
-        """Draw grade/score with decorative badge"""
+        """Redesigned grade badge to fix clipping"""
         c = self.c
         center_x = self.PAGE_WIDTH / 2
+        badge_y = self.PAGE_HEIGHT - 450
         
-        # Grade badge background
-        badge_y = self.PAGE_HEIGHT - 400
-        c.setFillColor(self.PRIMARY_COLOR)
-        c.roundRect(center_x - 60, badge_y - 25, 120, 50, 10, fill=True, stroke=False)
+        # Normalize grade text (Handle long texts like "shtirok etdi")
+        grade_text = str(self.cert.grade)
+        # Fix: if it's "GOLD", "SILVER", "BRONZE", translate or format nicely
+        grade_map = {
+            'GOLD': "1-O'RIN (OLTIN)",
+            'SILVER': "2-O'RIN (KUMUSH)",
+            'BRONZE': "3-O'RIN (BRONZA)",
+        }
+        display_grade = grade_map.get(grade_text, grade_text).upper()
         
-        # Grade text
+        # Dynamic ID for badge width
+        c.setFont("Helvetica-Bold", 20)
+        text_width = c.stringWidth(display_grade, "Helvetica-Bold", 20)
+        badge_width = max(160, text_width + 60)
+        
+        # Elegant Rounded Badge
+        c.setFillColor(self.ACCENT_COLOR) # Changed from primary for more pop
+        c.roundRect(center_x - badge_width/2, badge_y - 25, badge_width, 55, 12, fill=True, stroke=False)
+        
+        # Grade Text
         c.setFillColor(colors.white)
-        c.setFont("Helvetica-Bold", 24)
-        c.drawCentredString(center_x, badge_y - 8, self.cert.grade)
+        c.drawCentredString(center_x, badge_y + 8, display_grade)
         
-        # Score label
+        # Label below
         c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 10)
+        c.setFont("Helvetica", 11)
         c.drawCentredString(center_x, badge_y - 40, "Natija")
         
     def _draw_qr_code(self):
-        """Generate and draw QR code for verification"""
+        """QR Code with better integration"""
         c = self.c
+        qr_size = 85
+        qr_x = self.PAGE_WIDTH - 140
+        qr_y = 70
         
-        # Generate QR code
-        verify_url = f"https://ardent.uz/certificate/verify/{self.cert.cert_number}"
-        qr = qrcode.QRCode(version=1, box_size=10, border=2)
+        # Generate QR internally
+        verify_url = f"https://hogwords.uz/certificate/verify/{self.cert.cert_number}"
+        qr = qrcode.QRCode(version=1, box_size=10, border=1)
         qr.add_data(verify_url)
         qr.make(fit=True)
-        qr_img = qr.make_image(fill_color="black", back_color="white")
+        img = qr.make_image(fill_color="#111827", back_color="white")
         
-        # Convert to bytes
-        qr_buffer = io.BytesIO()
-        qr_img.save(qr_buffer, format='PNG')
-        qr_buffer.seek(0)
+        buf = io.BytesIO()
+        img.save(buf, format='PNG')
+        buf.seek(0)
         
-        # Draw QR code
-        qr_size = 70
-        qr_x = self.PAGE_WIDTH - 120
-        qr_y = 60
-        c.drawImage(ImageReader(qr_buffer), qr_x, qr_y, width=qr_size, height=qr_size)
+        # Draw white background for QR
+        c.setFillColor(colors.white)
+        c.roundRect(qr_x - 5, qr_y - 5, qr_size + 10, qr_size + 10, 8, fill=True, stroke=False)
         
-        # QR label
+        # Draw QR
+        c.drawImage(ImageReader(buf), qr_x, qr_y, width=qr_size, height=qr_size)
+        
+        # ID and Label
         c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 8)
-        c.drawCentredString(qr_x + qr_size/2, qr_y - 12, "Tekshirish uchun skanerlang")
+        c.setFont("Helvetica", 9)
+        c.drawCentredString(qr_x + qr_size/2, qr_y - 18, "Tekshirish uchun skanerlang")
         
-        # Certificate number
-        c.setFont("Helvetica-Bold", 10)
-        c.setFillColor(self.PRIMARY_COLOR)
-        c.drawCentredString(qr_x + qr_size/2, qr_y - 25, self.cert.cert_number)
+        c.setFont("Helvetica-Bold", 11)
+        c.setFillColor(self.SECONDARY_COLOR)
+        c.drawCentredString(qr_x + qr_size/2, qr_y - 35, self.cert.cert_number)
         
     def _draw_footer(self):
-        """Draw footer with date"""
+        """Clean footer"""
         c = self.c
         center_x = self.PAGE_WIDTH / 2
         
         # Issue date
         issue_date = self.cert.issued_at.strftime("%d %B %Y")
         c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 11)
-        c.drawCentredString(center_x, 90, f"Berilgan sana: {issue_date}")
+        c.setFont("Helvetica", 12)
+        c.drawCentredString(center_x, 85, f"Berilgan sana: {issue_date}")
         
         # Validity text
-        c.setFont("Helvetica", 9)
-        c.drawCentredString(center_x, 70, "Ushbu sertifikat cheksiz muddatga amal qiladi")
+        c.setFont("Helvetica-Oblique", 10)
+        c.drawCentredString(center_x, 65, "Ushbu sertifikat cheksiz muddatga amal qiladi")
         
     def _draw_signatures(self):
-        """Draw signature lines"""
+        """Professional signatures section"""
         c = self.c
+        sig_y = 125
         
-        # Left signature (Platform Director)
-        left_x = 150
-        sig_y = 130
-        
-        c.setStrokeColor(self.LIGHT_TEXT)
+        # Left (Director)
+        left_x = 160
+        c.setStrokeColor(self.BORDER_COLOR)
         c.setLineWidth(1)
-        c.line(left_x - 50, sig_y, left_x + 50, sig_y)
+        c.line(left_x - 60, sig_y, left_x + 60, sig_y)
         
         c.setFillColor(self.TEXT_COLOR)
-        c.setFont("Helvetica-Bold", 10)
-        c.drawCentredString(left_x, sig_y - 15, "Direktor")
+        c.setFont("Helvetica-Bold", 12)
+        c.drawCentredString(left_x, sig_y - 20, "Direktor")
+        c.setFont("Helvetica", 10)
+        c.drawCentredString(left_x, sig_y - 35, "Ardent Olimpiada")
         
-        c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 9)
-        c.drawCentredString(left_x, sig_y - 28, "Ardent Olimpiada")
-        
-        # Right signature (Teacher/Verifier) 
-        right_x = self.PAGE_WIDTH - 150
-        
-        c.setStrokeColor(self.LIGHT_TEXT)
-        c.line(right_x - 50, sig_y, right_x + 50, sig_y)
+        # Right (Verifier)
+        right_x = self.PAGE_WIDTH - 300 # Moved away from QR
+        c.setStrokeColor(self.BORDER_COLOR)
+        c.line(right_x - 60, sig_y, right_x + 60, sig_y)
         
         verifier = "O'qituvchi"
         if self.cert.verified_by:
             verifier = self.cert.verified_by.get_full_name() or self.cert.verified_by.username
         
         c.setFillColor(self.TEXT_COLOR)
-        c.setFont("Helvetica-Bold", 10)
-        c.drawCentredString(right_x, sig_y - 15, verifier)
-        
-        c.setFillColor(self.LIGHT_TEXT)
-        c.setFont("Helvetica", 9)
-        c.drawCentredString(right_x, sig_y - 28, "Tasdiqladi")
+        c.setFont("Helvetica-Bold", 12)
+        c.drawCentredString(right_x, sig_y - 20, verifier.title())
+        c.setFont("Helvetica", 10)
+        c.drawCentredString(right_x, sig_y - 35, "Tasdiqlovchi mas'ul")
 
 
 def generate_certificate_pdf(certificate):
