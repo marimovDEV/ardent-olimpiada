@@ -120,13 +120,19 @@ const AdminOlympiadsPage = () => {
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [statusDialog, setStatusDialog] = useState<{ id: number; status: string; currentStatus: string } | null>(null);
 
+    const ALL_STATUSES = ['DRAFT', 'REGISTRATION_OPEN', 'REGISTRATION_CLOSED', 'ONGOING', 'CHECKING', 'PUBLISHED'];
+
     const STATUS_TRANSITIONS: Record<string, string[]> = {
         'DRAFT': ['REGISTRATION_OPEN'],
-        'REGISTRATION_OPEN': ['REGISTRATION_CLOSED'],
-        'REGISTRATION_CLOSED': ['ONGOING'],
+        'REGISTRATION_OPEN': ['REGISTRATION_CLOSED', 'DRAFT'],
+        'REGISTRATION_CLOSED': ['ONGOING', 'REGISTRATION_OPEN'],
         'ONGOING': ['CHECKING'],
-        'CHECKING': ['PUBLISHED'],
-        'PUBLISHED': []
+        'CHECKING': ['PUBLISHED', 'ONGOING'],
+        'PUBLISHED': [],
+    };
+
+    const getAvailableStatuses = (currentStatus: string) => {
+        return STATUS_TRANSITIONS[currentStatus] || ALL_STATUSES.filter(s => s !== currentStatus);
     };
 
     useEffect(() => {
@@ -694,22 +700,30 @@ const AdminOlympiadsPage = () => {
                                     <SelectValue placeholder={t('admin.olympiads.selectStatus')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {statusDialog && STATUS_TRANSITIONS[statusDialog.currentStatus]?.map(s => (
+                                    {statusDialog && getAvailableStatuses(statusDialog.currentStatus).map(s => (
                                         <SelectItem key={s} value={s} className="py-3">
                                             <div className="flex items-center gap-2">
                                                 <div className={cn(
                                                     "w-2 h-2 rounded-full",
-                                                    s === 'ONGOING' ? "bg-green-500" :
-                                                        s === 'REGISTRATION_OPEN' ? "bg-indigo-500" :
-                                                            s === 'REGISTRATION_CLOSED' ? "bg-amber-500" :
-                                                                s === 'PUBLISHED' ? "bg-purple-500" :
-                                                                    s === 'CHECKING' ? "bg-orange-500" : "bg-gray-500"
+                                                    s === 'DRAFT' ? "bg-gray-400" :
+                                                        s === 'ONGOING' ? "bg-green-500" :
+                                                            s === 'REGISTRATION_OPEN' ? "bg-indigo-500" :
+                                                                s === 'REGISTRATION_CLOSED' ? "bg-amber-500" :
+                                                                    s === 'PUBLISHED' ? "bg-purple-500" :
+                                                                        s === 'CHECKING' ? "bg-orange-500" : "bg-gray-500"
                                                 )} />
-                                                <span className="font-bold">{t(`admin.status_${s.toLowerCase()}`, s)}</span>
+                                                <span className="font-bold">
+                                                    {s === 'DRAFT' ? 'Qoralama' :
+                                                        s === 'REGISTRATION_OPEN' ? "Ro'yxatga olish boshlandi" :
+                                                            s === 'REGISTRATION_CLOSED' ? "Ro'yxatdan o'tish tugadi" :
+                                                                s === 'ONGOING' ? 'Olimpiada boshladi' :
+                                                                    s === 'CHECKING' ? 'Tekshirilmoqda' :
+                                                                        s === 'PUBLISHED' ? "Natijalar e'lon qilindi" : s}
+                                                </span>
                                             </div>
                                         </SelectItem>
                                     ))}
-                                    {statusDialog && STATUS_TRANSITIONS[statusDialog.currentStatus]?.length === 0 && (
+                                    {statusDialog && getAvailableStatuses(statusDialog.currentStatus).length === 0 && (
                                         <div className="p-4 text-center text-sm text-muted-foreground">
                                             {t('admin.olympiads.noTransitions', 'Keyingi holatlar mavjud emas')}
                                         </div>
