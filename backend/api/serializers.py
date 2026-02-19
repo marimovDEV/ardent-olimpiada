@@ -870,11 +870,6 @@ class OlympiadSerializer(serializers.ModelSerializer):
                     })
         return data
 
-    def to_representation(self, instance):
-        # Automatically refresh status on view
-        instance.refresh_status()
-        return super().to_representation(instance)
-
     def get_questions_count(self, obj):
         return obj.questions.count()
     
