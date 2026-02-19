@@ -283,6 +283,17 @@
     "back": "Orqaga",
     "loading": "Yuklanmoqda...",
     "finish": "Yakunlash",
+    "view_report": "Hisobotni ko'rish",
+    "reports": {
+      "coursesEnrolled": "Yozilgan Kurslar",
+      "coursesCompleted": "Tugatilgan Kurslar",
+      "olympiadsParticipated": "Olimpiadalar",
+      "avgScore": "O'rtacha Ball",
+      "courseProgress": "Kurslardagi Progress",
+      "olympiadResults": "Olimpiada Natijalari",
+      "noCourses": "Kurslar mavjud emas",
+      "noOlympiads": "Olimpiadalarda ishtirok etilmagan"
+    },
     "courseUpdated": "Kurs muvaffaqiyatli yangilandi",
     "courseCover": "Kurs Muqovasi (Cover Image)",
     "uploadImage": "Rasm yuklash",

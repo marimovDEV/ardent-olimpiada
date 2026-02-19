@@ -57,7 +57,8 @@ import {
     XCircle,
     Copy,
     ArrowUpDown,
-    Lock
+    Lock,
+    BarChart3
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -66,6 +67,7 @@ import { API_URL, getAuthHeader } from "@/services/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatDistanceToNow } from 'date-fns';
 import { uz, ru } from 'date-fns/locale';
+import StudentReportModal from "@/components/admin/StudentReportModal";
 
 interface User {
     id: number;
@@ -99,6 +101,9 @@ const AdminUsersPage = () => {
         role: "STUDENT",
         password: ""
     });
+
+    const [reportUserId, setReportUserId] = useState<number | null>(null);
+    const [isReportOpen, setIsReportOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
 
@@ -694,6 +699,12 @@ const AdminUsersPage = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <StudentReportModal
+                userId={reportUserId}
+                open={isReportOpen}
+                onOpenChange={setIsReportOpen}
+            />
         </div>
     );
 };

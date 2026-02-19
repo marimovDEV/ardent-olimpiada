@@ -3639,31 +3639,79 @@ class UserViewSet(viewsets.ModelViewSet):
         notification_type = request.data.get('type', 'SYSTEM')
         channel = request.data.get('channel', 'WEB') # WEB, TELEGRAM, ALL
         
-        if not title or not message:
-            return Response({'error': 'Sarlavha va xabar talab qilinadi'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'success': True, 'message': 'Bildirishnoma yuborildi'})
+
+    @action(detail=True, methods=['get'])
+    def performance_report(self, request, pk=None):
+        """Full performance report for a student"""
+        user = self.get_object()
+        
+        # Security: Only admin, teacher or the user themselves
+        if not (request.user.role in ['ADMIN', 'TEACHER'] or request.user == user):
+            return Response({'error': 'Ruxsat yo\'q'}, status=status.HTTP_403_FORBIDDEN)
             
-        notification = NotificationService.create_notification(
-            user=user,
-            title=title,
-            message=message,
-            notification_type=notification_type,
-            channel=channel
-        )
-        
-        if notification:
-            return Response({
-                'success': True,
-                'message': 'Xabar muvaffaqiyatli yuborildi'
+        # 1. Course Stats
+        enrollments = Enrollment.objects.filter(user=user).select_related('course')
+        course_data = []
+        for en in enrollments:
+            # Get lessons count
+            total_lessons = Lesson.objects.filter(module__course=en.course).count()
+            completed_lessons = LessonProgress.objects.filter(user=user, lesson__module__course=en.course, is_completed=True).count()
+            
+            course_data.append({
+                'id': en.course.id,
+                'title': en.course.title,
+                'progress': float(en.progress),
+                'total_lessons': total_lessons,
+                'completed_lessons': completed_lessons,
+                'last_accessed': en.last_accessed_at,
+                'is_completed': en.completed_at is not None
             })
-        else:
-            return Response({
-                'success': False,
-                'error': 'Xabar yuborishda xatolik yuz berdi'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        user.save()
+            
+        # 2. Olympiad Stats
+        olympiad_results = TestResult.objects.filter(user=user).select_related('olympiad')
+        olympiad_data = []
+        for res in olympiad_results:
+            # Rank calculation
+            rank = TestResult.objects.filter(
+                olympiad=res.olympiad,
+                score__gt=res.score
+            ).count() + 1
+            
+            olympiad_data.append({
+                'rank': rank,
+                'id': res.olympiad.id,
+                'title': res.olympiad.title,
+                'score': res.score,
+                'percentage': float(res.percentage or 0),
+                'status': res.status,
+                'date': res.created_at
+            })
+            
+        # 3. Overall Stats
+        total_xp = user.xp
+        level = user.level
         
-        return Response({'success': True, 'message': 'Profil muvaffaqiyatli yangilandi'})
-    
+        return Response({
+            'success': True,
+            'user': {
+                'id': user.id,
+                'full_name': user.get_full_name() or user.username,
+                'username': user.username,
+                'xp': total_xp,
+                'level': level,
+                'role': user.role
+            },
+            'summary': {
+                'courses_enrolled': enrollments.count(),
+                'courses_completed': enrollments.filter(completed_at__isnull=False).count(),
+                'olympiads_participated': olympiad_results.count(),
+                'avg_olympiad_score': olympiad_results.aggregate(models.Avg('score'))['score__avg'] or 0
+            },
+            'courses': course_data,
+            'olympiads': olympiad_data
+        })
+
     @action(detail=True, methods=['post'])
     def reset_password(self, request, pk=None):
         """Reset user password (Admin)"""

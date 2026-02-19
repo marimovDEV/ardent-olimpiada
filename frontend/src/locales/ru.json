@@ -289,6 +289,17 @@
     "back": "Назад",
     "loading": "Загрузка...",
     "finish": "Завершить",
+    "view_report": "Просмотреть отчет",
+    "reports": {
+      "coursesEnrolled": "Записано на курсы",
+      "coursesCompleted": "Завершено курсов",
+      "olympiadsParticipated": "Олимпиады",
+      "avgScore": "Средний балл",
+      "courseProgress": "Прогресс в курсах",
+      "olympiadResults": "Результаты олимпиад",
+      "noCourses": "Курсы не найдены",
+      "noOlympiads": "Нет участия в олимпиадах"
+    },
     "courseUpdated": "Курс успешно обновлен",
     "courseCover": "Обложка курса (Cover Image)",
     "uploadImage": "Загрузить изображение",
