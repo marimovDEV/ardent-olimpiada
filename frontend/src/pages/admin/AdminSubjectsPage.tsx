@@ -166,11 +166,11 @@ const AdminSubjectsPage = () => {
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                             <div className="space-y-2">
-                                <Label>{t('common.name')}</Label>
+                                <Label>{t('admin.name')}</Label>
                                 <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder={t('admin.subjectPlaceholder')} />
                             </div>
                             <div className="space-y-2">
-                                <Label>{t('common.description')}</Label>
+                                <Label>{t('admin.description')}</Label>
                                 <Input value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder={t('admin.descriptionPlaceholder')} />
                             </div>
 
