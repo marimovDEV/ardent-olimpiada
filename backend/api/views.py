@@ -1698,7 +1698,20 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         return Response({
             'success': True,
             'questions': QuestionSerializer(questions, many=True).data,
-            'duration': olympiad.duration
+            'duration': olympiad.duration,
+            'olympiad': {
+                'id': olympiad.id,
+                'title': olympiad.title,
+                'duration': olympiad.duration,
+                'start_date': olympiad.start_date,
+                'end_date': olympiad.end_date,
+                'status': olympiad.status,
+                'tab_switch_limit': olympiad.tab_switch_limit,
+                'required_full_screen': olympiad.required_full_screen,
+                'disable_copy_paste': olympiad.disable_copy_paste,
+                'cannot_go_back': olympiad.cannot_go_back,
+                'max_attempts': olympiad.max_attempts,
+            }
         })
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
