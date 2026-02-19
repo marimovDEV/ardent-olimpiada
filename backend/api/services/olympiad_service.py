@@ -44,12 +44,13 @@ class OlympiadService:
         """Start the test attempt"""
         olympiad = Olympiad.objects.get(id=olympiad_id)
         
-        # Check active window
+        # Check active window (skip if admin set status to ONGOING manually)
         now = timezone.now()
-        if now < olympiad.start_date:
-            raise ValidationError("error.not_started")
-        if now > olympiad.end_date:
-            raise ValidationError("error.finished")
+        if olympiad.status != 'ONGOING':
+            if now < olympiad.start_date:
+                raise ValidationError("error.not_started")
+            if olympiad.end_date and now > olympiad.end_date:
+                raise ValidationError("error.finished")
             
         # Check registration
         if not OlympiadRegistration.objects.filter(user=user, olympiad=olympiad).exists():

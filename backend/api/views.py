@@ -1678,20 +1678,21 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 'error': 'error.already_submitted'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check olympiad timing
+        # Check olympiad timing (skip if status is ONGOING - admin started manually)
         now = timezone.now()
-        if now < olympiad.start_date:
-            return Response({
-                'success': False,
-                'error': 'error.not_started',
-                'starts_at': olympiad.start_date
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        if now > olympiad.end_date:
-            return Response({
-                'success': False,
-                'error': 'error.finished'
-            }, status=status.HTTP_400_BAD_REQUEST)
+        if olympiad.status != 'ONGOING':
+            if now < olympiad.start_date:
+                return Response({
+                    'success': False,
+                    'error': 'error.not_started',
+                    'starts_at': olympiad.start_date
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            if olympiad.end_date and now > olympiad.end_date:
+                return Response({
+                    'success': False,
+                    'error': 'error.finished'
+                }, status=status.HTTP_400_BAD_REQUEST)
         
         questions = olympiad.questions.all().order_by('order')
         return Response({
