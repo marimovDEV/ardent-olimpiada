@@ -158,10 +158,10 @@ export default function FinanceTransactions() {
 
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-[140px] bg-card">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue placeholder="Holat" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Status: Barchasi</SelectItem>
+                            <SelectItem value="all">Holat: Barchasi</SelectItem>
                             <SelectItem value="COMPLETED">Muvaffaqiyatli</SelectItem>
                             <SelectItem value="FAILED">Xatolik</SelectItem>
                             <SelectItem value="CANCELLED">Qaytarilgan</SelectItem>
@@ -175,7 +175,7 @@ export default function FinanceTransactions() {
 
                     <Button variant="outline" className="text-green-600 border-green-200 hover:bg-green-50">
                         <Download className="w-4 h-4 mr-2" />
-                        Export
+                        Eksport
                     </Button>
                 </div>
             </div>

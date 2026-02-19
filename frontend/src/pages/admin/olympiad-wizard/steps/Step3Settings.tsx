@@ -69,16 +69,16 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label>Status</Label>
+                        <Label>Holat</Label>
                         <Select value={data.status} onValueChange={(val) => update({ status: val })}>
                             <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="DRAFT">Qoralama (Draft)</SelectItem>
-                                <SelectItem value="PUBLISHED">E'lon qilingan (Published)</SelectItem>
-                                <SelectItem value="UPCOMING">Kutilmoqda (Upcoming)</SelectItem>
-                                <SelectItem value="ONGOING">Jarayonda (Live)</SelectItem>
+                                <SelectItem value="DRAFT">Qoralama</SelectItem>
+                                <SelectItem value="PUBLISHED">E'lon qilingan</SelectItem>
+                                <SelectItem value="UPCOMING">Kutilmoqda</SelectItem>
+                                <SelectItem value="ONGOING">Jarayonda</SelectItem>
                                 <SelectItem value="PAUSED">To'xtatilgan</SelectItem>
                                 <SelectItem value="COMPLETED">Tugagan</SelectItem>
                                 <SelectItem value="CANCELED">Bekor qilingan</SelectItem>

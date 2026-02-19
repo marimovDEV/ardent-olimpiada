@@ -184,7 +184,7 @@ const AdminOlympiadsPage = () => {
     const handleExportCSV = () => {
         if (olympiads.length === 0) return;
 
-        const headers = ["ID", "Title", "Subject", "Level", "Price", "Participants", "Status", "Date"];
+        const headers = ["ID", "Nomi", "Fan", "Daraja", "Narxi", "Ishtirokchilar", "Holat", "Sana"];
         const rows = filteredOlympiads.map(o => [
             o.id,
             o.title,
@@ -265,14 +265,14 @@ const AdminOlympiadsPage = () => {
 
     const getStatusBadge = (status: string) => {
         const labels: Record<string, string> = {
-            'ONGOING': 'Live',
+            'ONGOING': 'Jarayonda',
             'UPCOMING': t('admin.upcoming'),
-            'REGISTRATION_OPEN': 'Reg Open',
+            'REGISTRATION_OPEN': "Ro'yxat ochiq",
             'PUBLISHED': t('admin.published'),
             'CHECKING': t('admin.checking'),
             'COMPLETED': t('admin.completed'),
             'DRAFT': t('admin.draft'),
-            'CANCELED': 'Canceled'
+            'CANCELED': 'Bekor qilingan'
         };
 
         const colors: Record<string, string> = {
@@ -303,7 +303,7 @@ const AdminOlympiadsPage = () => {
             <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-border bg-card relative">
                 {isLive && (
                     <div className="absolute top-3 right-3 z-10">
-                        <Badge className="bg-red-500 text-white animate-pulse border-none shadow-lg shadow-red-500/20">LIVE</Badge>
+                        <Badge className="bg-red-500 text-white animate-pulse border-none shadow-lg shadow-red-500/20">JONLI</Badge>
                     </div>
                 )}
 
@@ -339,7 +339,7 @@ const AdminOlympiadsPage = () => {
                         </div>
                         <div className="text-right">
                             <div className="text-xs font-black text-indigo-600 dark:text-indigo-400">{formatMoney(oly.price)}</div>
-                            <div className="text-[10px] text-muted-foreground">{oly.duration} min</div>
+                            <div className="text-[10px] text-muted-foreground">{oly.duration} daqiqa</div>
                         </div>
                     </div>
 
@@ -348,14 +348,14 @@ const AdminOlympiadsPage = () => {
                         <div className="bg-muted/50 p-2 rounded-lg border border-border/50">
                             <div className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
                                 <Users className="w-2.5 h-2.5" />
-                                Participants
+                                Ishtirokchilar
                             </div>
                             <div className="text-sm font-black mt-0.5">{oly.participants_count || 0}</div>
                         </div>
                         <div className="bg-muted/50 p-2 rounded-lg border border-border/50">
                             <div className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1">
                                 <Wallet className="w-2.5 h-2.5" />
-                                Revenue
+                                Daromad
                             </div>
                             <div className="text-sm font-black mt-0.5">{formatUZS(oly.revenue || 0)}</div>
                         </div>
@@ -364,11 +364,11 @@ const AdminOlympiadsPage = () => {
                     {/* Timeline */}
                     <div className="space-y-1.5 text-[10px]">
                         <div className="flex justify-between items-center text-muted-foreground">
-                            <span>Registration</span>
+                            <span>Ro'yxatdan o'tish</span>
                             <span className="font-medium">{new Date(oly.registration_start).toLocaleDateString()}</span>
                         </div>
                         <div className="flex justify-between items-center text-indigo-600 dark:text-indigo-400 font-bold">
-                            <span>Event Start</span>
+                            <span>Boshlanish vaqti</span>
                             <span>{new Date(oly.start_date).toLocaleString()}</span>
                         </div>
                     </div>
@@ -381,7 +381,7 @@ const AdminOlympiadsPage = () => {
                         className="flex-1 h-8 text-[10px] font-bold"
                         onClick={() => navigate(`/admin/olympiads/${oly.id}/edit`)}
                     >
-                        <Edit className="w-3 h-3 mr-1.5" /> EDIT
+                        <Edit className="w-3 h-3 mr-1.5" /> Tahrirlash
                     </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -391,17 +391,17 @@ const AdminOlympiadsPage = () => {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem onClick={() => navigate(`/admin/olympiads/${oly.id}/participants`)}>
-                                <Users className="w-4 h-4 mr-2" /> Participants
+                                <Users className="w-4 h-4 mr-2" /> Ishtirokchilar
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => navigate(`/admin/olympiads/${oly.id}/results`)}>
-                                <BarChart className="w-4 h-4 mr-2" /> Live Monitoring
+                                <BarChart className="w-4 h-4 mr-2" /> Monitoring
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => setStatusDialog({ id: oly.id, status: oly.status, currentStatus: oly.status })}>
-                                <Activity className="w-4 h-4 mr-2" /> Change Status
+                                <Activity className="w-4 h-4 mr-2" /> Holatni o'zgartirish
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-red-600" onClick={() => setDeleteId(oly.id)}>
-                                <Trash2 className="w-4 h-4 mr-2" /> Delete
+                                <Trash2 className="w-4 h-4 mr-2" /> O'chirish
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -519,7 +519,7 @@ const AdminOlympiadsPage = () => {
 
                 <div className="flex w-full md:w-auto gap-3 overflow-x-auto pb-1 md:pb-0">
                     <Button variant="outline" size="sm" className="h-10 px-4" onClick={handleExportCSV}>
-                        <Layers className="w-4 h-4 mr-2" /> Export
+                        <Layers className="w-4 h-4 mr-2" /> Eksport
                     </Button>
                     <Select value={subjectFilter} onValueChange={setSubjectFilter}>
                         <SelectTrigger className="w-[140px] bg-background border-input">

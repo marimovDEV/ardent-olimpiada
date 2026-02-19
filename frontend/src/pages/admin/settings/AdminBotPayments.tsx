@@ -95,7 +95,7 @@ export default function AdminBotPayments() {
             const downloadUrl = `${api.defaults.baseURL}/payments/export/?${params.toString()}`;
             window.open(downloadUrl, '_blank');
         } catch (error) {
-            toast.error("Export failed");
+            toast.error("Eksport xatolik yuz berdi");
         }
     };
 
@@ -118,7 +118,7 @@ export default function AdminBotPayments() {
                 </div>
                 <div className="flex gap-2">
                     <Button onClick={handleExport} variant="outline">
-                        <Download className="w-4 h-4 mr-2" /> Export
+                        <Download className="w-4 h-4 mr-2" /> Eksport
                     </Button>
                     <Button onClick={() => fetchPayments()} variant="default">
                         <RefreshCcw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} /> Yangilash
@@ -146,7 +146,7 @@ export default function AdminBotPayments() {
                     </div>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Status" />
+                            <SelectValue placeholder="Holat" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">Barcha Statuslar</SelectItem>
@@ -182,7 +182,7 @@ export default function AdminBotPayments() {
                             <TableHead>Summa</TableHead>
                             <TableHead>Usul</TableHead>
                             <TableHead>Sana</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead>Holat</TableHead>
                             <TableHead className="text-right">Amallar</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -265,7 +265,7 @@ export default function AdminBotPayments() {
                                                 )}
                                                 {payment.status === 'COMPLETED' && (
                                                     <DropdownMenuItem onClick={() => handleAction(payment.id, 'refund')} className="text-orange-600">
-                                                        <RefreshCcw className="mr-2 h-4 w-4" /> Qaytarish (Refund)
+                                                        <RefreshCcw className="mr-2 h-4 w-4" /> Qaytarish
                                                     </DropdownMenuItem>
                                                 )}
                                             </DropdownMenuContent>
@@ -329,7 +329,7 @@ export default function AdminBotPayments() {
                                     <p className="font-medium">{selectedPayment.method}</p>
                                 </div>
                                 <div>
-                                    <p className="text-muted-foreground">Transaction ID</p>
+                                    <p className="text-muted-foreground">Tranzaksiya ID</p>
                                     <code className="text-xs bg-muted p-1 rounded">{selectedPayment.transaction_id || '-'}</code>
                                 </div>
                                 <div>
@@ -344,7 +344,7 @@ export default function AdminBotPayments() {
                                     <div className="relative aspect-video rounded-lg overflow-hidden border">
                                         <img
                                             src={selectedPayment.receipt_image}
-                                            alt="Receipt"
+                                            alt="Chek"
                                             className="object-cover w-full h-full"
                                         />
                                     </div>

@@ -121,7 +121,7 @@ const AdminPaymentSettings = () => {
             setProviders(Array.isArray(res.data) ? res.data : res.data.results || []);
         } catch (error) {
             console.error(error);
-            toast.error(t('settings.loadError', { defaultValue: "Error loading payment providers" }));
+            toast.error(t('settings.loadError', { defaultValue: "To'lov tizimlarini yuklashda xatolik" }));
         } finally {
             setLoading(false);
         }
@@ -152,30 +152,30 @@ const AdminPaymentSettings = () => {
 
             if (editingProvider) {
                 await axios.put(`${API_URL}/settings/payment-providers/${editingProvider.id}/`, data, { headers });
-                toast.success(t('global.updated', { defaultValue: "Updated successfully" }));
+                toast.success(t('global.updated', { defaultValue: "Muvaffaqiyatli yangilandi" }));
             } else {
                 await axios.post(`${API_URL}/settings/payment-providers/`, data, { headers });
-                toast.success(t('global.created', { defaultValue: "Created successfully" }));
+                toast.success(t('global.created', { defaultValue: "Muvaffaqiyatli yaratildi" }));
             }
             setShowDialog(false);
             fetchProviders();
         } catch (error: any) {
             console.error(error);
-            toast.error(error.response?.data?.detail || "Error saving provider");
+            toast.error(error.response?.data?.detail || "Saqlashda xatolik yuz berdi");
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm(t('global.confirmDelete', { defaultValue: "Are you sure?" }))) return;
+        if (!confirm(t('global.confirmDelete', { defaultValue: "Ishonchingiz komilmi?" }))) return;
         try {
             const headers = getAuthHeader();
             await axios.delete(`${API_URL}/settings/payment-providers/${id}/`, { headers });
-            toast.success(t('global.deleted', { defaultValue: "Deleted successfully" }));
+            toast.success(t('global.deleted', { defaultValue: "Muvaffaqiyatli o'chirildi" }));
             fetchProviders();
         } catch (error) {
-            toast.error("Error deleting provider");
+            toast.error("O'chirishda xatolik yuz berdi");
         }
     };
 
@@ -185,7 +185,7 @@ const AdminPaymentSettings = () => {
         if (list.length === 0) {
             return (
                 <div className="text-center py-8 text-muted-foreground border border-dashed rounded-lg">
-                    <p>{t('settings.noProviders', { defaultValue: "No providers found in this section" })}</p>
+                    <p>{t('settings.noProviders', { defaultValue: "Bu bo'limda hech narsa topilmadi" })}</p>
                 </div>
             );
         }
@@ -210,7 +210,7 @@ const AdminPaymentSettings = () => {
                                     <span>{provider.provider}</span>
                                     {provider.type === 'INTEGRATION' && (
                                         <span className="px-1.5 py-0.5 rounded bg-muted">
-                                            {provider.test_mode ? 'TEST' : 'PROD'}
+                                            {provider.test_mode ? 'TEST' : 'ISHLAB CHIQARISH'}
                                         </span>
                                     )}
                                 </div>
@@ -238,8 +238,8 @@ const AdminPaymentSettings = () => {
             {platformSettings && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>{t('settings.activePaymentSystem', { defaultValue: "Active Payment System" })}</CardTitle>
-                        <CardDescription>{t('settings.activePaymentSystemDesc', { defaultValue: "Select which payment method flows should be active for users." })}</CardDescription>
+                        <CardTitle>{t('settings.activePaymentSystem', { defaultValue: "Faol to'lov tizimi" })}</CardTitle>
+                        <CardDescription>{t('settings.activePaymentSystemDesc', { defaultValue: "Foydalanuvchilar uchun qaysi to'lov usuli faol bo'lishini tanlang." })}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {[
@@ -338,9 +338,9 @@ const AdminPaymentSettings = () => {
                         <div className="flex justify-between items-start border p-4 rounded-lg bg-card">
                             <div>
                                 <h3 className="text-lg font-medium flex items-center gap-2">
-                                    Status:
+                                    Holat:
                                     <span className={`px-2 py-0.5 rounded text-sm ${botStatus.is_running ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                                        {botStatus.is_running ? 'RUNNING' : 'STOPPED'}
+                                        {botStatus.is_running ? 'ISHLAYAPTI' : 'TO\'XTATILGAN'}
                                     </span>
                                 </h3>
                                 <p className="text-sm text-muted-foreground mt-1">
@@ -380,7 +380,7 @@ const AdminPaymentSettings = () => {
                         <DialogTitle>
                             {editingProvider ? t('global.edit') : t('global.add')} {t(`settings.${formData.type?.toLowerCase()}`)}
                         </DialogTitle>
-                        <DialogDescription>Configure payment provider details</DialogDescription>
+                        <DialogDescription>To'lov tizimi sozlamalarini kiriting</DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-4 py-2">
