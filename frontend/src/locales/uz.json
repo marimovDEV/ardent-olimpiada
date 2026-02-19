@@ -163,7 +163,17 @@
     "submitted": "Sizning javoblaringiz qabul qilindi",
     "confirm": "Tasdiqlash",
     "tabWarning": "Diqqat! Tabdan chiqish taqiqlanadi",
-    "placeholder": "Javobingizni yozing..."
+    "placeholder": "Javobingizni yozing...",
+    "rulesDesc": "Test boshlangandan so'ng tabdan chiqish taqiqlanadi. Omad!",
+    "ruleTime": "Test davomiyligi: {{duration}} daqiqa",
+    "ruleTabs": "Tabdan chiqish limiti: {{limit}} marta",
+    "ruleAutoSubmit": "Vaqt tugaganda javoblaringiz avtomatik topshiriladi",
+    "ruleFullscreen": "To'liq ekran rejimida ishlash shart",
+    "ruleNoCopy": "Nusxa ko'chirish va qo'yish taqiqlanadi",
+    "ruleQuestions": "Jami {{count}} ta savol",
+    "rulePoints": "Har bir savolning balli ko'rsatilgan",
+    "warningMsg": "DIQQAT! Tabdan chiqish taqiqlanadi! ({{count}}/{{limit}})",
+    "warningNoCopy": "Nusxa ko'chirish taqiqlanadi!"
   },
   "olympiadResult": {
     "title": "Imtihon Natijalari",

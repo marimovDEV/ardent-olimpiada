@@ -116,10 +116,13 @@ const OlympiadTestPage = () => {
 
                     let timeRemaining = durationSeconds - elapsedSeconds;
 
+                    // Only constrain by end_date if it exists and is in the future
                     if (data.olympiad.end_date) {
                         const endDate = new Date(data.olympiad.end_date).getTime();
-                        const timeUntilEnd = Math.floor(Math.max(0, endDate - now) / 1000);
-                        timeRemaining = Math.min(timeRemaining, timeUntilEnd);
+                        if (endDate > now) {
+                            const timeUntilEnd = Math.floor((endDate - now) / 1000);
+                            timeRemaining = Math.min(timeRemaining, timeUntilEnd);
+                        }
                     }
 
                     if (timeRemaining <= 0) {

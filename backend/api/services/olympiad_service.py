@@ -67,7 +67,15 @@ class OlympiadService:
                     attempt = TestResult.objects.create(user=user, olympiad=olympiad, status='IN_PROGRESS')
                 else:
                     raise ValidationError("error.already_submitted")
-            # If already IN_PROGRESS, just return it
+            else:
+                # IN_PROGRESS: check if timer expired and reset if needed
+                duration_minutes = olympiad.duration if isinstance(olympiad.duration, (int, float)) else 120
+                duration_seconds = duration_minutes * 60
+                elapsed = (timezone.now() - attempt.submitted_at).total_seconds()
+                if elapsed > duration_seconds:
+                    # Timer expired — delete old and create fresh attempt
+                    attempt.delete()
+                    attempt = TestResult.objects.create(user=user, olympiad=olympiad, status='IN_PROGRESS')
         else:
             attempt = TestResult.objects.create(user=user, olympiad=olympiad, status='IN_PROGRESS')
             
