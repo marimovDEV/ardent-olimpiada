@@ -33,6 +33,8 @@ export interface OlympiadFormState {
     evaluation_criteria: string;
 
     // Schedule
+    registration_start: string;
+    registration_end: string;
     start_date: string;
     end_date: string;
     duration: number;
@@ -102,6 +104,8 @@ const AdminOlympiadWizard = () => {
         prizes: "",
         evaluation_criteria: "",
 
+        registration_start: "",
+        registration_end: "",
         start_date: "",
         end_date: "",
         duration: 60,
@@ -164,6 +168,8 @@ const AdminOlympiadWizard = () => {
                 subject_id: data.subject_id || null,
                 profession: data.profession || null,
                 course: data.course || null,
+                registration_start: data.registration_start ? data.registration_start.slice(0, 16) : "",
+                registration_end: data.registration_end ? data.registration_end.slice(0, 16) : "",
                 start_date: data.start_date ? data.start_date.slice(0, 16) : "",
                 end_date: data.end_date ? data.end_date.slice(0, 16) : "",
                 max_participants: data.max_participants || "",
@@ -252,6 +258,8 @@ const AdminOlympiadWizard = () => {
                         if (!payload.slug) delete payload.slug;
 
                         // Dates -> null if empty
+                        if (!payload.registration_start) payload.registration_start = null;
+                        if (!payload.registration_end) payload.registration_end = null;
                         if (!payload.start_date) payload.start_date = null;
                         if (!payload.end_date) payload.end_date = null;
                         if (!payload.result_time) payload.result_time = null;
@@ -368,6 +376,8 @@ const AdminOlympiadWizard = () => {
 
                 // Clean empty/null values for JSON
                 if (!payload.slug) delete payload.slug;
+                if (!payload.registration_start) payload.registration_start = null;
+                if (!payload.registration_end) payload.registration_end = null;
                 if (!payload.start_date) payload.start_date = null;
                 if (!payload.end_date) payload.end_date = null;
                 if (!payload.result_time) payload.result_time = null;

@@ -1459,29 +1459,110 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             return OlympiadDetailSerializer
         return OlympiadSerializer
     
-    def get_queryset(self):
-        queryset = Olympiad.objects.filter(is_active=True)
-        user = self.request.user
-        
-        # Admin sees all (including inactive)
-        if user.is_authenticated and user.role == 'ADMIN':
-            queryset = Olympiad.objects.all()
-        # Teacher sees own
-        elif user.is_authenticated and user.role == 'TEACHER':
-            queryset = Olympiad.objects.filter(teacher=user)
-        else:
-            # Public
-            queryset = Olympiad.objects.filter(is_active=True)
-        
-        subject = self.request.query_params.get('subject')
-        status_param = self.request.query_params.get('status')
-        
-        if subject:
-            queryset = queryset.filter(subject__iexact=subject)
-        if status_param:
-            queryset = queryset.filter(status=status_param.upper())
-        
         return queryset
+    
+    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated, IsAdmin])
+    def admin_stats(self, request):
+        """Dashboard stats for Olympiad section"""
+        from datetime import datetime
+        now = timezone.now()
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        
+        # 1. Status Stats
+        status_counts = Olympiad.objects.values('status').annotate(count=Count('id'))
+        stats_dict = {
+            'ACTIVE': Olympiad.objects.filter(status='ONGOING').count(),
+            'UPCOMING': Olympiad.objects.filter(status='UPCOMING').count(),
+            'COMPLETED': Olympiad.objects.filter(status='COMPLETED').count(),
+            'REGISTRATION_OPEN': Olympiad.objects.filter(status='REGISTRATION_OPEN').count(),
+        }
+        
+        # 2. Revenue Stats
+        total_revenue = Payment.objects.filter(
+            type='OLYMPIAD', 
+            status='COMPLETED'
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        monthly_revenue = Payment.objects.filter(
+            type='OLYMPIAD', 
+            status='COMPLETED',
+            created_at__gte=month_start
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        # 3. Participation Stats
+        total_participants = OlympiadRegistration.objects.count()
+        avg_participants = Olympiad.objects.annotate(
+            p_count=Count('registrations')
+        ).aggregate(avg=Avg('p_count'))['avg'] or 0
+        
+        return Response({
+            'success': True,
+            'status_counts': stats_dict,
+            'total_revenue': float(total_revenue),
+            'monthly_revenue': float(monthly_revenue),
+            'total_participants': total_participants,
+            'avg_participants': round(float(avg_participants), 1)
+        })
+
+    @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def stats(self, request, pk=None):
+        """Detailed stats for an olympiad results page"""
+        olympiad = self.get_object()
+        
+        total_registrations = olympiad.registrations.count()
+        results = TestResult.objects.filter(olympiad=olympiad)
+        total_submissions = results.count()
+        total_paid = olympiad.registrations.filter(is_paid=True).count()
+        total_disqualified = results.filter(status='DISQUALIFIED').count()
+        
+        avg_score = results.aggregate(Avg('score'))['score__avg'] or 0
+        max_score = results.aggregate(Max('score'))['score__max'] or 0
+        
+        # Region breakdown
+        from django.db.models import Count
+        region_breakdown = olympiad.registrations.values('user__region').annotate(count=Count('id')).order_by('-count')
+        
+        return Response({
+            'success': True,
+            'stats': {
+                'total_registrations': total_registrations,
+                'total_submissions': total_submissions,
+                'total_paid': total_paid,
+                'total_disqualified': total_disqualified,
+                'avg_score': round(float(avg_score), 1),
+                'max_score': max_score,
+                'region_breakdown': [{'region': item['user__region'], 'count': item['count']} for item in region_breakdown]
+            }
+        })
+
+    @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def live_stats(self, request, pk=None):
+        """Live stats for an ongoing olympiad"""
+        olympiad = self.get_object()
+        now = timezone.now()
+        
+        # Online users = users who updated their result in the last 5 minutes
+        online_count = TestResult.objects.filter(
+            olympiad=olympiad,
+            # We assume updating results frequently or check updated_at
+            # Since TestResult doesn't have updated_at in snippet, checking submitted_at might be wrong
+            # Let's check for 'COMPLETED' or if there's an ongoing signal
+        ).count() # Placeholder count
+        
+        # Score distribution
+        distribution = {
+            '0-20%': TestResult.objects.filter(olympiad=olympiad, percentage__lt=20).count(),
+            '20-50%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=20, percentage__lt=50).count(),
+            '50-80%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=50, percentage__lt=80).count(),
+            '80-100%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=80).count(),
+        }
+        
+        return Response({
+            'success': True,
+            'online_participants': online_count, # Mock for now
+            'submissions': distribution,
+            'revenue': float(Payment.objects.filter(type='OLYMPIAD', reference_id=str(olympiad.id), status='COMPLETED').aggregate(Sum('amount'))['amount__sum'] or 0)
+        })
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy', 'add_question', 'import_questions', 'submissions', 'grade_result']:

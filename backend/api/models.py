@@ -489,10 +489,10 @@ class Enrollment(models.Model):
 
 
 class Olympiad(models.Model):
-    """Olympiad Model"""
     STATUS_CHOICES = [
         ('DRAFT', 'Qoralama'),
         ('UPCOMING', 'Kutilmoqda'),
+        ('REGISTRATION_OPEN', 'Ro\'yxatdan o\'tish ochiq'),
         ('ONGOING', 'Jarayonda'),
         ('PAUSED', 'To\'xtatilgan'),
         ('CHECKING', 'Tekshirilmoqda'),
@@ -533,6 +533,8 @@ class Olympiad(models.Model):
     evaluation_criteria = models.TextField(blank=True, help_text="HTML/Markdown content")
 
     # Schedule
+    registration_start = models.DateTimeField(null=True, blank=True)
+    registration_end = models.DateTimeField(null=True, blank=True)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     result_time = models.DateTimeField(blank=True, null=True, help_text="Time when results will be published")
@@ -544,7 +546,7 @@ class Olympiad(models.Model):
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, default='BEGINNER') # Keep for legacy/grouping
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='MEDIUM')
     
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='DRAFT')
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='DRAFT')
     
     format = models.CharField(max_length=20, choices=FORMAT_CHOICES, default='ONLINE')
     
@@ -578,20 +580,26 @@ class Olympiad(models.Model):
         from django.utils import timezone
         now = timezone.now()
         
-        if self.status in ['DRAFT', 'PAUSED', 'CANCELED', 'PUBLISHED', 'COMPLETED', 'CHECKING']:
+        # Only auto-refresh if status is in a "trackable" state
+        if self.status in ['PAUSED', 'CANCELED', 'PUBLISHED', 'COMPLETED', 'DRAFT']:
             return self.status
 
-        # If dates are missing, fallback logic (usually stays DRAFT, but if status was manually changed, stick to it or revert)
-        # But here we only auto-update if dates ARE present.
+        # If dates are missing, we cannot auto-refresh accurately
         if not self.start_date or not self.end_date:
             return self.status
 
-        if now < self.start_date:
+        # Sequence of time-based status transitions
+        if self.registration_start and now < self.registration_start:
             new_status = 'UPCOMING'
+        elif self.registration_start and self.registration_end and self.registration_start <= now <= self.registration_end:
+            new_status = 'REGISTRATION_OPEN'
+        elif now < self.start_date:
+            new_status = 'UPCOMING' # Or REGISTRATION_CLOSED if after reg_end
         elif self.start_date <= now <= self.end_date:
             new_status = 'ONGOING'
         else:
-            new_status = 'CHECKING' # Default to checking after end_date
+            # After end_date, if not already PUBLISHED or COMPLETED, it's CHECKING
+            new_status = 'CHECKING'
 
         if self.status != new_status:
             self.status = new_status

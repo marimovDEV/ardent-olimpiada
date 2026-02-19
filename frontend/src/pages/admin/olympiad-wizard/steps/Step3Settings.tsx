@@ -20,9 +20,28 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                     <Calendar className="w-5 h-5 text-blue-500" /> Vaqt va Jadval
                 </h3>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4 border-b border-dashed">
+                    <div className="space-y-2">
+                        <Label className="text-indigo-600 font-bold">Ro'yxatdan o'tish boshlanishi</Label>
+                        <DateTimePicker
+                            date={data.registration_start ? new Date(data.registration_start) : undefined}
+                            setDate={(d) => update({ registration_start: d ? format(d, "yyyy-MM-dd'T'HH:mm") : "" })}
+                            placeholder="Vaqtni tanlang"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-indigo-600 font-bold">Ro'yxatdan o'tish tugashi</Label>
+                        <DateTimePicker
+                            date={data.registration_end ? new Date(data.registration_end) : undefined}
+                            setDate={(d) => update({ registration_end: d ? format(d, "yyyy-MM-dd'T'HH:mm") : "" })}
+                            placeholder="Vaqtni tanlang"
+                        />
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <Label>Boshlanish Vaqti</Label>
+                        <Label className="text-green-600 font-bold">Olimpiada boshlanishi</Label>
                         <DateTimePicker
                             date={data.start_date ? new Date(data.start_date) : undefined}
                             setDate={(d) => update({ start_date: d ? format(d, "yyyy-MM-dd'T'HH:mm") : "" })}
@@ -30,7 +49,7 @@ const Step3Settings = ({ data, update }: { data: any, update: (d: any) => void }
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label>Tugash Vaqti</Label>
+                        <Label className="text-green-600 font-bold">Olimpiada tugashi</Label>
                         <DateTimePicker
                             date={data.end_date ? new Date(data.end_date) : undefined}
                             setDate={(d) => update({ end_date: d ? format(d, "yyyy-MM-dd'T'HH:mm") : "" })}
