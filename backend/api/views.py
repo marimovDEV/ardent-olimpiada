@@ -1450,7 +1450,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['title', 'description', 'subject__name']
+    search_fields = ['title', 'description', 'subject', 'subject_id__name']
     ordering_fields = ['start_date', 'created_at']
     ordering = ['-start_date']
 
