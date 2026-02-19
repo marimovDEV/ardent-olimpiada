@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
-from django.db.models import Count, Sum, Avg, Q, Min, F
+from django.db.models import Count, Sum, Avg, Max, Q, Min, F
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import default_storage
@@ -804,7 +804,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['title', 'description', 'subject']
+    search_fields = ['title', 'description', 'subject__name']
     ordering_fields = ['created_at', 'price', 'rating', 'students_count']
     ordering = ['-created_at']
     
@@ -1450,7 +1450,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     pagination_class = StandardPagination
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['title', 'description', 'subject']
+    search_fields = ['title', 'description', 'subject__name']
     ordering_fields = ['start_date', 'created_at']
     ordering = ['-start_date']
 
@@ -1459,7 +1459,6 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             return OlympiadDetailSerializer
         return OlympiadSerializer
     
-        return queryset
     
     @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated, IsAdmin])
     def admin_stats(self, request):
