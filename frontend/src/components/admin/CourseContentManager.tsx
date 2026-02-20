@@ -445,7 +445,8 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </>
+                )}
 
                 {/* Module Dialog */}
                 <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
@@ -603,8 +604,22 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                         </div>
                     </DialogContent>
                 </Dialog>
-            </div >
-            );
+
+                {/* Quiz Editor Dialog */}
+                {selectedLessonForQuiz && (
+                    <QuizEditor
+                        isOpen={isQuizEditorOpen}
+                        onClose={() => {
+                            setIsQuizEditorOpen(false);
+                            setSelectedLessonForQuiz(null);
+                        }}
+                        lessonId={selectedLessonForQuiz.id}
+                        lessonTitle={selectedLessonForQuiz.title}
+                    />
+                )}
+            </div>
+        </div>
+    );
 };
 
-            export default CourseContentManager;
+export default CourseContentManager;
