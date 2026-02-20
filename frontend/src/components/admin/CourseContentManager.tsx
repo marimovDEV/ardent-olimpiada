@@ -39,6 +39,13 @@ import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import { useTranslation } from "react-i18next";
 import CourseAnalytics from "./CourseAnalytics";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import QuizEditor from "./QuizEditor";
 
 
