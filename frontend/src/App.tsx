@@ -44,6 +44,7 @@ import AdminBotPage from "./pages/admin/AdminBotPage";
 import AdminHomeCMSPage from "./pages/admin/AdminHomeCMSPage";
 import AdminNotificationsPage from "./pages/admin/AdminNotificationsPage";
 import AdminAIAssistantPage from "./pages/admin/AdminAIAssistantPage";
+import AdminDeliveryPage from "./pages/admin/AdminDeliveryPage";
 
 import AdminParticipantAnalysisPage from "./pages/admin/AdminParticipantAnalysisPage";
 import AdminBotPayments from "./pages/admin/settings/AdminBotPayments";
@@ -195,6 +196,7 @@ const App = () => {
                   <Route path="finance" element={<AdminFinancePage />} />
                   <Route path="support" element={<AdminSupportPage />} />
                   <Route path="certificates" element={<AdminCertificatesPage />} />
+                  <Route path="delivery" element={<AdminDeliveryPage />} />
                   <Route path="bot" element={<AdminBotPage />} />
                   <Route path="bot-payments" element={<AdminBotPayments />} />
                   <Route path="settings" element={<AdminSettingsPage />} />

@@ -15,8 +15,9 @@ import { API_URL, getAuthHeader } from "@/services/api";
 interface Prize {
     id: number;
     name: string;
-    condition: string;
-    value: string;
+    prize_type: 'PHYSICAL' | 'COIN' | 'XP';
+    amount: number;
+    target_value: number;
     description: string;
     image: string | null;
 }
@@ -30,8 +31,9 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
     const [editingPrize, setEditingPrize] = useState<Prize | null>(null);
     const [prizeForm, setPrizeForm] = useState({
         name: "",
-        condition: "",
-        value: "",
+        prize_type: "PHYSICAL" as 'PHYSICAL' | 'COIN' | 'XP',
+        amount: 0,
+        target_value: 1,
         description: "",
         image: null as File | null
     });
@@ -56,8 +58,9 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
         const fd = new FormData();
         fd.append('olympiad', olympiadId.toString());
         fd.append('name', prizeForm.name);
-        fd.append('condition', prizeForm.condition);
-        fd.append('value', prizeForm.value);
+        fd.append('prize_type', prizeForm.prize_type);
+        fd.append('amount', prizeForm.amount.toString());
+        fd.append('target_value', prizeForm.target_value.toString());
         fd.append('description', prizeForm.description);
         if (prizeForm.image) {
             fd.append('image', prizeForm.image);
@@ -99,6 +102,42 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+
+            {/* Reward Strategy Section */}
+            <div className="space-y-4">
+                <h3 className="flex items-center gap-2 font-semibold text-lg border-b pb-2">
+                    <Award className="w-5 h-5 text-amber-500" /> Mukofotlash Strategiyasi
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label>Strategiya</Label>
+                        <select
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            value={data.reward_strategy || 'MANUAL'}
+                            onChange={(e) => update({ ...data, reward_strategy: e.target.value })}
+                        >
+                            <option value="MANUAL">Qo'lda (Manual)</option>
+                            <option value="TOP_N">Top G'oliblar (1, 2, 3...)</option>
+                            <option value="THRESHOLD">Ball Foizi bo'yicha (e.g. 90%+ )</option>
+                        </select>
+                        <p className="text-xs text-muted-foreground">
+                            {data.reward_strategy === 'TOP_N' ? "Sovrinlar o'rinlar bo'yicha tarqatiladi." : data.reward_strategy === 'THRESHOLD' ? "Belgilangan foizdan yuqori olganlarga tarqatiladi." : "Sovrinlarni admin o'zi biriktiradi."}
+                        </p>
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 border rounded-xl bg-muted/20">
+                        <div className="space-y-0.5">
+                            <Label className="text-base text-amber-600 font-bold">Avtomatik Tarqatish</Label>
+                            <p className="text-[10px] text-muted-foreground uppercase">Natijalar e'lon qilinganda</p>
+                        </div>
+                        <Switch
+                            checked={!!data.auto_reward}
+                            onCheckedChange={(c) => update({ ...data, auto_reward: c })}
+                        />
+                    </div>
+                </div>
+            </div>
 
             {/* Certificate Section */}
             <div className="space-y-4">
@@ -159,7 +198,14 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <h4 className="font-semibold truncate">{prize.name}</h4>
-                                        <p className="text-sm text-blue-600 font-medium">{prize.condition}</p>
+                                        <p className="text-sm text-blue-600 font-medium">
+                                            {prize.prize_type === 'COIN' ? `🪙 ${prize.amount} Coin` :
+                                                prize.prize_type === 'XP' ? `🚀 ${prize.amount} XP` :
+                                                    `📦 Fizik sovrin`}
+                                        </p>
+                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                                            {data.reward_strategy === 'TOP_N' ? `${prize.target_value}-o'rin uchun` : `${prize.target_value}% ball uchun`}
+                                        </p>
                                     </div>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive" onClick={() => handleDeletePrize(prize.id)}>
@@ -189,28 +235,43 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
                     <div className="space-y-4 py-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Nomi</Label>
-                                <Input
-                                    placeholder="Masalan: MacBook Air"
-                                    value={prizeForm.name}
-                                    onChange={(e) => setPrizeForm({ ...prizeForm, name: e.target.value })}
-                                />
+                                <Label>Sovrin Turi</Label>
+                                <select
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    value={prizeForm.prize_type}
+                                    onChange={(e: any) => setPrizeForm({ ...prizeForm, prize_type: e.target.value })}
+                                >
+                                    <option value="PHYSICAL">Fizik (Medal, Kitob...)</option>
+                                    <option value="COIN">Ardent Coin</option>
+                                    <option value="XP">Tajriba (XP)</option>
+                                </select>
                             </div>
                             <div className="space-y-2">
-                                <Label>Kimga (Shart)</Label>
-                                <Input
-                                    placeholder="1-o'rin, Top 3..."
-                                    value={prizeForm.condition}
-                                    onChange={(e) => setPrizeForm({ ...prizeForm, condition: e.target.value })}
-                                />
+                                <Label>{prizeForm.prize_type === 'PHYSICAL' ? 'Nomi' : 'Miqdori'}</Label>
+                                {prizeForm.prize_type === 'PHYSICAL' ? (
+                                    <Input
+                                        placeholder="Masalan: MacBook Air"
+                                        value={prizeForm.name}
+                                        onChange={(e) => setPrizeForm({ ...prizeForm, name: e.target.value })}
+                                    />
+                                ) : (
+                                    <Input
+                                        type="number"
+                                        placeholder="Miqdor"
+                                        value={prizeForm.amount}
+                                        onChange={(e) => setPrizeForm({ ...prizeForm, amount: Number(e.target.value), name: `${e.target.value} ${prizeForm.prize_type}` })}
+                                    />
+                                )}
                             </div>
                         </div>
+
                         <div className="space-y-2">
-                            <Label>Qiymati (Ixtiyoriy)</Label>
+                            <Label>{data.reward_strategy === 'TOP_N' ? "Nechanchi o'rin uchun?" : "Minimal Ball (%)"}</Label>
                             <Input
-                                placeholder="Masalan: $1000 yoki Grant"
-                                value={prizeForm.value}
-                                onChange={(e) => setPrizeForm({ ...prizeForm, value: e.target.value })}
+                                type="number"
+                                placeholder={data.reward_strategy === 'TOP_N' ? "1, 2, 3..." : "90, 80..."}
+                                value={prizeForm.target_value}
+                                onChange={(e) => setPrizeForm({ ...prizeForm, target_value: Number(e.target.value) })}
                             />
                         </div>
                         <div className="space-y-2">

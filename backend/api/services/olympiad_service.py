@@ -171,3 +171,20 @@ class OlympiadService:
                     count += 1
         return count
 
+    @staticmethod
+    def publish_results(olympiad_id):
+        """
+        Publish results and distribute rewards if auto_reward is enabled.
+        """
+        from api.services.reward_service import RewardService
+        
+        olympiad = Olympiad.objects.get(id=olympiad_id)
+        olympiad.status = 'PUBLISHED'
+        olympiad.result_time = timezone.now()
+        olympiad.save()
+        
+        if olympiad.auto_reward:
+            # Trigger reward distribution
+            RewardService.distribute_rewards(olympiad.id)
+            
+        return olympiad

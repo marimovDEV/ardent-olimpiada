@@ -21,7 +21,8 @@ import {
     GraduationCap,
 
     MessageSquare,
-    Smartphone
+    Smartphone,
+    Truck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -77,6 +78,7 @@ const AdminLayout = () => {
         { icon: GraduationCap, label: t('admin.teachers.title'), path: "/admin/teachers" },
         { icon: BookOpen, label: t('admin.courses.title'), path: "/admin/courses" },
         { icon: Trophy, label: t('admin.olympiads.title'), path: "/admin/olympiads" },
+        { icon: Truck, label: 'Yetkazib berish', path: "/admin/delivery" },
         { icon: DollarSign, label: t('admin.finance'), path: "/admin/finance" },
         { icon: PanelTop, label: t('admin.cms'), path: "/admin/cms" },
         { icon: Briefcase, label: t('admin.professions'), path: "/admin/professions" },

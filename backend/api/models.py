@@ -591,6 +591,24 @@ class Olympiad(models.Model):
     show_on_home = models.BooleanField(default=False)
     home_order = models.IntegerField(default=0)
     teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='olympiads', limit_choices_to={'role': 'TEACHER'})
+    
+    # Rewards Config
+    REWARD_STRATEGY_CHOICES = [
+        ('TOP_N', 'Top g\'oliblar bo\'yicha'),
+        ('THRESHOLD', 'Ball foizi bo\'yicha'),
+        ('MANUAL', 'Qo\'lda'),
+    ]
+    reward_strategy = models.CharField(max_length=20, choices=REWARD_STRATEGY_CHOICES, default='MANUAL')
+    auto_reward = models.BooleanField(default=False, help_text="Olimpiada tugagach sovrinlarni avto yuborish")
+    
+    DISTRIBUTION_STATUS_CHOICES = [
+        ('PENDING', 'Kutilmoqda'),
+        ('IN_PROGRESS', 'Jarayonda'),
+        ('COMPLETED', 'Yakunlandi'),
+        ('FAILED', 'Xatolik'),
+    ]
+    reward_distribution_status = models.CharField(max_length=20, choices=DISTRIBUTION_STATUS_CHOICES, default='PENDING')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -662,12 +680,19 @@ class Olympiad(models.Model):
 
 class OlympiadPrize(models.Model):
     """Prizes for Olympiad Winners"""
+    PRIZE_TYPES = [
+        ('PHYSICAL', 'Fizik sovrin (Medal, Kitob...)'),
+        ('COIN', 'Ardent Coin'),
+        ('XP', 'Tajriba balli (XP)'),
+    ]
+    
     olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, related_name='prizes')
     name = models.CharField(max_length=255)
+    prize_type = models.CharField(max_length=20, choices=PRIZE_TYPES, default='PHYSICAL')
+    amount = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Coin yoki XP miqdori")
+    target_value = models.IntegerField(default=1, help_text="1-o'rin uchun 1, yoki Threshold uchun ball foizi (80, 90...)")
     image = models.ImageField(upload_to='olympiad_prizes/', blank=True, null=True)
     description = models.TextField(blank=True)
-    condition = models.CharField(max_length=100, help_text="e.g. '1-o\'rin', 'Top 10'")
-    value = models.CharField(max_length=100, blank=True, help_text="Monetary value or equivalent")
     
     class Meta:
         db_table = 'olympiad_prizes'
@@ -1334,6 +1359,8 @@ class Transaction(models.Model):
         ('COMMISSION', 'Platform Commission'),
         ('PAYOUT', 'Payout to Teacher'),
         ('REFUND', 'Refund'),
+        ('OLYMPIAD_REWARD', 'Olympiad Reward'),
+        ('STREAK_REWARD', 'Streak Reward'),
     ]
     
     STATUS_CHOICES = [

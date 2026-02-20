@@ -856,7 +856,7 @@ class OlympiadPrizeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = OlympiadPrize
-        fields = ['id', 'olympiad', 'name', 'image', 'description', 'condition', 'value']
+        fields = ['id', 'olympiad', 'name', 'image', 'description', 'prize_type', 'amount', 'target_value']
 
     def get_image(self, obj):
         request = self.context.get('request')
@@ -920,7 +920,8 @@ class OlympiadSerializer(serializers.ModelSerializer):
                   'grade_range', 'level', 'difficulty', 'format',
                   'max_attempts', 'tab_switch_limit', 'required_camera', 'required_full_screen', 'disable_copy_paste',
                   'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'created_at',
-                  'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time', 'revenue']
+                  'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time', 'revenue',
+                  'reward_strategy', 'auto_reward', 'reward_distribution_status']
     
     def get_thumbnail(self, obj):
         request = self.context.get('request')

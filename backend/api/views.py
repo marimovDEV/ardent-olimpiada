@@ -69,6 +69,7 @@ from .services.olympiad_service import OlympiadService
 from .services.email_service import EmailService
 from .bot_service import BotService
 from .services.certificate_service import CertificateService
+from .services.reward_service import RewardService
 
 
 
@@ -1561,6 +1562,35 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             'online_participants': online_count, # Mock for now
             'submissions': distribution,
             'revenue': float(Payment.objects.filter(type='OLYMPIAD', reference_id=str(olympiad.id), status='COMPLETED').aggregate(Sum('amount'))['amount__sum'] or 0)
+        })
+
+    @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated, IsAdmin])
+    def distribute_rewards(self, request, pk=None):
+        """Trigger automated reward distribution for this olympiad"""
+        olympiad = self.get_object()
+        
+        # Check if olympiad is published or completed
+        if olympiad.status not in ['PUBLISHED', 'CHECKING', 'COMPLETED']:
+             return Response({
+                'success': False,
+                'error': 'Sovrinlarni tarqatish uchun olimpiada natijalari tekshirilgan yoki e\'lon qilingan bo\'lishi kerak'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        success = RewardService.distribute_rewards(olympiad.id)
+        if success:
+            return Response({'success': True, 'message': 'Sovrinlar muvaffaqiyatli tarqatildi!'})
+        else:
+            return Response({'success': False, 'error': 'Sovrinlarni tarqatishda xatolik yuz berdi'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['GET'])
+    def winners(self, request, pk=None):
+        """Get list of winners and their prizes for this olympiad"""
+        olympiad = self.get_object()
+        winners = WinnerPrize.objects.filter(olympiad=olympiad).select_related('student', 'prize_item')
+        serializer = WinnerPrizeSerializer(winners, many=True)
+        return Response({
+            'success': True,
+            'winners': serializer.data
         })
     
     def get_permissions(self):
@@ -5329,6 +5359,36 @@ class ProfessionViewSet(viewsets.ModelViewSet):
         progress_item.save()
         return percent
 
+
+class WinnerPrizeViewSet(viewsets.ModelViewSet):
+    """Admin panel for managing prize delivery"""
+    queryset = WinnerPrize.objects.all()
+    serializer_class = WinnerPrizeSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ['status', 'olympiad']
+    ordering = ['-awarded_at']
+
+    @action(detail=True, methods=['POST'])
+    def update_status(self, request, pk=None):
+        prize = self.get_object()
+        new_status = request.data.get('status')
+        if new_status in dict(WinnerPrize.STATUS_CHOICES):
+            prize.status = new_status
+            prize.save()
+            
+            # Notify user about status change if needed
+            if prize.student.telegram_id:
+                status_texts = {
+                    'SHIPPED': "🚚 Sizning sovriningiz yo'lga chiqdi!",
+                    'COMPLETED': "✅ Sovrin yetkazib berildi. Tabriklaymiz!",
+                    'CONTACTED': "📞 Admin sovrin bo'yicha siz bilan bog'lanadi."
+                }
+                if new_status in status_texts:
+                    BotService.send_message(prize.student.telegram_id, status_texts[new_status])
+
+            return Response({'success': True, 'status': prize.status})
+        return Response({'success': False, 'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
 
 class TestResultViewSet(viewsets.ReadOnlyModelViewSet):
     """

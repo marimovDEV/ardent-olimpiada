@@ -166,8 +166,16 @@ class BotService:
 Siz <b>{olympiad.title}</b> olimpiadasida <b>{pos_text}</b>ni qo'lga kiritdingiz! 🎊
 
 Sovrinni yetkazib berishimiz uchun, iltimos, manzilingizni yuboring:
-📍 <b>Lokatsiya yuboring</b> (Share Location tugmasi orqali)
+📍 <b>Lokatsiya yuboring</b> (pastdagi tugma orqali)
 yoki
-📦 <b>To'liq manzilingizni matn ko'rinishida yozib yuboring.</b>
+📦 <b>To'liq manzilingizni yozib yuboring.</b>
 """
-        return cls.send_message(user.telegram_id, text)
+        keyboard = {
+            "keyboard": [
+                [{"text": "📍 Lokatsiyani yuborish", "request_location": True}],
+                [{"text": "❌ Bekor qilish"}]
+            ],
+            "resize_keyboard": True,
+            "one_time_keyboard": True
+        }
+        return cls.send_message(user.telegram_id, text, reply_markup=keyboard)

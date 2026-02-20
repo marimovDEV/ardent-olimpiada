@@ -20,6 +20,7 @@ const OlympiadResultPage = () => {
     const [loading, setLoading] = useState(true);
     const [timeLeft, setTimeLeft] = useState<string>('');
     const [showConfetti, setShowConfetti] = useState(false);
+    const [winners, setWinners] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -56,6 +57,15 @@ const OlympiadResultPage = () => {
                     }
                 } else if (res.status === 404) {
                     toast.error(t('olympiadResult.notFinished'));
+                }
+
+                // Fetch Winners
+                const winRes = await fetch(`${API_BASE}/olympiads/${id}/winners/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (winRes.ok) {
+                    const winData = await winRes.json();
+                    setWinners(winData.winners || []);
                 }
             } catch (err) {
                 console.error(err);
@@ -314,6 +324,48 @@ const OlympiadResultPage = () => {
                             <p className="text-sm text-muted-foreground">{t('olympiadResult.noPersonalResultDesc', 'Siz ushbu olimpiadada ishtirok etmadingiz yoki testingiz hali yakunlanmagan.')}</p>
                         </div>
                     </Card>
+                )}
+
+                {/* PRIZES SECTION */}
+                {winners.length > 0 && (
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 px-1">
+                            <Award className="w-5 h-5 text-amber-500" />
+                            <h2 className="text-xl font-black uppercase tracking-tight">{t('olympiadResult.prizes', 'Sovrinlar')}</h2>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {winners.slice(0, 6).map((winner, idx) => (
+                                <Card key={idx} className="p-4 border-2 border-primary/10 bg-card/40 backdrop-blur overflow-hidden relative group hover:border-primary/30 transition-all">
+                                    <div className="flex items-center gap-4 relative z-10">
+                                        <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center font-black text-primary text-xl">
+                                            {idx + 1}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-sm font-black truncate">{winner.student_name}</div>
+                                            <div className="text-[10px] text-muted-foreground font-bold uppercase truncate">{winner.prize_item_name}</div>
+                                        </div>
+                                        {winner.student === result?.my_result?.student && (
+                                            <Badge className="bg-green-500 text-white border-0">{t('common.you')}</Badge>
+                                        )}
+                                    </div>
+                                    <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <Trophy className="w-12 h-12 text-primary" />
+                                    </div>
+                                    {winner.student === result?.my_result?.student && (
+                                        <div className="mt-3 flex items-center justify-between pt-3 border-t border-primary/10">
+                                            <span className="text-[10px] font-bold text-muted-foreground">{t('olympiadResult.deliveryStatus')}</span>
+                                            <PrizeStatusBadge status={winner.status} />
+                                        </div>
+                                    )}
+                                </Card>
+                            ))}
+                        </div>
+                        {winners.length > 6 && (
+                            <p className="text-center text-[10px] text-muted-foreground font-medium italic">
+                                + {winners.length - 6} {t('olympiadResult.moreWinners', 'yana g\'oliblar...')}
+                            </p>
+                        )}
+                    </div>
                 )}
 
                 {/* LEADERBOARD PREVIEW */}

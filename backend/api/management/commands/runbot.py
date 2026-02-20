@@ -4,7 +4,7 @@ import json
 import logging
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from api.models import BotConfig, User, Olympiad, OlympiadRegistration, Payment
+from api.models import BotConfig, User, Olympiad, OlympiadRegistration, Payment, WinnerPrize, PrizeAddress
 from api.models_settings import PlatformSettings, PaymentProviderConfig
 from api.bot_service import BotService
 from django.core.files.base import ContentFile
@@ -23,6 +23,7 @@ STATE_NONE = 0
 STATE_WAIT_PHONE = 1 # Not used if contact is shared directly
 STATE_WAIT_AMOUNT = 2
 STATE_WAIT_RECEIPT = 3
+STATE_WAIT_ADDRESS = 4
 
 class Command(BaseCommand):
     help = 'Runs the Telegram Bot via Long Polling (Interactive)'
@@ -150,10 +151,16 @@ class Command(BaseCommand):
         message = update['message']
         chat_id = message['chat']['id']
         text = message.get('text', '').strip()
+        location = message.get('location')
         user_name = message['from'].get('first_name', 'User')
 
         # Check Active State
         state = self.user_states.get(chat_id, {}).get("state", STATE_NONE)
+        
+        # Handle Location specifically for prizes
+        if location:
+            self.handle_location(chat_id, location)
+            return
         
         # --- COMMANDS ---
 
@@ -405,6 +412,11 @@ class Command(BaseCommand):
             self.create_payment_request(chat_id, user, amount, total_sum, file_id)
             return
 
+        # Handle Address Text if in STATE_WAIT_ADDRESS
+        if state == STATE_WAIT_ADDRESS and text and not text.startswith('/'):
+            self.handle_address_text(chat_id, text)
+            return
+
 
     def create_payment_request(self, chat_id, user, coins, total_sum, file_id):
         try:
@@ -606,6 +618,54 @@ class Command(BaseCommand):
         }
         self.send_message(chat_id, text, reply_markup=keyboard)
 
-    def get_rate(self):
-        settings = PlatformSettings.objects.first()
-        return settings.ardcoin_exchange_rate if settings else 100
+    def handle_location(self, chat_id, location):
+        """Handle incoming location message for prizes"""
+        user = User.objects.filter(telegram_id=chat_id).first()
+        if not user: return
+
+        # Find any pending or contacted winner prize
+        winner_prize = WinnerPrize.objects.filter(student=user, status__in=['PENDING', 'CONTACTED']).order_by('-awarded_at').first()
+        if winner_prize:
+            try:
+                address, _ = PrizeAddress.objects.get_or_create(prize=winner_prize)
+                address.latitude = Decimal(str(location['latitude']))
+                address.longitude = Decimal(str(location['longitude']))
+                address.save()
+                
+                winner_prize.status = 'ADDRESS_RECEIVED'
+                winner_prize.save()
+                
+                self.send_message(chat_id, "✅ <b>Lokatsiyangiz qabul qilindi!</b>\n\nSovrinni yetkazib berish jarayoni boshlandi. Adminlarimiz siz bilan bog'lanishadi.")
+                self.user_states[chat_id] = {"state": STATE_NONE}
+                self.show_main_menu(chat_id, "Bosh menyu:")
+            except Exception as e:
+                logger.error(f"Error handling location: {e}")
+                self.send_message(chat_id, "❌ Lokatsiyani saqlashda xatolik yuz berdi.")
+        else:
+            # If no pending prize, maybe they just sent a location for no reason
+            pass
+
+    def handle_address_text(self, chat_id, text):
+        """Handle incoming text address for prizes"""
+        user = User.objects.filter(telegram_id=chat_id).first()
+        if not user: return
+
+        winner_prize = WinnerPrize.objects.filter(student=user, status__in=['PENDING', 'CONTACTED']).order_by('-awarded_at').first()
+        if winner_prize:
+            try:
+                address, _ = PrizeAddress.objects.get_or_create(prize=winner_prize)
+                address.address_text = text
+                address.save()
+                
+                winner_prize.status = 'ADDRESS_RECEIVED'
+                winner_prize.save()
+                
+                self.send_message(chat_id, "✅ <b>Manzilingiz qabul qilindi!</b>\n\nSovrinni yetkazib berish jarayoni boshlandi. Adminlarimiz siz bilan bog'lanishadi.")
+                self.user_states[chat_id] = {"state": STATE_NONE}
+                self.show_main_menu(chat_id, "Bosh menyu:")
+            except Exception as e:
+                logger.error(f"Error handling address text: {e}")
+                self.send_message(chat_id, "❌ Manzilni saqlashda xatolik yuz berdi.")
+        else:
+            self.send_message(chat_id, "⚠️ Hozirda sizdan manzil so'ralmagan.")
+            self.user_states[chat_id] = {"state": STATE_NONE}
