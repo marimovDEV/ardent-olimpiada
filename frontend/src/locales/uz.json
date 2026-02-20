@@ -3186,5 +3186,53 @@
       "quickVerifyDesc": "ID bo'yicha haqiqiyligini tekshiring",
       "diplomaCert": "Diplom"
     }
+  },
+  "lessons": {
+    "lesson": "Dars",
+    "next": "Keyingisi",
+    "overview": "Umumiy ko'rinish",
+    "practice": "Mashq",
+    "test": "Test",
+    "back": "Orqaga",
+    "course_page": "Kursga qaytish",
+    "finished": "Tugallangan",
+    "completed": "Bajarildi",
+    "in_progress": "Jarayonda",
+    "not_completed": "Bajarilmagan",
+    "watched": "Ko'rilgan",
+    "not_watched": "Ko'rilmagan",
+    "status": "Holat",
+    "video": "Video",
+    "view": "Ko'rish",
+    "no_video_content": "Bu darsda video mavjud emas",
+    "no_content": "Kontent mavjud emas",
+    "content_title": "Dars mazmuni",
+    "materials_title": "O'quv materiallari",
+    "materials_subtitle": "Qo'shimcha materiallar va PDF fayllar",
+    "stats_title": "Dars statistikasi",
+    "practice_title": "Mashq savoli",
+    "test_title": "Dars testi",
+    "your_answer": "Javobingiz",
+    "answer_placeholder": "Javobni kiriting...",
+    "check_answer": "Tekshirish",
+    "sending": "Yuborilmoqda...",
+    "finish_test": "Testni yakunlash",
+    "pass_score": "O'tish bali",
+    "xp_reward": "XP mukofot",
+    "lesson_finished_success": "Dars muvaffaqiyatli yakunlandi",
+    "practice_success": "To'g'ri javob! Bravo!",
+    "practice_pending": "Javob tekshirilmoqda...",
+    "test_passed": "Test o'tdi! Natija",
+    "test_failed": "Test o'tmadi. Natija",
+    "error": {
+      "title": "Nimadur xato ketdi",
+      "subtitle": "Darsni yuklashda xatolik yuz berdi. Qayta urinib ko'ring.",
+      "retry": "Qayta urinish"
+    },
+    "empty": {
+      "title": "Dars topilmadi",
+      "subtitle": "Bu kursda dars mavjud emas yoki mavjud emas.",
+      "back": "Kurslarga qaytish"
+    }
   }
 }

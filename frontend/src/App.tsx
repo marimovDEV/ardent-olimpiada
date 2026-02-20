@@ -135,7 +135,6 @@ const App = () => {
                   <Route path="/all-courses" element={<PublicCoursesPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/guide" element={<GuidePage />} />
-                  <Route path="/course/:id" element={<CourseDetailPage />} />
                   <Route path="/profession/:id" element={<ProfessionDetailPage />} />
                   <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
@@ -166,6 +165,8 @@ const App = () => {
                 </Route>
 
                 <Route path="/course/:id/lesson/:lessonId?" element={<LessonView />} />
+                {/* Course Detail — own context-aware layout (RoleAwareCourseLayout inside the page) */}
+                <Route path="/course/:id" element={<CourseDetailPage />} />
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/olympiad/:id/test" element={<OlympiadTestPage />} />
 

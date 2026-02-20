@@ -3181,5 +3181,53 @@
       "quickVerifyDesc": "Проверьте подлинность по ID",
       "diplomaCert": "Диплом"
     }
+  },
+  "lessons": {
+    "lesson": "Урок",
+    "next": "Следующий",
+    "overview": "Обзор",
+    "practice": "Практика",
+    "test": "Тест",
+    "back": "Назад",
+    "course_page": "Вернуться к курсу",
+    "finished": "Завершён",
+    "completed": "Выполнено",
+    "in_progress": "В процессе",
+    "not_completed": "Не выполнено",
+    "watched": "Просмотрено",
+    "not_watched": "Не просмотрено",
+    "status": "Статус",
+    "video": "Видео",
+    "view": "Просмотреть",
+    "no_video_content": "В этом уроке нет видео",
+    "no_content": "Контент недоступен",
+    "content_title": "Содержание урока",
+    "materials_title": "Учебные материалы",
+    "materials_subtitle": "Дополнительные материалы и PDF файлы",
+    "stats_title": "Статистика урока",
+    "practice_title": "Задание для практики",
+    "test_title": "Тест урока",
+    "your_answer": "Ваш ответ",
+    "answer_placeholder": "Введите ответ...",
+    "check_answer": "Проверить",
+    "sending": "Отправка...",
+    "finish_test": "Завершить тест",
+    "pass_score": "Проходной балл",
+    "xp_reward": "XP награда",
+    "lesson_finished_success": "Урок успешно завершён",
+    "practice_success": "Правильный ответ! Браво!",
+    "practice_pending": "Ответ проверяется...",
+    "test_passed": "Тест пройден! Результат",
+    "test_failed": "Тест не пройден. Результат",
+    "error": {
+      "title": "Что-то пошло не так",
+      "subtitle": "Ошибка при загрузке урока. Попробуйте ещё раз.",
+      "retry": "Повторить"
+    },
+    "empty": {
+      "title": "Урок не найден",
+      "subtitle": "В этом курсе нет уроков или они недоступны.",
+      "back": "Вернуться к курсам"
+    }
   }
 }
