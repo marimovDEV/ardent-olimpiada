@@ -238,57 +238,59 @@ const CourseDetailPage = () => {
     <RoleAwareCourseLayout courseTitle={course.title} courseId={id}>
       <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col">
         <div className="flex-1">
-          {/* Hero Section */}
-          <div className={`bg-gradient-to-br ${courseTheme.bg} text-white relative overflow-hidden`}>
-            {/* Abstract Background pattern */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iMzYgMzRjMC0yIDItNCAyLTRzMiAyIDIgNC0yIDQtMiA0LTItMiA0LTJ6bTAgMGMwIDItMiA0LTIgNHMtMi0yLTItNC0yLTQgMi00IDIgMiAyIDR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20" />
-
+          {/* ── Hero Section: Cover Image Background ── */}
+          <div
+            className="relative text-white overflow-hidden"
+            style={{
+              minHeight: '420px',
+              background: `linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 60%, rgba(0,0,0,0.92) 100%), url(${getImageUrl(course.thumbnail) || courseTheme.fallbackImage}) center/cover no-repeat`,
+            }}
+          >
             <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
               <Link
                 to={backPath}
-                className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-8 transition-colors"
+                className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-8 transition-colors text-sm font-medium group"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
                 {t('dashboard.courseDetail.backToCourses')}
               </Link>
 
               {showLanguageWarning && (
                 <div className="mb-6 bg-yellow-500/20 backdrop-blur-md border border-yellow-500/40 p-4 rounded-2xl flex items-start gap-3">
                   <AlertTriangle className="w-6 h-6 text-yellow-300 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-yellow-100">
-                      {t('courses.languageWarning', { language: courseLang })}
-                    </p>
-                  </div>
+                  <p className="font-bold text-yellow-100">
+                    {t('courses.languageWarning', { language: courseLang })}
+                  </p>
                 </div>
               )}
 
-              <div className="grid lg:grid-cols-3 gap-10">
+              <div className="grid lg:grid-cols-3 gap-10 items-start">
                 {/* Course Info */}
-                <div className="lg:col-span-2 space-y-6">
-                  <div className="flex flex-wrap gap-3">
-                    <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold border border-white/10">
+                <div className="lg:col-span-2 space-y-5">
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/10 uppercase tracking-wider">
                       {(() => {
                         const sub = String(course.subject_name || course.subject || "").toLowerCase();
                         return t(`subjects.${sub}`, { defaultValue: course.subject_name || course.subject || t('common.general') });
                       })()}
                     </span>
-                    <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold border border-white/10">
+                    <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/10 uppercase tracking-wider">
                       {t(`levels.${course.level}`) || course.level || t('common.general')}
                     </span>
                     {course.language && (
-                      <span className="bg-white/20 backdrop-blur-sm px-4 py-1.5 rounded-full text-sm font-semibold border border-white/10 flex items-center gap-2">
-                        <Globe className="w-4 h-4" />
+                      <span className="bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/10 flex items-center gap-1.5">
+                        <Globe className="w-3.5 h-3.5" />
                         {t(`courses.languages.${course.language}`)}
                       </span>
                     )}
                   </div>
 
-                  <h1 className="text-4xl lg:text-5xl font-black leading-tight drop-shadow-md">
+                  <h1 className="text-3xl lg:text-4xl xl:text-5xl font-black leading-tight">
                     {t(`courses.${course.title}`, { defaultValue: course.title })}
                   </h1>
 
-                  <p className="text-xl text-white/90 leading-relaxed max-w-2xl drop-shadow-sm">
+                  <p className="text-base text-white/80 leading-relaxed max-w-2xl">
                     {t(`courses.${course.description}`, {
                       defaultValue: t(course.description || "", {
                         defaultValue: course.description || t('dashboard.courseDetail.defaultDesc')
@@ -296,24 +298,24 @@ const CourseDetailPage = () => {
                     })}
                   </p>
 
-                  {/* Stats */}
-                  <div className="flex flex-wrap items-center gap-8 pt-4">
-                    <div className="flex items-center gap-2">
-                      <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                      <span className="text-xl font-bold">{Number(course.rating || 0).toFixed(1)}</span>
-                      <span className="text-white/70">({course.enrolled_count || 0} {t('dashboard.courseDetail.reviews')})</span>
+                  {/* Stats row */}
+                  <div className="flex flex-wrap items-center gap-5 text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-bold">{Number(course.rating || 0).toFixed(1)}</span>
+                      <span className="text-white/50">({course.enrolled_count || 0})</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-6 h-6" />
-                      <span className="text-lg">{course.enrolled_count || 0} {t('dashboard.courseDetail.students')}</span>
+                    <div className="flex items-center gap-1.5">
+                      <Users className="w-4 h-4 text-white/60" />
+                      <span>{course.enrolled_count || 0} {t('dashboard.courseDetail.students')}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Play className="w-6 h-6" />
-                      <span className="text-lg">{course.lessons_count || 0} {t('dashboard.courseDetail.lessons')}</span>
+                    <div className="flex items-center gap-1.5">
+                      <Play className="w-4 h-4 text-white/60" />
+                      <span>{course.lessons_count || 0} {t('dashboard.courseDetail.lessons')}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-6 h-6" />
-                      <span className="text-lg">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4 text-white/60" />
+                      <span>
                         {course.duration ? (
                           course.duration.toString().includes(' ')
                             ? `${course.duration.split(' ')[0]} ${t('common.hours')}`
@@ -324,128 +326,108 @@ const CourseDetailPage = () => {
                   </div>
 
                   {/* Teacher */}
-                  <div className="flex items-center gap-4 pt-4">
-                    <div className="w-14 h-14 rounded-full bg-white/20 border border-white/10 flex items-center justify-center text-2xl font-bold shadow-inner">
+                  <div className="flex items-center gap-3 pt-1">
+                    <div className="w-10 h-10 rounded-full bg-white/20 border border-white/10 flex items-center justify-center text-lg font-bold shrink-0">
                       {course.teacher_name?.[0] || 'O'}
                     </div>
                     <div>
-                      <div className="font-semibold text-lg">{course.teacher_name || t('dashboard.courseDetail.teacher')}</div>
-                      <div className="text-white/70">{t('dashboard.courseDetail.author')}</div>
+                      <div className="font-bold text-sm">{course.teacher_name || t('dashboard.courseDetail.teacher')}</div>
+                      <div className="text-white/50 text-xs">{t('dashboard.courseDetail.author')}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Purchase Card */}
                 <div className="lg:col-span-1">
-                  <div className="bg-card dark:bg-card/90 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden sticky top-24 border border-border">
-                    {/* Course Image */}
-                    <div className="h-48 relative">
-                      <img
-                        src={getImageUrl(course.thumbnail) || courseTheme.fallbackImage}
-                        alt={course.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    <div className="p-6 space-y-6">
-                      {/* Price */}
+                  <div className="bg-card/95 dark:bg-card backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden sticky top-6 border border-border">
+                    <div className="p-6 space-y-5">
+                      {/* Price / Status */}
                       <div className="text-center">
-                        {isFree ? (
-                          <div className="flex flex-col items-center">
-                            <span className="text-4xl font-black text-green-600 dark:text-green-400">{t('dashboard.courseDetail.free')}</span>
-                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400 mt-2">
-                              <Gift className="w-5 h-5" />
-                              <span className="font-semibold">{t('dashboard.courseDetail.totallyFree')}</span>
+                        {isEnrolled ? (
+                          <div className="flex flex-col items-center gap-1 animate-in zoom-in-95 duration-300">
+                            <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-600 dark:text-green-400 border border-green-500/20">
+                              <CheckCircle2 className="w-7 h-7" />
                             </div>
+                            <span className="text-lg font-black text-green-600 dark:text-green-400 mt-1">
+                              {t('dashboard.myCoursesPage.enrolled') || 'Sotib olingan'}
+                            </span>
+                          </div>
+                        ) : isFree ? (
+                          <div className="flex flex-col items-center gap-1">
+                            <span className="text-4xl font-black text-green-600 dark:text-green-400">{t('dashboard.courseDetail.free')}</span>
                           </div>
                         ) : (
-                          <div className="flex flex-col items-center gap-2">
-                            {/* Price / Status Block */}
-                            <div className="flex flex-col items-center justify-center min-h-[60px]">
-                              {isEnrolled ? (
-                                <div className="flex flex-col items-center gap-1 animate-in zoom-in-95 duration-300">
-                                  <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-600 dark:text-green-400 border border-green-500/20">
-                                    <CheckCircle2 className="w-7 h-7" />
-                                  </div>
-                                  <span className="text-lg font-black text-green-600 dark:text-green-400 mt-1">
-                                    {t('dashboard.myCoursesPage.enrolled') || 'Sotib olingan'}
-                                  </span>
-                                </div>
-                              ) : isFree ? (
-                                <div className="flex flex-col items-center gap-1">
-                                  <span className="text-4xl font-black text-green-600 dark:text-green-400">{t('badges.free')}</span>
-                                </div>
-                              ) : (
-                                <ArdCoin amount={course.price} size="xl" />
-                              )}
-                            </div>
-
-                            {isEnrolled && course.enrollment && (
-                              <div className="mb-6 animate-in slide-in-from-top-2">
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="text-sm font-bold text-muted-foreground">{t('dashboard.myCoursesPage.progress')}</span>
-                                  <span className="text-sm font-black text-primary">{Math.round(course.enrollment.progress)}%</span>
-                                </div>
-                                <div className="w-full h-3 bg-muted rounded-full overflow-hidden border border-border">
-                                  <div
-                                    className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] transition-all duration-1000 shadow-gold"
-                                    style={{ width: `${course.enrollment.progress}%` }}
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            {/* CTA Button */}
-                            {isEnrolled ? (
-                              <Button
-                                size="lg"
-                                className="w-full h-14 text-lg rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/20 transition-all active:scale-95"
-                                onClick={() => navigate(`/course/${id}/lesson/${course.enrollment?.current_lesson || ''}`)}
-                              >
-                                <Play className="w-5 h-5 mr-2" />
-                                {t('dashboard.courseDetail.continue')}
-                              </Button>
-                            ) : (
-                              <Button
-                                size="lg"
-                                className={`w-full h-14 text-lg rounded-2xl ${isFree
-                                  ? 'bg-green-600 hover:bg-green-700 text-white'
-                                  : 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 shadow-lg shadow-orange-500/20 text-white'
-                                  } transition-all hover:scale-[1.02] active:scale-[0.98]`}
-                                onClick={handleEnroll}
-                                disabled={isPurchasing}
-                              >
-                                {isPurchasing ? (
-                                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                                ) : isFree ? (
-                                  <Play className="w-5 h-5 mr-2" />
-                                ) : (
-                                  <ShoppingCart className="w-5 h-5 mr-2" />
-                                )}
-                                {isPurchasing ? t('dashboard.courseDetail.processing') : isFree ? t('dashboard.courseDetail.startFree') : t('dashboard.courseDetail.buy')}
-                              </Button>
-                            )}
-
-                            {/* Balance Warning */}
-                            {!isEnrolled && !isFree && userBalance < course.price && (
-                              <div className="text-center text-sm text-destructive bg-destructive/10 p-2 rounded-lg border border-destructive/20">
-                                {t('dashboard.courseDetail.insufficientFunds', { balance: userBalance.toLocaleString() })}
-                              </div>
-                            )}
-
-                            {/* Features */}
-                            <div className="space-y-3 pt-4 border-t border-border">
-                              <div className="flex items-center gap-3 text-muted-foreground">
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                <span>{t('dashboard.courseDetail.lifetimeAccess')}</span>
-                              </div>
-                              <div className="flex items-center gap-3 text-muted-foreground">
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
-                                <span>{t('dashboard.courseDetail.certificateIncluded')}</span>
-                              </div>
-                            </div>
-                          </div>
+                          <ArdCoin amount={course.price} size="xl" />
                         )}
+                      </div>
+
+                      {/* Progress bar if enrolled */}
+                      {isEnrolled && course.enrollment && (
+                        <div className="animate-in slide-in-from-top-2">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('dashboard.myCoursesPage.progress')}</span>
+                            <span className="text-sm font-black text-primary">{Math.round(course.enrollment.progress)}%</span>
+                          </div>
+                          <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border">
+                            <div
+                              className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] transition-all duration-1000 rounded-full"
+                              style={{ width: `${course.enrollment.progress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* CTA Button */}
+                      {isEnrolled ? (
+                        <Button
+                          size="lg"
+                          className="w-full h-13 text-base rounded-2xl bg-primary hover:bg-primary/90 text-background font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+                          onClick={() => navigate(`/course/${id}/lesson/${course.enrollment?.current_lesson || ''}`)}
+                        >
+                          <Play className="w-5 h-5 mr-2" />
+                          {t('dashboard.courseDetail.continue')}
+                        </Button>
+                      ) : (
+                        <Button
+                          size="lg"
+                          className={`w-full h-13 text-base rounded-2xl font-bold transition-all hover:scale-[1.02] active:scale-[0.98] ${isFree
+                            ? 'bg-green-600 hover:bg-green-700 text-white'
+                            : 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 shadow-lg shadow-orange-500/20 text-white'
+                            }`}
+                          onClick={handleEnroll}
+                          disabled={isPurchasing}
+                        >
+                          {isPurchasing ? (
+                            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                          ) : isFree ? (
+                            <Play className="w-5 h-5 mr-2" />
+                          ) : (
+                            <ShoppingCart className="w-5 h-5 mr-2" />
+                          )}
+                          {isPurchasing ? t('dashboard.courseDetail.processing') : isFree ? t('dashboard.courseDetail.startFree') : t('dashboard.courseDetail.buy')}
+                        </Button>
+                      )}
+
+                      {/* Balance Warning */}
+                      {!isEnrolled && !isFree && userBalance < course.price && (
+                        <div className="text-center text-xs text-destructive bg-destructive/10 p-2 rounded-lg border border-destructive/20">
+                          {t('dashboard.courseDetail.insufficientFunds', { balance: userBalance.toLocaleString() })}
+                        </div>
+                      )}
+
+                      {/* Badge-style Features */}
+                      <div className="flex flex-wrap gap-2 pt-3 border-t border-border justify-center">
+                        {isEnrolled && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold border border-green-500/20">
+                            🟢 {t('dashboard.myCoursesPage.enrolled') || 'Sotib olingan'}
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20">
+                          🎓 {t('dashboard.courseDetail.certificateIncluded')}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs font-bold border border-border">
+                          ♾ {t('dashboard.courseDetail.lifetimeAccess')}
+                        </span>
                       </div>
                     </div>
                   </div>
