@@ -450,6 +450,69 @@ class SubjectSerializer(serializers.ModelSerializer):
                 
         return attrs
 
+class UserProfessionProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfessionProgress
+        fields = ['id', 'status', 'progress_percent', 'started_at', 'updated_at']
+
+
+# ============= PROFESSION SERIALIZERS =============
+
+class ProfessionSubjectSerializer(serializers.ModelSerializer):
+    subject_id = serializers.IntegerField(source='subject.id')
+    name = serializers.CharField(source='subject.name')
+    slug = serializers.CharField(source='subject.slug')
+    icon = serializers.CharField(source='subject.icon')
+    color = serializers.CharField(source='subject.color')
+    
+    class Meta:
+        model = ProfessionSubject
+        fields = ['subject_id', 'name', 'slug', 'icon', 'color', 'importance', 'percentage', 'order']
+
+
+class ProfessionRoadmapStepSerializer(serializers.ModelSerializer):
+    step_type_display = serializers.CharField(source='get_step_type_display', read_only=True)
+    course_title = serializers.CharField(source='course.title', read_only=True)
+    course_id = serializers.IntegerField(source='course.id', read_only=True)
+    olympiad_title = serializers.CharField(source='olympiad.title', read_only=True)
+    olympiad_id = serializers.IntegerField(source='olympiad.id', read_only=True)
+    is_course_completed = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ProfessionRoadmapStep
+        fields = ['id', 'title', 'description', 'step_type', 'step_type_display', 
+                  'course_id', 'course_title', 'olympiad_id', 'olympiad_title',
+                  'is_mandatory', 'is_course_completed', 'order']
+
+    def get_is_course_completed(self, obj):
+        user = self.context.get('request').user if self.context.get('request') and self.context.get('request').user.is_authenticated else None
+        if user and obj.course:
+            return Enrollment.objects.filter(user=user, course=obj.course, progress__gte=100).exists()
+        return False
+
+
+class ProfessionSerializer(serializers.ModelSerializer):
+    required_subjects = ProfessionSubjectSerializer(many=True, read_only=True)
+    roadmap_steps = ProfessionRoadmapStepSerializer(many=True, read_only=True)
+    user_progress = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Profession
+        fields = ['id', 'name', 'description', 'icon', 'color', 'is_active', 'order',
+                  'suitability', 'requirements', 'salary_range', 'learning_time',
+                  'certification_info', 'career_opportunities',
+                  'primary_subject', 'required_xp',
+                  'required_subjects', 'roadmap_steps', 'user_progress']
+
+    def get_user_progress(self, obj):
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and user.is_authenticated:
+            progress = UserProfessionProgress.objects.filter(user=user, profession=obj).first()
+            if progress:
+                return UserProfessionProgressSerializer(progress).data
+        return None
+
+
 
 class SubjectDetailSerializer(serializers.ModelSerializer):
     """Full detail serializer for subject page with related content"""
@@ -475,8 +538,6 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
         if not featured_profession:
             return []
         
-        # This nested import avoids circular dependency and NameError
-        from .serializers import ProfessionRoadmapStepSerializer
         steps = featured_profession.roadmap_steps.all().order_by('order')
         return ProfessionRoadmapStepSerializer(steps, many=True, context=self.context).data
     
@@ -503,7 +564,7 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
         return [{
             'id': c.id,
             'title': c.title,
-            'thumbnail': self.context['request'].build_absolute_uri(c.thumbnail.url) if c.thumbnail else None,
+            'thumbnail': self.context['request'].build_absolute_uri(c.thumbnail.url) if c.thumbnail and 'request' in self.context else (c.thumbnail.url if c.thumbnail else None),
             'price': c.price,
             'level': c.level,
             'lesson_count': c.modules.aggregate(count=Count('lessons'))['count'] or 0,
@@ -535,8 +596,6 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
     def get_professions(self, obj):
         """Return professions that require this subject"""
         links = obj.profession_links.select_related('profession')[:6]
-        # Nested import to avoid NameError
-        from .serializers import ProfessionRoadmapStepSerializer
         return [{
             'id': link.profession.id,
             'name': link.profession.name,
@@ -725,10 +784,8 @@ class CourseCreateSerializer(serializers.ModelSerializer):
                   'subject', 'language', 'duration', 'is_featured', 'is_active', 'status', 'xp_reward']
 
 
-class UserProfessionProgressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserProfessionProgress
-        fields = ['id', 'status', 'progress_percent', 'started_at', 'updated_at']
+
+
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     course = CourseSerializer(read_only=True)
@@ -1042,14 +1099,14 @@ class CertificateSerializer(serializers.ModelSerializer):
     olympiad_id = serializers.PrimaryKeyRelatedField(
         queryset=Olympiad.objects.all(), source='olympiad', write_only=True, required=False, allow_null=True
     )
-    course_title = serializers.CharField(source='course.title', read_only=True)
-    olympiad_title = serializers.CharField(source='olympiad.title', read_only=True)
+    course_title = serializers.CharField(source='course.title', read_only=True, default=None)
+    olympiad_title = serializers.CharField(source='olympiad.title', read_only=True, default=None)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     type_display = serializers.CharField(source='get_cert_type_display', read_only=True)
     verified_by_name = serializers.SerializerMethodField()
     source = serializers.SerializerMethodField()
-    title = serializers.CharField(read_only=True)
-    verify_url = serializers.CharField(read_only=True)
+    title = serializers.ReadOnlyField() 
+    verify_url = serializers.ReadOnlyField()
     
     qr_code = serializers.SerializerMethodField()
     pdf_file = serializers.SerializerMethodField()
@@ -1057,22 +1114,34 @@ class CertificateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Certificate
         fields = ['id', 'cert_number', 'cert_type', 'type_display', 'user', 'user_id',
-                  'course', 'course_id', 'course_title', 'olympiad', 'olympiad_id', 'olympiad_title', 
+                  'course_id', 'course_title', 'olympiad_id', 'olympiad_title', 
                   'title', 'source', 'grade', 'score', 'status', 'status_display', 
                   'issued_at', 'verified_at', 'verified_by', 'verified_by_name',
                   'rejection_reason', 'verify_url', 'qr_code', 'pdf_file']
 
     def get_qr_code(self, obj):
         request = self.context.get('request')
-        if obj.qr_code and request:
-            return request.build_absolute_uri(obj.qr_code.url)
-        return obj.qr_code.url if obj.qr_code else None
+        if obj.qr_code:
+            try:
+                url = obj.qr_code.url
+                if request:
+                    return request.build_absolute_uri(url)
+                return url
+            except Exception:
+                return None
+        return None
 
     def get_pdf_file(self, obj):
         request = self.context.get('request')
-        if obj.pdf_file and request:
-            return request.build_absolute_uri(obj.pdf_file.url)
-        return obj.pdf_file.url if obj.pdf_file else None
+        if obj.pdf_file:
+            try:
+                url = obj.pdf_file.url
+                if request:
+                    return request.build_absolute_uri(url)
+                return url
+            except Exception:
+                return None
+        return None
     
     def get_source(self, obj):
         if obj.course:
@@ -1271,58 +1340,7 @@ class LevelRewardSerializer(serializers.ModelSerializer):
 
 
 
-# ============= PROFESSION SERIALIZERS =============
 
-class ProfessionSubjectSerializer(serializers.ModelSerializer):
-    subject_id = serializers.IntegerField(source='subject.id')
-    name = serializers.CharField(source='subject.name')
-    slug = serializers.CharField(source='subject.slug')
-    icon = serializers.CharField(source='subject.icon')
-    color = serializers.CharField(source='subject.color')
-    
-    class Meta:
-        model = ProfessionSubject
-        fields = ['subject_id', 'name', 'slug', 'icon', 'color', 'importance', 'percentage', 'order']
-
-
-class ProfessionRoadmapStepSerializer(serializers.ModelSerializer):
-    step_type_display = serializers.CharField(source='get_step_type_display', read_only=True)
-    course_title = serializers.CharField(source='course.title', read_only=True)
-    course_id = serializers.IntegerField(source='course.id', read_only=True)
-    is_course_completed = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = ProfessionRoadmapStep
-        fields = ['id', 'title', 'description', 'step_type', 'step_type_display', 
-                  'course_id', 'course_title', 'is_mandatory', 'is_course_completed', 'order']
-
-    def get_is_course_completed(self, obj):
-        user = self.context.get('request').user if self.context.get('request') else None
-        if user and user.is_authenticated and obj.course:
-            return Enrollment.objects.filter(user=user, course=obj.course, progress__gte=100).exists()
-        return False
-
-
-class ProfessionSerializer(serializers.ModelSerializer):
-    required_subjects = ProfessionSubjectSerializer(many=True, read_only=True)
-    roadmap_steps = ProfessionRoadmapStepSerializer(many=True, read_only=True)
-    user_progress = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = Profession
-        fields = ['id', 'name', 'description', 'icon', 'color', 'is_active', 'order',
-                  'suitability', 'requirements', 'salary_range', 'learning_time',
-                  'certification_info', 'career_opportunities',
-                  'primary_subject', 'required_xp',
-                  'required_subjects', 'roadmap_steps', 'user_progress']
-
-    def get_user_progress(self, obj):
-        user = self.context.get('request').user if self.context.get('request') else None
-        if user and user.is_authenticated:
-            progress = UserProfessionProgress.objects.filter(user=user, profession=obj).first()
-            if progress:
-                return UserProfessionProgressSerializer(progress).data
-        return None
 
 
 class LeadSerializer(serializers.ModelSerializer):
