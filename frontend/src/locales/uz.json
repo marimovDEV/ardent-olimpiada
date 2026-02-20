@@ -3149,5 +3149,42 @@
       "newPass": "Yangi Parol",
       "updateBtn": "Parolni yangilash"
     }
+    "certificates": {
+      "title": "Sertifikatlar",
+      "certificatesSubtitle": "Sertifikatlarni tekshirish, tasdiqlash va berish",
+      "newCertificate": "Yangi sertifikat",
+      "totalIssued": "Jami berilgan",
+      "thisMonth": "Shu oyda",
+      "quickVerify": "Tezkor tekshirish",
+      "byIdOrQr": "ID yoki QR kod orqali",
+      "searchCertPlaceholder": "Ism, email yoki sertifikat raqami...",
+      "allStatuses": "Barcha holatlar",
+      "allTypes": "Barcha turlar",
+      "noCertificates": "Sertifikatlar topilmadi",
+      "certId": "Sertifikat ID",
+      "source": "Manba",
+      "result": "Natija",
+      "actions": "Amallar",
+      "unknownUser": "Noma'lum foydalanuvchi",
+      "noEmail": "Email yo'q",
+      "rejectCertificate": "Rad etish",
+      "rejectCertDesc": "Sertifikatni rad etish sababini ko'rsating",
+      "rejectReasonLabel": "Rad etish sababi",
+      "rejectReasonPlaceholder": "Masalan: Natijalar shubhali...",
+      "certDetails": "Sertifikat tafsilotlari",
+      "certDetailsDesc": "Sertifikat haqida to'liq ma'lumot",
+      "certNumber": "Sertifikat raqami",
+      "issuedDate": "Berilgan sana",
+      "verifyInfo": "Tasdiqlash ma'lumotlari",
+      "verifiedBy": "Tasdiqladi:",
+      "dateColon": "Sana:",
+      "rejectReasonTitle": "Rad etish sababi:",
+      "certCopyPdf": "Sertifikat nusxasi (PDF)",
+      "pdfNotCreated": "PDF hali yaratilmagan",
+      "willBeCreatedAfterVerify": "Tasdiqlangandan so'ng PDF avtomatik yaratiladi",
+      "quickVerifyTitle": "Sertifikatni tekshirish",
+      "quickVerifyDesc": "ID bo'yicha haqiqiyligini tekshiring",
+      "diplomaCert": "Diplom"
+    }
   }
 }

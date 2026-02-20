@@ -130,11 +130,20 @@ class OlympiadService:
         attempt.save()
         
         # Rewards (XP, Coins)
-        user.add_xp(int(score) * 2, 'OLYMPIAD_PARTICIPATION', f"Olimpiada yakunlandi: {olympiad.title}")
+        if olympiad.xp_reward > 0:
+            user.add_xp(olympiad.xp_reward, 'OLYMPIAD_PARTICIPATION', f"Olimpiada yakunlandi: {olympiad.title}")
+        
+        # Bonus XP for high performance (optional, keeping it as 2x score if preferred, 
+        # but user asked for 150 fixed for participation. Let's stick to user's 150)
+        # user.add_xp(int(score) * 2, ...)  # Removed this to strictly follow requested values
         
         # Record Streak Activity
         from api.streak_service import StreakService
         StreakService.record_activity(user, 'OLYMPIAD_PARTICIPATION', f"Olimpiada topshirildi: {olympiad.title}")
+
+        # Update Career Progress
+        from api.services.profession_service import ProfessionService
+        ProfessionService.update_all_active_professions(user)
 
         # Telegram Notification
         if user.telegram_id:

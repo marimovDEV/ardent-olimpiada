@@ -190,6 +190,29 @@ class LearningService:
                 
                 # Update Enrollment overall progress
                 LearningService.update_enrollment_stats(user, lesson.course)
+                
+                # Check for Module Completion
+                if lesson.module:
+                    LearningService.check_module_completion(user, lesson.module)
+
+    @staticmethod
+    def check_module_completion(user, module):
+        """Check if all published lessons in a module are completed by the user"""
+        total_lessons = Lesson.objects.filter(module=module, is_published=True).count()
+        completed_lessons = LessonProgress.objects.filter(
+            user=user, 
+            lesson__module=module, 
+            is_completed=True
+        ).count()
+        
+        if total_lessons > 0 and completed_lessons >= total_lessons:
+            # All lessons completed - check if already rewarded? 
+            # We can use ActivityLog to prevent double reward or just check if it's the first time
+            # For simplicity, we can log it. 
+            # Better: add a ModuleCompletion model or just check ActivityLog
+            from api.models import ActivityLog
+            if not ActivityLog.objects.filter(user=user, activity_type='MODULE_COMPLETE', description__contains=f"Module ID: {module.id}").exists():
+                user.add_xp(module.xp_reward, 'MODULE_COMPLETE', f"Modul yakunlandi: {module.title} (Module ID: {module.id})")
 
     @staticmethod
     def update_enrollment_stats(user, course):
@@ -210,6 +233,10 @@ class LearningService:
             enrollment.completed_at = timezone.now()
             # Reward XP for course completion
             user.add_xp(course.xp_reward, 'COURSE_ENROLL', f"Kurs yakunlandi: {course.title}")
+            
+            # Update Career Progress
+            from api.services.profession_service import ProfessionService
+            ProfessionService.update_all_active_professions(user)
             
             # Create certificate if not already exists AND it's enabled for course
             if course.is_certificate_enabled and not Certificate.objects.filter(user=user, course=course).exists():

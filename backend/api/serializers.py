@@ -259,7 +259,7 @@ class UserMiniSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', 'username', 'full_name', 'phone', 'avatar', 'language']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'full_name', 'phone', 'avatar', 'language']
     
     def get_full_name(self, obj):
         return obj.get_full_name() or obj.username
@@ -463,9 +463,17 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ['id', 'name', 'slug', 'description', 'icon', 'color', 'xp_reward', 
-                  'is_featured', 'is_active', 'order', 
-                  'courses_count', 'olympiads_count', 'professions_count',
-                  'courses', 'olympiads', 'professions']
+                  'is_featured', 'is_active', 'order',                   'courses_count', 'olympiads_count', 'professions_count',
+                  'total_xp_available', 'courses', 'olympiads', 'professions']
+    
+    total_xp_available = serializers.SerializerMethodField()
+    
+    def get_total_xp_available(self, obj):
+        from django.db.models import Sum
+        lesson_xp = obj.courses.aggregate(total=Sum('lessons__xp_amount'))['total'] or 0
+        course_xp = obj.courses.aggregate(total=Sum('xp_reward'))['total'] or 0
+        olympiad_xp = obj.olympiads_api.aggregate(total=Sum('xp_reward'))['total'] or 0
+        return lesson_xp + course_xp + olympiad_xp
     
     def get_courses_count(self, obj):
         return obj.courses.filter(is_active=True).count()
@@ -521,6 +529,8 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
             'icon': link.profession.icon,
             'color': link.profession.color,
             'percentage': link.percentage,
+            'required_xp': link.profession.required_xp,
+            'roadmap_steps': ProfessionRoadmapStepSerializer(link.profession.roadmap_steps.all(), many=True, context=self.context).data
         } for link in links]
 
 class LessonProgressSerializer(serializers.ModelSerializer):
@@ -1287,9 +1297,9 @@ class ProfessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profession
         fields = ['id', 'name', 'description', 'icon', 'color', 'is_active', 'order',
-                  'suitability', 'requirements', 'salary_range', 'learning_time', 
-                  'certification_info', 'career_opportunities',
-                  'required_subjects', 'roadmap_steps', 'user_progress']
+                   'certification_info', 'career_opportunities',
+                   'primary_subject', 'required_xp',
+                   'required_subjects', 'roadmap_steps', 'user_progress']
 
     def get_user_progress(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None

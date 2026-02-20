@@ -240,7 +240,7 @@ class Course(models.Model):
     students_count = models.IntegerField(default=0)
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    xp_reward = models.IntegerField(default=50, help_text="XP given upon completion")
+    xp_reward = models.IntegerField(default=100, help_text="XP given upon completion")
     show_on_home = models.BooleanField(default=False)
     home_order = models.IntegerField(default=0)
     STATUS_CHOICES = [
@@ -309,6 +309,7 @@ class Module(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     order = models.IntegerField(default=0)
+    xp_reward = models.IntegerField(default=30, help_text="XP awarded for completing all lessons in this module")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -585,7 +586,8 @@ class Olympiad(models.Model):
     allowed_ip_range = models.CharField(max_length=200, blank=True, null=True, help_text="Comma separated IPs or CIDR")
 
     is_active = models.BooleanField(default=True)
-    xp_reward = models.IntegerField(default=50, help_text="XP given for participation")
+    xp_reward = models.IntegerField(default=150, help_text="XP given for participation (finishing test)")
+    winner_xp = models.IntegerField(default=400, help_text="Extra XP for 1st place/Winners")
     show_on_home = models.BooleanField(default=False)
     home_order = models.IntegerField(default=0)
     teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='olympiads', limit_choices_to={'role': 'TEACHER'})
@@ -1497,6 +1499,10 @@ class Profession(models.Model):
     is_active = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
     
+    # Career Engine enhancements
+    primary_subject = models.ForeignKey('Subject', on_delete=models.SET_NULL, null=True, blank=True, related_name='professions_featured')
+    required_xp = models.IntegerField(default=0, help_text="Kasbni ochish uchun kerakli XP")
+    
     # Roadmap / Career Info
     suitability = models.TextField(blank=True, help_text="Kimlar uchun mos")
     requirements = models.TextField(blank=True, help_text="Boshlash uchun talablar")
@@ -1538,6 +1544,7 @@ class ProfessionRoadmapStep(models.Model):
         ('LEARN', 'O\'rganish'),
         ('PRACTICE', 'Amaliyot'),
         ('COMPETE', 'Olimpiada'),
+        ('PROJECT', 'Loyiha'),
         ('CERTIFY', 'Sertifikat'),
     ]
 
@@ -1546,6 +1553,8 @@ class ProfessionRoadmapStep(models.Model):
     description = models.TextField(blank=True)
     step_type = models.CharField(max_length=20, choices=STEP_TYPES, default='LEARN')
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True, related_name='roadmap_steps')
+    olympiad = models.ForeignKey('Olympiad', on_delete=models.SET_NULL, null=True, blank=True, related_name='roadmap_steps')
+    required_xp = models.IntegerField(default=0, help_text="Ushbu qadam uchun kerakli XP")
     is_mandatory = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
 

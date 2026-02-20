@@ -3144,5 +3144,42 @@
       "newPass": "Новый пароль",
       "updateBtn": "Обновить пароль"
     }
+    "certificates": {
+      "title": "Сертификаты",
+      "certificatesSubtitle": "Проверка, подтверждение и выдача сертификатов",
+      "newCertificate": "Новый сертификат",
+      "totalIssued": "Всего выдано",
+      "thisMonth": "В этом месяце",
+      "quickVerify": "Быстрая проверка",
+      "byIdOrQr": "По ID или QR-коду",
+      "searchCertPlaceholder": "Имя, email или номер сертификата...",
+      "allStatuses": "Все статусы",
+      "allTypes": "Все типы",
+      "noCertificates": "Сертификаты не найдены",
+      "certId": "ID Сертификата",
+      "source": "Источник",
+      "result": "Результат",
+      "actions": "Действия",
+      "unknownUser": "Неизвестный пользователь",
+      "noEmail": "Нет email",
+      "rejectCertificate": "Отклонить",
+      "rejectCertDesc": "Укажите причину отклонения сертификата",
+      "rejectReasonLabel": "Причина отклонения",
+      "rejectReasonPlaceholder": "Например: Результаты подозрительны...",
+      "certDetails": "Детали сертификата",
+      "certDetailsDesc": "Полная информация о сертификате",
+      "certNumber": "Номер сертификата",
+      "issuedDate": "Дата выдачи",
+      "verifyInfo": "Информация о проверке",
+      "verifiedBy": "Подтвердил:",
+      "dateColon": "Дата:",
+      "rejectReasonTitle": "Причина отклонения:",
+      "certCopyPdf": "Копия сертификата (PDF)",
+      "pdfNotCreated": "PDF еще не создан",
+      "willBeCreatedAfterVerify": "PDF будет создан автоматически после подтверждения",
+      "quickVerifyTitle": "Проверка сертификата",
+      "quickVerifyDesc": "Проверьте подлинность по ID",
+      "diplomaCert": "Диплом"
+    }
   }
 }
