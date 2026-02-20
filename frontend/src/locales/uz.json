@@ -3148,7 +3148,7 @@
       "oldPass": "Eski Parol",
       "newPass": "Yangi Parol",
       "updateBtn": "Parolni yangilash"
-    }
+    },
     "certificates": {
       "title": "Sertifikatlar",
       "certificatesSubtitle": "Sertifikatlarni tekshirish, tasdiqlash va berish",
