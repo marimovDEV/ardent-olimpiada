@@ -262,7 +262,10 @@ class UserMiniSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'full_name', 'phone', 'avatar', 'language']
     
     def get_full_name(self, obj):
-        return obj.get_full_name() or obj.username
+        try:
+            return obj.get_full_name() or obj.username
+        except Exception:
+            return getattr(obj, 'username', 'Noma\'lum')
 
 
 # ============= COURSE SERIALIZERS =============
@@ -1105,8 +1108,8 @@ class CertificateSerializer(serializers.ModelSerializer):
     type_display = serializers.CharField(source='get_cert_type_display', read_only=True)
     verified_by_name = serializers.SerializerMethodField()
     source = serializers.SerializerMethodField()
-    title = serializers.ReadOnlyField() 
-    verify_url = serializers.ReadOnlyField()
+    title = serializers.SerializerMethodField()
+    verify_url = serializers.SerializerMethodField()
     
     qr_code = serializers.SerializerMethodField()
     pdf_file = serializers.SerializerMethodField()
@@ -1144,15 +1147,33 @@ class CertificateSerializer(serializers.ModelSerializer):
         return None
     
     def get_source(self, obj):
-        if obj.course:
-            return {'type': 'course', 'title': obj.course.title, 'id': obj.course.id}
-        elif obj.olympiad:
-            return {'type': 'olympiad', 'title': obj.olympiad.title, 'id': obj.olympiad.id}
+        try:
+            if obj.course:
+                return {'type': 'course', 'title': getattr(obj.course, 'title', 'Noma\'lum'), 'id': obj.course.id}
+            elif obj.olympiad:
+                return {'type': 'olympiad', 'title': getattr(obj.olympiad, 'title', 'Noma\'lum'), 'id': obj.olympiad.id}
+        except Exception:
+            pass
         return None
     
+    def get_title(self, obj):
+        try:
+            return obj.title
+        except Exception:
+            return "Sertifikat"
+            
+    def get_verify_url(self, obj):
+        try:
+            return obj.verify_url
+        except Exception:
+            return ""
+
     def get_verified_by_name(self, obj):
-        if obj.verified_by:
-            return obj.verified_by.get_full_name() or obj.verified_by.username
+        try:
+            if obj.verified_by:
+                return obj.verified_by.get_full_name() or obj.verified_by.username
+        except Exception:
+            pass
         return None
 
 
