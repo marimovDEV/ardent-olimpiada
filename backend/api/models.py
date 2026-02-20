@@ -255,7 +255,14 @@ class Course(models.Model):
         ('ru', "Rus"),
         ('en', "Ingliz"),
     ]
+    LOCK_STRATEGY_CHOICES = [
+        ('free', 'Erkin (barcha darslar ochiq)'),
+        ('sequential', 'Ketma-ket (oldingi tugaguncha keyingisi yopiq)'),
+        ('custom', 'Maxsus (har darsda belgilangan)'),
+    ]
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICES, default='uz')
+    lock_strategy = models.CharField(max_length=20, choices=LOCK_STRATEGY_CHOICES, default='free')
+    completion_min_progress = models.IntegerField(default=80, help_text="Kurs tugallandi hisoblash uchun minimal foiz")
     teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='courses', limit_choices_to={'role': 'TEACHER'})
     
     # Advanced Settings
@@ -365,6 +372,12 @@ class Lesson(models.Model):
     order = models.IntegerField(default=0)
     is_free = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
+    is_locked = models.BooleanField(default=False, help_text="Agar True bo'lsa, oldingi dars tugaguncha yopiq")
+    required_lesson = models.ForeignKey(
+        'self', on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='unlocks_lessons',
+        help_text="Bu dars tugamasdan yuqoridagi dars ochilmaydi"
+    )
     xp_amount = models.IntegerField(default=10, help_text="XP awarded for completing this lesson")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -711,7 +724,7 @@ class Question(models.Model):
         ('CODE', 'Code Submission'),
     ]
 
-    olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, related_name='questions')
+    olympiad = models.ForeignKey(Olympiad, on_delete=models.CASCADE, related_name='questions', null=True, blank=True)
     text = models.TextField()
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default='MCQ')
     options = models.JSONField(blank=True, null=True)  # ["A variant", ...] for MCQ

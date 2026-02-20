@@ -12,7 +12,7 @@ from ..models import (
     User,
     PrizeAddress
 )
-from .bot_service import BotService
+from ..bot_service import BotService
 
 logger = logging.getLogger(__name__)
 

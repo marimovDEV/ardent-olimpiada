@@ -816,9 +816,49 @@ class CourseViewSet(viewsets.ModelViewSet):
             return ModuleSerializer
         return CourseSerializer
 
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def analytics(self, request, pk=None):
+        course = self.get_object()
+        enrollments = Enrollment.objects.filter(course=course)
+        total_students = enrollments.count()
+        
+        if total_students == 0:
+            return Response({
+                'total_students': 0,
+                'completion_rate': 0,
+                'lessons': []
+            })
+            
+        completed_students = enrollments.filter(completed_at__isnull=False).count()
+        completion_rate = (completed_students / total_students * 100) if total_students > 0 else 0
+        
+        # Get all lessons for this course
+        lessons = Lesson.objects.filter(course=course).order_by('order')
+        lesson_stats = []
+        
+        for lesson in lessons:
+            # Count how many students have progress for this lesson
+            reached = LessonProgress.objects.filter(lesson=lesson).count()
+            completed = LessonProgress.objects.filter(lesson=lesson, is_completed=True).count()
+            
+            lesson_stats.append({
+                'id': lesson.id,
+                'title': lesson.title,
+                'reached_count': reached,
+                'completed_count': completed,
+                'dropoff_rate': ((reached - completed) / reached * 100) if reached > 0 else 0
+            })
+            
+        return Response({
+            'total_students': total_students,
+            'completed_students': completed_students,
+            'completion_rate': completion_rate,
+            'lessons': lesson_stats
+        })
+
     def perform_create(self, serializer):
-        # Check premium status for teachers
         user = self.request.user
+        # Check premium status for teachers
         if user.role == 'TEACHER':
             teacher_profile = getattr(user, 'teacher_profile', None)
             if teacher_profile and not teacher_profile.is_premium:
@@ -828,8 +868,11 @@ class CourseViewSet(viewsets.ModelViewSet):
                     raise ValidationError({
                         'detail': "Sizda faqat 1 ta kurs yaratish imkoniyati bor. Ko'proq kurs yaratish uchun Premium obuna sotib oling."
                     })
-        
-        course = serializer.save()
+            # Auto-assign teacher and set status to DRAFT
+            course = serializer.save(teacher=user, status='DRAFT')
+        else:
+            course = serializer.save()
+
         # Trigger notification for new course if active
         if course.is_active:
             from .services.notification_service import NotificationService
@@ -838,16 +881,42 @@ class CourseViewSet(viewsets.ModelViewSet):
             # Create a broadcast record for history
             broadcast = NotificationBroadcast.objects.create(
                 title="Yangi kurs e'lon qilindi!",
-                message=f"{course.title} kursi endi platformamizda mavjud. Hoziroq o'rganishni boshlang!",
+                message=f"{course.title} kursi endi platformamizda muvjud. Hoziroq o'rganishni boshlang!",
                 audience_type='ALL',
                 notification_type='COURSE',
                 channel='ALL',
                 link=f"/courses/{course.id}",
                 status='SENT',
                 sent_at=timezone.now(),
-                created_by=self.request.user if self.request.user.is_authenticated else None
+                created_by=user if user.is_authenticated else None
             )
             NotificationService.broadcast_notification(broadcast.id)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def reorder_lessons(self, request, pk=None):
+        """Reorder lessons within a course"""
+        items = request.data.get('items', [])
+        if not items:
+            return Response({'error': 'items is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        course = self.get_object()
+        for item in items:
+            Lesson.objects.filter(id=item['id'], course=course).update(order=item['order'])
+            
+        return Response({'success': True})
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def reorder_modules(self, request, pk=None):
+        """Reorder modules within a course"""
+        items = request.data.get('items', [])
+        if not items:
+            return Response({'error': 'items is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        course = self.get_object()
+        for item in items:
+            Module.objects.filter(id=item['id'], course=course).update(order=item['order'])
+            
+        return Response({'success': True})
     
     @action(detail=True, methods=['get'])
     def modules(self, request, pk=None):
@@ -923,12 +992,6 @@ class CourseViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), IsTeacherOrAdmin()]
         return [AllowAny()]
 
-    def perform_create(self, serializer):
-        # Auto-assign teacher if creator is teacher
-        if self.request.user.role == 'TEACHER':
-            serializer.save(teacher=self.request.user, status='DRAFT')
-        else:
-            serializer.save()
 
     def perform_update(self, serializer):
         # Prevent teachers from activating unapproved courses
@@ -1281,6 +1344,27 @@ class LessonViewSet(viewsets.ModelViewSet):
         if self.request.user.role == 'ADMIN':
             return Lesson.objects.all()
         return Lesson.objects.none()
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        user = request.user
+        
+        # Admin and Teacher (of this course) bypass lock
+        if user.role == 'ADMIN' or (user.role == 'TEACHER' and instance.course.teacher == user):
+             return super().retrieve(request, *args, **kwargs)
+             
+        # Guest/Student check
+        state = LearningService.get_course_learning_state(user, instance.course_id)
+        # Find this lesson in the flat list
+        lesson_data = next((l for l in state['flat_lessons'] if l.id == instance.id), None)
+        
+        if lesson_data and getattr(lesson_data, 'is_locked', False):
+            return Response({
+                'error': 'Lesson is locked. Complete previous requirements first.',
+                'required_lesson_id': lesson_data.required_lesson_id
+            }, status=status.HTTP_403_FORBIDDEN)
+            
+        return super().retrieve(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         lesson = serializer.save()

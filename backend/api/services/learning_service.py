@@ -40,9 +40,10 @@ class LearningService:
             progress_prefetch
         ).order_by('order')
 
-        # To handle locking: a lesson is locked if the previous lesson is not completed.
-        # First lesson of the first module is always unlocked.
-        
+        course = enrollment.course if enrollment.id else Course.objects.get(id=course_id)
+        lock_strategy = course.lock_strategy
+
+        # Flatten lessons and link progress
         flat_lessons = []
         for m in modules:
             for l in m.lessons.all():
@@ -54,26 +55,47 @@ class LearningService:
                 l.progress_data = progress[0] if progress else None
                 flat_lessons.append(l)
 
-        # Iterate and set is_locked
-        previous_completed = True # First lesson is unlocked IF enrolled
-        
-        # If not enrolled (id is None), base locking purely on is_free
+        # Iterate and set is_locked based on strategy
         is_enrolled = enrollment.id is not None
-        
-        for i, lesson in enumerate(flat_lessons):
+        previous_completed = True # Helper for sequential strategy
+
+        # Build a map for fast lookup of completion status
+        completion_map = {l.id: (l.progress_data.is_completed if l.progress_data else False) for l in flat_lessons}
+
+        for lesson in flat_lessons:
             if not is_enrolled:
                 # Guest mode: Lock everything except free lessons
                 lesson.is_locked = not lesson.is_free
             else:
-                # Enrolled mode: standard progressive locking
-                lesson.is_locked = not previous_completed
+                # Enrolled mode: apply lock strategy
+                if lock_strategy == 'free':
+                    lesson.is_locked = False
                 
-                # Free lessons are always unlocked?
+                elif lock_strategy == 'sequential':
+                    # Sequential: lock if previous lesson is not completed
+                    lesson.is_locked = not previous_completed
+                
+                elif lock_strategy == 'custom':
+                    # Custom: use required_lesson field and is_locked flag
+                    if lesson.is_locked:
+                        if lesson.required_lesson_id:
+                            # Use completion map to check required lesson
+                            lesson.is_locked = not completion_map.get(lesson.required_lesson_id, False)
+                        else:
+                            # is_locked is True but no specific required_lesson? 
+                            # Interpret as "locked by some unspecified rule", maybe teacher manually unlocks? 
+                            # For now, if is_locked=True but no required_lesson, we keep it locked.
+                            pass
+                    else:
+                        # is_locked is False in custom mode
+                        lesson.is_locked = False
+                
+                # Special cases: free lessons are ALWAYS unlocked
                 if lesson.is_free:
                     lesson.is_locked = False
 
-                # Update previous_completed for NEXT iteration
-                is_completed = lesson.progress_data.is_completed if lesson.progress_data else False
+                # Update state for next iteration (used by sequential)
+                is_completed = completion_map.get(lesson.id, False)
                 previous_completed = is_completed
 
         return {
@@ -229,7 +251,10 @@ class LearningService:
         enrollment = Enrollment.objects.get(user=user, course=course)
         enrollment.progress = progress_pct
         
-        if progress_pct >= 100 and not enrollment.completed_at:
+        # Use course threshold (default 80%) for completion trigger
+        threshold = getattr(course, 'completion_min_progress', 80)
+        
+        if progress_pct >= threshold and not enrollment.completed_at:
             enrollment.completed_at = timezone.now()
             # Reward XP for course completion
             user.add_xp(course.xp_reward, 'COURSE_ENROLL', f"Kurs yakunlandi: {course.title}")

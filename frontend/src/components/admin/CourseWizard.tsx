@@ -80,7 +80,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
         certificate_template: "",
         thumbnail: null as File | string | null,
         teacher_percentage: 70,
-        platform_percentage: 30
+        platform_percentage: 30,
+        lock_strategy: "free",
+        completion_min_progress: 80
     });
     const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -142,7 +144,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                 certificate_template: data.certificate_template || "",
                 thumbnail: data.thumbnail,
                 teacher_percentage: data.teacher_percentage || 70,
-                platform_percentage: data.platform_percentage || 30
+                platform_percentage: data.platform_percentage || 30,
+                lock_strategy: data.lock_strategy || "free",
+                completion_min_progress: data.completion_min_progress || 80
             });
             if (data.modules) {
                 setModules(data.modules);
@@ -173,7 +177,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
             certificate_template: "",
             thumbnail: null,
             teacher_percentage: 70,
-            platform_percentage: 30
+            platform_percentage: 30,
+            lock_strategy: "free",
+            completion_min_progress: 80
         });
         setThumbnailPreview(null);
         setModules([]);
@@ -480,6 +486,33 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 />
                             </div>
+
+                            <section className="space-y-4 pt-4 border-t border-border">
+                                <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                                    <Settings className="w-4 h-4 text-primary" /> {t('admin.courseAccessSettings') || "Kursga kirish sozlamalari"}
+                                </h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">{t('admin.lockStrategy') || "Darslarni ochish strategiyasi"}</label>
+                                        <Select value={formData.lock_strategy} onValueChange={(val) => setFormData({ ...formData, lock_strategy: val })}>
+                                            <SelectTrigger><SelectValue /></SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="free">Erkin (Barcha darslar ochiq)</SelectItem>
+                                                <SelectItem value="sequential">Ketma-ket (Oldingi tugashi shart)</SelectItem>
+                                                <SelectItem value="custom">Maxsus (Har darsda belgilangan)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">{t('admin.completionThreshold') || "Minimal o'zlashtirish foizi"} (%)</label>
+                                        <Input
+                                            type="number"
+                                            value={formData.completion_min_progress}
+                                            onChange={(e) => setFormData({ ...formData, completion_min_progress: Number(e.target.value) })}
+                                        />
+                                    </div>
+                                </div>
+                            </section>
                         </section>
 
                         <section className="space-y-4 pt-4 border-t border-border">
