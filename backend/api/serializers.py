@@ -463,10 +463,22 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ['id', 'name', 'slug', 'description', 'icon', 'color', 'xp_reward', 
-                  'is_featured', 'is_active', 'order',                   'courses_count', 'olympiads_count', 'professions_count',
-                  'total_xp_available', 'courses', 'olympiads', 'professions']
+                  'is_featured', 'is_active', 'order', 'courses_count', 'olympiads_count', 'professions_count',
+                  'total_xp_available', 'courses', 'olympiads', 'professions', 'roadmap_steps']
     
     total_xp_available = serializers.SerializerMethodField()
+    roadmap_steps = serializers.SerializerMethodField()
+
+    def get_roadmap_steps(self, obj):
+        # We want to show roadmap steps for featured professions of this subject
+        featured_profession = obj.professions_featured.filter(is_active=True).first()
+        if not featured_profession:
+            return []
+        
+        # This nested import avoids circular dependency and NameError
+        from .serializers import ProfessionRoadmapStepSerializer
+        steps = featured_profession.roadmap_steps.all().order_by('order')
+        return ProfessionRoadmapStepSerializer(steps, many=True, context=self.context).data
     
     def get_total_xp_available(self, obj):
         from django.db.models import Sum
@@ -523,6 +535,8 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
     def get_professions(self, obj):
         """Return professions that require this subject"""
         links = obj.profession_links.select_related('profession')[:6]
+        # Nested import to avoid NameError
+        from .serializers import ProfessionRoadmapStepSerializer
         return [{
             'id': link.profession.id,
             'name': link.profession.name,
@@ -1297,9 +1311,10 @@ class ProfessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profession
         fields = ['id', 'name', 'description', 'icon', 'color', 'is_active', 'order',
-                   'certification_info', 'career_opportunities',
-                   'primary_subject', 'required_xp',
-                   'required_subjects', 'roadmap_steps', 'user_progress']
+                  'suitability', 'requirements', 'salary_range', 'learning_time',
+                  'certification_info', 'career_opportunities',
+                  'primary_subject', 'required_xp',
+                  'required_subjects', 'roadmap_steps', 'user_progress']
 
     def get_user_progress(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None
