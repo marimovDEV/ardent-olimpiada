@@ -365,6 +365,73 @@ class HomeworkSubmissionSerializer(serializers.ModelSerializer):
         return obj.file_url.url if obj.file_url else None
 
 
+# ============= QUESTION SERIALIZERS =============
+
+class QuestionSerializer(serializers.ModelSerializer):
+    """Question serializer for students (no correct_answer)"""
+    class Meta:
+        model = Question
+        fields = ['id', 'text', 'type', 'options', 'points', 'order', 'time_limit']
+
+class QuestionAdminSerializer(serializers.ModelSerializer):
+    """Question serializer for admins (includes correct_answer)"""
+    olympiad = serializers.PrimaryKeyRelatedField(queryset=Olympiad.objects.all())
+    correct_answer = serializers.CharField(required=False, allow_blank=True)
+    options = serializers.JSONField(required=False, allow_null=True)
+    explanation = serializers.CharField(required=False, allow_blank=True)
+    
+    class Meta:
+        model = Question
+        fields = ['id', 'olympiad', 'text', 'options', 'correct_answer', 'explanation', 'points', 'order', 'time_limit', 'code_template'] # Full admin fields
+
+class LessonTestSerializer(serializers.ModelSerializer):
+    questions = QuestionAdminSerializer(many=True, required=False)
+    
+    class Meta:
+        model = LessonTest
+        fields = ['id', 'min_pass_score', 'max_attempts', 'questions']
+
+    def update(self, instance, validated_data):
+        questions_data = validated_data.pop('questions', None)
+        instance.min_pass_score = validated_data.get('min_pass_score', instance.min_pass_score)
+        instance.max_attempts = validated_data.get('max_attempts', instance.max_attempts)
+        instance.save()
+        
+        if questions_data is not None:
+            # Simple approach: delete old questions and create new ones
+            # Or map via IDs. Let's do map via IDs for better persistence.
+            existing_question_ids = [q.id for q in instance.questions.all()]
+            new_question_ids = []
+            
+            for q_data in questions_data:
+                q_id = q_data.get('id')
+                if q_id and q_id in existing_question_ids:
+                    # Update existing
+                    q_instance = Question.objects.get(id=q_id)
+                    for attr, value in q_data.items():
+                        setattr(q_instance, attr, value)
+                    q_instance.save()
+                    new_question_ids.append(q_id)
+                else:
+                    # Create new
+                    # Ensure olympiad is null as it's a LessonTest question
+                    q_data.pop('olympiad', None)
+                    new_q = Question.objects.create(**q_data)
+                    instance.questions.add(new_q)
+                    new_question_ids.append(new_q.id)
+            
+            # Remove questions that are no longer in the list
+            for old_id in existing_question_ids:
+                if old_id not in new_question_ids:
+                    q_to_remove = Question.objects.get(id=old_id)
+                    instance.questions.remove(q_to_remove)
+                    # Optional: delete the question if it's not used elsewhere
+                    if q_to_remove.lesson_tests.count() == 0 and not q_to_remove.olympiad:
+                        q_to_remove.delete()
+                        
+        return instance
+
+
 class LessonSerializer(serializers.ModelSerializer):
     duration = serializers.SerializerMethodField()
     test = LessonTestSerializer(required=False)
@@ -634,72 +701,6 @@ class LessonPracticeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonPractice
         fields = ['id', 'type', 'problem_text', 'points'] # Don't show correct_answer
-
-# ============= QUESTION SERIALIZERS =============
-
-class QuestionSerializer(serializers.ModelSerializer):
-    """Question serializer for students (no correct_answer)"""
-    class Meta:
-        model = Question
-        fields = ['id', 'text', 'type', 'options', 'points', 'order', 'time_limit']
-
-class QuestionAdminSerializer(serializers.ModelSerializer):
-    """Question serializer for admins (includes correct_answer)"""
-    olympiad = serializers.PrimaryKeyRelatedField(queryset=Olympiad.objects.all())
-    correct_answer = serializers.CharField(required=False, allow_blank=True)
-    options = serializers.JSONField(required=False, allow_null=True)
-    explanation = serializers.CharField(required=False, allow_blank=True)
-    
-    class Meta:
-        model = Question
-        fields = ['id', 'olympiad', 'text', 'options', 'correct_answer', 'explanation', 'points', 'order', 'time_limit', 'code_template'] # Full admin fields
-
-class LessonTestSerializer(serializers.ModelSerializer):
-    questions = QuestionAdminSerializer(many=True, required=False)
-    
-    class Meta:
-        model = LessonTest
-        fields = ['id', 'min_pass_score', 'max_attempts', 'questions']
-
-    def update(self, instance, validated_data):
-        questions_data = validated_data.pop('questions', None)
-        instance.min_pass_score = validated_data.get('min_pass_score', instance.min_pass_score)
-        instance.max_attempts = validated_data.get('max_attempts', instance.max_attempts)
-        instance.save()
-        
-        if questions_data is not None:
-            # Simple approach: delete old questions and create new ones
-            # Or map via IDs. Let's do map via IDs for better persistence.
-            existing_question_ids = [q.id for q in instance.questions.all()]
-            new_question_ids = []
-            
-            for q_data in questions_data:
-                q_id = q_data.get('id')
-                if q_id and q_id in existing_question_ids:
-                    # Update existing
-                    q_instance = Question.objects.get(id=q_id)
-                    for attr, value in q_data.items():
-                        setattr(q_instance, attr, value)
-                    q_instance.save()
-                    new_question_ids.append(q_id)
-                else:
-                    # Create new
-                    # Ensure olympiad is null as it's a LessonTest question
-                    q_data.pop('olympiad', None)
-                    new_q = Question.objects.create(**q_data)
-                    instance.questions.add(new_q)
-                    new_question_ids.append(new_q.id)
-            
-            # Remove questions that are no longer in the list
-            for old_id in existing_question_ids:
-                if old_id not in new_question_ids:
-                    q_to_remove = Question.objects.get(id=old_id)
-                    instance.questions.remove(q_to_remove)
-                    # Optional: delete the question if it's not used elsewhere
-                    if q_to_remove.lesson_tests.count() == 0 and not q_to_remove.olympiad:
-                        q_to_remove.delete()
-                        
-        return instance
 
 
 class LearningLessonSerializer(serializers.ModelSerializer):
