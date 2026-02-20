@@ -40,7 +40,7 @@ import { API_URL, getAuthHeader } from "@/services/api";
 import { useTranslation } from "react-i18next";
 import CourseAnalytics from "./CourseAnalytics";
 import QuizEditor from "./QuizEditor";
-import { CheckSquare } from "lucide-react";
+
 
 interface Lesson {
     id: number;
@@ -304,202 +304,147 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                     {/* Module Header */}
                                     <div className="p-6 flex items-center justify-between hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => toggleModule(module.id)}>
                                         <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary text-xl">
+                                                {idx + 1}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-black text-xl text-foreground">{module.title}</h3>
+                                                <p className="text-sm font-medium text-muted-foreground">{module.lessons.length} {t('admin.curriculum.lessons')}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div
-                                            draggable
-                                            onDragStart={(e) => handleDragStart(e, 'module', module.id)}
-                                            onDragEnd={handleDragEnd}
-                                            onDragOver={handleDragOver}
-                                            onDrop={(e) => handleDrop(e, 'module', module.id)}
-                                            className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center cursor-move hover:bg-muted transition-colors mr-2"
-                                        >
-                                            <GripVertical className="w-5 h-5 text-muted-foreground" />
-                                        </div>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10">
-                                                    <MoreVertical className="w-5 h-5" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="rounded-2xl border-border p-2">
-                                                <DropdownMenuItem className="rounded-xl h-10 gap-3" onClick={() => { setCurrentModule(module); setIsModuleDialogOpen(true); }}>
-                                                    <Edit2 className="w-4 h-4 text-primary" /> {t('admin.curriculum.editModule')}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem className="rounded-xl h-10 gap-3 text-destructive" onClick={() => handleDeleteModule(module.id)}>
-                                                    <Trash2 className="w-4 h-4" /> {t('admin.curriculum.deleteModule')}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                        <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center">
-                                            {expandedModules.includes(module.id) ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
-                                        </div>
-                                    </div>
-                                </div>
-
-                            {/* Lessons List (Expanded) */ }
-                            {
-                                    expandedModules.includes(module.id) && (
-                                        <div className="px-6 pb-6 pt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                        <div className="flex items-center gap-3">
                                             <div
-                                                key={lesson.id}
                                                 draggable
-                                                onDragStart={(e) => handleDragStart(e, 'lesson', lesson.id, module.id)}
+                                                onDragStart={(e) => handleDragStart(e, 'module', module.id)}
                                                 onDragEnd={handleDragEnd}
                                                 onDragOver={handleDragOver}
-                                                onDrop={(e) => handleDrop(e, 'lesson', lesson.id, module.id)}
-                                                className="flex items-center justify-between p-4 bg-background rounded-2xl border border-border/50 hover:border-primary/20 hover:shadow-md transition-all group/lesson"
+                                                onDrop={(e) => handleDrop(e, 'module', module.id)}
+                                                className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center cursor-move hover:bg-muted transition-colors mr-2"
                                             >
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center cursor-move text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors">
-                                                            <GripVertical className="w-4 h-4" />
-                                                        </div>
-                                                    </div>
-                                                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                                                        {lesson.is_free ? <Play className="w-4 h-4 text-green-500 fill-green-500" /> : <Video className="w-4 h-4 text-primary" />}
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-foreground">{lesson.title}</span>
-                                                            {lesson.is_free && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none scale-75">{t('admin.curriculum.demo')}</Badge>}
-                                                            {lesson.is_locked && (
-                                                                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 shadow-sm" title="Ushbu dars qulflangan">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-black uppercase tracking-tighter mt-0.5">
-                                                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {t('admin.curriculum.videoDuration', { minutes: (lesson.video_duration / 60).toFixed(0) })}</span>
-                                                            <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {lesson.pdf_url ? t('admin.curriculum.hasResource') : t('admin.curriculum.noResource')}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className={`h-9 w-9 rounded-xl transition-all ${lesson.is_locked ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-muted-foreground hover:bg-muted'}`}
-                                                        onClick={(e) => { e.stopPropagation(); toggleLessonLock(lesson); }}
-                                                        title={lesson.is_locked ? "Qulfdan chiqarish" : "Qulflash"}
-                                                    >
-                                                        {lesson.is_locked ?
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> :
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg>
-                                                        }
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary" onClick={() => {
-                                                        setCurrentLesson({
-                                                            ...lesson,
-                                                            video_duration: Math.round(lesson.video_duration / 60) // Show in minutes
-                                                        });
-                                                        setTargetModuleId(module.id);
-                                                        setIsLessonDialogOpen(true);
-                                                        {
-                                                            module.lessons.map((lesson) => (
-                                                                <div
-                                                                    key={lesson.id}
-                                                                    draggable
-                                                                    onDragStart={(e) => handleDragStart(e, 'lesson', lesson.id, module.id)}
-                                                                    onDragEnd={handleDragEnd}
-                                                                    onDragOver={handleDragOver}
-                                                                    onDrop={(e) => handleDrop(e, 'lesson', lesson.id, module.id)}
-                                                                    className="flex items-center justify-between p-4 bg-background rounded-2xl border border-border/50 hover:border-primary/20 hover:shadow-md transition-all group/lesson"
-                                                                >
-                                                                    <div className="flex items-center gap-4">
-                                                                        <div className="flex flex-col items-center gap-1">
-                                                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center cursor-move text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors">
-                                                                                <GripVertical className="w-4 h-4" />
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                                                                            {lesson.is_free ? <Play className="w-4 h-4 text-green-500 fill-green-500" /> : <Video className="w-4 h-4 text-primary" />}
-                                                                        </div>
-                                                                        <div>
-                                                                            <div className="flex items-center gap-2">
-                                                                                <span className="font-bold text-foreground">{lesson.title}</span>
-                                                                                {lesson.is_free && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none scale-75">{t('admin.curriculum.demo')}</Badge>}
-                                                                                {lesson.is_locked && (
-                                                                                    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 shadow-sm" title="Ushbu dars qulflangan">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                                                                                    </div>
-                                                                                )}
-                                                                            </div>
-                                                                            <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-black uppercase tracking-tighter mt-0.5">
-                                                                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {t('admin.curriculum.videoDuration', { minutes: (lesson.video_duration / 60).toFixed(0) })}</span>
-                                                                                <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {lesson.pdf_url ? t('admin.curriculum.hasResource') : t('admin.curriculum.noResource')}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="icon"
-                                                                            className={`h-9 w-9 rounded-xl transition-all ${lesson.is_locked ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-muted-foreground hover:bg-muted'}`}
-                                                                            onClick={(e) => { e.stopPropagation(); toggleLessonLock(lesson); }}
-                                                                            title={lesson.is_locked ? "Qulfdan chiqarish" : "Qulflash"}
-                                                                        >
-                                                                            {lesson.is_locked ?
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> :
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg>
-                                                                            }
-                                                                        </Button>
-                                                                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary" onClick={() => {
-                                                                            setCurrentLesson({
-                                                                                ...lesson,
-                                                                                video_duration: Math.round(lesson.video_duration / 60) // Show in minutes
-                                                                            });
-                                                                            setTargetModuleId(module.id);
-                                                                            setIsLessonDialogOpen(true);
-                                                                        }}>
-                                                                            <Edit2 className="w-4 h-4" />
-                                                                        </Button>
-                                                                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-destructive" onClick={() => handleDeleteLesson(lesson.id)}>
-                                                                            <Trash2 className="w-4 h-4" />
-                                                                        </Button>
-                                                                        <Button
-                                                                            variant="ghost"
-                                                                            size="icon"
-                                                                            className="h-9 w-9 rounded-xl hover:bg-orange-50 text-orange-500"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                setSelectedLessonForQuiz({ id: lesson.id, title: lesson.title });
-                                                                                setIsQuizEditorOpen(true);
-                                                                            }}
-                                                                            title="Testni tahrirlash"
-                                                                        >
-                                                                            <CheckSquare className="w-4 h-4" />
-                                                                        </Button>
-                                                                    </div>
-                                                                </div>
-                                                            ))
-                                                        }
-                                                        <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 hover:bg-primary/5 hover:border-primary/30 transition-all font-bold group" onClick={() => { setCurrentLesson({ title: "", is_free: false, video_duration: 10 }); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}>
-                                                            <Plus className="w-5 h-5 mr-3 text-primary group-hover:scale-125 transition-transform" />
-                                                            {t('admin.curriculum.addLesson')}
-                                                        </Button>
-                                        </div>
-                                                )
-                                }
+                                                <GripVertical className="w-5 h-5 text-muted-foreground" />
                                             </div>
-                    ))}
-
-                                            {modules.length === 0 && !loading && (
-                                                <div className="text-center py-20 bg-card rounded-[3rem] border border-dashed border-border">
-                                                    <Puzzle className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-                                                    <h3 className="text-xl font-black text-foreground">{t('admin.curriculum.noModules')}</h3>
-                                                    <p className="text-muted-foreground font-medium mb-8">{t('admin.curriculum.startAdding')}</p>
-                                                    <Button className="h-14 px-8 rounded-2xl font-black shadow-xl shadow-primary/20" onClick={() => { setCurrentModule({ title: "" }); setIsModuleDialogOpen(true); }}>
-                                                        <Plus className="w-5 h-5 mr-3" />
-                                                        {t('admin.curriculum.addFirstModule')}
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                    <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10">
+                                                        <MoreVertical className="w-5 h-5" />
                                                     </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="rounded-2xl border-border p-2">
+                                                    <DropdownMenuItem className="rounded-xl h-10 gap-3" onClick={() => { setCurrentModule(module); setIsModuleDialogOpen(true); }}>
+                                                        <Edit2 className="w-4 h-4 text-primary" /> {t('admin.curriculum.editModule')}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="rounded-xl h-10 gap-3 text-destructive" onClick={() => handleDeleteModule(module.id)}>
+                                                        <Trash2 className="w-4 h-4" /> {t('admin.curriculum.deleteModule')}
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                            <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center">
+                                                {expandedModules.includes(module.id) ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Lessons List (Expanded) */}
+                                    {expandedModules.includes(module.id) && (
+                                        <div className="px-6 pb-6 pt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                            {module.lessons.map((lesson) => (
+                                                <div
+                                                    key={lesson.id}
+                                                    draggable
+                                                    onDragStart={(e) => handleDragStart(e, 'lesson', lesson.id, module.id)}
+                                                    onDragEnd={handleDragEnd}
+                                                    onDragOver={handleDragOver}
+                                                    onDrop={(e) => handleDrop(e, 'lesson', lesson.id, module.id)}
+                                                    className="flex items-center justify-between p-4 bg-background rounded-2xl border border-border/50 hover:border-primary/20 hover:shadow-md transition-all group/lesson"
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="flex flex-col items-center gap-1">
+                                                            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center cursor-move text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors">
+                                                                <GripVertical className="w-4 h-4" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                                                            {lesson.is_free ? <Play className="w-4 h-4 text-green-500 fill-green-500" /> : <Video className="w-4 h-4 text-primary" />}
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-bold text-foreground">{lesson.title}</span>
+                                                                {lesson.is_free && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none scale-75">{t('admin.curriculum.demo')}</Badge>}
+                                                                {lesson.is_locked && (
+                                                                    <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 shadow-sm" title="Ushbu dars qulflangan">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-black uppercase tracking-tighter mt-0.5">
+                                                                <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {t('admin.curriculum.videoDuration', { minutes: (lesson.video_duration / 60).toFixed(0) })}</span>
+                                                                <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {lesson.pdf_url ? t('admin.curriculum.hasResource') : t('admin.curriculum.noResource')}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className={`h-9 w-9 rounded-xl transition-all ${lesson.is_locked ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-muted-foreground hover:bg-muted'}`}
+                                                            onClick={(e) => { e.stopPropagation(); toggleLessonLock(lesson); }}
+                                                            title={lesson.is_locked ? "Qulfdan chiqarish" : "Qulflash"}
+                                                        >
+                                                            {lesson.is_locked ?
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> :
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg>
+                                                            }
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary" onClick={() => {
+                                                            setCurrentLesson({
+                                                                ...lesson,
+                                                                video_duration: Math.round(lesson.video_duration / 60) // Show in minutes
+                                                            });
+                                                            setTargetModuleId(module.id);
+                                                            setIsLessonDialogOpen(true);
+                                                        }}>
+                                                            <Edit2 className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-destructive" onClick={() => handleDeleteLesson(lesson.id)}>
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-9 w-9 rounded-xl hover:bg-orange-50 text-orange-500"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedLessonForQuiz({ id: lesson.id, title: lesson.title });
+                                                                setIsQuizEditorOpen(true);
+                                                            }}
+                                                            title="Testni tahrirlash"
+                                                        >
+                                                            <CheckSquare className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
                                                 </div>
-                                            )}
-                                        </>
-                                    )
-                                }
-            </div>
+                                            ))}
+                                            <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 hover:bg-primary/5 hover:border-primary/30 transition-all font-bold group" onClick={() => { setCurrentLesson({ title: "", is_free: false, video_duration: 10 }); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}>
+                                                <Plus className="w-5 h-5 mr-3 text-primary group-hover:scale-125 transition-transform" />
+                                                {t('admin.curriculum.addLesson')}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            {modules.length === 0 && !loading && (
+                                <div className="text-center py-20 bg-card rounded-[3rem] border border-dashed border-border">
+                                    <Puzzle className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+                                    <h3 className="text-xl font-black text-foreground">{t('admin.curriculum.noModules')}</h3>
+                                    <p className="text-muted-foreground font-medium mb-8">{t('admin.curriculum.startAdding')}</p>
+                                    <Button className="h-14 px-8 rounded-2xl font-black shadow-xl shadow-primary/20" onClick={() => { setCurrentModule({ title: "" }); setIsModuleDialogOpen(true); }}>
+                                        <Plus className="w-5 h-5 mr-3" />
+                                        {t('admin.curriculum.addFirstModule')}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                 {/* Module Dialog */}
