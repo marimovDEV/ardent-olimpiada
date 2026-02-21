@@ -618,156 +618,208 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
 
                 {/* Lesson Dialog */}
                 <Dialog open={isLessonDialogOpen} onOpenChange={setIsLessonDialogOpen}>
-                    <DialogContent className="sm:max-w-[700px] rounded-[3rem] bg-card border-none shadow-2xl overflow-hidden p-0">
-                        <div className="p-8 space-y-6">
-                            <DialogHeader>
-                                <DialogTitle className="text-3xl font-black">{currentLesson?.id ? t('admin.curriculum.editLesson') : t('admin.curriculum.newLesson')}</DialogTitle>
-                                <DialogDescription className="text-base font-medium">{t('admin.curriculum.descriptionPlaceholder')}</DialogDescription>
-                            </DialogHeader>
+                    <DialogContent className="sm:max-w-[800px] h-[90vh] rounded-[3rem] bg-card border-none shadow-2xl overflow-hidden p-0 flex flex-col">
+                        <div className="p-8 border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-10 flex justify-between items-center">
+                            <div>
+                                <DialogHeader>
+                                    <DialogTitle className="text-3xl font-black">{currentLesson?.id ? t('admin.curriculum.editLesson') : t('admin.curriculum.newLesson')}</DialogTitle>
+                                    <DialogDescription className="text-base font-medium">{t('admin.curriculum.descriptionPlaceholder')}</DialogDescription>
+                                </DialogHeader>
+                            </div>
+                            <Button variant="ghost" size="icon" className="rounded-2xl h-12 w-12 border border-border" onClick={() => setIsLessonDialogOpen(false)}>
+                                <X className="w-6 h-6" />
+                            </Button>
+                        </div>
 
-                            <div className="grid grid-cols-2 gap-8 py-2">
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonTitle')}</label>
+                        <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                {/* Left Column: Basic Info */}
+                                <div className="space-y-8">
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                            {t('admin.curriculum.lessonTitle')}
+                                        </label>
                                         <Input
                                             placeholder={t('admin.curriculum.lessonTitlePlaceholder')}
                                             value={currentLesson?.title || ""}
                                             onChange={(e) => setCurrentLesson({ ...currentLesson, title: e.target.value })}
-                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold text-lg"
+                                            className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-bold text-lg focus:bg-background transition-all"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.description')}</label>
+
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                            {t('admin.curriculum.description')}
+                                        </label>
                                         <Textarea
                                             placeholder={t('admin.curriculum.descriptionPlaceholder')}
-                                            rows={4}
+                                            rows={5}
                                             value={currentLesson?.description || ""}
                                             onChange={(e) => setCurrentLesson({ ...currentLesson, description: e.target.value })}
-                                            className="rounded-[1.25rem] bg-background border-none shadow-inner font-medium resize-none p-4"
+                                            className="rounded-2xl bg-muted/30 border-none shadow-inner font-medium resize-none p-4 focus:bg-background transition-all"
                                         />
+                                    </div>
+
+                                    <div className="p-6 bg-primary/5 rounded-[2rem] border border-primary/10 space-y-4">
+                                        <h4 className="text-sm font-black text-primary uppercase tracking-widest flex items-center gap-2">
+                                            <Shield className="w-4 h-4" />
+                                            Dars Sozlamalari
+                                        </h4>
+                                        <div className="grid grid-cols-1 gap-3">
+                                            <div className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-white/5">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                                                        <Unlock className="w-5 h-5 text-green-500" />
+                                                    </div>
+                                                    <span className="font-bold text-sm text-foreground">{t('admin.curriculum.demo')}</span>
+                                                </div>
+                                                <Switch
+                                                    checked={currentLesson?.is_free || false}
+                                                    onCheckedChange={(val) => setCurrentLesson({ ...currentLesson, is_free: val })}
+                                                />
+                                            </div>
+                                            <div className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-white/5">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                                                        <Lock className="w-5 h-5 text-red-500" />
+                                                    </div>
+                                                    <span className="font-bold text-sm text-foreground">{t('admin.curriculum.locked')}</span>
+                                                </div>
+                                                <Switch
+                                                    checked={currentLesson?.is_locked || false}
+                                                    onCheckedChange={(val) => setCurrentLesson({ ...currentLesson, is_locked: val })}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.videoUrl')}</label>
-                                        <Input
-                                            placeholder={t('admin.curriculum.videoUrlPlaceholder')}
-                                            value={currentLesson?.video_url || ""}
-                                            onChange={(e) => setCurrentLesson({ ...currentLesson, video_url: e.target.value })}
-                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
-                                        />
-                                    </div>
-
-                                    {currentLesson?.video_url && currentLesson.video_url.includes('youtube') && (
-                                        <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border mt-2">
-                                            <iframe
-                                                className="w-full h-full"
-                                                src={currentLesson.video_url.replace('watch?v=', 'embed/')}
-                                                title="YouTube preview"
-                                                allowFullScreen
-                                            ></iframe>
+                                {/* Right Column: Media & Progression */}
+                                <div className="space-y-8">
+                                    <div className="space-y-4">
+                                        <div className="space-y-3">
+                                            <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                                {t('admin.curriculum.videoUrl')}
+                                            </label>
+                                            <div className="relative group">
+                                                <Input
+                                                    placeholder={t('admin.curriculum.videoUrlPlaceholder')}
+                                                    value={currentLesson?.video_url || ""}
+                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, video_url: e.target.value })}
+                                                    className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-mono text-xs pr-12 focus:bg-background transition-all"
+                                                />
+                                                <Video className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                            </div>
                                         </div>
-                                    )}
+
+                                        {currentLesson?.video_url && currentLesson.video_url.includes('youtube') && (
+                                            <div className="aspect-video rounded-[2rem] overflow-hidden bg-muted border border-border shadow-2xl">
+                                                <iframe
+                                                    className="w-full h-full"
+                                                    src={currentLesson.video_url.replace('watch?v=', 'embed/')}
+                                                    title="YouTube preview"
+                                                    allowFullScreen
+                                                ></iframe>
+                                            </div>
+                                        )}
+                                    </div>
 
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.duration')} ({t('common.minutes')})</label>
-                                            <Input
-                                                type="number"
-                                                value={currentLesson?.video_duration || 0}
-                                                onChange={(e) => setCurrentLesson({ ...currentLesson, video_duration: parseInt(e.target.value) })}
-                                                className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.isFree')}</label>
-                                            <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={currentLesson?.is_free || false}
-                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, is_free: e.target.checked })}
-                                                    className="w-5 h-5 rounded-lg border-muted"
+                                        <div className="space-y-3">
+                                            <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.duration')} (min)</label>
+                                            <div className="relative">
+                                                <Input
+                                                    type="number"
+                                                    value={currentLesson?.video_duration || 0}
+                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, video_duration: parseInt(e.target.value) })}
+                                                    className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-black pr-12"
                                                 />
-                                                <span className="font-bold text-foreground">{t('admin.curriculum.demo')}</span>
+                                                <Clock className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                             </div>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonLocked')}</label>
-                                            <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={currentLesson?.is_locked || false}
-                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, is_locked: e.target.checked })}
-                                                    className="w-5 h-5 rounded-lg border-muted"
+                                        <div className="space-y-3">
+                                            <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">Minimal Ko'rish (%)</label>
+                                            <div className="relative">
+                                                <Input
+                                                    type="number"
+                                                    value={currentLesson?.min_watch_percent || 80}
+                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, min_watch_percent: parseInt(e.target.value) })}
+                                                    className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-black pr-12"
                                                 />
-                                                <span className="font-bold text-foreground">{t('admin.curriculum.locked')}</span>
+                                                <Activity className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                                             </div>
                                         </div>
-                                        <div className="space-y-2 col-span-2">
-                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.requiredLesson')}</label>
-                                            <Select
-                                                value={currentLesson?.required_lesson?.toString() || "none"}
-                                                onValueChange={(val) => setCurrentLesson({ ...currentLesson, required_lesson: val === "none" ? null : parseInt(val) })}
-                                            >
-                                                <SelectTrigger className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold">
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">Talab Qilinadigan Dars</label>
+                                        <Select
+                                            value={currentLesson?.required_lesson?.toString() || "none"}
+                                            onValueChange={(val) => setCurrentLesson({ ...currentLesson, required_lesson: val === "none" ? null : parseInt(val) })}
+                                        >
+                                            <SelectTrigger className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-bold">
+                                                <div className="flex items-center gap-2">
+                                                    <Lock className="w-4 h-4 text-primary" />
                                                     <SelectValue placeholder={t('admin.curriculum.selectLesson')} />
-                                                </SelectTrigger>
-                                                <SelectContent className="rounded-2xl">
-                                                    <SelectItem value="none">{t('admin.curriculum.noRequirement')}</SelectItem>
-                                                    {modules.flatMap(m => m.lessons)
-                                                        .filter(l => l.id !== currentLesson?.id)
-                                                        .map(l => (
-                                                            <SelectItem key={l.id} value={l.id.toString()}>{l.title}</SelectItem>
-                                                        ))
-                                                    }
-                                                </SelectContent>
-                                            </Select>
+                                                </div>
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
+                                                <SelectItem value="none" className="rounded-xl">{t('admin.curriculum.noRequirement')}</SelectItem>
+                                                {modules.flatMap(m => m.lessons)
+                                                    .filter(l => l.id !== currentLesson?.id)
+                                                    .map(l => (
+                                                        <SelectItem key={l.id} value={l.id.toString()} className="rounded-xl">{l.title}</SelectItem>
+                                                    ))
+                                                }
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.resource')} (PDF)</label>
+                                        <div className="relative group">
+                                            <Input
+                                                placeholder="https://..."
+                                                value={currentLesson?.pdf_url || ""}
+                                                onChange={(e) => setCurrentLesson({ ...currentLesson, pdf_url: e.target.value })}
+                                                className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-mono text-xs pr-12 focus:bg-background transition-all"
+                                            />
+                                            <FileText className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.resource')}</label>
-                                        <Input
-                                            placeholder={t('admin.curriculum.videoUrlPlaceholder')}
-                                            value={currentLesson?.pdf_url || ""}
-                                            onChange={(e) => setCurrentLesson({ ...currentLesson, pdf_url: e.target.value })}
-                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.completionThreshold')} (%)</label>
-                                        <div className="relative">
-                                            <Input
-                                                type="number"
-                                                value={currentLesson?.min_watch_percent || 80}
-                                                onChange={(e) => setCurrentLesson({ ...currentLesson, min_watch_percent: parseInt(e.target.value) })}
-                                                className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-black pr-10"
-                                            />
-                                            <Percent className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                                        </div>
-                                        <p className="text-[10px] text-muted-foreground font-medium mt-1 pr-2 leading-tight">
-                                            {t('admin.curriculum.completionThresholdDesc')}
-                                        </p>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest text-orange-600">Dars XP balli</label>
-                                        <div className="relative">
-                                            <Input
-                                                type="number"
-                                                value={currentLesson?.xp_amount || 10}
-                                                onChange={(e) => setCurrentLesson({ ...currentLesson, xp_amount: parseInt(e.target.value) })}
-                                                className="h-14 rounded-[1.25rem] bg-orange-50/20 border-orange-100 shadow-inner font-black pr-10 text-orange-600"
-                                            />
-                                            <Trophy className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-orange-400" />
+
+                                    <div className="p-6 bg-orange-500/5 rounded-[2rem] border border-orange-500/10 space-y-4">
+                                        <h4 className="text-sm font-black text-orange-500 uppercase tracking-widest flex items-center gap-2">
+                                            <Trophy className="w-4 h-4" />
+                                            Gamifikatsiya
+                                        </h4>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">Dars XP Balli</label>
+                                            <div className="relative">
+                                                <Input
+                                                    type="number"
+                                                    value={currentLesson?.xp_amount || 10}
+                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, xp_amount: parseInt(e.target.value) })}
+                                                    className="h-14 rounded-2xl bg-background/50 border-orange-200/50 shadow-inner font-black pr-12 text-orange-600 focus:border-orange-500 transition-all"
+                                                />
+                                                <span className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-orange-500 text-xs">XP</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-muted/50 p-8 flex gap-4">
-                            <Button variant="ghost" className="h-14 flex-1 rounded-2xl font-bold" onClick={() => setIsLessonDialogOpen(false)}>{t('admin.curriculum.cancel')}</Button>
-                            <Button className="h-14 flex-[2] rounded-2xl font-black shadow-xl shadow-primary/20" onClick={handleSaveLesson}>
-                                <Save className="w-5 h-5 mr-3" /> {t('admin.curriculum.save')}
+
+                        <div className="p-8 bg-muted/30 backdrop-blur-xl border-t border-border/50 sticky bottom-0 z-10 flex gap-4">
+                            <Button variant="ghost" className="h-14 flex-1 rounded-2xl font-bold" onClick={() => setIsLessonDialogOpen(false)}>
+                                {t('admin.curriculum.cancel')}
+                            </Button>
+                            <Button className="h-14 flex-[2] rounded-2xl font-black shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground group" onClick={handleSaveLesson}>
+                                <Save className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
+                                {t('admin.curriculum.save')}
                             </Button>
                         </div>
                     </DialogContent>
