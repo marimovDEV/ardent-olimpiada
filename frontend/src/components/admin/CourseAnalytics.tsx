@@ -64,8 +64,8 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
         }
     };
 
-    if (loading) return <div className="p-20 text-center animate-pulse text-muted-foreground font-bold">Analytics yuklanmoqda...</div>;
-    if (!data) return <div className="p-20 text-center text-muted-foreground">Ma'lumot topilmadi.</div>;
+    if (loading) return <div className="p-20 text-center animate-pulse text-muted-foreground font-bold">{t('common.loading') || "Yuklanmoqda..."}</div>;
+    if (!data) return <div className="p-20 text-center text-muted-foreground">{t('common.noData') || "Ma'lumot topilmadi."}</div>;
 
     const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -78,7 +78,7 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
                         <Users className="w-7 h-7" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-muted-foreground uppercase">{t('admin.totalStudents') || "Jami o'quvchilar"}</p>
+                        <p className="text-sm font-bold text-muted-foreground uppercase">{t('admin.analytics.totalStudents')}</p>
                         <p className="text-2xl font-black text-foreground">{data.total_students}</p>
                     </div>
                 </div>
@@ -88,7 +88,7 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
                         <CheckCircle2 className="w-7 h-7" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-muted-foreground uppercase">{t('admin.completedStudents') || "Tugatganlar"}</p>
+                        <p className="text-sm font-bold text-muted-foreground uppercase">{t('admin.analytics.completedStudents')}</p>
                         <p className="text-2xl font-black text-foreground">{data.completed_students}</p>
                     </div>
                 </div>
@@ -98,7 +98,7 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
                         <Activity className="w-7 h-7" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-muted-foreground uppercase">{t('admin.completionRate') || "Tugatish foizi"}</p>
+                        <p className="text-sm font-bold text-muted-foreground uppercase">{t('admin.analytics.completionRate')}</p>
                         <p className="text-2xl font-black text-foreground">{data.completion_rate.toFixed(1)}%</p>
                     </div>
                 </div>
@@ -108,11 +108,11 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
             <div className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm">
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h3 className="text-xl font-black text-foreground">{t('admin.lessonDropoff') || "Darslar kesimida o'zlashtirish"}</h3>
-                        <p className="text-sm text-muted-foreground">{t('admin.dropoffDesc') || "Qaysi darsda o'quvchilar ko'p qolib ketayotganini tahlil qiling"}</p>
+                        <h3 className="text-xl font-black text-foreground">{t('admin.analytics.lessonDropoff')}</h3>
+                        <p className="text-sm text-muted-foreground">{t('admin.analytics.dropoffDesc')}</p>
                     </div>
                     <Badge variant="outline" className="h-8 rounded-full px-4 border-primary/20 text-primary font-bold">
-                        <TrendingDown className="w-3.5 h-3.5 mr-2" /> {t('admin.dropoffRate') || "Tashlab ketish stavkasi"}
+                        <TrendingDown className="w-3.5 h-3.5 mr-2" /> {t('admin.analytics.dropoffRate')}
                     </Badge>
                 </div>
 
@@ -132,7 +132,7 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
                                 contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 20px 50px rgba(0,0,0,0.1)' }}
                                 cursor={{ fill: '#88888810' }}
                             />
-                            <Bar dataKey="reached_count" radius={[10, 10, 0, 0]} name="O'quvchilar soni">
+                            <Bar dataKey="reached_count" radius={[10, 10, 0, 0]} name={t('admin.analytics.reachedStudents')}>
                                 {data.lessons.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
@@ -145,16 +145,16 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
             {/* Detailed Table */}
             <div className="bg-card rounded-[2.5rem] border border-border shadow-sm overflow-hidden">
                 <div className="p-8 border-b border-border">
-                    <h3 className="text-xl font-black text-foreground">{t('admin.detailedStats') || "Batafsil statistika"}</h3>
+                    <h3 className="text-xl font-black text-foreground">{t('admin.analytics.detailedStats')}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-muted/30">
-                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground">Dars nomi</th>
-                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">Yetib kelganlar</th>
-                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">Tugatganlar</th>
-                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-right">Tashlab ketish</th>
+                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground">{t('admin.analytics.lessonName')}</th>
+                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">{t('admin.analytics.reachedStudents')}</th>
+                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">{t('admin.analytics.completedStudents')}</th>
+                                <th className="px-8 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-right">{t('admin.analytics.dropoff')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
@@ -175,8 +175,8 @@ const CourseAnalytics = ({ courseId }: CourseAnalyticsProps) => {
                                     </td>
                                     <td className="px-8 py-5 text-right">
                                         <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black ${lesson.dropoff_rate > 30 ? 'bg-red-500/10 text-red-500' :
-                                                lesson.dropoff_rate > 10 ? 'bg-yellow-500/10 text-yellow-500' :
-                                                    'bg-green-500/10 text-green-500'
+                                            lesson.dropoff_rate > 10 ? 'bg-yellow-500/10 text-yellow-500' :
+                                                'bg-green-500/10 text-green-500'
                                             }`}>
                                             {lesson.dropoff_rate > 10 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                                             {lesson.dropoff_rate.toFixed(1)}%

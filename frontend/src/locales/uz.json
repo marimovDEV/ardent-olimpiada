@@ -533,7 +533,21 @@
       "addFirstModule": "Birinchi modulni qo'shish",
       "hasResource": "Resurs bor",
       "noResource": "Resurs yo'q",
-      "videoDuration": "{{minutes}} daqiqa"
+      "videoDuration": "{{minutes}} daqiqa",
+      "lockToggled": "Dars qulflash holati yangilandi"
+    },
+    "analytics": {
+      "title": "Analitika",
+      "totalStudents": "Jami o'quvchilar",
+      "completedStudents": "Tugatganlar",
+      "completionRate": "Tugatish foizi",
+      "lessonDropoff": "Darslar kesimida o'zlashtirish",
+      "dropoffDesc": "Qaysi darsda o'quvchilar ko'p qolib ketayotganini tahlil qiling",
+      "dropoffRate": "Tashlab ketish stavkasi",
+      "detailedStats": "Batafsil statistika",
+      "lessonName": "Dars nomi",
+      "reachedStudents": "Yetib kelganlar",
+      "dropoff": "Tashlab ketish"
     },
     "finance": "Moliya va To'lovlar",
     "financeDesc": "To'lovlar statistikasi, tranzaksiyalar va sozlamalar.",

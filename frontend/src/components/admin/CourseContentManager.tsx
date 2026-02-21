@@ -164,7 +164,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
         try {
             await axios.patch(`${API_URL}/lessons/${lesson.id}/`, { is_locked: !lesson.is_locked }, { headers: getAuthHeader() });
             fetchContent();
-            toast.success(t('admin.curriculum.lockToggled') || "Qulflash holati o'zgardi");
+            toast.success(t('admin.curriculum.lockToggled'));
         } catch (error) {
             toast.error(t('admin.curriculum.error'));
         }
@@ -316,7 +316,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                             </div>
                                             <div>
                                                 <h3 className="font-black text-xl text-foreground">{module.title}</h3>
-                                                <p className="text-sm font-medium text-muted-foreground">{module.lessons.length} {t('admin.curriculum.lessons')}</p>
+                                                <p className="text-sm font-medium text-muted-foreground">{t('admin.curriculum.lessonsCount', { count: module.lessons.length })}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3">

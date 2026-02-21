@@ -586,7 +586,21 @@
       "addFirstModule": "Добавить первый модуль",
       "hasResource": "Есть ресурс",
       "noResource": "Нет ресурса",
-      "videoDuration": "{{minutes}} минут"
+      "videoDuration": "{{minutes}} минут",
+      "lockToggled": "Статус блокировки урока обновлен"
+    },
+    "analytics": {
+      "title": "Аналитика",
+      "totalStudents": "Всего студентов",
+      "completedStudents": "Завершили",
+      "completionRate": "Процент завершения",
+      "lessonDropoff": "Освоение по урокам",
+      "dropoffDesc": "Анализируйте, на каком уроке студенты чаще всего останавливаются",
+      "dropoffRate": "Коэффициент отсева",
+      "detailedStats": "Подробная статистика",
+      "lessonName": "Название урока",
+      "reachedStudents": "Дошли до урока",
+      "dropoff": "Отсев"
     },
     "finance": "Финансы и Платежи",
     "financeDesc": "Статистика платежей, транзакции и настройки.",
