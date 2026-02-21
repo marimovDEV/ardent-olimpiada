@@ -68,15 +68,37 @@ const TeacherLayout = () => {
         }
 
         if (!loading) {
+            // Check if user was updated in localStorage (e.g., from Onboarding)
+            const cachedUserStr = localStorage.getItem('user');
+            let currentUser = user;
+            if (cachedUserStr) {
+                try {
+                    const parsed = JSON.parse(cachedUserStr);
+                    // Minimal check if verification_status has changed
+                    if (parsed?.teacher_profile?.verification_status !== user?.teacher_profile?.verification_status) {
+                        currentUser = parsed;
+                        setUser(parsed);
+                    }
+                } catch (e) {
+                    console.error("Failed to parse cached user");
+                }
+            }
+
+            const currentIsProfileComplete = currentUser?.teacher_profile?.bio &&
+                currentUser?.teacher_profile?.specialization &&
+                currentUser?.teacher_profile?.verification_status === 'APPROVED';
+
+            const currentIsPending = !!(currentUser?.teacher_profile?.verification_status === 'PENDING' && currentUser?.teacher_profile?.bio);
+
             // If on onboarding page, allow it
             if (location.pathname === '/teacher/onboarding') return;
 
             // If profile not complete, not pending, and not on onboarding, force redirection
-            if (!isProfileComplete && !isPending && location.pathname !== '/teacher/onboarding') {
+            if (!currentIsProfileComplete && !currentIsPending && location.pathname !== '/teacher/onboarding') {
                 navigate('/teacher/onboarding');
             }
         }
-    }, [navigate, isAuthorized, isProfileComplete, isPending, location.pathname, loading]);
+    }, [navigate, isAuthorized, user, location.pathname, loading]);
 
     if (loading) {
         return (
