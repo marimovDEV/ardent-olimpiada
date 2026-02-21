@@ -470,328 +470,324 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                 )}
                             </div>
                         ))}
+                    </TabsContent>
 
-                            )}
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="grading">
-                    <div className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
-                        <div>
-                            <h3 className="text-xl font-black text-foreground mb-1">{t('admin.curriculum.grading')}</h3>
-                            <p className="text-muted-foreground text-sm font-medium">Kursni tugatish va baholash shartlarini belgilang</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
-                                    <div className="space-y-1">
-                                        <h4 className="font-black text-foreground">{t('admin.curriculum.completionThreshold')}</h4>
-                                        <p className="text-xs text-muted-foreground font-medium pr-8">{t('admin.curriculum.completionThresholdDesc')}</p>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <Input
-                                            type="number"
-                                            className="w-20 h-12 rounded-xl text-center font-black"
-                                            value={courseData?.completion_min_progress || 80}
-                                            onChange={(e) => handleUpdateCourse({ completion_min_progress: parseInt(e.target.value) })}
-                                        />
-                                        <span className="font-black text-primary text-xl">%</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
-                                    <div className="space-y-1">
-                                        <h4 className="font-black text-foreground">{t('admin.curriculum.requiredFinalScore')}</h4>
-                                        <p className="text-xs text-muted-foreground font-medium pr-8">{t('admin.curriculum.requiredFinalScoreDesc')}</p>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <Input
-                                            type="number"
-                                            className="w-20 h-12 rounded-xl text-center font-black"
-                                            value={courseData?.required_final_score || 70}
-                                            onChange={(e) => handleUpdateCourse({ required_final_score: parseInt(e.target.value) })}
-                                        />
-                                        <span className="font-black text-primary text-xl">%</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
-                                    <div className="space-y-1">
-                                        <h4 className="font-black text-foreground">Kurs yakunlash XP mukofoti</h4>
-                                        <p className="text-xs text-muted-foreground font-medium pr-8">Kursni to'liq tugatgan talaba oladigan tajriba balli</p>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <Input
-                                            type="number"
-                                            className="w-24 h-12 rounded-xl text-center font-black"
-                                            value={courseData?.xp_reward || 100}
-                                            onChange={(e) => handleUpdateCourse({ xp_reward: parseInt(e.target.value) })}
-                                        />
-                                        <span className="font-black text-orange-500 text-xl">XP</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="certification">
-                    <div className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
-                        <div className="flex justify-between items-start">
+                    <TabsContent value="grading">
+                        <div className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
                             <div>
-                                <h3 className="text-xl font-black text-foreground mb-1">{t('admin.curriculum.certification')}</h3>
-                                <p className="text-muted-foreground text-sm font-medium">Kurs muvaffaqiyatli yakunlanganda sertifikat berish sozlamalari</p>
+                                <h3 className="text-xl font-black text-foreground mb-1">{t('admin.curriculum.grading')}</h3>
+                                <p className="text-muted-foreground text-sm font-medium">Kursni tugatish va baholash shartlarini belgilang</p>
                             </div>
-                            <div className="flex items-center gap-4 bg-primary/5 px-6 py-4 rounded-3xl border border-primary/20">
-                                <label className="font-black text-primary flex items-center gap-2 cursor-pointer">
-                                    <Trophy className="w-5 h-5" />
-                                    {t('admin.curriculum.isCertificateEnabled')}
-                                </label>
-                                <Switch
-                                    checked={courseData?.is_certificate_enabled || false}
-                                    onCheckedChange={(val) => handleUpdateCourse({ is_certificate_enabled: val })}
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-foreground">{t('admin.curriculum.completionThreshold')}</h4>
+                                            <p className="text-xs text-muted-foreground font-medium pr-8">{t('admin.curriculum.completionThresholdDesc')}</p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Input
+                                                type="number"
+                                                className="w-20 h-12 rounded-xl text-center font-black"
+                                                value={courseData?.completion_min_progress || 80}
+                                                onChange={(e) => handleUpdateCourse({ completion_min_progress: parseInt(e.target.value) })}
+                                            />
+                                            <span className="font-black text-primary text-xl">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-foreground">{t('admin.curriculum.requiredFinalScore')}</h4>
+                                            <p className="text-xs text-muted-foreground font-medium pr-8">{t('admin.curriculum.requiredFinalScoreDesc')}</p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Input
+                                                type="number"
+                                                className="w-20 h-12 rounded-xl text-center font-black"
+                                                value={courseData?.required_final_score || 70}
+                                                onChange={(e) => handleUpdateCourse({ required_final_score: parseInt(e.target.value) })}
+                                            />
+                                            <span className="font-black text-primary text-xl">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
+                                        <div className="space-y-1">
+                                            <h4 className="font-black text-foreground">Kurs yakunlash XP mukofoti</h4>
+                                            <p className="text-xs text-muted-foreground font-medium pr-8">Kursni to'liq tugatgan talaba oladigan tajriba balli</p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <Input
+                                                type="number"
+                                                className="w-24 h-12 rounded-xl text-center font-black"
+                                                value={courseData?.xp_reward || 100}
+                                                onChange={(e) => handleUpdateCourse({ xp_reward: parseInt(e.target.value) })}
+                                            />
+                                            <span className="font-black text-orange-500 text-xl">XP</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="certification">
+                        <div className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm space-y-8">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-xl font-black text-foreground mb-1">{t('admin.curriculum.certification')}</h3>
+                                    <p className="text-muted-foreground text-sm font-medium">Kurs muvaffaqiyatli yakunlanganda sertifikat berish sozlamalari</p>
+                                </div>
+                                <div className="flex items-center gap-4 bg-primary/5 px-6 py-4 rounded-3xl border border-primary/20">
+                                    <label className="font-black text-primary flex items-center gap-2 cursor-pointer">
+                                        <Trophy className="w-5 h-5" />
+                                        {t('admin.curriculum.isCertificateEnabled')}
+                                    </label>
+                                    <Switch
+                                        checked={courseData?.is_certificate_enabled || false}
+                                        onCheckedChange={(val) => handleUpdateCourse({ is_certificate_enabled: val })}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className={`transition-all duration-500 overflow-hidden ${courseData?.is_certificate_enabled ? 'opacity-100 max-h-[500px]' : 'opacity-30 pointer-events-none grayscale max-h-0'}`}>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="p-8 bg-gradient-to-br from-primary/5 to-orange-500/5 rounded-[2rem] border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center">
+                                        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                            <FileText className="w-10 h-10 text-primary" />
+                                        </div>
+                                        <h4 className="font-black text-foreground mb-2">Standard Template</h4>
+                                        <p className="text-xs text-muted-foreground font-bold mb-6">Ardent Academy Professional Certificate Design</p>
+                                        <Button variant="outline" className="rounded-2xl h-12 px-8 font-black border-primary/20 text-primary hover:bg-primary/5">
+                                            Preview Template
+                                        </Button>
+                                    </div>
+                                    <div className="space-y-4 flex flex-col justify-center">
+                                        <div className="p-6 bg-muted/30 rounded-3xl border border-border">
+                                            <h5 className="font-black text-foreground mb-2 flex items-center gap-2 italic">
+                                                <Shield className="w-4 h-4 text-blue-500" /> Validation Rule
+                                            </h5>
+                                            <p className="text-sm font-medium text-muted-foreground">
+                                                Student must reach <span className="text-primary font-black">{courseData?.completion_min_progress}%</span> total progress
+                                                and score at least <span className="text-orange-500 font-black">{courseData?.required_final_score}%</span> on the final exam.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="analytics">
+                        <CourseAnalytics courseId={courseId} />
+                    </TabsContent>
+                </Tabs>
+
+                {/* Module Dialog */}
+                <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
+                    <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] bg-card border-none shadow-2xl">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-black">{currentModule?.id ? t('admin.curriculum.editModule') : t('admin.curriculum.newModule')}</DialogTitle>
+                            <DialogDescription>{t('admin.curriculum.moduleTitlePlaceholder')}</DialogDescription>
+                        </DialogHeader>
+                        <div className="py-6 space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-1">{t('admin.curriculum.moduleTitle')}</label>
+                                <Input
+                                    placeholder={t('admin.curriculum.moduleTitlePlaceholder')}
+                                    value={currentModule?.title || ""}
+                                    onChange={(e) => setCurrentModule({ ...currentModule, title: e.target.value })}
+                                    className="h-14 rounded-2xl bg-background border-none shadow-inner text-lg font-bold"
                                 />
                             </div>
                         </div>
+                        <DialogFooter>
+                            <Button variant="outline" className="h-12 rounded-2xl font-bold flex-1" onClick={() => setIsModuleDialogOpen(false)}>{t('admin.curriculum.cancel')}</Button>
+                            <Button className="h-12 rounded-2xl font-black flex-1 shadow-lg shadow-primary/20" onClick={handleSaveModule}>
+                                <Save className="w-4 h-4 mr-2" /> {t('admin.curriculum.save')}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
 
-                        <div className={`transition-all duration-500 overflow-hidden ${courseData?.is_certificate_enabled ? 'opacity-100 max-h-[500px]' : 'opacity-30 pointer-events-none grayscale max-h-0'}`}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="p-8 bg-gradient-to-br from-primary/5 to-orange-500/5 rounded-[2rem] border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center">
-                                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                                        <FileText className="w-10 h-10 text-primary" />
+                {/* Lesson Dialog */}
+                <Dialog open={isLessonDialogOpen} onOpenChange={setIsLessonDialogOpen}>
+                    <DialogContent className="sm:max-w-[700px] rounded-[3rem] bg-card border-none shadow-2xl overflow-hidden p-0">
+                        <div className="p-8 space-y-6">
+                            <DialogHeader>
+                                <DialogTitle className="text-3xl font-black">{currentLesson?.id ? t('admin.curriculum.editLesson') : t('admin.curriculum.newLesson')}</DialogTitle>
+                                <DialogDescription className="text-base font-medium">{t('admin.curriculum.descriptionPlaceholder')}</DialogDescription>
+                            </DialogHeader>
+
+                            <div className="grid grid-cols-2 gap-8 py-2">
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonTitle')}</label>
+                                        <Input
+                                            placeholder={t('admin.curriculum.lessonTitlePlaceholder')}
+                                            value={currentLesson?.title || ""}
+                                            onChange={(e) => setCurrentLesson({ ...currentLesson, title: e.target.value })}
+                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold text-lg"
+                                        />
                                     </div>
-                                    <h4 className="font-black text-foreground mb-2">Standard Template</h4>
-                                    <p className="text-xs text-muted-foreground font-bold mb-6">Ardent Academy Professional Certificate Design</p>
-                                    <Button variant="outline" className="rounded-2xl h-12 px-8 font-black border-primary/20 text-primary hover:bg-primary/5">
-                                        Preview Template
-                                    </Button>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.description')}</label>
+                                        <Textarea
+                                            placeholder={t('admin.curriculum.descriptionPlaceholder')}
+                                            rows={4}
+                                            value={currentLesson?.description || ""}
+                                            onChange={(e) => setCurrentLesson({ ...currentLesson, description: e.target.value })}
+                                            className="rounded-[1.25rem] bg-background border-none shadow-inner font-medium resize-none p-4"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="space-y-4 flex flex-col justify-center">
-                                    <div className="p-6 bg-muted/30 rounded-3xl border border-border">
-                                        <h5 className="font-black text-foreground mb-2 flex items-center gap-2 italic">
-                                            <Shield className="w-4 h-4 text-blue-500" /> Validation Rule
-                                        </h5>
-                                        <p className="text-sm font-medium text-muted-foreground">
-                                            Student must reach <span className="text-primary font-black">{courseData?.completion_min_progress}%</span> total progress
-                                            and score at least <span className="text-orange-500 font-black">{courseData?.required_final_score}%</span> on the final exam.
+
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.videoUrl')}</label>
+                                        <Input
+                                            placeholder={t('admin.curriculum.videoUrlPlaceholder')}
+                                            value={currentLesson?.video_url || ""}
+                                            onChange={(e) => setCurrentLesson({ ...currentLesson, video_url: e.target.value })}
+                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
+                                        />
+                                    </div>
+
+                                    {currentLesson?.video_url && currentLesson.video_url.includes('youtube') && (
+                                        <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border mt-2">
+                                            <iframe
+                                                className="w-full h-full"
+                                                src={currentLesson.video_url.replace('watch?v=', 'embed/')}
+                                                title="YouTube preview"
+                                                allowFullScreen
+                                            ></iframe>
+                                        </div>
+                                    )}
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.duration')} ({t('common.minutes')})</label>
+                                            <Input
+                                                type="number"
+                                                value={currentLesson?.video_duration || 0}
+                                                onChange={(e) => setCurrentLesson({ ...currentLesson, video_duration: parseInt(e.target.value) })}
+                                                className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.isFree')}</label>
+                                            <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={currentLesson?.is_free || false}
+                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, is_free: e.target.checked })}
+                                                    className="w-5 h-5 rounded-lg border-muted"
+                                                />
+                                                <span className="font-bold text-foreground">{t('admin.curriculum.demo')}</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonLocked')}</label>
+                                            <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={currentLesson?.is_locked || false}
+                                                    onChange={(e) => setCurrentLesson({ ...currentLesson, is_locked: e.target.checked })}
+                                                    className="w-5 h-5 rounded-lg border-muted"
+                                                />
+                                                <span className="font-bold text-foreground">{t('admin.curriculum.locked')}</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 col-span-2">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.requiredLesson')}</label>
+                                            <Select
+                                                value={currentLesson?.required_lesson?.toString() || "none"}
+                                                onValueChange={(val) => setCurrentLesson({ ...currentLesson, required_lesson: val === "none" ? null : parseInt(val) })}
+                                            >
+                                                <SelectTrigger className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold">
+                                                    <SelectValue placeholder={t('admin.curriculum.selectLesson')} />
+                                                </SelectTrigger>
+                                                <SelectContent className="rounded-2xl">
+                                                    <SelectItem value="none">{t('admin.curriculum.noRequirement')}</SelectItem>
+                                                    {modules.flatMap(m => m.lessons)
+                                                        .filter(l => l.id !== currentLesson?.id)
+                                                        .map(l => (
+                                                            <SelectItem key={l.id} value={l.id.toString()}>{l.title}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.resource')}</label>
+                                        <Input
+                                            placeholder={t('admin.curriculum.videoUrlPlaceholder')}
+                                            value={currentLesson?.pdf_url || ""}
+                                            onChange={(e) => setCurrentLesson({ ...currentLesson, pdf_url: e.target.value })}
+                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.completionThreshold')} (%)</label>
+                                        <div className="relative">
+                                            <Input
+                                                type="number"
+                                                value={currentLesson?.min_watch_percent || 80}
+                                                onChange={(e) => setCurrentLesson({ ...currentLesson, min_watch_percent: parseInt(e.target.value) })}
+                                                className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-black pr-10"
+                                            />
+                                            <Percent className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                                        </div>
+                                        <p className="text-[10px] text-muted-foreground font-medium mt-1 pr-2 leading-tight">
+                                            {t('admin.curriculum.completionThresholdDesc')}
                                         </p>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="analytics">
-                    <CourseAnalytics courseId={courseId} />
-                </TabsContent>
-            </Tabs>
-
-            {/* Module Dialog */}
-            <Dialog open={isModuleDialogOpen} onOpenChange={setIsModuleDialogOpen}>
-                <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] bg-card border-none shadow-2xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-2xl font-black">{currentModule?.id ? t('admin.curriculum.editModule') : t('admin.curriculum.newModule')}</DialogTitle>
-                        <DialogDescription>{t('admin.curriculum.moduleTitlePlaceholder')}</DialogDescription>
-                    </DialogHeader>
-                    <div className="py-6 space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground ml-1">{t('admin.curriculum.moduleTitle')}</label>
-                            <Input
-                                placeholder={t('admin.curriculum.moduleTitlePlaceholder')}
-                                value={currentModule?.title || ""}
-                                onChange={(e) => setCurrentModule({ ...currentModule, title: e.target.value })}
-                                className="h-14 rounded-2xl bg-background border-none shadow-inner text-lg font-bold"
-                            />
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" className="h-12 rounded-2xl font-bold flex-1" onClick={() => setIsModuleDialogOpen(false)}>{t('admin.curriculum.cancel')}</Button>
-                        <Button className="h-12 rounded-2xl font-black flex-1 shadow-lg shadow-primary/20" onClick={handleSaveModule}>
-                            <Save className="w-4 h-4 mr-2" /> {t('admin.curriculum.save')}
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-
-            {/* Lesson Dialog */}
-            <Dialog open={isLessonDialogOpen} onOpenChange={setIsLessonDialogOpen}>
-                <DialogContent className="sm:max-w-[700px] rounded-[3rem] bg-card border-none shadow-2xl overflow-hidden p-0">
-                    <div className="p-8 space-y-6">
-                        <DialogHeader>
-                            <DialogTitle className="text-3xl font-black">{currentLesson?.id ? t('admin.curriculum.editLesson') : t('admin.curriculum.newLesson')}</DialogTitle>
-                            <DialogDescription className="text-base font-medium">{t('admin.curriculum.descriptionPlaceholder')}</DialogDescription>
-                        </DialogHeader>
-
-                        <div className="grid grid-cols-2 gap-8 py-2">
-                            <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonTitle')}</label>
-                                    <Input
-                                        placeholder={t('admin.curriculum.lessonTitlePlaceholder')}
-                                        value={currentLesson?.title || ""}
-                                        onChange={(e) => setCurrentLesson({ ...currentLesson, title: e.target.value })}
-                                        className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold text-lg"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.description')}</label>
-                                    <Textarea
-                                        placeholder={t('admin.curriculum.descriptionPlaceholder')}
-                                        rows={4}
-                                        value={currentLesson?.description || ""}
-                                        onChange={(e) => setCurrentLesson({ ...currentLesson, description: e.target.value })}
-                                        className="rounded-[1.25rem] bg-background border-none shadow-inner font-medium resize-none p-4"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.videoUrl')}</label>
-                                    <Input
-                                        placeholder={t('admin.curriculum.videoUrlPlaceholder')}
-                                        value={currentLesson?.video_url || ""}
-                                        onChange={(e) => setCurrentLesson({ ...currentLesson, video_url: e.target.value })}
-                                        className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
-                                    />
-                                </div>
-
-                                {currentLesson?.video_url && currentLesson.video_url.includes('youtube') && (
-                                    <div className="aspect-video rounded-2xl overflow-hidden bg-muted border border-border mt-2">
-                                        <iframe
-                                            className="w-full h-full"
-                                            src={currentLesson.video_url.replace('watch?v=', 'embed/')}
-                                            title="YouTube preview"
-                                            allowFullScreen
-                                        ></iframe>
-                                    </div>
-                                )}
-
-                                <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.duration')} ({t('common.minutes')})</label>
-                                        <Input
-                                            type="number"
-                                            value={currentLesson?.video_duration || 0}
-                                            onChange={(e) => setCurrentLesson({ ...currentLesson, video_duration: parseInt(e.target.value) })}
-                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.isFree')}</label>
-                                        <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
-                                            <input
-                                                type="checkbox"
-                                                checked={currentLesson?.is_free || false}
-                                                onChange={(e) => setCurrentLesson({ ...currentLesson, is_free: e.target.checked })}
-                                                className="w-5 h-5 rounded-lg border-muted"
+                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest text-orange-600">Dars XP balli</label>
+                                        <div className="relative">
+                                            <Input
+                                                type="number"
+                                                value={currentLesson?.xp_amount || 10}
+                                                onChange={(e) => setCurrentLesson({ ...currentLesson, xp_amount: parseInt(e.target.value) })}
+                                                className="h-14 rounded-[1.25rem] bg-orange-50/20 border-orange-100 shadow-inner font-black pr-10 text-orange-600"
                                             />
-                                            <span className="font-bold text-foreground">{t('admin.curriculum.demo')}</span>
+                                            <Trophy className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-orange-400" />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonLocked')}</label>
-                                        <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
-                                            <input
-                                                type="checkbox"
-                                                checked={currentLesson?.is_locked || false}
-                                                onChange={(e) => setCurrentLesson({ ...currentLesson, is_locked: e.target.checked })}
-                                                className="w-5 h-5 rounded-lg border-muted"
-                                            />
-                                            <span className="font-bold text-foreground">{t('admin.curriculum.locked')}</span>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2 col-span-2">
-                                        <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.requiredLesson')}</label>
-                                        <Select
-                                            value={currentLesson?.required_lesson?.toString() || "none"}
-                                            onValueChange={(val) => setCurrentLesson({ ...currentLesson, required_lesson: val === "none" ? null : parseInt(val) })}
-                                        >
-                                            <SelectTrigger className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold">
-                                                <SelectValue placeholder={t('admin.curriculum.selectLesson')} />
-                                            </SelectTrigger>
-                                            <SelectContent className="rounded-2xl">
-                                                <SelectItem value="none">{t('admin.curriculum.noRequirement')}</SelectItem>
-                                                {modules.flatMap(m => m.lessons)
-                                                    .filter(l => l.id !== currentLesson?.id)
-                                                    .map(l => (
-                                                        <SelectItem key={l.id} value={l.id.toString()}>{l.title}</SelectItem>
-                                                    ))
-                                                }
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.resource')}</label>
-                                    <Input
-                                        placeholder={t('admin.curriculum.videoUrlPlaceholder')}
-                                        value={currentLesson?.pdf_url || ""}
-                                        onChange={(e) => setCurrentLesson({ ...currentLesson, pdf_url: e.target.value })}
-                                        className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-mono text-xs"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.completionThreshold')} (%)</label>
-                                    <div className="relative">
-                                        <Input
-                                            type="number"
-                                            value={currentLesson?.min_watch_percent || 80}
-                                            onChange={(e) => setCurrentLesson({ ...currentLesson, min_watch_percent: parseInt(e.target.value) })}
-                                            className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-black pr-10"
-                                        />
-                                        <Percent className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                                    </div>
-                                    <p className="text-[10px] text-muted-foreground font-medium mt-1 pr-2 leading-tight">
-                                        {t('admin.curriculum.completionThresholdDesc')}
-                                    </p>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest text-orange-600">Dars XP balli</label>
-                                    <div className="relative">
-                                        <Input
-                                            type="number"
-                                            value={currentLesson?.xp_amount || 10}
-                                            onChange={(e) => setCurrentLesson({ ...currentLesson, xp_amount: parseInt(e.target.value) })}
-                                            className="h-14 rounded-[1.25rem] bg-orange-50/20 border-orange-100 shadow-inner font-black pr-10 text-orange-600"
-                                        />
-                                        <Trophy className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-orange-400" />
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div className="bg-muted/50 p-8 flex gap-4">
-                    <Button variant="ghost" className="h-14 flex-1 rounded-2xl font-bold" onClick={() => setIsLessonDialogOpen(false)}>{t('admin.curriculum.cancel')}</Button>
-                    <Button className="h-14 flex-[2] rounded-2xl font-black shadow-xl shadow-primary/20" onClick={handleSaveLesson}>
-                        <Save className="w-5 h-5 mr-3" /> {t('admin.curriculum.save')}
-                    </Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+                        <div className="bg-muted/50 p-8 flex gap-4">
+                            <Button variant="ghost" className="h-14 flex-1 rounded-2xl font-bold" onClick={() => setIsLessonDialogOpen(false)}>{t('admin.curriculum.cancel')}</Button>
+                            <Button className="h-14 flex-[2] rounded-2xl font-black shadow-xl shadow-primary/20" onClick={handleSaveLesson}>
+                                <Save className="w-5 h-5 mr-3" /> {t('admin.curriculum.save')}
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
-            {/* Quiz Editor Dialog */ }
-    {
-        selectedLessonForQuiz && (
-            <QuizEditor
-                isOpen={isQuizEditorOpen}
-                onClose={() => {
-                    setIsQuizEditorOpen(false);
-                    setSelectedLessonForQuiz(null);
-                }}
-                lessonId={selectedLessonForQuiz.id}
-                lessonTitle={selectedLessonForQuiz.title}
-            />
-        )
-    }
-        </div >
+                {/* Quiz Editor Dialog */}
+                {
+                    selectedLessonForQuiz && (
+                        <QuizEditor
+                            isOpen={isQuizEditorOpen}
+                            onClose={() => {
+                                setIsQuizEditorOpen(false);
+                                setSelectedLessonForQuiz(null);
+                            }}
+                            lessonId={selectedLessonForQuiz.id}
+                            lessonTitle={selectedLessonForQuiz.title}
+                        />
+                    )
+                }
+            </div >
         </div >
     );
 };
