@@ -325,6 +325,11 @@
     "recommendedSize": "Tavsiya etiladi: 1200x675 (16:9)",
     "courseAccessSettings": "Kursga kirish sozlamalari",
     "lockStrategy": "Darslarni ochish strategiyasi",
+    "lockStrategies": {
+      "free": "Erkin (Barcha darslar ochiq)",
+      "sequential": "Ketma-ket (Oldingi tugashi shart)",
+      "custom": "Maxsus (Har darsda belgilangan)"
+    },
     "completionThreshold": "Minimal o'zlashtirish foizi",
     "templatePlaceholder": "Masalan: modern_gold",
     "selectTeacher": "O'qituvchini tanlang",

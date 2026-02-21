@@ -500,9 +500,9 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                         <Select value={formData.lock_strategy} onValueChange={(val) => setFormData({ ...formData, lock_strategy: val })}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="free">Erkin (Barcha darslar ochiq)</SelectItem>
-                                                <SelectItem value="sequential">Ketma-ket (Oldingi tugashi shart)</SelectItem>
-                                                <SelectItem value="custom">Maxsus (Har darsda belgilangan)</SelectItem>
+                                                <SelectItem value="free">{t('admin.lockStrategies.free', "Erkin (Barcha darslar ochiq)")}</SelectItem>
+                                                <SelectItem value="sequential">{t('admin.lockStrategies.sequential', "Ketma-ket (Oldingi tugashi shart)")}</SelectItem>
+                                                <SelectItem value="custom">{t('admin.lockStrategies.custom', "Maxsus (Har darsda belgilangan)")}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
