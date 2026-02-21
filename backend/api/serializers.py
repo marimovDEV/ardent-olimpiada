@@ -96,6 +96,10 @@ class UserSerializer(serializers.ModelSerializer):
     avatar_url = serializers.SerializerMethodField()
     teacher_profile = serializers.SerializerMethodField()
     subjects = serializers.SerializerMethodField()
+    courses_count = serializers.SerializerMethodField()
+    students_count = serializers.SerializerMethodField()
+    total_revenue = serializers.SerializerMethodField()
+    olympiads_count = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
     
     class Meta:
