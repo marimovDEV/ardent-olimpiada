@@ -492,11 +492,11 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
 
                             <section className="space-y-4 pt-4 border-t border-border">
                                 <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                                    <Settings className="w-4 h-4 text-primary" /> {t('admin.courseAccessSettings') || "Kursga kirish sozlamalari"}
+                                    <Settings className="w-4 h-4 text-primary" /> {t('admin.courseAccessSettings', "Kursga kirish sozlamalari")}
                                 </h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">{t('admin.lockStrategy') || "Darslarni ochish strategiyasi"}</label>
+                                        <label className="text-sm font-medium">{t('admin.lockStrategy', "Darslarni ochish strategiyasi")}</label>
                                         <Select value={formData.lock_strategy} onValueChange={(val) => setFormData({ ...formData, lock_strategy: val })}>
                                             <SelectTrigger><SelectValue /></SelectTrigger>
                                             <SelectContent>
@@ -507,7 +507,7 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-sm font-medium">{t('admin.completionThreshold') || "Minimal o'zlashtirish foizi"} (%)</label>
+                                        <label className="text-sm font-medium">{t('admin.completionThreshold', "Minimal o'zlashtirish foizi")} (%)</label>
                                         <Input
                                             type="number"
                                             value={formData.completion_min_progress}
