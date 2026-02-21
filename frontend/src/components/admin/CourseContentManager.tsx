@@ -454,6 +454,15 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                                                                     >
                                                                                         {lesson.is_locked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
                                                                                     </Button>
+                                                                                    <Button
+                                                                                        variant="ghost"
+                                                                                        size="icon"
+                                                                                        className="h-9 w-9 rounded-xl hover:bg-blue-50 text-blue-500"
+                                                                                        onClick={(e) => { e.stopPropagation(); setSelectedLessonForQuiz({ id: lesson.id, title: lesson.title }); setIsQuizEditorOpen(true); }}
+                                                                                        title="Test qo'shish"
+                                                                                    >
+                                                                                        <CheckSquare className="w-4 h-4" />
+                                                                                    </Button>
                                                                                     <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-destructive" onClick={(e) => { e.stopPropagation(); handleDeleteLesson(lesson.id); }}>
                                                                                         <Trash2 className="w-4 h-4" />
                                                                                     </Button>
@@ -855,7 +864,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                 {/* Quiz Editor Dialog */}
                 {selectedLessonForQuiz && (
                     <QuizEditor
-                        isOpen={isQuizEditorOpen}
+                        open={isQuizEditorOpen}
                         onClose={() => {
                             setIsQuizEditorOpen(false);
                             setSelectedLessonForQuiz(null);
