@@ -3844,10 +3844,55 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.get_object()
         title = request.data.get('title')
         message = request.data.get('message')
-        notification_type = request.data.get('type', 'SYSTEM')
-        channel = request.data.get('channel', 'WEB') # WEB, TELEGRAM, ALL
+        notification_type = request.data.get('notification_type', 'SYSTEM')
+        channel = request.data.get('channel', 'WEB') 
+        
+        if not title or not message:
+            return Response({'error': 'Sarlavha va xabar kiritilishi shart'}, status=status.HTTP_400_BAD_REQUEST)
+
+        Notification.objects.create(
+            user=user,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+            channel=channel
+        )
         
         return Response({'success': True, 'message': 'Bildirishnoma yuborildi'})
+
+    @action(detail=True, methods=['get'])
+    def teacher_stats(self, request, pk=None):
+        """Get summarized teacher statistics"""
+        user = self.get_object()
+        if user.role != 'TEACHER':
+             return Response({'error': 'Foydalanuvchi o\'qituvchi emas'}, status=status.HTTP_400_BAD_REQUEST)
+             
+        serializer = self.get_serializer(user)
+        data = serializer.data
+        
+        return Response({
+            'courses': data.get('courses_count', 0),
+            'students': data.get('students_count', 0),
+            'revenue': data.get('total_revenue', 0.0),
+            'olympiads': data.get('olympiads_count', 0),
+            'rating': 5.0, # Placeholder or calculate
+            'is_verified': user.teacher_profile.verification_status == 'APPROVED' if hasattr(user, 'teacher_profile') else False,
+            'is_identity_verified': user.teacher_profile.is_identity_verified if hasattr(user, 'teacher_profile') else False
+        })
+
+    @action(detail=True, methods=['post'])
+    def toggle_identity_verification(self, request, pk=None):
+        """Toggle identity verification status"""
+        user = self.get_object()
+        profile, _ = TeacherProfile.objects.get_or_create(user=user)
+        profile.is_identity_verified = not profile.is_identity_verified
+        profile.save()
+        
+        return Response({
+            'success': True, 
+            'is_identity_verified': profile.is_identity_verified,
+            'message': 'Shaxsni tasdiqlash holati o\'zgartirildi'
+        })
 
     @action(detail=True, methods=['get'])
     def performance_report(self, request, pk=None):

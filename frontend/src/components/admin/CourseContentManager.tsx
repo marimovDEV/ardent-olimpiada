@@ -45,6 +45,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
+    SelectGroup,
+    SelectLabel,
 } from "@/components/ui/select";
 import {
     Tabs,
@@ -63,6 +65,23 @@ import {
     Activity
 } from "lucide-react";
 import QuizEditor from "./QuizEditor";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { SortableItem } from "./dnd/SortableItem";
 
 
 interface Lesson {
@@ -107,74 +126,64 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
     const [targetModuleId, setTargetModuleId] = useState<number | null>(null);
     const [isQuizEditorOpen, setIsQuizEditorOpen] = useState(false);
     const [selectedLessonForQuiz, setSelectedLessonForQuiz] = useState<{ id: number, title: string } | null>(null);
-    const [draggedItem, setDraggedItem] = useState<{ type: 'module' | 'lesson', id: number, moduleId?: number } | null>(null);
 
-    const handleDragStart = (e: React.DragEvent, type: 'module' | 'lesson', id: number, moduleId?: number) => {
-        setDraggedItem({ type, id, moduleId });
-        e.dataTransfer.effectAllowed = 'move';
-        // Add a class for styling
-        const target = e.target as HTMLElement;
-        target.classList.add('opacity-50');
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleModuleDragEnd = async (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const oldIndex = modules.findIndex((m) => m.id === active.id);
+        const newIndex = modules.findIndex((m) => m.id === over.id);
+
+        const newModules = arrayMove(modules, oldIndex, newIndex);
+        setModules(newModules);
+
+        const items = newModules.map((m, i) => ({ id: m.id, order: i + 1 }));
+
+        try {
+            await axios.post(`${API_URL}/courses/${courseId}/reorder_modules/`, { items }, { headers: getAuthHeader() });
+            toast.success(t('admin.curriculum.reorderSuccess'));
+        } catch (error) {
+            fetchContent();
+            toast.error(t('admin.curriculum.error'));
+        }
     };
 
-    const handleDragEnd = (e: React.DragEvent) => {
-        const target = e.target as HTMLElement;
-        target.classList.remove('opacity-50');
-        setDraggedItem(null);
-    };
+    const handleLessonDragEnd = async (event: DragEndEvent, moduleId: number) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
 
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    };
+        const module = modules.find(m => m.id === moduleId);
+        if (!module) return;
 
-    const handleDrop = async (e: React.DragEvent, targetType: 'module' | 'lesson', targetId: number, targetModuleId?: number) => {
-        e.preventDefault();
-        if (!draggedItem) return;
+        const oldIndex = module.lessons.findIndex((l) => l.id === active.id);
+        const newIndex = module.lessons.findIndex((l) => l.id === over.id);
 
-        if (draggedItem.type === 'lesson' && targetType === 'lesson' && draggedItem.moduleId === targetModuleId) {
-            // Reorder lessons within same module
-            const module = modules.find(m => m.id === targetModuleId);
-            if (!module) return;
+        const newLessons = arrayMove(module.lessons, oldIndex, newIndex);
 
-            const newLessons = [...module.lessons];
-            const draggedIdx = newLessons.findIndex(l => l.id === draggedItem.id);
-            const targetIdx = newLessons.findIndex(l => l.id === targetId);
+        // Update local state immediately
+        setModules(prev => prev.map(m =>
+            m.id === moduleId ? { ...m, lessons: newLessons } : m
+        ));
 
-            if (draggedIdx === targetIdx) return;
+        const items = newLessons.map((l, i) => ({ id: l.id, order: i + 1 }));
 
-            const [removed] = newLessons.splice(draggedIdx, 1);
-            newLessons.splice(targetIdx, 0, removed);
-
-            const items = newLessons.map((l, i) => ({ id: l.id, order: i + 1 }));
-
-            try {
-                await axios.post(`${API_URL}/courses/${courseId}/reorder_lessons/`, { items }, { headers: getAuthHeader() });
-                fetchContent();
-                toast.success(t('admin.curriculum.reorderSuccess'));
-            } catch (error) {
-                toast.error(t('admin.curriculum.error'));
-            }
-        } else if (draggedItem.type === 'module' && targetType === 'module') {
-            // Reorder modules
-            const newModules = [...modules];
-            const draggedIdx = newModules.findIndex(m => m.id === draggedItem.id);
-            const targetIdx = newModules.findIndex(m => m.id === targetId);
-
-            if (draggedIdx === targetIdx) return;
-
-            const [removed] = newModules.splice(draggedIdx, 1);
-            newModules.splice(targetIdx, 0, removed);
-
-            const items = newModules.map((m, i) => ({ id: m.id, order: i + 1 }));
-
-            try {
-                await axios.post(`${API_URL}/courses/${courseId}/reorder_modules/`, { items }, { headers: getAuthHeader() });
-                fetchContent();
-                toast.success(t('admin.curriculum.reorderSuccess'));
-            } catch (error) {
-                toast.error(t('admin.curriculum.error'));
-            }
+        try {
+            await axios.post(`${API_URL}/courses/${courseId}/reorder_lessons/`, { items }, { headers: getAuthHeader() });
+            toast.success(t('admin.curriculum.reorderSuccess'));
+        } catch (error) {
+            fetchContent();
+            toast.error(t('admin.curriculum.error'));
         }
     };
 
@@ -337,139 +346,140 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                 <Plus className="w-5 h-5 mr-3" /> {t('admin.curriculum.addModule')}
                             </Button>
                         </div>
-                        {modules.map((module, idx) => (
-                            <div key={module.id} className="bg-card rounded-[2.5rem] border border-border shadow-sm overflow-hidden group">
-                                {/* Module Header */}
-                                <div className="p-6 flex items-center justify-between hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => toggleModule(module.id)}>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary text-xl">
-                                            {idx + 1}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-black text-xl text-foreground">{module.title}</h3>
-                                            <p className="text-sm font-medium text-muted-foreground">{t('admin.curriculum.lessonsCount', { count: module.lessons.length })}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div
-                                            draggable
-                                            onDragStart={(e) => handleDragStart(e, 'module', module.id)}
-                                            onDragEnd={handleDragEnd}
-                                            onDragOver={handleDragOver}
-                                            onDrop={(e) => handleDrop(e, 'module', module.id)}
-                                            className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center cursor-move hover:bg-muted transition-colors mr-2"
-                                        >
-                                            <GripVertical className="w-5 h-5 text-muted-foreground" />
-                                        </div>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10">
-                                                    <MoreVertical className="w-5 h-5" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="rounded-2xl border-border p-2">
-                                                <DropdownMenuItem className="rounded-xl h-10 gap-3" onClick={() => { setCurrentModule(module); setIsModuleDialogOpen(true); }}>
-                                                    <Edit2 className="w-4 h-4 text-primary" /> {t('admin.curriculum.editModule')}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem className="rounded-xl h-10 gap-3 text-destructive" onClick={() => handleDeleteModule(module.id)}>
-                                                    <Trash2 className="w-4 h-4" /> {t('admin.curriculum.deleteModule')}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                        <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center">
-                                            {expandedModules.includes(module.id) ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
-                                        </div>
-                                    </div>
-                                </div>
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleModuleDragEnd}
+                            modifiers={[restrictToVerticalAxis]}
+                        >
+                            <SortableContext
+                                items={modules.map(m => m.id)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {modules.map((module, idx) => (
+                                    <SortableItem key={module.id} id={module.id}>
+                                        {({ dragHandleProps, isDragging }) => (
+                                            <div className={`bg-card rounded-[2.5rem] border border-border shadow-sm overflow-hidden group mb-6 last:mb-0 transition-all ${isDragging ? 'shadow-2xl ring-2 ring-primary/20 scale-[1.02] z-50' : ''}`}>
+                                                {/* Module Header */}
+                                                <div className="p-6 flex items-center justify-between hover:bg-muted/30 transition-colors cursor-pointer" onClick={() => toggleModule(module.id)}>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-primary text-xl">
+                                                            {idx + 1}
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="font-black text-xl text-foreground">{module.title}</h3>
+                                                            <p className="text-sm font-medium text-muted-foreground">{t('admin.curriculum.lessonsCount', { count: module.lessons.length })}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-3">
+                                                        <div
+                                                            {...dragHandleProps}
+                                                            className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center cursor-move hover:bg-muted transition-colors mr-2"
+                                                        >
+                                                            <GripVertical className="w-5 h-5 text-muted-foreground" />
+                                                        </div>
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                                                <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10">
+                                                                    <MoreVertical className="w-5 h-5" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent align="end" className="rounded-2xl border-border p-2">
+                                                                <DropdownMenuItem className="rounded-xl h-10 gap-3" onClick={() => { setCurrentModule(module); setIsModuleDialogOpen(true); }}>
+                                                                    <Edit2 className="w-4 h-4 text-primary" /> {t('admin.curriculum.editModule')}
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem className="rounded-xl h-10 gap-3 text-destructive" onClick={() => handleDeleteModule(module.id)}>
+                                                                    <Trash2 className="w-4 h-4" /> {t('admin.curriculum.deleteModule')}
+                                                                </DropdownMenuItem>
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                        <div className="w-10 h-10 rounded-xl bg-background border border-border flex items-center justify-center">
+                                                            {expandedModules.includes(module.id) ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                {/* Lessons List (Expanded) */}
-                                {expandedModules.includes(module.id) && (
-                                    <div className="px-6 pb-6 pt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                                        {module.lessons.map((lesson) => (
-                                            <div
-                                                key={lesson.id}
-                                                draggable
-                                                onDragStart={(e) => handleDragStart(e, 'lesson', lesson.id, module.id)}
-                                                onDragEnd={handleDragEnd}
-                                                onDragOver={handleDragOver}
-                                                onDrop={(e) => handleDrop(e, 'lesson', lesson.id, module.id)}
-                                                className="flex items-center justify-between p-4 bg-background rounded-2xl border border-border/50 hover:border-primary/20 hover:shadow-md transition-all group/lesson"
-                                            >
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center cursor-move text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors">
-                                                            <GripVertical className="w-4 h-4" />
-                                                        </div>
+                                                {/* Lessons List (Expanded) */}
+                                                {expandedModules.includes(module.id) && (
+                                                    <div className="px-6 pb-6 pt-2 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                        <DndContext
+                                                            sensors={sensors}
+                                                            collisionDetection={closestCenter}
+                                                            onDragEnd={(event) => handleLessonDragEnd(event, module.id)}
+                                                            modifiers={[restrictToVerticalAxis]}
+                                                        >
+                                                            <SortableContext
+                                                                items={module.lessons.map(l => l.id)}
+                                                                strategy={verticalListSortingStrategy}
+                                                            >
+                                                                {module.lessons.map((lesson) => (
+                                                                    <SortableItem key={lesson.id} id={lesson.id}>
+                                                                        {({ dragHandleProps: lessonDragProps, isDragging: isLessonDragging }) => (
+                                                                            <div
+                                                                                className={`flex items-center justify-between p-4 bg-background rounded-2xl border border-border/50 hover:border-primary/20 hover:shadow-md transition-all group/lesson ${isLessonDragging ? 'shadow-xl ring-2 ring-primary/10 relative z-50 bg-card' : ''}`}
+                                                                            >
+                                                                                <div className="flex items-center gap-4">
+                                                                                    <div
+                                                                                        {...lessonDragProps}
+                                                                                        className="w-8 h-8 rounded-lg bg-muted/30 flex items-center justify-center cursor-move opacity-0 group-hover/lesson:opacity-100 transition-opacity"
+                                                                                    >
+                                                                                        <GripVertical className="w-4 h-4 text-muted-foreground" />
+                                                                                    </div>
+                                                                                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                                                                                        {lesson.is_free ? <Play className="w-4 h-4 text-green-500 fill-green-500" /> : <Video className="w-4 h-4 text-primary" />}
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div className="flex items-center gap-2">
+                                                                                            <span className="font-bold text-foreground">{lesson.title}</span>
+                                                                                            {lesson.is_free && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none scale-75">{t('admin.curriculum.demo')}</Badge>}
+                                                                                            {lesson.is_locked && (
+                                                                                                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 shadow-sm" title="Ushbu dars qulflangan">
+                                                                                                    <Lock className="w-3 h-3" />
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </div>
+                                                                                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-black uppercase tracking-tighter mt-0.5">
+                                                                                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {t('admin.curriculum.videoDuration', { minutes: (lesson.video_duration / 60).toFixed(0) })}</span>
+                                                                                            <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {lesson.pdf_url ? t('admin.curriculum.hasResource') : t('admin.curriculum.noResource')}</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <Button
+                                                                                        variant="ghost"
+                                                                                        size="icon"
+                                                                                        className={`h-9 w-9 rounded-xl transition-all ${lesson.is_locked ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-muted-foreground hover:bg-muted'}`}
+                                                                                        onClick={(e) => { e.stopPropagation(); toggleLessonLock(lesson); }}
+                                                                                        title={lesson.is_locked ? "Qulfdan chiqarish" : "Qulflash"}
+                                                                                    >
+                                                                                        {lesson.is_locked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                                                                                    </Button>
+                                                                                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-destructive" onClick={(e) => { e.stopPropagation(); handleDeleteLesson(lesson.id); }}>
+                                                                                        <Trash2 className="w-4 h-4" />
+                                                                                    </Button>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </SortableItem>
+                                                                ))}
+                                                            </SortableContext>
+                                                        </DndContext>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="w-full h-14 rounded-2xl border-dashed border-2 hover:bg-primary/5 hover:border-primary/30 transition-all font-bold group mt-2"
+                                                            onClick={() => { setCurrentLesson({ title: "", is_free: false, video_duration: 10 }); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}
+                                                        >
+                                                            <Plus className="w-5 h-5 mr-3 text-primary group-hover:scale-125 transition-transform" />
+                                                            {t('admin.curriculum.addLesson')}
+                                                        </Button>
                                                     </div>
-                                                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
-                                                        {lesson.is_free ? <Play className="w-4 h-4 text-green-500 fill-green-500" /> : <Video className="w-4 h-4 text-primary" />}
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-foreground">{lesson.title}</span>
-                                                            {lesson.is_free && <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none scale-75">{t('admin.curriculum.demo')}</Badge>}
-                                                            {lesson.is_locked && (
-                                                                <div className="w-6 h-6 rounded-full bg-red-100 flex items-center justify-center text-red-600 shadow-sm" title="Ushbu dars qulflangan">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-black uppercase tracking-tighter mt-0.5">
-                                                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {t('admin.curriculum.videoDuration', { minutes: (lesson.video_duration / 60).toFixed(0) })}</span>
-                                                            <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> {lesson.pdf_url ? t('admin.curriculum.hasResource') : t('admin.curriculum.noResource')}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className={`h-9 w-9 rounded-xl transition-all ${lesson.is_locked ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'text-muted-foreground hover:bg-muted'}`}
-                                                        onClick={(e) => { e.stopPropagation(); toggleLessonLock(lesson); }}
-                                                        title={lesson.is_locked ? "Qulfdan chiqarish" : "Qulflash"}
-                                                    >
-                                                        {lesson.is_locked ?
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> :
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></svg>
-                                                        }
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary" onClick={() => {
-                                                        setCurrentLesson({
-                                                            ...lesson,
-                                                            video_duration: Math.round(lesson.video_duration / 60) // Show in minutes
-                                                        });
-                                                        setTargetModuleId(module.id);
-                                                        setIsLessonDialogOpen(true);
-                                                    }}>
-                                                        <Edit2 className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-red-50 text-destructive" onClick={() => handleDeleteLesson(lesson.id)}>
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-9 w-9 rounded-xl hover:bg-orange-50 text-orange-500"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            setSelectedLessonForQuiz({ id: lesson.id, title: lesson.title });
-                                                            setIsQuizEditorOpen(true);
-                                                        }}
-                                                        title="Testni tahrirlash"
-                                                    >
-                                                        <CheckSquare className="w-4 h-4" />
-                                                    </Button>
-                                                </div>
+                                                )}
                                             </div>
-                                        ))}
-                                        <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 hover:bg-primary/5 hover:border-primary/30 transition-all font-bold group" onClick={() => { setCurrentLesson({ title: "", is_free: false, video_duration: 10 }); setTargetModuleId(module.id); setIsLessonDialogOpen(true); }}>
-                                            <Plus className="w-5 h-5 mr-3 text-primary group-hover:scale-125 transition-transform" />
-                                            {t('admin.curriculum.addLesson')}
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                                        )}
+                                    </SortableItem>
+                                ))}
+                            </SortableContext>
+                        </DndContext>
                     </TabsContent>
 
                     <TabsContent value="grading">
@@ -496,9 +506,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                             <span className="font-black text-primary text-xl">%</span>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="space-y-4">
                                     <div className="flex items-center justify-between p-6 bg-muted/30 rounded-3xl border border-border">
                                         <div className="space-y-1">
                                             <h4 className="font-black text-foreground">{t('admin.curriculum.requiredFinalScore')}</h4>
@@ -665,7 +673,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                     <div className="p-6 bg-primary/5 rounded-[2rem] border border-primary/10 space-y-4">
                                         <h4 className="text-sm font-black text-primary uppercase tracking-widest flex items-center gap-2">
                                             <Shield className="w-4 h-4" />
-                                            Dars Sozlamalari
+                                            {t('admin.curriculum.settings', 'Dars Sozlamalari')}
                                         </h4>
                                         <div className="grid grid-cols-1 gap-3">
                                             <div className="flex items-center justify-between p-4 bg-background/50 rounded-2xl border border-white/5">
@@ -685,7 +693,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                                     <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
                                                         <Lock className="w-5 h-5 text-red-500" />
                                                     </div>
-                                                    <span className="font-bold text-sm text-foreground">{t('admin.curriculum.locked')}</span>
+                                                    <span className="font-bold text-sm text-foreground">{t('admin.curriculum.locked', 'Qulflangan')}</span>
                                                 </div>
                                                 <Switch
                                                     checked={currentLesson?.is_locked || false}
@@ -755,25 +763,44 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                     </div>
 
                                     <div className="space-y-3">
-                                        <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">Talab Qilinadigan Dars</label>
+                                        <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.requiredLesson', 'Talab qilinadigan dars')}</label>
                                         <Select
                                             value={currentLesson?.required_lesson?.toString() || "none"}
                                             onValueChange={(val) => setCurrentLesson({ ...currentLesson, required_lesson: val === "none" ? null : parseInt(val) })}
                                         >
-                                            <SelectTrigger className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-bold">
+                                            <SelectTrigger className="h-14 rounded-2xl bg-muted/30 border-none shadow-inner font-bold focus:ring-primary/50 transition-all">
                                                 <div className="flex items-center gap-2">
                                                     <Lock className="w-4 h-4 text-primary" />
-                                                    <SelectValue placeholder={t('admin.curriculum.selectLesson')} />
+                                                    <SelectValue placeholder={t('admin.curriculum.selectLesson', "Darsni tanlang")} />
                                                 </div>
                                             </SelectTrigger>
-                                            <SelectContent className="rounded-2xl border-border bg-card/95 backdrop-blur-xl">
-                                                <SelectItem value="none" className="rounded-xl">{t('admin.curriculum.noRequirement')}</SelectItem>
-                                                {modules.flatMap(m => m.lessons)
-                                                    .filter(l => l.id !== currentLesson?.id)
-                                                    .map(l => (
-                                                        <SelectItem key={l.id} value={l.id.toString()} className="rounded-xl">{l.title}</SelectItem>
-                                                    ))
-                                                }
+                                            <SelectContent className="rounded-3xl border-border bg-card/95 backdrop-blur-2xl p-2 shadow-2xl max-h-[350px]">
+                                                <SelectItem value="none" className="rounded-xl h-11 font-bold text-muted-foreground focus:bg-primary/5 focus:text-primary mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <Unlock className="w-4 h-4" />
+                                                        {t('admin.curriculum.noRequirement', 'Talab yo\'q (Ochiq dars)')}
+                                                    </div>
+                                                </SelectItem>
+                                                {modules.map(module => {
+                                                    const validLessons = module.lessons.filter(l => l.id !== currentLesson?.id);
+                                                    if (validLessons.length === 0) return null;
+
+                                                    return (
+                                                        <SelectGroup key={module.id} className="mb-2 last:mb-0">
+                                                            <SelectLabel className="font-black text-xs text-primary/70 uppercase tracking-widest px-2 py-1.5 bg-primary/5 rounded-lg mb-1">
+                                                                {module.title}
+                                                            </SelectLabel>
+                                                            {validLessons.map(l => (
+                                                                <SelectItem key={l.id} value={l.id.toString()} className="rounded-xl font-bold focus:bg-primary/10 pl-6 h-10 transition-colors">
+                                                                    <div className="flex items-center gap-2 truncate pr-4">
+                                                                        <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                                                                        <span className="truncate">{l.title}</span>
+                                                                    </div>
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectGroup>
+                                                    );
+                                                })}
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -794,10 +821,10 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                     <div className="p-6 bg-orange-500/5 rounded-[2rem] border border-orange-500/10 space-y-4">
                                         <h4 className="text-sm font-black text-orange-500 uppercase tracking-widest flex items-center gap-2">
                                             <Trophy className="w-4 h-4" />
-                                            Gamifikatsiya
+                                            {t('admin.curriculum.gamification', 'Gamifikatsiya')}
                                         </h4>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">Dars XP Balli</label>
+                                            <label className="text-xs font-black text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonXp', 'Dars XP Balli')}</label>
                                             <div className="relative">
                                                 <Input
                                                     type="number"
@@ -826,21 +853,19 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                 </Dialog>
 
                 {/* Quiz Editor Dialog */}
-                {
-                    selectedLessonForQuiz && (
-                        <QuizEditor
-                            isOpen={isQuizEditorOpen}
-                            onClose={() => {
-                                setIsQuizEditorOpen(false);
-                                setSelectedLessonForQuiz(null);
-                            }}
-                            lessonId={selectedLessonForQuiz.id}
-                            lessonTitle={selectedLessonForQuiz.title}
-                        />
-                    )
-                }
-            </div >
-        </div >
+                {selectedLessonForQuiz && (
+                    <QuizEditor
+                        isOpen={isQuizEditorOpen}
+                        onClose={() => {
+                            setIsQuizEditorOpen(false);
+                            setSelectedLessonForQuiz(null);
+                        }}
+                        lessonId={selectedLessonForQuiz.id}
+                        lessonTitle={selectedLessonForQuiz.title}
+                    />
+                )}
+            </div>
+        </div>
     );
 };
 

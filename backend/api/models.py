@@ -1328,6 +1328,10 @@ class TeacherProfile(models.Model):
     youtube_channel = models.URLField(blank=True, null=True)
     linkedin_profile = models.URLField(blank=True, null=True)
     
+    # Identity Verification
+    is_identity_verified = models.BooleanField(default=False)
+    identity_document = models.ImageField(upload_to='teacher_docs/', blank=True, null=True)
+    
     # Verification
     VERIFICATION_STATUS = [
         ('PENDING', 'Pending Verification'),

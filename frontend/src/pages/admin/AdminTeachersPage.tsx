@@ -9,6 +9,7 @@ import {
     Edit2,
     Search,
     Shield,
+    ShieldCheck,
     CheckCircle,
     XCircle,
     Clock,
@@ -26,7 +27,9 @@ import {
     Instagram,
     Youtube,
     Send,
-    Lock
+    Lock,
+    Users,
+    TrendingUp
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,6 +68,9 @@ import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import TeacherStats from "@/components/admin/TeacherStats";
+import TeacherVerificationSheet from "@/components/admin/TeacherVerificationSheet";
+
 
 interface TeacherProfile {
     bio: string;
@@ -77,6 +83,8 @@ interface TeacherProfile {
     youtube_channel?: string;
     linkedin_profile?: string;
     approved_at?: string;
+    is_identity_verified: boolean;
+    identity_document?: string;
 }
 
 interface Teacher {
@@ -92,6 +100,10 @@ interface Teacher {
     teacher_profile?: TeacherProfile;
     is_active: boolean;
     date_joined: string;
+    courses_count: number;
+    students_count: number;
+    total_revenue: number;
+    olympiads_count: number;
 }
 
 const BASE_URL = API_URL.replace('/api', '');
@@ -109,6 +121,7 @@ const AdminTeachersPage = () => {
     const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [verificationSheetOpen, setVerificationSheetOpen] = useState(false);
 
     // Message State
     const [messageDialogOpen, setMessageDialogOpen] = useState(false);
@@ -158,6 +171,7 @@ const AdminTeachersPage = () => {
 
             toast.success(t('admin.statusChangedTo', { status }));
             setRejectDialogOpen(false);
+            setVerificationSheetOpen(false);
             setRejectionReason("");
             fetchTeachers();
             if (selectedTeacher?.id === teacherId) {
@@ -177,6 +191,26 @@ const AdminTeachersPage = () => {
             await axios.post(`${API_URL}/users/${userId}/toggle_active/`, {}, { headers: getAuthHeader() });
             setTeachers(teachers.map(t => t.id === userId ? { ...t, is_active: !currentActive } : t));
             toast.success(!currentActive ? t('common.activate') : t('common.block'));
+        } catch (error) {
+            toast.error(t('common.error'));
+        }
+    };
+
+    const handleToggleIdentity = async (userId: number) => {
+        try {
+            const res = await axios.post(`${API_URL}/users/${userId}/toggle_identity_verification/`, {}, { headers: getAuthHeader() });
+            toast.success(res.data.message);
+            fetchTeachers();
+            if (selectedTeacher?.id === userId) {
+                // Update local state if viewing
+                setSelectedTeacher(prev => prev ? ({
+                    ...prev,
+                    teacher_profile: {
+                        ...prev.teacher_profile!,
+                        is_identity_verified: res.data.is_identity_verified
+                    }
+                }) : null);
+            }
         } catch (error) {
             toast.error(t('common.error'));
         }
@@ -449,6 +483,47 @@ const AdminTeachersPage = () => {
                 </Dialog>
             </div>
 
+            {/* Global Stats Summary */}
+            {!loading && (
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <Card className="rounded-[32px] border-none shadow-sm bg-blue-500 text-white overflow-hidden relative group">
+                        <div className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 bg-white/10 rounded-full transition-transform group-hover:scale-110" />
+                        <CardContent className="p-8 relative">
+                            <Users className="w-10 h-10 mb-4 opacity-80" />
+                            <h3 className="text-sm font-black uppercase tracking-widest opacity-80 mb-1">{t('admin.totalTeachers')}</h3>
+                            <p className="text-4xl font-black">{teachers.length}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="rounded-[32px] border-none shadow-sm bg-yellow-500 text-white overflow-hidden relative group">
+                        <div className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 bg-white/10 rounded-full transition-transform group-hover:scale-110" />
+                        <CardContent className="p-8 relative">
+                            <Clock className="w-10 h-10 mb-4 opacity-80" />
+                            <h3 className="text-sm font-black uppercase tracking-widest opacity-80 mb-1">{t('admin.pendingVerification')}</h3>
+                            <p className="text-4xl font-black">{teachers.filter(t => t.teacher_profile?.verification_status === 'PENDING').length}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="rounded-[32px] border-none shadow-sm bg-green-600 text-white overflow-hidden relative group">
+                        <div className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 bg-white/10 rounded-full transition-transform group-hover:scale-110" />
+                        <CardContent className="p-8 relative">
+                            <ShieldCheck className="w-10 h-10 mb-4 opacity-80" />
+                            <h3 className="text-sm font-black uppercase tracking-widest opacity-80 mb-1">{t('admin.identityVerified')}</h3>
+                            <p className="text-4xl font-black">{teachers.filter(t => t.teacher_profile?.is_identity_verified).length}</p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="rounded-[32px] border-none shadow-sm bg-primary text-primary-foreground overflow-hidden relative group">
+                        <div className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 bg-white/10 rounded-full transition-transform group-hover:scale-110" />
+                        <CardContent className="p-8 relative">
+                            <TrendingUp className="w-10 h-10 mb-4 opacity-80" />
+                            <h3 className="text-sm font-black uppercase tracking-widest opacity-80 mb-1">{t('admin.activeNow')}</h3>
+                            <p className="text-4xl font-black">{teachers.filter(t => t.is_active).length}</p>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+
             {/* Filter Toolbar */}
             <div className="bg-card p-6 rounded-3xl border border-border shadow-sm flex flex-col md:flex-row gap-6 justify-between items-center">
                 <div className="relative w-full md:w-[400px] group">
@@ -523,19 +598,14 @@ const AdminTeachersPage = () => {
                                             <>
                                                 <DropdownMenuItem
                                                     className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-green-600 focus:text-green-600 focus:bg-green-50 dark:focus:bg-green-900/20 font-bold"
-                                                    onClick={() => handleVerifyStatus(teacher.id, 'APPROVED')}
+                                                    onClick={() => { setSelectedTeacher(teacher); setVerificationSheetOpen(true); }}
                                                 >
-                                                    <CheckCircle className="w-4 h-4" /> {t('common.approve')}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem
-                                                    className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-red-600 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-900/20 font-bold"
-                                                    onClick={() => { setSelectedTeacher(teacher); setRejectDialogOpen(true); }}
-                                                >
-                                                    <XCircle className="w-4 h-4" /> {t('common.reject')}
+                                                    <ShieldCheck className="w-4 h-4" /> {t('admin.verify')}
                                                 </DropdownMenuItem>
                                                 <DropdownMenuSeparator className="my-2" />
                                             </>
                                         )}
+
 
                                         {teacher.is_active ? (
                                             <DropdownMenuItem
@@ -620,22 +690,16 @@ const AdminTeachersPage = () => {
                         </CardContent>
 
                         {teacher.teacher_profile?.verification_status === 'PENDING' && (
-                            <CardFooter className="px-8 pb-8 pt-0 grid grid-cols-2 gap-3">
+                            <CardFooter className="px-8 pb-8 pt-0">
                                 <Button
-                                    variant="outline"
-                                    className="rounded-xl h-12 font-black border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 dark:border-red-900/30 dark:hover:bg-red-900/20"
-                                    onClick={() => { setSelectedTeacher(teacher); setRejectDialogOpen(true); }}
+                                    className="w-full rounded-xl h-12 font-black bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+                                    onClick={() => { setSelectedTeacher(teacher); setVerificationSheetOpen(true); }}
                                 >
-                                    <XCircle className="w-4 h-4 mr-2" /> {t('common.reject')}
-                                </Button>
-                                <Button
-                                    className="rounded-xl h-12 font-black bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20"
-                                    onClick={() => handleVerifyStatus(teacher.id, 'APPROVED')}
-                                >
-                                    <CheckCircle className="w-4 h-4 mr-2" /> {t('common.approve')}
+                                    <ShieldCheck className="w-4 h-4 mr-2" /> {t('admin.verificationFlow')}
                                 </Button>
                             </CardFooter>
                         )}
+
 
                         {teacher.teacher_profile?.verification_status === 'REJECTED' && (
                             <CardFooter className="px-8 pb-8 pt-0">
@@ -718,46 +782,31 @@ const AdminTeachersPage = () => {
                                                 <MessageSquare className="w-4 h-4 mr-2" /> {t('admin.writeMessage')}
                                             </Button>
                                             {selectedTeacher.teacher_profile?.verification_status === 'PENDING' && (
-                                                <>
-                                                    <Button
-                                                        className="rounded-xl h-12 px-6 font-black bg-green-600 hover:bg-green-700 text-white shadow-xl shadow-green-600/20"
-                                                        onClick={() => handleVerifyStatus(selectedTeacher.id, 'APPROVED')}
-                                                    >
-                                                        <CheckCircle className="w-4 h-4 mr-2" /> {t('common.approve')}
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        className="rounded-xl h-12 px-6 font-bold border-2 border-red-500/50 text-red-500 hover:bg-red-500/10"
-                                                        onClick={() => setRejectDialogOpen(true)}
-                                                    >
-                                                        <XCircle className="w-4 h-4 mr-2" /> {t('common.reject')}
-                                                    </Button>
-                                                </>
+                                                <Button
+                                                    className="rounded-xl h-12 px-6 font-black bg-primary text-primary-foreground shadow-xl shadow-primary/20"
+                                                    onClick={() => setVerificationSheetOpen(true)}
+                                                >
+                                                    <ShieldCheck className="w-4 h-4 mr-2" /> {t('admin.verificationFlow')}
+                                                </Button>
                                             )}
                                         </div>
                                     </div>
 
                                     <Separator className="bg-border/60" />
 
-                                    {/* Stats Grid */}
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('admin.experienceYears')}</p>
-                                            <p className="text-xl font-black">{selectedTeacher.teacher_profile?.experience_years || 0} {t('admin.experienceYear')}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('admin.coursesCount')}</p>
-                                            <p className="text-xl font-black">{selectedTeacher.courses_count || 0} {t('admin.countUnit')}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('admin.subject')}</p>
-                                            <p className="text-xl font-black truncate max-w-[150px]">{selectedTeacher.teacher_profile?.specialization || "-"}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('common.dateJoined')}</p>
-                                            <p className="text-xl font-black">{new Date(selectedTeacher.date_joined).toLocaleDateString()}</p>
-                                        </div>
-                                    </div>
+                                    {/* Stats Component */}
+                                    <TeacherStats
+                                        stats={{
+                                            courses: selectedTeacher.courses_count,
+                                            students: selectedTeacher.students_count,
+                                            revenue: selectedTeacher.total_revenue,
+                                            olympiads: selectedTeacher.olympiads_count,
+                                            rating: 5.0,
+                                            is_verified: selectedTeacher.teacher_profile?.verification_status === 'APPROVED',
+                                            is_identity_verified: selectedTeacher.teacher_profile?.is_identity_verified || false
+                                        }}
+                                    />
+
 
                                     {/* Bio Section */}
                                     <div className="space-y-4">
@@ -965,6 +1014,14 @@ const AdminTeachersPage = () => {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <TeacherVerificationSheet
+                teacher={selectedTeacher}
+                open={verificationSheetOpen}
+                onOpenChange={setVerificationSheetOpen}
+                onVerify={handleVerifyStatus}
+                onToggleIdentity={handleToggleIdentity}
+            />
         </div>
     );
 };

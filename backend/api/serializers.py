@@ -87,7 +87,8 @@ class TeacherProfileSerializer(serializers.ModelSerializer):
         model = TeacherProfile
         fields = ['bio', 'experience_years', 'specialization', 'telegram_username', 
                   'instagram_username', 'youtube_channel', 'linkedin_profile', 
-                  'verification_status', 'rejection_reason', 'approved_at', 'approved_by', 'is_premium']
+                  'verification_status', 'rejection_reason', 'approved_at', 'approved_by', 'is_premium',
+                  'is_identity_verified', 'identity_document']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -104,11 +105,12 @@ class UserSerializer(serializers.ModelSerializer):
                   'ranking', 'certificates_count',
                   'birth_date', 'region', 'school', 'grade', 'language', 'password',
                   'telegram_id', 'telegram_linking_token', 'telegram_connected_at',
-                  'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'teacher_profile', 'subjects']
+                   'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'teacher_profile', 'subjects',
+                   'courses_count', 'students_count', 'total_revenue', 'olympiads_count']
         read_only_fields = ['id', 'date_joined', 'xp', 'level', 'last_login', 
                             'ranking', 'certificates_count',
                             'telegram_id', 'telegram_linking_token', 'telegram_connected_at',
-                            'teacher_profile', 'subjects']
+                            'teacher_profile', 'subjects', 'courses_count', 'students_count', 'total_revenue', 'olympiads_count']
     
     def get_full_name(self, obj):
         return obj.get_full_name() or obj.username
@@ -130,6 +132,32 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.role == 'TEACHER':
             return [{'id': s.id, 'name': s.name, 'color': s.color} for s in obj.subjects.all()]
         return []
+
+    def get_courses_count(self, obj):
+        if obj.role == 'TEACHER':
+            return obj.courses.count()
+        return 0
+
+    def get_students_count(self, obj):
+        if obj.role == 'TEACHER':
+            # Sum of students_count from all teacher's courses
+            from django.db.models import Sum
+            return obj.courses.aggregate(total=Sum('students_count'))['total'] or 0
+        return 0
+
+    def get_total_revenue(self, obj):
+        if obj.role == 'TEACHER':
+            # Check if TeacherWallet exists and return total_earned
+            try:
+                return float(obj.teacher_wallet.total_earned)
+            except:
+                return 0.0
+        return 0.0
+
+    def get_olympiads_count(self, obj):
+        if obj.role == 'TEACHER':
+            return obj.olympiads.count()
+        return 0
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -754,6 +782,7 @@ class CourseSerializer(serializers.ModelSerializer):
     teacher_avatar = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
+    total_duration = serializers.SerializerMethodField()
     
     class Meta:
         model = Course
@@ -762,8 +791,18 @@ class CourseSerializer(serializers.ModelSerializer):
             'level', 'price', 'teacher_percentage', 'platform_percentage',
             'is_active', 'status', 'lessons_count', 'students_count',
             'rating', 'teacher_name', 'teacher_avatar', 'is_enrolled', 'created_at',
-            'lock_strategy', 'completion_min_progress', 'required_final_score'
+            'lock_strategy', 'completion_min_progress', 'required_final_score', 'total_duration'
         ]
+
+    def get_total_duration(self, obj):
+        from django.db.models import Sum
+        total_seconds = obj.modules.aggregate(total=Sum('lessons__video_duration'))['total'] or 0
+        total_minutes = total_seconds // 60
+        hours = total_minutes // 60
+        minutes = total_minutes % 60
+        if hours > 0:
+            return f"{hours}h {minutes}m"
+        return f"{minutes}m"
 
     def get_subject_name(self, obj):
         if obj.subject:
