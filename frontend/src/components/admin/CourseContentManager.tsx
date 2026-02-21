@@ -133,7 +133,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
             try {
                 await axios.post(`${API_URL}/courses/${courseId}/reorder_lessons/`, { items }, { headers: getAuthHeader() });
                 fetchContent();
-                toast.success(t('admin.curriculum.reorderSuccess') || "Tartib saqlandi");
+                toast.success(t('admin.curriculum.reorderSuccess'));
             } catch (error) {
                 toast.error(t('admin.curriculum.error'));
             }
@@ -153,7 +153,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
             try {
                 await axios.post(`${API_URL}/courses/${courseId}/reorder_modules/`, { items }, { headers: getAuthHeader() });
                 fetchContent();
-                toast.success(t('admin.curriculum.reorderSuccess') || "Tartib saqlandi");
+                toast.success(t('admin.curriculum.reorderSuccess'));
             } catch (error) {
                 toast.error(t('admin.curriculum.error'));
             }
