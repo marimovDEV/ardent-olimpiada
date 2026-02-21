@@ -10,14 +10,25 @@ export const getImageUrl = (path: string | null | undefined, name?: string) => {
         return path;
     }
 
-    // Ensure path starts with /
     let cleanPath = path;
+
+    // Fix common path issues
     if (cleanPath.startsWith('.')) {
         cleanPath = cleanPath.substring(cleanPath.indexOf('/'));
     }
 
+    // If it starts with common upload directories but NOT /media/, prepend /media/
+    if ((cleanPath.startsWith('courses/') || cleanPath.startsWith('avatars/') || cleanPath.startsWith('olympiads/')) && !cleanPath.startsWith('/media/')) {
+        cleanPath = '/media/' + cleanPath;
+    }
+
     if (!cleanPath.startsWith('/')) {
         cleanPath = '/' + cleanPath;
+    }
+
+    // Ensure we don't have duplicate /media/media/
+    if (cleanPath.startsWith('/media/media/')) {
+        cleanPath = cleanPath.substring(6);
     }
 
     return `${getBaseUrl()}${cleanPath}`;

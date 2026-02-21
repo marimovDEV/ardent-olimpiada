@@ -276,7 +276,6 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                 const res = await axios[method](url, data, {
                     headers: {
                         ...getAuthHeader(),
-                        'Content-Type': 'multipart/form-data'
                     }
                 });
 
@@ -289,9 +288,26 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                 }
                 setStep(2);
             } catch (error: any) {
+                console.error("Error saving course profile:", error.response?.data);
+                const errors = error.response?.data;
+                let errorMsg = "Ma'lumotlarni saqlashda xatolik yuz berdi";
+
+                if (errors && typeof errors === 'object') {
+                    // Collect all field errors
+                    const detail = errors.detail || errors.error;
+                    if (detail) {
+                        errorMsg = detail;
+                    } else {
+                        const fieldErrors = Object.entries(errors)
+                            .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
+                            .join(' | ');
+                        if (fieldErrors) errorMsg = fieldErrors;
+                    }
+                }
+
                 toast({
                     title: "Saqlashda xatolik",
-                    description: error.response?.data?.errors?.non_field_errors?.[0] || "Ma'lumotlarni saqlashda xatolik yuz berdi",
+                    description: errorMsg,
                     variant: "destructive"
                 });
             } finally {
@@ -311,7 +327,6 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                 await axios.patch(url, data, {
                     headers: {
                         ...getAuthHeader(),
-                        'Content-Type': 'multipart/form-data'
                     }
                 });
                 toast({ title: t('common.success') || "Muvaffaqiyatli", description: t('admin.courseUpdated') || "Kurs yangilandi" });
