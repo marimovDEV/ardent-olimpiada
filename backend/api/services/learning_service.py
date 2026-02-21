@@ -254,7 +254,16 @@ class LearningService:
         # Use course threshold (default 80%) for completion trigger
         threshold = getattr(course, 'completion_min_progress', 80)
         
-        if progress_pct >= threshold and not enrollment.completed_at:
+        # PRO UPGRADE: Check Final Exam if it exists
+        final_exam_passed = True
+        final_test = LessonTest.objects.filter(lesson__course=course, is_final=True).first()
+        if final_test:
+            final_progress = LessonProgress.objects.filter(user=user, lesson=final_test.lesson).first()
+            required_score = getattr(course, 'required_final_score', 70)
+            if not final_progress or final_progress.test_score is None or final_progress.test_score < required_score:
+                final_exam_passed = False
+
+        if progress_pct >= threshold and final_exam_passed and not enrollment.completed_at:
             enrollment.completed_at = timezone.now()
             # Reward XP for course completion
             user.add_xp(course.xp_reward, 'COURSE_ENROLL', f"Kurs yakunlandi: {course.title}")
@@ -265,16 +274,28 @@ class LearningService:
             
             # Create certificate if not already exists AND it's enabled for course
             if course.is_certificate_enabled and not Certificate.objects.filter(user=user, course=course).exists():
+                from api.utils import generate_unique_id
                 cert_number = generate_unique_id('CRT')
+                
+                # Calculate average score for certificate
+                from django.db.models import Avg
+                avg_score = LessonProgress.objects.filter(
+                    user=user, 
+                    lesson__course=course, 
+                    test_score__isnull=False
+                ).aggregate(avg=Avg('test_score'))['avg'] or 0
+
                 Certificate.objects.create(
                     cert_number=cert_number,
                     user=user,
                     course=course,
-                    grade='100%',
-                    status='PENDING' # Or APPROVED depending on business rule
+                    grade=f"{int(avg_score)}%",
+                    score=int(avg_score),
+                    status='PENDING' 
                 )
             
             # Send notification to student
+            from api.models import Notification
             Notification.objects.create(
                 user=user,
                 title="Tabriklaymiz! 🎓",

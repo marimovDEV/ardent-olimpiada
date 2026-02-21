@@ -389,7 +389,7 @@ class LessonTestSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = LessonTest
-        fields = ['id', 'min_pass_score', 'max_attempts', 'questions']
+        fields = ['id', 'min_pass_score', 'is_final', 'max_attempts', 'questions']
 
     def update(self, instance, validated_data):
         questions_data = validated_data.pop('questions', None)
@@ -439,7 +439,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ['id', 'course', 'module', 'title', 'description', 'video_url', 'pdf_url', 
-                  'video_duration', 'duration', 'order', 'is_free', 'is_locked', 'required_lesson', 'test', 'created_at']
+                  'video_duration', 'duration', 'order', 'is_free', 'is_locked', 'min_watch_percent', 'required_lesson', 'test', 'created_at']
         read_only_fields = ['id', 'created_at']
 
     def update(self, instance, validated_data):
@@ -762,7 +762,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'level', 'price', 'teacher_percentage', 'platform_percentage',
             'is_active', 'status', 'lessons_count', 'students_count',
             'rating', 'teacher_name', 'teacher_avatar', 'is_enrolled', 'created_at',
-            'lock_strategy', 'completion_min_progress'
+            'lock_strategy', 'completion_min_progress', 'required_final_score'
         ]
 
     def get_subject_name(self, obj):
@@ -811,7 +811,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
                   'level_display', 'status', 'status_display', 'subject', 'subject_name', 'subject_details', 'language', 'duration', 'lessons_count', 
                   'teacher_percentage', 'platform_percentage',
                   'rating', 'students_count', 'is_featured', 'is_active', 'xp_reward',
-                  'lock_strategy', 'completion_min_progress',
+                  'lock_strategy', 'completion_min_progress', 'required_final_score',
                   'is_enrolled', 'enrollment', 'created_at', 'updated_at', 'lessons', 'modules']
 
     def get_subject_name(self, obj):
@@ -844,7 +844,7 @@ class CourseCreateSerializer(serializers.ModelSerializer):
         model = Course
         fields = ['title', 'description', 'thumbnail', 'price', 'level',
                   'subject', 'language', 'duration', 'is_featured', 'is_active', 'status', 'xp_reward',
-                  'lock_strategy', 'completion_min_progress']
+                  'lock_strategy', 'completion_min_progress', 'required_final_score']
 
 
 

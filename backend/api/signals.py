@@ -183,7 +183,7 @@ def olympiad_status_change(sender, instance, **kwargs):
 @receiver(post_delete, sender='api.Lesson')
 def update_course_stats(sender, instance, **kwargs):
     """
-    Update lessons_count and duration for a Course when a Lesson is added/deleted
+    Update lessons_count and duration for a Course when a Lesson is added/deleted/updated
     """
     course = instance.course
     # Count lessons
@@ -192,8 +192,16 @@ def update_course_stats(sender, instance, **kwargs):
     # Calculate duration
     from django.db.models import Sum
     total_sec = course.lessons.aggregate(total=Sum('video_duration'))['total'] or 0
-    minutes = total_sec // 60
-    course.duration = f"{minutes} min"
+    
+    if total_sec > 0:
+        hours = total_sec // 3600
+        minutes = (total_sec % 3600) // 60
+        if hours > 0:
+            course.duration = f"{hours} soat {minutes} daqiqa"
+        else:
+            course.duration = f"{minutes} daqiqa"
+    else:
+        course.duration = "0 daqiqa"
     
     course.save(update_fields=['lessons_count', 'duration'])
 

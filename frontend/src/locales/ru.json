@@ -593,7 +593,17 @@
       "locked": "Заблокировано",
       "requiredLesson": "Обязательный урок",
       "selectLesson": "Выберите урок",
-      "noRequirement": "Нет требований"
+      "noRequirement": "Нет требований",
+      "grading": "Правила оценки",
+      "certification": "Сертификация",
+      "completionThreshold": "Мин. процент просмотра",
+      "completionThresholdDesc": "Процент видео, который должен быть просмотрен для завершения урока",
+      "requiredFinalScore": "Проходной балл фин. экзамена",
+      "requiredFinalScoreDesc": "Балл, необходимый для получения сертификата",
+      "isCertificateEnabled": "Выдавать сертификат",
+      "isCertificateEnabledDesc": "Опция для генерации сертификата при успешном окончании курса",
+      "isFinalExam": "Финальный экзамен",
+      "isFinalExamDesc": "Должен ли этот тест считаться итоговым экзаменом курса?"
     },
     "analytics": {
       "title": "Аналитика",

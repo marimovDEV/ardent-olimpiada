@@ -268,6 +268,7 @@ class Course(models.Model):
     # Advanced Settings
     is_certificate_enabled = models.BooleanField(default=False)
     certificate_template = models.CharField(max_length=100, blank=True, null=True, help_text="Template name or path")
+    required_final_score = models.IntegerField(default=70, help_text="Sertifikat olish uchun yakuniy imtihondan kutilayotgan minimal ball")
     
     # Payment fields for course creation
     creation_fee_paid = models.BooleanField(default=False, help_text="Whether teacher paid course creation fee")
@@ -379,6 +380,7 @@ class Lesson(models.Model):
         help_text="Bu dars tugamasdan yuqoridagi dars ochilmaydi"
     )
     xp_amount = models.IntegerField(default=10, help_text="XP awarded for completing this lesson")
+    min_watch_percent = models.IntegerField(default=80, help_text="Dars tugallangan hisoblanishi uchun minimal ko'rish foizi")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -474,6 +476,7 @@ class LessonTest(models.Model):
     lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='test')
     questions = models.ManyToManyField('Question', related_name='lesson_tests')
     min_pass_score = models.IntegerField(default=70, help_text="Percentage 0-100")
+    is_final = models.BooleanField(default=False, help_text="Agar True bo'lsa, bu kursning yakuniy imtihoni hisoblanadi")
     max_attempts = models.IntegerField(default=3)
     
     class Meta:

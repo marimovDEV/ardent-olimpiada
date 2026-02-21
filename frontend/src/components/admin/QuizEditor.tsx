@@ -24,6 +24,7 @@ import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 
 interface Question {
     id?: number;
@@ -47,6 +48,7 @@ const QuizEditor = ({ open, onOpenChange, lessonId, lessonTitle }: QuizEditorPro
     const { t } = useTranslation();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [minPassScore, setMinPassScore] = useState(70);
+    const [isFinal, setIsFinal] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -63,9 +65,11 @@ const QuizEditor = ({ open, onOpenChange, lessonId, lessonTitle }: QuizEditorPro
             if (test) {
                 setQuestions(test.questions || []);
                 setMinPassScore(test.min_pass_score || 70);
+                setIsFinal(test.is_final || false);
             } else {
                 setQuestions([]);
                 setMinPassScore(70);
+                setIsFinal(false);
             }
         } catch (error) {
             console.error("Quiz fetch error:", error);
@@ -109,6 +113,7 @@ const QuizEditor = ({ open, onOpenChange, lessonId, lessonTitle }: QuizEditorPro
             const payload = {
                 test: {
                     min_pass_score: minPassScore,
+                    is_final: isFinal,
                     questions: questions.map((q, i) => ({
                         ...q,
                         order: i + 1,
@@ -134,14 +139,26 @@ const QuizEditor = ({ open, onOpenChange, lessonId, lessonTitle }: QuizEditorPro
                         <DialogTitle className="text-3xl font-black">{t('admin.quizEditor') || "Test muharriri"}</DialogTitle>
                         <p className="text-muted-foreground font-medium mt-1">{lessonTitle}</p>
                     </div>
-                    <div className="flex items-center gap-4 bg-muted/50 px-6 py-3 rounded-2xl border border-border">
-                        <label className="text-xs font-black uppercase text-muted-foreground tracking-widest">{t('admin.passScore') || "O'tish bali"} (%)</label>
-                        <Input
-                            type="number"
-                            value={minPassScore}
-                            onChange={(e) => setMinPassScore(parseInt(e.target.value))}
-                            className="w-16 h-8 bg-background border-none text-center font-bold"
-                        />
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 bg-blue-50 px-6 py-3 rounded-2xl border border-blue-100">
+                            <div className="flex flex-col">
+                                <label className="text-[10px] font-black uppercase text-blue-600 tracking-widest">{t('admin.curriculum.isFinalExam')}</label>
+                                <p className="text-[9px] text-blue-400 font-bold max-w-[120px] leading-tight mt-0.5">{t('admin.curriculum.isFinalExamDesc')}</p>
+                            </div>
+                            <Switch
+                                checked={isFinal}
+                                onCheckedChange={setIsFinal}
+                            />
+                        </div>
+                        <div className="flex items-center gap-4 bg-muted/50 px-6 py-3 rounded-2xl border border-border">
+                            <label className="text-xs font-black uppercase text-muted-foreground tracking-widest">{t('admin.passScore') || "O'tish bali"} (%)</label>
+                            <Input
+                                type="number"
+                                value={minPassScore}
+                                onChange={(e) => setMinPassScore(parseInt(e.target.value))}
+                                className="w-16 h-8 bg-background border-none text-center font-bold"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -178,8 +195,8 @@ const QuizEditor = ({ open, onOpenChange, lessonId, lessonTitle }: QuizEditorPro
                                     <div key={oIdx} className="flex items-center gap-3 group/opt">
                                         <div
                                             className={`w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition-all border-2 ${q.correct_answer === oIdx.toString()
-                                                    ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-500/20'
-                                                    : 'bg-background border-border text-muted-foreground hover:border-primary/30'
+                                                ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-500/20'
+                                                : 'bg-background border-border text-muted-foreground hover:border-primary/30'
                                                 }`}
                                             onClick={() => handleQuestionChange(qIdx, 'correct_answer', oIdx.toString())}
                                         >

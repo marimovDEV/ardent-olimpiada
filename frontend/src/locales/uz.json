@@ -540,7 +540,17 @@
       "locked": "Qulflangan",
       "requiredLesson": "Talab qilinadigan dars",
       "selectLesson": "Darsni tanlang",
-      "noRequirement": "Talab yo'q"
+      "noRequirement": "Talab yo'q",
+      "grading": "Baholash qoidalari",
+      "certification": "Sertifikatlash",
+      "completionThreshold": "Minimal ko'rish foizi",
+      "completionThresholdDesc": "Darsni tugatgan hisoblanishi uchun ko'rilishi shart bo'lgan video foizi",
+      "requiredFinalScore": "Final imtihon o'tish balli",
+      "requiredFinalScoreDesc": "Sertifikat olish uchun kerakli ball",
+      "isCertificateEnabled": "Sertifikat berish",
+      "isCertificateEnabledDesc": "Kursni muvaffaqiyatli tugatganlarga sertifikat generatsiya qilish",
+      "isFinalExam": "Final imtihon",
+      "isFinalExamDesc": "Bu test kursning yakuniy imtihoni hisoblansinmi?"
     },
     "analytics": {
       "title": "Analitika",
