@@ -344,130 +344,133 @@ const AdminCoursesPage = () => {
             {/* Courses Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredCourses.map((course) => (
-                    <div key={course.id} className="group bg-card rounded-[2rem] border border-border shadow-sm overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-                        <div className="flex flex-col md:flex-row h-full">
-                            {/* Left: Thumbnail (2/5 on desktop) */}
-                            <div className="relative w-full md:w-[280px] h-48 md:h-auto overflow-hidden bg-muted shrink-0">
-                                {course.thumbnail_url ? (
-                                    <img src={getImageUrl(course.thumbnail_url)} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-blue-500/10">
-                                        <GraduationCap className="w-12 h-12 text-primary/20" />
-                                    </div>
-                                )}
-                                <div className="absolute top-4 left-4">
-                                    {getStatusBadge(course)}
+                    <div key={course.id} className="group bg-card/40 backdrop-blur-md rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden hover:bg-card/60 hover:border-primary/20 hover:shadow-primary/5 transition-all duration-500 flex flex-col">
+                        {/* Thumbnail Area */}
+                        <div className="relative aspect-video w-full overflow-hidden bg-muted/20">
+                            {course.thumbnail_url ? (
+                                <img
+                                    src={getImageUrl(course.thumbnail_url)}
+                                    alt={course.title}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 via-primary/5 to-transparent">
+                                    <GraduationCap className="w-16 h-16 text-primary/30" />
+                                </div>
+                            )}
+
+                            {/* Status Overlay */}
+                            <div className="absolute top-4 left-4 z-10">
+                                {getStatusBadge(course)}
+                            </div>
+
+                            {/* Subject Overlay */}
+                            <div className="absolute top-4 right-4 z-10">
+                                <Badge className="bg-background/80 backdrop-blur-md text-foreground border-white/10 font-bold uppercase tracking-wider px-3 py-1 rounded-full text-[10px]">
+                                    {course.subject_name}
+                                </Badge>
+                            </div>
+
+                            {/* Price Badge */}
+                            <div className="absolute bottom-4 right-4 z-10">
+                                <div className="bg-primary px-4 py-2 rounded-2xl shadow-xl shadow-primary/20">
+                                    <p className="text-xl font-black text-primary-foreground leading-none">
+                                        {formatMoney(course.price)}
+                                    </p>
                                 </div>
                             </div>
 
-                            {/* Middle & Right: Content */}
-                            <div className="flex-1 flex flex-col p-6 min-w-0">
-                                <div className="flex flex-col lg:flex-row justify-between gap-4 flex-1">
-                                    {/* Middle: Info */}
-                                    <div className="space-y-2 flex-1 min-w-0">
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="secondary" className="bg-primary/5 text-primary border-none font-bold text-[10px] uppercase tracking-wider">
-                                                {course.subject_name}
-                                            </Badge>
-                                            <Badge variant="outline" className="text-[10px] font-bold border-border">
-                                                {course.level}
-                                            </Badge>
-                                        </div>
-                                        <h3 className="text-xl font-black text-foreground line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h3>
-                                        <p className="text-sm text-muted-foreground line-clamp-2 font-medium leading-relaxed">
-                                            {course.description}
-                                        </p>
-                                    </div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        </div>
 
-                                    {/* Right: Price & Main Actions */}
-                                    <div className="flex flex-col items-end gap-3 shrink-0">
-                                        <div className="text-2xl font-black text-primary">
-                                            {formatMoney(course.price)}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                className="h-11 w-11 rounded-xl border-border group-hover:border-primary/30 transition-all"
-                                                onClick={() => openEdit(course)}
-                                                title={t('admin.edit')}
-                                            >
-                                                <Edit2 className="w-4 h-4 text-muted-foreground" />
-                                            </Button>
-                                            <Button
-                                                className="h-11 px-5 rounded-xl font-black shadow-lg shadow-primary/10 flex items-center gap-2"
-                                                onClick={() => { setCurrentCourseId(course.id); setIsContentManagerOpen(true); }}
-                                            >
-                                                <Layers className="w-4 h-4" />
-                                                {t('admin.content')}
-                                            </Button>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="outline" size="icon" className="h-11 w-11 rounded-xl border-border">
-                                                        <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-border shadow-2xl">
-                                                    <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3" onClick={() => openEdit(course)}>
-                                                        <Settings2 className="w-4 h-4 text-primary" /> {t('admin.settings')}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3">
-                                                        <Eye className="w-4 h-4 text-blue-500" /> {t('admin.view')}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator className="my-2" />
-                                                    {course.status === 'PENDING' && (
-                                                        <>
-                                                            <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 text-green-600 focus:text-green-700" onClick={() => handleApprove(course.id)}>
-                                                                <ShieldCheck className="w-4 h-4" /> {t('common.approve')}
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 text-red-600 focus:text-red-700" onClick={() => handleReject(course.id)}>
-                                                                <Trash2 className="w-4 h-4" /> {t('common.reject')}
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuSeparator className="my-2" />
-                                                        </>
-                                                    )}
-                                                    <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => setDeleteId(course.id)}>
-                                                        <Trash2 className="w-4 h-4" /> {t('admin.delete')}
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </div>
+                        {/* Content Area */}
+                        <div className="p-6 flex-1 flex flex-col space-y-4">
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="text-[10px] font-bold border-primary/20 text-primary px-2 py-0 rounded-md">
+                                        {course.level}
+                                    </Badge>
+                                    <div className="flex items-center gap-1 text-yellow-500 font-bold text-xs">
+                                        <Star className="w-3 h-3 fill-yellow-500" />
+                                        {course.rating || "5.0"}
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-black text-foreground line-clamp-1 group-hover:text-primary transition-colors tracking-tight">
+                                    {course.title}
+                                </h3>
+                                <p className="text-sm text-muted-foreground line-clamp-2 font-medium leading-relaxed leading-snug opacity-80">
+                                    {course.description}
+                                </p>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center gap-2 pt-2">
+                                <Button
+                                    onClick={() => { setCurrentCourseId(course.id); setIsContentManagerOpen(true); }}
+                                    className="flex-1 h-12 rounded-2xl font-black flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary border-none shadow-none group/btn"
+                                >
+                                    <Layers className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
+                                    {t('admin.content')}
+                                </Button>
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl border-white/10 hover:bg-white/5 bg-transparent">
+                                            <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-white/5 bg-card/90 backdrop-blur-2xl shadow-2xl">
+                                        <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 focus:bg-primary/10" onClick={() => openEdit(course)}>
+                                            <Edit2 className="w-4 h-4 text-primary" /> {t('admin.edit')}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 focus:bg-blue-500/10">
+                                            <ExternalLink className="w-4 h-4 text-blue-500" /> {t('admin.view')}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator className="my-2 bg-white/5" />
+                                        {course.status === 'PENDING' && (
+                                            <>
+                                                <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 text-green-500 focus:bg-green-500/10" onClick={() => handleApprove(course.id)}>
+                                                    <ShieldCheck className="w-4 h-4" /> {t('common.approve')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 text-red-500 focus:bg-red-500/10" onClick={() => handleReject(course.id)}>
+                                                    <Trash2 className="w-4 h-4" /> {t('common.reject')}
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator className="my-2 bg-white/5" />
+                                            </>
+                                        )}
+                                        <DropdownMenuItem className="rounded-xl h-11 font-bold gap-3 text-red-500 focus:bg-red-500/10" onClick={() => setDeleteId(course.id)}>
+                                            <Trash2 className="w-4 h-4" /> {t('admin.delete')}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+
+                            {/* Stats & Teacher Footer */}
+                            <div className="pt-4 mt-auto border-t border-white/5 flex items-center justify-between">
+                                <div className="flex items-center -space-x-2">
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-full text-[11px] font-bold text-muted-foreground hover:bg-white/10 transition-colors">
+                                        <Users className="w-3.5 h-3.5 text-primary" />
+                                        {course.students_count}
+                                    </div>
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-full text-[11px] font-bold text-muted-foreground hover:bg-white/10 transition-colors">
+                                        <Clock className="w-3.5 h-3.5 text-primary" />
+                                        12h
                                     </div>
                                 </div>
 
-                                {/* Bottom: Stats Bar */}
-                                <div className="mt-6 pt-6 border-t border-border/50 flex flex-wrap items-center justify-between gap-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-xl text-xs font-bold text-muted-foreground">
-                                            <Users className="w-3.5 h-3.5 text-blue-500" />
-                                            {t('admin.studentsCountLabel', { count: course.students_count })}
-                                        </div>
-                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-xl text-xs font-bold text-muted-foreground">
-                                            <Layers className="w-3.5 h-3.5 text-primary" />
-                                            {t('admin.lessonsCountLabel', { count: course.lessons_count })}
-                                        </div>
-                                        {course.rating > 0 && (
-                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-xl text-xs font-bold text-muted-foreground">
-                                                <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                                                {course.rating}
-                                            </div>
-                                        )}
-                                        <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-xl text-xs font-bold text-muted-foreground">
-                                            <Clock className="w-3.5 h-3.5 text-green-500" />
-                                            12 {t('common.hours') || "soat"}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 rounded-full border-2 border-background bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary overflow-hidden">
+                                <div className="flex items-center gap-2 group/teacher cursor-help">
+                                    <div className="w-8 h-8 rounded-full border-2 border-white/10 p-0.5 group-hover/teacher:border-primary/50 transition-colors">
+                                        <div className="w-full h-full rounded-full bg-primary/20 overflow-hidden flex items-center justify-center">
                                             {course.teacher_avatar ? (
-                                                <img src={getImageUrl(course.teacher_avatar, course.teacher_name)} className="w-full h-full object-cover" />
+                                                <img src={getImageUrl(course.teacher_avatar)} className="w-full h-full object-cover" />
                                             ) : (
-                                                course.teacher_name?.substring(0, 1) || 'T'
+                                                <span className="text-[10px] font-black">{course.teacher_name?.charAt(0)}</span>
                                             )}
                                         </div>
-                                        <span className="text-xs font-bold text-foreground">{course.teacher_name}</span>
                                     </div>
+                                    <span className="text-[11px] font-bold text-muted-foreground group-hover/teacher:text-foreground transition-colors max-w-[80px] truncate">
+                                        {course.teacher_name}
+                                    </span>
                                 </div>
                             </div>
                         </div>
