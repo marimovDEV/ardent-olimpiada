@@ -535,7 +535,12 @@
       "noResource": "Resurs yo'q",
       "videoDuration": "{{minutes}} daqiqa",
       "lockToggled": "Dars qulflash holati yangilandi",
-      "reorderSuccess": "Tartib muvaffaqiyatli saqlandi"
+      "reorderSuccess": "Tartib muvaffaqiyatli saqlandi",
+      "lessonLocked": "Dars qulflangan",
+      "locked": "Qulflangan",
+      "requiredLesson": "Talab qilinadigan dars",
+      "selectLesson": "Darsni tanlang",
+      "noRequirement": "Talab yo'q"
     },
     "analytics": {
       "title": "Analitika",

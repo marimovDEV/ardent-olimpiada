@@ -296,7 +296,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                         className={`rounded-2xl h-11 px-8 font-bold transition-all ${activeTab === 'analytics' ? 'shadow-lg shadow-primary/20' : ''}`}
                         onClick={() => setActiveTab('analytics')}
                     >
-                        {t('admin.analytics.title') || "Analitika"}
+                        {t('admin.analytics.title')}
                     </Button>
                 </div>
 
@@ -559,7 +559,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.lessonLocked') || "Dars qulflangan"}</label>
+                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.lessonLocked')}</label>
                                             <div className="flex items-center gap-3 h-14 px-4 bg-background rounded-[1.25rem] shadow-inner">
                                                 <input
                                                     type="checkbox"
@@ -567,20 +567,20 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                                     onChange={(e) => setCurrentLesson({ ...currentLesson, is_locked: e.target.checked })}
                                                     className="w-5 h-5 rounded-lg border-muted"
                                                 />
-                                                <span className="font-bold text-foreground">{t('admin.locked')}</span>
+                                                <span className="font-bold text-foreground">{t('admin.curriculum.locked')}</span>
                                             </div>
                                         </div>
                                         <div className="space-y-2 col-span-2">
-                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.requiredLesson') || "Talab qilinadigan dars"}</label>
+                                            <label className="text-sm font-bold text-muted-foreground uppercase ml-1 tracking-widest">{t('admin.curriculum.requiredLesson')}</label>
                                             <Select
                                                 value={currentLesson?.required_lesson?.toString() || "none"}
                                                 onValueChange={(val) => setCurrentLesson({ ...currentLesson, required_lesson: val === "none" ? null : parseInt(val) })}
                                             >
                                                 <SelectTrigger className="h-14 rounded-[1.25rem] bg-background border-none shadow-inner font-bold">
-                                                    <SelectValue placeholder={t('admin.selectLesson') || "Darsni tanlang"} />
+                                                    <SelectValue placeholder={t('admin.curriculum.selectLesson')} />
                                                 </SelectTrigger>
                                                 <SelectContent className="rounded-2xl">
-                                                    <SelectItem value="none">{t('admin.noRequirement') || "Talab yo'q"}</SelectItem>
+                                                    <SelectItem value="none">{t('admin.curriculum.noRequirement')}</SelectItem>
                                                     {modules.flatMap(m => m.lessons)
                                                         .filter(l => l.id !== currentLesson?.id)
                                                         .map(l => (

@@ -588,7 +588,12 @@
       "noResource": "Нет ресурса",
       "videoDuration": "{{minutes}} минут",
       "lockToggled": "Статус блокировки урока обновлен",
-      "reorderSuccess": "Порядок успешно сохранен"
+      "reorderSuccess": "Порядок успешно сохранен",
+      "lessonLocked": "Урок заблокирован",
+      "locked": "Заблокировано",
+      "requiredLesson": "Обязательный урок",
+      "selectLesson": "Выберите урок",
+      "noRequirement": "Нет требований"
     },
     "analytics": {
       "title": "Аналитика",
