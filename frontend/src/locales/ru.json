@@ -316,6 +316,9 @@
     "courseCover": "Обложка курса (Cover Image)",
     "uploadImage": "Загрузить изображение",
     "recommendedSize": "Рекомендуется: 1200x675 (16:9)",
+    "courseAccessSettings": "Настройки доступа к курсу",
+    "lockStrategy": "Стратегия открытия уроков",
+    "completionThreshold": "Минимальный порог прохождения",
     "teacher": {
       "title": "Учитель",
       "homework": "Домашнее задание",

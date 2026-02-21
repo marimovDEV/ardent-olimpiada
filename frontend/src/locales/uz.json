@@ -323,6 +323,11 @@
     "courseCover": "Kurs Muqovasi (Cover Image)",
     "uploadImage": "Rasm yuklash",
     "recommendedSize": "Tavsiya etiladi: 1200x675 (16:9)",
+    "courseAccessSettings": "Kursga kirish sozlamalari",
+    "lockStrategy": "Darslarni ochish strategiyasi",
+    "completionThreshold": "Minimal o'zlashtirish foizi",
+    "templatePlaceholder": "Masalan: modern_gold",
+    "selectTeacher": "O'qituvchini tanlang",
     "teacher": {
       "title": "O'qituvchi",
       "homework": "Uyga vazifa",

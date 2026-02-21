@@ -116,9 +116,12 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
     const fetchTeachers = async () => {
         try {
             const res = await axios.get(`${API_URL}/users/?role=TEACHER`, { headers: getAuthHeader() });
-            setTeachers(res.data.results || res.data);
+            const data = res.data.results || res.data;
+            console.log("Fetched teachers:", data);
+            setTeachers(data);
         } catch (error) {
-            console.error(error);
+            console.error("Error fetching teachers:", error);
+            toast({ title: t('common.error'), description: t('admin.loadTeachersError'), variant: "destructive" });
         }
     };
 
