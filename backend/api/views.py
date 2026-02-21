@@ -3834,6 +3834,11 @@ class UserViewSet(viewsets.ModelViewSet):
         if 'last_name' in data: user.last_name = data['last_name']
         if 'avatar' in request.FILES:
             user.avatar = request.FILES['avatar']
+        
+        # Handle identity document
+        if 'identity_document' in request.FILES:
+            profile.identity_document = request.FILES['identity_document']
+            profile.save()
             
         user.save()
         return Response({'success': True, 'message': 'Profil yangilandi'})

@@ -43,6 +43,8 @@ const TeacherOnboarding = () => {
     });
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [identityFile, setIdentityFile] = useState<File | null>(null);
+    const [identityPreview, setIdentityPreview] = useState<string | null>(null);
 
     useEffect(() => {
         fetchProfile();
@@ -64,6 +66,7 @@ const TeacherOnboarding = () => {
                 linkedin_profile: user.teacher_profile?.linkedin_profile || ""
             });
             if (user.avatar_url) setAvatarPreview(user.avatar_url);
+            if (user.teacher_profile?.identity_document) setIdentityPreview(user.teacher_profile.identity_document);
 
             // If already verified or submission is pending (has bio), they shouldn't be here
             if (user.teacher_profile?.verification_status === 'APPROVED' ||
@@ -85,6 +88,14 @@ const TeacherOnboarding = () => {
         }
     };
 
+    const handleIdentityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setIdentityFile(file);
+            setIdentityPreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleNext = () => {
         if (step === 1) {
             if (!formData.first_name || !formData.last_name) {
@@ -102,6 +113,11 @@ const TeacherOnboarding = () => {
     };
 
     const handleSubmit = async () => {
+        if (!identityFile && !identityPreview) {
+            toast.error("Iltimos, shaxsingizni tasdiqlovchi hujjatni yuklang");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             // Upload avatar if changed
@@ -113,8 +129,19 @@ const TeacherOnboarding = () => {
                 });
             }
 
-            // Update profile
-            await axios.post(`${API_URL}/users/me/update_teacher_profile/`, formData, { headers: getAuthHeader() });
+            // Update profile with identity document if changed
+            const profileData = new FormData();
+            Object.entries(formData).forEach(([key, value]) => {
+                profileData.append(key, String(value));
+            });
+
+            if (identityFile) {
+                profileData.append('identity_document', identityFile);
+            }
+
+            await axios.post(`${API_URL}/users/me/update_teacher_profile/`, profileData, {
+                headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
+            });
 
             // Submit for verification
             await axios.post(`${API_URL}/users/me/verify_teacher/`, { status: "PENDING" }, { headers: getAuthHeader() });
@@ -148,14 +175,14 @@ const TeacherOnboarding = () => {
 
                     {/* Progress Bar */}
                     <div className="flex items-center justify-center gap-4 mt-8">
-                        {[1, 2, 3].map((s) => (
+                        {[1, 2, 3, 4].map((s) => (
                             <div key={s} className="flex items-center">
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 ${step === s ? "bg-primary text-white shadow-lg" :
                                     step > s ? "bg-green-500 text-white" : "bg-muted text-muted-foreground border-2 border-border"
                                     }`}>
                                     {step > s ? <Check className="w-5 h-5" /> : s}
                                 </div>
-                                {s < 3 && <div className={`w-12 h-1 mx-2 rounded-full ${step > s ? "bg-green-500" : "bg-muted"}`} />}
+                                {s < 4 && <div className={`w-12 h-1 mx-2 rounded-full ${step > s ? "bg-green-500" : "bg-muted"}`} />}
                             </div>
                         ))}
                     </div>
@@ -167,11 +194,13 @@ const TeacherOnboarding = () => {
                             {step === 1 && "Shaxsiy ma'lumotlar"}
                             {step === 2 && "Kasbiy ma'lumotlar"}
                             {step === 3 && "Ijtimoiy tarmoqlar"}
+                            {step === 4 && "Shaxsni tasdiqlash"}
                         </CardTitle>
                         <CardDescription className="text-base font-medium">
                             {step === 1 && "Ismingiz va professional rasmingizni yuklang."}
                             {step === 2 && "O'zingiz va tajribangiz haqida batafsil so'zlab bering."}
                             {step === 3 && "O'quvchilar sizni ijtimoiy tarmoqlarda topishlari uchun."}
+                            {step === 4 && "Shaxsingizni tasdiqlovchi hujjat (Passport/ID) nusxasini yuklang."}
                         </CardDescription>
                     </CardHeader>
 
@@ -314,6 +343,45 @@ const TeacherOnboarding = () => {
                                 </div>
                             </div>
                         )}
+
+                        {step === 4 && (
+                            <div className="space-y-8">
+                                <div className="flex flex-col items-center gap-6">
+                                    <div className="w-full aspect-video rounded-3xl bg-muted border-4 border-dashed border-border flex flex-col items-center justify-center relative overflow-hidden group">
+                                        {identityPreview ? (
+                                            <>
+                                                <img src={identityPreview} className="w-full h-full object-cover" alt="Identity Document" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <Button variant="secondary" className="rounded-xl font-bold" onClick={() => { setIdentityFile(null); setIdentityPreview(null); }}>
+                                                        Boshqa fayl tanlash
+                                                    </Button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="text-center p-10">
+                                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                                                    <Globe className="w-8 h-8 text-primary" />
+                                                </div>
+                                                <p className="text-lg font-black mb-1">Hujjat nusxasini yuklang</p>
+                                                <p className="text-sm text-muted-foreground font-medium mb-6">Passport yoki ID karta (old tomoni)</p>
+                                                <label className="inline-block">
+                                                    <Button variant="outline" className="h-12 px-8 rounded-xl font-bold border-2 pointer-events-none">
+                                                        Faylni tanlash
+                                                    </Button>
+                                                    <input type="file" className="hidden" accept="image/*,application/pdf" onChange={handleIdentityChange} />
+                                                </label>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-2xl flex gap-3 text-yellow-600 dark:text-yellow-500">
+                                        <Clock className="w-5 h-5 shrink-0" />
+                                        <p className="text-xs font-bold leading-relaxed">
+                                            Hujjat ma'lumotlari faqat shaxsingizni tasdiqlash uchun ishlatiladi va hech qachon uchinchi shaxslarga berilmaydi.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
 
                     <CardFooter className="p-10 pt-0 flex justify-between gap-4">
@@ -327,14 +395,14 @@ const TeacherOnboarding = () => {
                             </Button>
                         )}
                         <Button
-                            className={`h-14 px-10 rounded-2xl font-black transition-all shadow-lg ${step === 3 ? "bg-green-600 hover:bg-green-700 shadow-green-600/20" : "bg-primary shadow-primary/20 ml-auto"}`}
-                            onClick={step === 3 ? handleSubmit : handleNext}
+                            className={`h-14 px-10 rounded-2xl font-black transition-all shadow-lg ${step === 4 ? "bg-green-600 hover:bg-green-700 shadow-green-600/20" : "bg-primary shadow-primary/20 ml-auto"}`}
+                            onClick={step === 4 ? handleSubmit : handleNext}
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                                 <>
-                                    {step === 3 ? "Tugatish va yuborish" : "Keyingisi"}
-                                    {step !== 3 && <ChevronRight className="w-5 h-5 ml-2" />}
+                                    {step === 4 ? "Tugatish va yuborish" : "Keyingisi"}
+                                    {step !== 4 && <ChevronRight className="w-5 h-5 ml-2" />}
                                 </>
                             )}
                         </Button>
