@@ -41,6 +41,7 @@ const TeacherOnboarding = () => {
         youtube_channel: "",
         linkedin_profile: ""
     });
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
     useEffect(() => {
