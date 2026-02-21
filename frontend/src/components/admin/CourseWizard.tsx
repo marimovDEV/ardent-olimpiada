@@ -246,16 +246,32 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                 const method = internalCourseId ? 'patch' : 'post'; // Use patch for updates to avoid overwriting all fields
 
                 const data = new FormData();
+                console.log("Preparing FormData for course:", internalCourseId || "NEW");
+
                 Object.entries(formData).forEach(([key, value]) => {
                     if (key === 'thumbnail') {
                         if (value instanceof File) {
+                            console.log("Appending thumbnail file:", value.name, value.size);
                             data.append(key, value);
+                        } else {
+                            console.log("Thumbnail is not a new file, skipping append");
                         }
-                        // If it's a string (existing URL), we don't need to send it back as it's already there
                     } else if (value !== null && value !== undefined) {
-                        data.append(key, value.toString());
+                        // Handle booleans explicitly for FormData
+                        const stringValue = typeof value === 'boolean' ? value.toString() : value.toString();
+                        data.append(key, stringValue);
                     }
                 });
+
+                // Debug: Log FormData keys
+                for (let pair of (data as any).entries()) {
+                    // Don't log the actual file content to console, just its existence
+                    if (pair[1] instanceof File) {
+                        console.log(`FormData: ${pair[0]} = [File: ${pair[1].name}]`);
+                    } else {
+                        console.log(`FormData: ${pair[0]} = ${pair[1]}`);
+                    }
+                }
 
                 const res = await axios[method](url, data, {
                     headers: {

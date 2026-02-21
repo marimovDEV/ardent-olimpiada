@@ -784,7 +784,6 @@ class CourseSerializer(serializers.ModelSerializer):
     subject_name = serializers.SerializerMethodField()
     teacher_name = serializers.SerializerMethodField()
     teacher_avatar = serializers.SerializerMethodField()
-    thumbnail = serializers.SerializerMethodField()
     is_enrolled = serializers.SerializerMethodField()
     total_duration = serializers.SerializerMethodField()
     
@@ -823,12 +822,6 @@ class CourseSerializer(serializers.ModelSerializer):
         if obj.teacher and obj.teacher.avatar and request:
             return request.build_absolute_uri(obj.teacher.avatar.url)
         return obj.teacher.avatar.url if obj.teacher and obj.teacher.avatar else None
-
-    def get_thumbnail(self, obj):
-        request = self.context.get('request')
-        if obj.thumbnail and request:
-            return request.build_absolute_uri(obj.thumbnail.url)
-        return obj.thumbnail.url if obj.thumbnail else None
 
     def get_is_enrolled(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None
