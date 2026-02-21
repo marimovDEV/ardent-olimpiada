@@ -587,7 +587,8 @@
       "hasResource": "Есть ресурс",
       "noResource": "Нет ресурса",
       "videoDuration": "{{minutes}} минут",
-      "lockToggled": "Статус блокировки урока обновлен"
+      "lockToggled": "Статус блокировки урока обновлен",
+      "reorderSuccess": "Порядок успешно сохранен"
     },
     "analytics": {
       "title": "Аналитика",

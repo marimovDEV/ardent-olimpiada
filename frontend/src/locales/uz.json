@@ -534,7 +534,8 @@
       "hasResource": "Resurs bor",
       "noResource": "Resurs yo'q",
       "videoDuration": "{{minutes}} daqiqa",
-      "lockToggled": "Dars qulflash holati yangilandi"
+      "lockToggled": "Dars qulflash holati yangilandi",
+      "reorderSuccess": "Tartib muvaffaqiyatli saqlandi"
     },
     "analytics": {
       "title": "Analitika",
