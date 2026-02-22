@@ -23,7 +23,7 @@ const WizardHero = () => {
                 }>
                     <Spline
                         className="w-full h-full pointer-events-auto"
-                        scene="https://prod.spline.design/6Wq1Q7YGyWf8Z9eR/scene.splinecode"
+                        scene="https://prod.spline.design/OKp79S2X5IWDcl-F/scene.splinecode"
                     />
                 </Suspense>
             </motion.div>
