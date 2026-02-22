@@ -15,6 +15,7 @@ import {
     GraduationCap,
     CheckCircle
 } from "lucide-react";
+import * as Icons from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import BecomeTeacherForm from "@/components/home/BecomeTeacherForm";

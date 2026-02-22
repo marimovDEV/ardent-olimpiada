@@ -982,10 +982,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         # Manual filters (keep existing logic)
         subject = self.request.query_params.get('subject')
         level = self.request.query_params.get('level')
+        teacher_id = self.request.query_params.get('teacher')
         featured = self.request.query_params.get('featured')
         min_price = self.request.query_params.get('min_price')
         max_price = self.request.query_params.get('max_price')
         
+        if teacher_id:
+            queryset = queryset.filter(teacher_id=teacher_id)
         if subject:
             queryset = queryset.filter(subject__iexact=subject)
         if level:
