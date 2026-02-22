@@ -34,6 +34,8 @@ const OlympiadTestPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRulesOpen, setIsRulesOpen] = useState(false);
     const [warningMsg, setWarningMsg] = useState<string | null>(null);
+    const [stream, setStream] = useState<MediaStream | null>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
 
     const answersRef = useRef<Record<string, any>>({});
     const tabSwitchesRef = useRef(0);
@@ -216,7 +218,29 @@ const OlympiadTestPage = () => {
         return () => clearInterval(timer);
     }, [isStarted, isSubmitting]); // Depend on isStarted to start counting down
 
-    const startTest = () => {
+    const startCamera = async () => {
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            setStream(mediaStream);
+            if (videoRef.current) {
+                videoRef.current.srcObject = mediaStream;
+            }
+        } catch (err) {
+            console.error("Camera access failed:", err);
+            toast.error("Kameraga ruxsat berilmadi. Bu olimpiada uchun kamera ulanishi shart.");
+            throw err;
+        }
+    };
+
+    const startTest = async () => {
+        if (olympiad?.required_camera) {
+            try {
+                await startCamera();
+            } catch (err) {
+                return; // Stop if camera failed
+            }
+        }
+
         setIsStarted(true);
         if (olympiad?.required_full_screen) {
             const elem = document.documentElement;
@@ -273,6 +297,12 @@ const OlympiadTestPage = () => {
         // Exit Fullscreen
         if (document.fullscreenElement) {
             document.exitFullscreen().catch(err => console.error("Exit fullscreen failed:", err));
+        }
+
+        // Stop Camera
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
         }
 
         const token = localStorage.getItem('token');
@@ -389,6 +419,23 @@ const OlympiadTestPage = () => {
                             <h4 className="font-bold text-lg uppercase tracking-wider">Ogohlantirish!</h4>
                             <p className="font-medium text-lg">{warningMsg}</p>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Floating Camera View */}
+            {isStarted && olympiad?.required_camera && (
+                <div className="fixed bottom-6 right-6 z-[60] w-32 h-32 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-2xl bg-black animate-in fade-in zoom-in duration-500">
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover scale-x-[-1]"
+                    />
+                    <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-red-500/80 text-[10px] font-bold text-white uppercase tracking-tighter animate-pulse">
+                        <div className="w-1.5 h-1.5 rounded-full bg-white"></div>
+                        REC
                     </div>
                 </div>
             )}

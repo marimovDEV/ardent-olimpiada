@@ -1021,7 +1021,7 @@ class OlympiadSerializer(serializers.ModelSerializer):
                   'price', 'is_paid', 'currency', 'discount_percent',
                   'max_participants', 'status', 'status_display', 'is_active', 
                   'grade_range', 'level', 'difficulty', 'format',
-                  'max_attempts', 'tab_switch_limit', 'required_camera', 'required_full_screen', 'disable_copy_paste',
+                  'max_attempts', 'tab_switch_limit', 'is_random', 'cannot_go_back', 'required_camera', 'required_full_screen', 'disable_copy_paste',
                   'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'created_at',
                   'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time', 'revenue',
                   'is_paid_creation', 'creation_fee_paid', 'checker', 'moderator',

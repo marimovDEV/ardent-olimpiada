@@ -96,58 +96,6 @@ const TeacherVerificationSheet = ({
                 </SheetHeader>
 
                 <div className="py-8 space-y-8">
-                    {/* Identity Doc */}
-                    <div className="space-y-4">
-                        <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                            <FileText className="w-4 h-4" />
-                            {t('admin.identityDocument')}
-                        </Label>
-                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-muted border-2 border-dashed border-border group">
-                            {teacher.teacher_profile?.identity_document ? (
-                                <>
-                                    <img
-                                        src={getImageUrl(teacher.teacher_profile.identity_document)}
-                                        className="w-full h-full object-cover"
-                                        alt="Passport/ID"
-                                    />
-                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                                        <Button variant="secondary" size="sm" asChild>
-                                            <a href={getImageUrl(teacher.teacher_profile.identity_document)} target="_blank" rel="noreferrer">
-                                                <ExternalLink className="w-4 h-4 mr-2" /> {t('common.viewLarge')}
-                                            </a>
-                                        </Button>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
-                                    <AlertTriangle className="w-8 h-8 mb-2 opacity-50" />
-                                    <p className="text-xs font-bold">{t('admin.noDocumentUploaded')}</p>
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex items-center justify-between bg-muted/30 p-4 rounded-xl">
-                            <div className="space-y-1">
-                                <p className="text-sm font-bold">{t('admin.identityVerified')}</p>
-                                <p className="text-xs text-muted-foreground">{t('admin.manuallyVerifyIdentity')}</p>
-                            </div>
-                            <Button
-                                variant={teacher.teacher_profile?.is_identity_verified ? "default" : "outline"}
-                                size="sm"
-                                className="rounded-xl h-10 px-4"
-                                onClick={handleToggleIdentity}
-                                disabled={loading}
-                            >
-                                {teacher.teacher_profile?.is_identity_verified ? (
-                                    <><CheckCircle2 className="w-4 h-4 mr-2" /> {t('common.verified')}</>
-                                ) : (
-                                    t('common.verify')
-                                )}
-                            </Button>
-                        </div>
-                    </div>
-
-                    <Separator />
-
                     {/* Status Actions */}
                     <div className="space-y-6">
                         <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">

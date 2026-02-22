@@ -1077,10 +1077,11 @@ class CourseViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             user = request.user
             is_internal = False
+            is_internal = False
             creation_fee_paid = False
             
             if user.role == 'TEACHER':
-                profile = getattr(user, 'teacherprofile', None)
+                profile = getattr(user, 'teacher_profile', None)
                 if profile:
                     if getattr(profile, 'teacher_type', None) == 'INTERNAL':
                         is_internal = True
@@ -1090,8 +1091,11 @@ class CourseViewSet(viewsets.ModelViewSet):
             else:
                 creation_fee_paid = True # Admin creates for free
                 
+            # If admin provided a teacher in data, keep it. Otherwise default to user if teacher.
+            assigned_teacher = serializer.validated_data.get('teacher', user if user.role == 'TEACHER' else None)
+
             course = serializer.save(
-                teacher=user if user.role == 'TEACHER' else None,
+                teacher=assigned_teacher,
                 is_internal=is_internal,
                 creation_fee_paid=creation_fee_paid
             )
@@ -1735,13 +1739,18 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         creation_fee_paid = False
         
         if user.role == 'TEACHER':
-            profile = getattr(user, 'teacherprofile', None)
+            profile = getattr(user, 'teacher_profile', None)
             if profile:
                 if getattr(profile, 'teacher_type', None) == 'INTERNAL' or getattr(profile, 'is_vip', False):
                     creation_fee_paid = True
-            serializer.save(teacher=user, creation_fee_paid=creation_fee_paid)
+            
+            # If admin assigned a teacher, keep it. Otherwise default to current user.
+            assigned_teacher = serializer.validated_data.get('teacher', user)
+            serializer.save(teacher=assigned_teacher, creation_fee_paid=creation_fee_paid)
         else:
-            serializer.save(creation_fee_paid=True)
+            # For Admins, if teacher is in data, use it.
+            assigned_teacher = serializer.validated_data.get('teacher', None)
+            serializer.save(teacher=assigned_teacher, creation_fee_paid=True)
     
     @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated, IsAdmin])
     def force_start(self, request, pk=None):
@@ -1863,7 +1872,12 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                     'error': 'error.finished'
                 }, status=status.HTTP_400_BAD_REQUEST)
         
-        questions = olympiad.questions.all().order_by('order')
+        questions = olympiad.questions.all()
+        if olympiad.is_random:
+            questions = questions.order_by('?')
+        else:
+            questions = questions.order_by('order')
+
         return Response({
             'success': True,
             'questions': QuestionSerializer(questions, many=True).data,
