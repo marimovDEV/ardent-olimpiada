@@ -128,9 +128,9 @@ const ProfessionsCarousel = () => {
                     <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
                         <Globe className="w-8 h-8 text-primary animate-pulse" />
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{t('professions.coming_soon', "Yangi yo'nalishlar tayyorlanmoqda")}</h3>
+                    <h3 className="text-xl font-bold mb-2">{t('professions.coming_soon')}</h3>
                     <p className="text-muted-foreground max-w-md">
-                        {t('professions.coming_soon_desc', "Tez kunda platformamizda eng talabgir kasblar bo'yicha yo'l xaritalari paydo bo'ladi. Biz bilan qoling!")}
+                        {t('professions.coming_soon_desc')}
                     </p>
                 </motion.div>
             )}

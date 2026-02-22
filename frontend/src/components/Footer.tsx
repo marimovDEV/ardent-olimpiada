@@ -143,7 +143,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs md:text-sm text-muted-foreground/60">
-          <p className="font-medium">&copy; {new Date().getFullYear()} Hogwarts. Barcha huquqlar himoyalangan.</p>
+          <p className="font-medium">&copy; {new Date().getFullYear()} Hogwarts. {t('footer.rights')}</p>
           <div className="flex gap-6">
             <Link to="/terms" className="hover:text-primary transition-colors">{t('footer.terms')}</Link>
             <Link to="/privacy" className="hover:text-primary transition-colors">{t('footer.privacy')}</Link>

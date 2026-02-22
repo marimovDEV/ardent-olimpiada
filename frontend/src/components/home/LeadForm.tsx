@@ -55,7 +55,7 @@ const LeadForm = () => {
                     >
                         <div className="space-y-6">
                             <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
-                                FREE CONSULTATION SECTION
+                                {t('leadForm.badge')}
                             </Badge>
                             <h2 className="text-4xl md:text-6xl font-black text-white font-cinzel leading-tight tracking-tighter">
                                 {t('leadForm.title')} <br />

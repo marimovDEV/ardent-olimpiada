@@ -28,28 +28,28 @@ const FinalCTA = () => {
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
                         <Sparkles className="w-4 h-4" />
-                        IMKONIYATNI QO‘LDAN BOY BERMANNG
+                        {t('finalCTA.badge')}
                     </div>
 
                     <h2 className="text-5xl md:text-8xl font-black text-white font-cinzel leading-[1.05] tracking-tighter">
-                        Bugun Boshlamaganlar <br />
-                        <span className="text-primary italic">Ertaga Afsus Qiladi.</span>
+                        {t('finalCTA.title')} <br />
+                        <span className="text-primary italic">{t('finalCTA.titleAccent')}</span>
                     </h2>
 
                     <p className="text-xl md:text-2xl text-secondary max-w-2xl mx-auto font-medium italic font-cinzel">
-                        "O'z bilimingizni isbotlash va nufuzli g'oliblar safiga qo'shilish vaqti keldi."
+                        {t('finalCTA.description')}
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center pt-8">
                         <Link to="/auth/register" className="w-full sm:w-auto">
                             <Button size="lg" className="h-16 md:h-20 px-12 rounded-2xl bg-primary text-background font-black text-xl shadow-gold hover:-translate-y-1 transition-all active:scale-95 group w-full">
-                                Ro‘yxatdan O‘tish
+                                {t('finalCTA.register')}
                                 <ArrowRight className="w-6 h-6 ml-3 transition-transform group-hover:translate-x-1" />
                             </Button>
                         </Link>
                         <Link to="/all-olympiads" className="w-full sm:w-auto">
                             <Button size="lg" variant="outline" className="h-16 md:h-20 px-12 rounded-2xl border-white/10 text-white font-black hover:bg-white/5 transition-all active:scale-95 w-full">
-                                Olimpiadalarni Ko‘rish
+                                {t('finalCTA.view_olympiads')}
                             </Button>
                         </Link>
                     </div>

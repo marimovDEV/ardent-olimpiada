@@ -58,14 +58,14 @@ const SubjectsSection = () => {
           >
             <Badge variant="outline" className="px-6 py-1.5 text-sm border-primary/30 text-primary bg-primary/5 backdrop-blur-sm font-black uppercase tracking-widest">
               <Zap className="w-4 h-4 mr-2" />
-              {t('subjectsSection.badge', "Interactive Grid")}
+              {t('subjectsSection.badge')}
             </Badge>
           </motion.div>
           <h2 className="text-4xl md:text-6xl font-black text-white font-cinzel tracking-tight leading-tight">
-            Eng mashhur <span className="text-primary italic">fanlar</span>
+            {t('subjectsSection.title').split(' ').slice(0, -1).join(' ')} <span className="text-primary italic">{t('subjectsSection.title').split(' ').slice(-1)}</span>
           </h2>
           <p className="text-xl text-secondary max-w-2xl mx-auto font-medium">
-            O'z sohangizni tanlang va profesional mentorlardan bilim oling.
+            {t('subjectsSection.subtitle')}
           </p>
         </div>
 
@@ -143,26 +143,26 @@ const SubjectCard = ({ subject, index, t }: { subject: any, index: number, t: an
       {/* Content */}
       <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors font-cinzel">{subject.name}</h3>
       <p className="text-secondary/80 text-sm font-medium leading-relaxed mb-6 line-clamp-1">
-        {subject.description || "O'z sohangizda eng sara kurslar to'plami."}
+        {subject.description || t('professions.coming_soon_desc')}
       </p>
 
       {/* Stats (Compact) */}
       <div className="w-full flex items-center gap-4 mb-6 py-3 border-y border-white/5 text-[11px] font-medium text-secondary/60">
         <div className="flex items-center gap-1.5">
           <span className="text-white font-bold">{subject.stats?.students || "1k+"}</span>
-          <span>o'quvchi</span>
+          <span>{t('subjectsSection.card.students')}</span>
         </div>
         <div className="w-1 h-1 rounded-full bg-white/10" />
         <div className="flex items-center gap-1.5">
           <span className="text-white font-bold">{subject.stats?.olympiads || "5+"}</span>
-          <span>olimpiada</span>
+          <span>{t('subjectsSection.card.olympiads')}</span>
         </div>
       </div>
 
       {/* Primary CTA (Full width & simplified) */}
       <Link to={`/all-courses?subject=${subject.id}`} className="w-full mt-auto">
         <Button className="w-full h-12 rounded-xl bg-primary text-background font-bold hover:bg-yellow-500 transition-all active:scale-95 flex items-center justify-center gap-2">
-          Kursni boshlash
+          {t('subjectsSection.card.start_course')}
           <ArrowRight className="w-4 h-4" />
         </Button>
       </Link>
@@ -172,7 +172,7 @@ const SubjectCard = ({ subject, index, t }: { subject: any, index: number, t: an
         to={`/all-olympiads?subject=${subject.id}`}
         className="w-full text-center mt-3 text-[10px] font-bold uppercase tracking-widest text-[#64748B] hover:text-primary transition-colors"
       >
-        Olimpiadalarni ko'rish
+        {t('subjectsSection.card.view_olympiads')}
       </Link>
     </div>
   </motion.div>
