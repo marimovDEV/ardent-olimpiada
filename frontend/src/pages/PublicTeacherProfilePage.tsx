@@ -135,7 +135,7 @@ const PublicTeacherProfilePage = () => {
                                         <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
                                             <CheckCircle className="w-6 h-6 text-green-500" />
                                         </div>
-                                        <span className="text-3xl font-black font-cinzel">{mentor.experience} {t('common.years', 'yil')}</span>
+                                        <span className="text-3xl font-black font-cinzel">{parseInt(String(mentor.experience)) || 0} {t('common.years', 'yil')}</span>
                                     </div>
                                 </div>
                                 <div className="hidden md:block w-px h-12 bg-white/5" />

@@ -151,7 +151,7 @@ const PublicTeachersPage = () => {
                                             {teacher.company}
                                         </Badge>
                                         <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black px-3 flex items-center gap-1.5">
-                                            <CheckCircle className="w-3 h-3" /> {teacher.experience} yil tajriba
+                                            <CheckCircle className="w-3 h-3" /> {parseInt(String(teacher.experience)) || 0} yil tajriba
                                         </Badge>
                                         <Badge variant="outline" className="bg-blue-500/5 text-blue-500 border-blue-500/20 font-black px-3 flex items-center gap-1.5">
                                             <Icons.Users className="w-3 h-3" /> {teacher.students_count?.toLocaleString()} student

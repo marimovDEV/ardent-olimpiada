@@ -180,7 +180,7 @@ const TeachersSection = () => {
                                                         <CheckCircle className="w-4 h-4" />
                                                     </div>
                                                     <span className="text-[10px] font-bold text-white tracking-wider">
-                                                        {teacher.experience} {t('teachers.experience_suffix', 'yil tajriba')}
+                                                        {parseInt(String(teacher.experience)) || 0} {t('teachers.experience_suffix', 'yil tajriba')}
                                                     </span>
                                                 </div>
                                                 <Link to={`/teacher-profile/${teacher.id}`}>
