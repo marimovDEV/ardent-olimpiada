@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import TrustBar from "@/components/home/TrustBar";
-import TimelineSection from "@/components/home/TimelineSection";
+import FinalCTA from "@/components/home/FinalCTA";
 import Footer from "@/components/Footer";
 import AIChatWidget from "@/components/AIChatWidget";
 import { useNavigate } from "react-router-dom";
