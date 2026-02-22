@@ -1077,7 +1077,6 @@ class CourseViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             user = request.user
             is_internal = False
-            is_internal = False
             creation_fee_paid = False
             
             if user.role == 'TEACHER':
@@ -1094,11 +1093,36 @@ class CourseViewSet(viewsets.ModelViewSet):
             # If admin provided a teacher in data, keep it. Otherwise default to user if teacher.
             assigned_teacher = serializer.validated_data.get('teacher', user if user.role == 'TEACHER' else None)
 
+            # Teachers must be moderated
+            status_val = 'APPROVED' if user.role == 'ADMIN' else 'PENDING'
+
             course = serializer.save(
                 teacher=assigned_teacher,
                 is_internal=is_internal,
-                creation_fee_paid=creation_fee_paid
+                creation_fee_paid=creation_fee_paid,
+                status=status_val
             )
+
+            # Notify Admins if teacher created
+            if user.role == 'TEACHER':
+                admins = User.objects.filter(role='ADMIN', is_active=True)
+                title = "Yangi kurs (Moderatsiya)"
+                message = f"O'qituvchi {user.username} yangi kurs yaratdi: {course.title}. Iltimos, ko'rib chiqing va tasdiqlang."
+                
+                for admin in admins:
+                    NotificationService.create_notification(
+                        user=admin,
+                        title=title,
+                        message=message,
+                        notification_type='COURSE',
+                        channel='ALL' # Web + Telegram if linked
+                    )
+                
+                # Direct Telegram to system admin channel/group if configured
+                config = BotConfig.objects.filter(is_active=True).first()
+                if config and config.admin_chat_id:
+                    tg_msg = f"🆕 <b>Yangi kurs (Moderatsiya)</b>\n\n👤 O'qituvchi: {user.username}\n📚 Kurs: {course.title}\n\nTasdiqlash kutilmoqda."
+                    BotService.send_to_admin(tg_msg)
             return Response({
                 'success': True,
                 'message': 'Kurs yaratildi',
@@ -1763,11 +1787,37 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             
             # If admin assigned a teacher, keep it. Otherwise default to current user.
             assigned_teacher = serializer.validated_data.get('teacher', user)
-            serializer.save(teacher=assigned_teacher, creation_fee_paid=creation_fee_paid)
+            
+            # Teachers must be moderated
+            olympiad = serializer.save(
+                teacher=assigned_teacher, 
+                creation_fee_paid=creation_fee_paid,
+                status='PENDING'
+            )
+
+            # Notify Admins
+            admins = User.objects.filter(role='ADMIN', is_active=True)
+            admin_title = "Yangi olimpiada (Moderatsiya)"
+            admin_msg = f"O'qituvchi {user.username} yangi olimpiada yaratdi: {olympiad.title}. Iltimos, ko'rib chiqing va tasdiqlang."
+            
+            for admin in admins:
+                NotificationService.create_notification(
+                    user=admin,
+                    title=admin_title,
+                    message=admin_msg,
+                    notification_type='OLYMPIAD',
+                    channel='ALL'
+                )
+            
+            # Direct Telegram to system admin channel/group if configured
+            config = BotConfig.objects.filter(is_active=True).first()
+            if config and config.admin_chat_id:
+                tg_msg = f"🆕 <b>Yangi olimpiada (Moderatsiya)</b>\n\n👤 O'qituvchi: {user.username}\n🏆 Olimpiada: {olympiad.title}\n\nTasdiqlash kutilmoqda."
+                BotService.send_to_admin(tg_msg)
         else:
             # For Admins, if teacher is in data, use it.
             assigned_teacher = serializer.validated_data.get('teacher', None)
-            serializer.save(teacher=assigned_teacher, creation_fee_paid=True)
+            serializer.save(teacher=assigned_teacher, creation_fee_paid=True, status='APPROVED')
     
     @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated, IsAdmin])
     def force_start(self, request, pk=None):

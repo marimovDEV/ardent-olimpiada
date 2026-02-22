@@ -557,6 +557,8 @@ class Enrollment(models.Model):
 class Olympiad(models.Model):
     STATUS_CHOICES = [
         ('DRAFT', 'Qoralama'),
+        ('PENDING', 'Kutilmoqda'),
+        ('APPROVED', 'Tasdiqlangan'),
         ('REGISTRATION_OPEN', 'Ro\'yxatga olish boshlandi'),
         ('REGISTRATION_CLOSED', 'Ro\'yxatdan o\'tish tugadi'),
         ('ONGOING', 'Olimpiada boshladi'),
