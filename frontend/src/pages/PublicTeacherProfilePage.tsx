@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { getBaseUrl } from "@/services/api";
 import { homepageService, Mentor } from "@/services/homepageService";
 import { useTranslation } from "react-i18next";
