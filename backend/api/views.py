@@ -5200,8 +5200,8 @@ class HomePageViewSet(viewsets.ViewSet):
             })
         return Response(data)
 
-    @action(detail=True, methods=['get'], url_path='mentors/(?P<mentor_id>[^/.]+)')
-    def mentor_detail(self, request, pk=None, mentor_id=None):
+    @action(detail=False, methods=['get'], url_path='mentors/(?P<mentor_id>[^/.]+)')
+    def mentor_detail(self, request, mentor_id=None):
         """Get detailed info for a single mentor"""
         mentor = get_object_or_404(User, id=mentor_id, role='TEACHER')
         tp = getattr(mentor, 'teacher_profile', None)
