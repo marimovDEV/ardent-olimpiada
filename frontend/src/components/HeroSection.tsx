@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
-import { SplineHero } from "./SplineHero";
-
 const HeroSection = () => {
   const { t } = useTranslation();
 
@@ -113,14 +111,53 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right: Spline Scene with Spotlight (Desktop Only) */}
+          {/* Right: Optimized Floating Elements */}
           <div className="relative hidden lg:block">
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative aspect-square"
             >
-              <SplineHero />
+              {/* Main Shield Card - Simplified Magic */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-96 bg-[#111827] rounded-[3rem] border-2 border-primary/20 shadow-2xl overflow-hidden animate-float-slow gold-glow">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+                <div className="relative h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
+                  <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20">
+                    <Trophy className="w-12 h-12 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWARTS PRESTIGE</div>
+                    <div className="text-2xl font-black text-white font-cinzel">ELITE MEMBER</div>
+                  </div>
+                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: "70%" }}
+                      transition={{ duration: 1, delay: 0.5 }}
+                      className="h-full bg-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Smaller Optimized Card */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-0 right-0 w-48 h-48 bg-[#111827]/80 backdrop-blur-md rounded-[2.5rem] border border-white/10 p-6 shadow-xl translate-x-12 -translate-y-12"
+              >
+                <div className="h-full flex flex-col justify-between">
+                  <Star className="w-8 h-8 text-primary fill-primary" />
+                  <div className="space-y-2">
+                    <div className="text-xs font-black text-white italic">Sertifikatlar</div>
+                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div className="w-full h-full bg-primary/30" />
+                    </div>
+                    <div className="w-1/2 h-1.5 bg-white/10 rounded-full" />
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
