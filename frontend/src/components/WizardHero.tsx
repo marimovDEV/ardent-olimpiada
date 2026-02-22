@@ -6,6 +6,7 @@ const Spline = lazy(() => import("@splinetool/react-spline"));
 
 const WizardHero = () => {
     const [hasError, setHasError] = useState(false);
+    const [isChecking, setIsChecking] = useState(true);
     const sceneUrl = "https://prod.spline.design/OKp79S2X5IWDcl-F/scene.splinecode";
 
     useEffect(() => {
@@ -13,43 +14,57 @@ const WizardHero = () => {
         fetch(sceneUrl, { method: 'HEAD' })
             .then(res => {
                 if (!res.ok) {
-                    console.warn("Spline scene inaccessible, triggering fallback:", res.status);
                     setHasError(true);
                 }
             })
             .catch(() => {
                 setHasError(true);
+            })
+            .finally(() => {
+                setIsChecking(false);
             });
     }, []);
 
-    if (hasError) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8 }}
-                className="relative w-80 h-96 bg-[#111827] rounded-[3rem] border-2 border-primary/20 shadow-2xl overflow-hidden gold-glow mx-auto"
-            >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
-                <div className="relative h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
-                    <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20">
-                        <Trophy className="w-12 h-12 text-primary" />
-                    </div>
-                    <div>
-                        <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWARTS PRESTIGE</div>
-                        <div className="text-2xl font-black text-white font-cinzel">ELITE MEMBER</div>
-                    </div>
-                    <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: "70%" }}
-                            transition={{ duration: 1, delay: 0.5 }}
-                            className="h-full bg-primary"
-                        />
-                    </div>
+    const FallbackCard = () => (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="relative w-80 h-96 bg-[#111827] rounded-[3rem] border-2 border-primary/20 shadow-2xl overflow-hidden gold-glow mx-auto"
+        >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
+            <div className="relative h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
+                <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20">
+                    <Trophy className="w-12 h-12 text-primary" />
                 </div>
-            </motion.div>
+                <div>
+                    <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWARTS PRESTIGE</div>
+                    <div className="text-2xl font-black text-white font-cinzel">ELITE MEMBER</div>
+                </div>
+                <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: "70%" }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        className="h-full bg-primary"
+                    />
+                </div>
+            </div>
+        </motion.div>
+    );
+
+    if (isChecking) {
+        return (
+            <div className="w-full h-full flex items-center justify-center min-h-[400px]">
+                <div className="w-24 h-24 bg-primary/10 rounded-full animate-pulse border-2 border-primary/20 flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/20 rounded-full animate-ping" />
+                </div>
+            </div>
         );
+    }
+
+    if (hasError) {
+        return <FallbackCard />;
     }
 
     return (
