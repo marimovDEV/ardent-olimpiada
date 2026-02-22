@@ -1162,18 +1162,19 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                         </div>
-                        {imageToCrop && (
-                            <ImageCropper
-                                image={imageToCrop}
-                                open={showCropper}
-                                onOpenChange={setShowCropper}
-                                aspect={1}
-                                onCropComplete={(croppedFile) => {
-                                    setAvatarFile(croppedFile);
-                                    setAvatarPreview(URL.createObjectURL(croppedFile));
-                                }}
-                            />
-                        )}
+                    </div>
+                    {imageToCrop && (
+                        <ImageCropper
+                            image={imageToCrop}
+                            open={showCropper}
+                            onOpenChange={setShowCropper}
+                            aspect={1}
+                            onCropComplete={(croppedFile) => {
+                                setAvatarFile(croppedFile);
+                                setAvatarPreview(URL.createObjectURL(croppedFile));
+                            }}
+                        />
+                    )}
                 </TabsContent>
 
                 <TabsContent value="courses" className="focus-visible:outline-none">
