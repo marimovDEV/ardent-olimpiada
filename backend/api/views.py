@@ -1510,14 +1510,31 @@ class LessonTestViewSet(viewsets.ModelViewSet):
 class OlympiadPrizeViewSet(viewsets.ModelViewSet):
     queryset = OlympiadPrize.objects.all()
     serializer_class = OlympiadPrizeSerializer
-    permission_classes = [IsAuthenticated, IsAdmin] 
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin] 
     
     def get_queryset(self):
-        # Optional: Filter by olympiad if needed, but for now return all or filter by query param
+        user = self.request.user
         olympiad_id = self.request.query_params.get('olympiad_id')
+        
+        if user.role == 'ADMIN':
+            qs = self.queryset
+        else:
+            # Teachers can only see prizes for their own olympiads
+            qs = self.queryset.filter(olympiad__teacher=user)
+
         if olympiad_id:
-            return self.queryset.filter(olympiad_id=olympiad_id)
-        return self.queryset
+            qs = qs.filter(olympiad_id=olympiad_id)
+        return qs
+
+    def perform_create(self, serializer):
+        # Additional check to ensure teacher is creating prize for their own olympiad
+        user = self.request.user
+        if user.role != 'ADMIN':
+            olympiad = serializer.validated_data.get('olympiad')
+            if olympiad.teacher != user:
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied("You can only add prizes to your own olympiads.")
+        serializer.save()
 
 class WinnerPrizeViewSet(viewsets.ModelViewSet):
     """ViewSet for managing Olympiad winners and their prizes"""
