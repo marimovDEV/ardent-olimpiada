@@ -599,7 +599,7 @@
     },
     "botPayments": "Bot To'lovlari",
     "cms": "Sayt Tahriri",
-    "professions": "Kasblar",
+    "professions_label": "Kasblar",
     "subjects": "Fanlar",
     "subjectsSubtitle": "Platformadagi fanlar ro'yxati va ularni boshqarish",
     "addSubject": "Fan qo'shish",
@@ -1315,11 +1315,6 @@
       "school": "Maktab nomini kiriting (masalan: 12-maktab)",
       "password": "Kamida 6 ta belgi"
     },
-    "footer": {
-      "rights": "Barcha huquqlar himoyalangan.",
-      "privacy": "Maxfiylik siyosati",
-      "help": "Yordam"
-    },
     "rightSide": {
       "title": "Hogwartsga Xush Kelibsiz",
       "subtitle": "Bilim va g'alabalar sari yo'lingiz shu yerdan boshlanadi",
@@ -1366,25 +1361,6 @@
     "students": "O'quvchilar",
     "prizeFund": "Yutuq fondi",
     "rating": "Ota-onalar bahosi"
-  },
-  "subjectsSection": {
-    "badge": "Yo'nalishlar",
-    "title": "Kelajagingizni tanlang",
-    "titleAccent": "tanlang",
-    "description": "Qaysi fan sizga ko'proq yoqadi? O'zingizga mos yo'nalishni tanlab, birinchi qadamni tashlang.",
-    "student": "O'quvchi",
-    "olympiad": "Olimpiada",
-    "popular": "Mashhur",
-    "free": "Tekin",
-    "it": "IT Kasb",
-    "matematika_desc": "Olimpiada va maktab uchun chuqur tayyorgarlik",
-    "informatika_desc": "Python, C++ va IT kasblarni noldan o'rganing",
-    "fizika_desc": "Tabiat qonunlarini tajribalar orqali tushuning",
-    "mantiq_desc": "Kritik fikrlash va IQ darajasini oshiring",
-    "ingliz_tili_desc": "IELTS va CEFR uchun maxsus kurslar",
-    "badge_olympiad": "Olimpiada",
-    "empty": "Fanlar topilmadi. Admin panel orqali qo'shing.",
-    "ona_tili_desc": "Grammatika va adabiyotni mukammal biling"
   },
   "dashboard": {
     "emptyState": {
@@ -1794,7 +1770,6 @@
     "view_results": "Barcha natijalarni ko'rish",
     "more": "Batafsil →"
   },
-  "professions": "Kasblar",
   "cta": {
     "badge": "Hoziroq boshlang",
     "title": "Olimpiadaga tayyorlanish vaqti keldi!",
@@ -1868,28 +1843,6 @@
     "correct": "To'g'ri",
     "improvement": "O'sish",
     "ratingImpact": "Reyting"
-  },
-  "footer": {
-    "description": "Biz bilan kelajak kasblarini o'rganing va xalqaro darajadagi mutaxassis bo'ling. Sifatli ta'lim - farovon kelajak garovi.",
-    "courses_title": "Kurslar",
-    "all_courses": "Barcha kurslar",
-    "programming": "Dasturlash",
-    "design": "Dizayn",
-    "languages": "Xorijiy tillar",
-    "olympiads": "Olimpiadalar",
-    "pathways": "Kasbiy yo'llanmalar",
-    "company_title": "Kompaniya",
-    "about": "Biz haqimizda",
-    "teachers": "Ustozlar",
-    "careers": "Vakansiyalar",
-    "blog": "Blog",
-    "contact_title": "Aloqa",
-    "contact_link": "Bog'lanish",
-    "address": "Toshkent sh., Chilonzor tumani,\nMuqimiy ko'chasi, 12-uy",
-    "copyright": "© {{year}} Olimpiada Platform. Barcha huquqlar himoyalangan.",
-    "terms": "Foydalanish shartlari",
-    "privacy": "Maxfiylik siyosati",
-    "rights": "Barcha huquqlar himoyalangan."
   },
   "levels": {
     "BEGINNER": "Boshlang'ich",
@@ -2268,7 +2221,6 @@
     "benefit1": "📚 Professional ustozlar",
     "benefit2": "🏅 Sertifikat va reytinglar",
     "benefit3": "🚀 Real natijalar",
-    "footer": "Bugun boshlaganlar ertaga g‘olib bo‘ladi.",
     "loading": "Tekshirilmoqda… omad tilaymiz 🍀"
   },
   "teaser": {
@@ -2299,35 +2251,6 @@
     "review3": "Dizayn kursi zo'r ekan, 0 dan o'rgandim",
     "review4": "Ishimda ko'tarildim, rahmat!",
     "review5": "Backend qiyin deb o'ylardim, lekin..."
-  },
-  "leadForm": {
-    "badge": "Bepul Konsultatsiya",
-    "title": "Kasb tanlashda",
-    "titleAccent": "yordam beramiz",
-    "description": "Qaysi soha sizga mos ekanligini bilmayapsizmi? Mutaxassislarimiz sizning qiziqishlaringiz va qobiliyatingizga qarab to'g'ri yo'nalish tanlashda bepul yordam berishadi.",
-    "steps": {
-      "1": "So'rov yuborasiz",
-      "2": "Mutaxassis bog'lanadi",
-      "3": "Shaxsiy yo'l xarita tuzamiz"
-    },
-    "form": {
-      "title": "Bog'lanish uchun ma'lumotlar",
-      "name": "Ismingiz",
-      "name_ph": "Abdulla Qodiriy",
-      "phone": "Telefon raqam",
-      "phone_ph": "+998 90 123 45 67",
-      "telegram": "Telegram username (ixtiyoriy)",
-      "submit": "Yuborish",
-      "submitting": "Yuborilmoqda...",
-      "privacy": "\"Yuborish\" tugmasini bosish orqali siz shaxsiy ma'lumotlarni qayta ishlashga rozilik bildirasiz.",
-      "success": "So'rovingiz qabul qilindi!",
-      "success_desc": "Tez orada mutaxassislarimiz siz bilan bog'lanishadi.",
-      "error": "Xatolik yuz berdi",
-      "error_desc": "Iltimos, qayta urinib ko'ring yoki telefon raqamingizni tekshiring.",
-      "error_name": "Ism kiritish shart",
-      "error_phone": "Telefon raqam shart",
-      "telegram_ph": "@username"
-    }
   },
   "popularCourses": {
     "title": "Ommabop Kurslar",
@@ -3294,81 +3217,82 @@
       "title": "Dars topilmadi",
       "subtitle": "Bu kursda dars mavjud emas yoki mavjud emas.",
       "back": "Kurslarga qaytish"
-    },
-    "subjectsSection": {
-      "badge": "Eng sara fanlar",
-      "title": "Eng mashhur fanlar",
-      "subtitle": "O'z sohangizni tanlang va profesional mentorlardan bilim oling.",
-      "card": {
-        "students": "o'quvchi",
-        "olympiads": "olimpiada",
-        "start_course": "Kursni boshlash",
-        "view_olympiads": "Olimpiadalarni ko'rish"
-      }
-    },
-    "professions": {
-      "title": "Zamonaviy kasblar",
-      "subtitle": "Kasblar va ixtisosliklarni boshqarish",
-      "all": "Barchasi",
-      "courses_count": "kurslar",
-      "avg_salary": "O'rtacha maosh",
-      "view_roadmap": "Yo'l xaritasini ko'rish",
-      "coming_soon": "Yangi yo'nalishlar tayyorlanmoqda",
-      "coming_soon_desc": "Tez kunda platformamizda eng talabgir kasblar bo'yicha yo'l xaritalari paydo bo'ladi."
-    },
-    "leadForm": {
-      "badge": "Bepul Konsultatsiya",
-      "title": "Kasb tanlashda",
-      "titleAccent": "yordam beramiz",
-      "description": "Qaysi soha sizga mos ekanligini bilmayapsizmi? Mutaxassislarimiz sizning qiziqishlaringiz va qobiliyatingizga qarab to'g'ri yo'nalish tanlashda bepul yordam berishadi.",
-      "steps": {
-        "1": "So'rov yuborasiz",
-        "2": "Mutaxassis bog'lanadi",
-        "3": "Shaxsiy yo'l xarita tuzamiz"
-      },
-      "form": {
-        "title": "Bog'lanish uchun ma'lumotlar",
-        "name": "Ismingiz",
-        "name_ph": "Abdulla Qodiriy",
-        "phone": "Telefon raqam",
-        "phone_ph": "+998 90 123 45 67",
-        "telegram": "Telegram username (ixtiyoriy)",
-        "submitting": "Yuborilmoqda...",
-        "submit": "Yuborish",
-        "privacy": "\"Yuborish\" tugmasini bosish orqali siz shaxsiy ma'lumotlarni qayta ishlashga rozilik bildirasiz.",
-        "success": "Muvaffaqiyatli!",
-        "success_desc": "Sizning so'rovingiz qabul qilindi. Tez orada mutaxassislarimiz siz bilan bog'lanishadi.",
-        "error": "Xatolik!",
-        "error_desc": "So'rov yuborishda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
-      }
-    },
-    "finalCTA": {
-      "badge": "IMKONIYATNI QO‘LDAN BOY BERMANNG",
-      "title": "Bugun Boshlamaganlar",
-      "titleAccent": "Ertaga Afsus Qiladi.",
-      "description": "\"O'z bilimingizni isbotlash va nufuzli g'oliblar safiga qo'shilish vaqti keldi.\"",
-      "register": "Ro‘yxatdan O‘tish",
-      "view_olympiads": "Olimpiadalarni Ko‘rish"
-    },
-    "footer": {
-      "description": "Biz bilan kelajak kasblarini o'rganing va xalqaro darajadagi mutaxassis bo'ling. Sifatli ta'lim - farovon kelajak garovi.",
-      "courses_title": "Kurslar",
-      "all_courses": "Barcha kurslar",
-      "programming": "Dasturlash",
-      "design": "Dizayn",
-      "languages": "Xorijiy tillar",
-      "olympiads": "Olimpiadalar",
-      "pathways": "Kasbiy yo'llanmalar",
-      "company_title": "Kompaniya",
-      "about": "Biz haqimizda",
-      "teachers": "Ustozlar",
-      "careers": "Vakansiyalar",
-      "blog": "Blog",
-      "contact_link": "Bog'lanish",
-      "contact_title": "Aloqa",
-      "address": "Toshkent sh., Chilonzor tumani, Muqimiy ko'chasi, 12-uy",
-      "terms": "Foydalanish shartlari",
-      "privacy": "Maxfiylik siyosati"
     }
+  },
+  "subjectsSection": {
+    "badge": "Eng sara fanlar",
+    "title": "Eng mashhur fanlar",
+    "subtitle": "O'z sohangizni tanlang va profesional mentorlardan bilim oling.",
+    "card": {
+      "students": "o'quvchi",
+      "olympiads": "olimpiada",
+      "start_course": "Kursni boshlash",
+      "view_olympiads": "Olimpiadalarni ko'rish"
+    }
+  },
+  "professions": {
+    "title": "Zamonaviy kasblar",
+    "subtitle": "Kasblar va ixtisosliklarni boshqarish",
+    "all": "Barchasi",
+    "courses_count": "kurslar",
+    "avg_salary": "O'rtacha maosh",
+    "view_roadmap": "Yo'l xaritasini ko'rish",
+    "coming_soon": "Yangi yo'nalishlar tayyorlanmoqda",
+    "coming_soon_desc": "Tez kunda platformamizda eng talabgir kasblar bo'yicha yo'l xaritalari paydo bo'ladi."
+  },
+  "leadForm": {
+    "badge": "Bepul Konsultatsiya",
+    "title": "Kasb tanlashda",
+    "titleAccent": "yordam beramiz",
+    "description": "Qaysi soha sizga mos ekanligini bilmayapsizmi? Mutaxassislarimiz sizning qiziqishlaringiz va qobiliyatingizga qarab to'g'ri yo'nalish tanlashda bepul yordam berishadi.",
+    "steps": {
+      "1": "So'rov yuborasiz",
+      "2": "Mutaxassis bog'lanadi",
+      "3": "Shaxsiy yo'l xarita tuzamiz"
+    },
+    "form": {
+      "title": "Bog'lanish uchun ma'lumotlar",
+      "name": "Ismingiz",
+      "name_ph": "Abdulla Qodiriy",
+      "phone": "Telefon raqam",
+      "phone_ph": "+998 90 123 45 67",
+      "telegram": "Telegram username (ixtiyoriy)",
+      "submitting": "Yuborilmoqda...",
+      "submit": "Yuborish",
+      "privacy": "\"Yuborish\" tugmasini bosish orqali siz shaxsiy ma'lumotlarni qayta ishlashga rozilik bildirasiz.",
+      "success": "Muvaffaqiyatli!",
+      "success_desc": "Sizning so'rovingiz qabul qilindi. Tez orada mutaxassislarimiz siz bilan bog'lanishadi.",
+      "error": "Xatolik!",
+      "error_desc": "So'rov yuborishda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
+    }
+  },
+  "finalCTA": {
+    "badge": "IMKONIYATNI QO‘LDAN BOY BERMANNG",
+    "title": "Bugun Boshlamaganlar",
+    "titleAccent": "Ertaga Afsus Qiladi.",
+    "description": "\"O'z bilimingizni isbotlash va nufuzli g'oliblar safiga qo'shilish vaqti keldi.\"",
+    "register": "Ro‘yxatdan O‘tish",
+    "view_olympiads": "Olimpiadalarni Ko‘rish"
+  },
+  "footer": {
+    "description": "Biz bilan kelajak kasblarini o'rganing va xalqaro darajadagi mutaxassis bo'ling. Sifatli ta'lim - farovon kelajak garovi.",
+    "courses_title": "Kurslar",
+    "all_courses": "Barcha kurslar",
+    "programming": "Dasturlash",
+    "design": "Dizayn",
+    "languages": "Xorijiy tillar",
+    "olympiads": "Olimpiadalar",
+    "pathways": "Kasbiy yo'llanmalar",
+    "company_title": "Kompaniya",
+    "about": "Biz haqimizda",
+    "teachers": "Ustozlar",
+    "careers": "Vakansiyalar",
+    "blog": "Blog",
+    "contact_link": "Bog'lanish",
+    "contact_title": "Aloqa",
+    "address": "Toshkent sh., Chilonzor tumani, Muqimiy ko'chasi, 12-uy",
+    "terms": "Foydalanish shartlari",
+    "privacy": "Maxfiylik siyosati",
+    "rights": "Barcha huquqlar himoyalangan."
   }
 }
