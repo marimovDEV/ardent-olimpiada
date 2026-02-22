@@ -60,9 +60,9 @@ const PublicTeacherProfilePage = () => {
     if (!mentor) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-4">
-                <h1 className="text-2xl font-black mb-4 font-cinzel">{t('common.error.notFound')}</h1>
+                <h1 className="text-2xl font-black mb-4 font-cinzel">{t('error.not_found')}</h1>
                 <Link to="/">
-                    <Button className="rounded-xl font-bold">Asosiyga qaytish</Button>
+                    <Button className="rounded-xl font-bold">{t('nav.home')}</Button>
                 </Link>
             </div>
         );

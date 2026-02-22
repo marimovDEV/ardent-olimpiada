@@ -5197,11 +5197,36 @@ class HomePageViewSet(viewsets.ViewSet):
                 'company': "Hogwarts Mentor", # Branding updated
                 'experience': exp,
                 'bio_uz': bio,
-                'bio_ru': bio,
-                'social_links': soc,
-                'image': m.avatar.url if (m.avatar and hasattr(m.avatar, 'url')) else "https://github.com/shadcn.png"
             })
         return Response(data)
+
+    @action(detail=True, methods=['get'], url_path='mentors/(?P<mentor_id>[^/.]+)')
+    def mentor_detail(self, request, pk=None, mentor_id=None):
+        """Get detailed info for a single mentor"""
+        mentor = get_object_or_404(User, id=mentor_id, role='TEACHER')
+        tp = getattr(mentor, 'teacher_profile', None)
+        
+        pos = tp.specialization if tp and tp.specialization else "O'qituvchi"
+        exp = f"{tp.experience_years} yil" if tp else "5 yil"
+        bio = tp.bio if tp else ""
+        soc = {
+            'telegram': tp.telegram_username if tp else '',
+            'linkedin': tp.linkedin_profile if tp else '',
+            'instagram': tp.instagram_username if tp else '',
+            'github': tp.github_username if tp else ''
+        }
+
+        return Response({
+            'id': mentor.id,
+            'name': mentor.get_full_name() or mentor.username,
+            'position': pos,
+            'company': "Hogwarts Mentor",
+            'experience': exp,
+            'bio_uz': bio,
+            'bio_ru': bio,
+            'social_links': soc,
+            'image': mentor.avatar.url if (mentor.avatar and hasattr(mentor.avatar, 'url')) else "https://github.com/shadcn.png"
+        })
     
     @action(detail=False, methods=['get'], url_path='featured-subjects')
     def featured_subjects(self, request):

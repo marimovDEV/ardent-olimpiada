@@ -34,7 +34,8 @@
     "not_started": "Olimpiada hali boshlanmagan",
     "finished": "Olimpiada tugagan",
     "full": "Olimpiadada joy qolmagan",
-    "disqualified": "Imtihon qoidabuzarlik tufayli bekor qilindi"
+    "disqualified": "Imtihon qoidabuzarlik tufayli bekor qilindi",
+    "notFound": "Obyekt topilmadi"
   },
   "common": {
     "actions": "Amallar",
@@ -1449,7 +1450,7 @@
     },
     "profile": {
       "title": "Profil",
-      "back": "Bosh sahifaga qaytish",
+      "back": "Asosiyga qaytish",
       "edit": "Tahrirlash",
       "cancel": "Bekor qilish",
       "goodDay": "Xayrli kun",
