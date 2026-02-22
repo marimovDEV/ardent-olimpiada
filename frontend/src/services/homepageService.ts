@@ -104,13 +104,15 @@ export interface Mentor {
     name: string;
     position: string;
     company: string;
-    experience: string;
+    experience: number | string;
+    students_count?: number;
     bio_uz: string;
     bio_ru: string;
     social_links: {
         telegram?: string;
         linkedin?: string;
         instagram?: string;
+        github?: string;
     };
     image: string;
 }

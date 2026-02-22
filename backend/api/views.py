@@ -5175,7 +5175,9 @@ class HomePageViewSet(viewsets.ViewSet):
         mentors = User.objects.filter(
             role='TEACHER', 
             teacher_profile__verification_status='APPROVED'
-        ).select_related('teacher_profile').order_by('?')[:8]
+        ).select_related('teacher_profile').annotate(
+            total_students=Sum('courses__students_count')
+        ).order_by('?')[:8]
         
         data = []
         for m in mentors:
@@ -5183,11 +5185,13 @@ class HomePageViewSet(viewsets.ViewSet):
             
             # Use data from profile if available, otherwise fallbacks
             pos = tp.specialization if tp and tp.specialization else "O'qituvchi"
-            exp = f"{tp.experience_years} yil" if tp else "5 yil"
+            exp = tp.experience_years if tp else 5
+            students = m.total_students or 0
             bio = tp.bio if tp else ""
             soc = {
                 'telegram': tp.telegram_username if tp else '',
-                'linkedin': tp.linkedin_profile if tp else ''
+                'linkedin': tp.linkedin_profile if tp else '',
+                'instagram': tp.instagram_username if tp else ''
             }
 
             data.append({
@@ -5196,6 +5200,7 @@ class HomePageViewSet(viewsets.ViewSet):
                 'position': pos,
                 'company': "Hogwarts Mentor", # Branding updated
                 'experience': exp,
+                'students_count': students,
                 'bio_uz': bio,
                 'bio_ru': bio,
                 'social_links': soc,
@@ -5210,7 +5215,8 @@ class HomePageViewSet(viewsets.ViewSet):
         tp = getattr(mentor, 'teacher_profile', None)
         
         pos = tp.specialization if tp and tp.specialization else "O'qituvchi"
-        exp = f"{tp.experience_years} yil" if tp else "5 yil"
+        exp = tp.experience_years if tp else 5
+        students = mentor.courses.aggregate(total=Sum('students_count'))['total'] or 0
         bio = tp.bio if tp else ""
         soc = {
             'telegram': tp.telegram_username if tp else '',
@@ -5224,6 +5230,7 @@ class HomePageViewSet(viewsets.ViewSet):
             'position': pos,
             'company': "Hogwarts Mentor",
             'experience': exp,
+            'students_count': students,
             'bio_uz': bio,
             'bio_ru': bio,
             'social_links': soc,

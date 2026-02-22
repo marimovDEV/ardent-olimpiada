@@ -44,8 +44,6 @@
     "hours": "soat",
     "minutes": "daqiqa",
     "days": "kun",
-    "lessons": "dars",
-    "currency": "AC",
     "uzs": "so'm",
     "general": "Umumiy",
     "duration": "Davomiyligi",
@@ -1449,6 +1447,14 @@
       "continue": "DAVOM ETTIRISH"
     },
     "profile": {
+      "mentors": "Mentorlar",
+      "experience": "Tajriba",
+      "experience_years": "{{count}} yil tajriba",
+      "students": "Talabalar",
+      "courses": "Mentor kurslari",
+      "bio_title": "Biografiya",
+      "back_to_list": "Mentorlar ro'yxatiga qaytish",
+      "home": "Bosh sahifa",
       "title": "Profil",
       "back": "Asosiyga qaytish",
       "edit": "Tahrirlash",
@@ -1537,6 +1543,16 @@
         "completed": "Tugatilgan",
         "progress": "Progress"
       }
+    },
+    "teachers": {
+      "badge": "Kuchli jamoa",
+      "title": "Bizning",
+      "mentors": "mentorlarimiz",
+      "description": "O'z sohasining haqiqiy professionallaridan bilim oling va maqsadlaringizga tezroq erishing.",
+      "more": "Batafsil",
+      "default_bio": "Kelajak bunyodkorlariga bilim ulashish yo'lida.",
+      "experience_suffix": "yil tajriba",
+      "quote": "O'z sohasining haqiqiy professionallaridan bilim oling va tezroq maqsadlaringizga erishing."
     },
     "olympiadDetail": {
       "back": "Olimpiadalarga qaytish",
@@ -1708,7 +1724,7 @@
       "title": "Mening Natijalarim",
       "all": "Hammasi",
       "empty": "Hali test natijalaringiz yo'q",
-      "joinOlympiads": "Olimpiadalarda qatnashing",
+      "joinOlimpiads": "Olimpiadalarda qatnashing",
       "strong": "Kuchli",
       "weak": "Zaif",
       "practice": "Mashq qiling",
@@ -1855,7 +1871,25 @@
     "olympiad": "Olimpiada",
     "popular": "Ommabop",
     "free": "Tekin",
-    "new": "Yangi"
+    "new": "Yangi",
+    "mentors": "Наставники",
+    "experience": "Опыт",
+    "experience_years": "{{count}} лет опыта",
+    "students": "Студенты",
+    "courses": "Курсы ментора",
+    "bio_title": "Биография",
+    "back_to_list": "Вернуться к списку наставников",
+    "home": "Главная"
+  },
+  "teachers": {
+    "badge": "Сильная команда",
+    "title": "Наши",
+    "mentors": "наставники",
+    "description": "Учитесь у настоящих профессионалов своего дела и быстрее достигайте своих целей.",
+    "more": "Подробнее",
+    "default_bio": "На пути к распространению знаний среди строителей будущего.",
+    "experience_suffix": "лет опыта",
+    "quote": "Учитесь у настоящих профессионалов своего дела и быстрее достигайте своих целей."
   },
   "filters": {
     "all_subjects": "Barcha fanlar",

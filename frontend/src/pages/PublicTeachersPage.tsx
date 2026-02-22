@@ -42,6 +42,7 @@ const PublicTeachersPage = () => {
                         name: item.name,
                         role: item.position,
                         experience: item.experience,
+                        students_count: item.students_count,
                         image: imageUrl,
                         company: item.company,
                         bio: item[`bio_${lang}`] || item.bio_uz,
@@ -93,7 +94,7 @@ const PublicTeachersPage = () => {
                         Bizning <span className="text-primary italic gold-glow">Mentorlarimiz</span>
                     </h1>
                     <p className="text-xl text-secondary max-w-2xl mx-auto font-medium italic font-cinzel">
-                        "O'z sohasining haqiqiy professionallaridan bilim oling va maqsadlaringizga tezroq erishing."
+                        "{t('teachers.quote')}"
                     </p>
                 </div>
 
@@ -151,6 +152,9 @@ const PublicTeachersPage = () => {
                                         </Badge>
                                         <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-black px-3 flex items-center gap-1.5">
                                             <CheckCircle className="w-3 h-3" /> {teacher.experience} yil tajriba
+                                        </Badge>
+                                        <Badge variant="outline" className="bg-blue-500/5 text-blue-500 border-blue-500/20 font-black px-3 flex items-center gap-1.5">
+                                            <Icons.Users className="w-3 h-3" /> {teacher.students_count?.toLocaleString()} student
                                         </Badge>
                                     </div>
 

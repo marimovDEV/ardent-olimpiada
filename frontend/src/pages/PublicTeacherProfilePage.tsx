@@ -88,8 +88,8 @@ const PublicTeacherProfilePage = () => {
             <section className="relative pt-32 pb-20 overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
                     <Link to="/teachers" className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-12 group">
-                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-black uppercase tracking-widest text-[10px]">Mentorlar ro'yxatiga qaytish</span>
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        {t('profile.back_to_list')}
                     </Link>
                     <div className="grid lg:grid-cols-12 gap-16 items-center">
                         <div className="lg:col-span-4">
@@ -130,22 +130,22 @@ const PublicTeacherProfilePage = () => {
 
                             <div className="flex flex-wrap gap-12 items-center border-y border-white/5 py-10">
                                 <div className="space-y-2">
-                                    <span className="text-[10px] text-secondary font-black uppercase tracking-widest">Tajriba</span>
+                                    <span className="text-[10px] text-secondary font-black uppercase tracking-widest">{t('profile.experience')}</span>
                                     <div className="flex items-center gap-3 text-white">
                                         <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
                                             <CheckCircle className="w-6 h-6 text-green-500" />
                                         </div>
-                                        <span className="text-3xl font-black font-cinzel">{mentor.experience} yil</span>
+                                        <span className="text-3xl font-black font-cinzel">{mentor.experience} {t('common.years', 'yil')}</span>
                                     </div>
                                 </div>
                                 <div className="hidden md:block w-px h-12 bg-white/5" />
                                 <div className="space-y-2">
-                                    <span className="text-[10px] text-secondary font-black uppercase tracking-widest">Talabalar</span>
+                                    <span className="text-[10px] text-secondary font-black uppercase tracking-widest">{t('profile.students')}</span>
                                     <div className="flex items-center gap-3 text-white">
                                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                                             <Users className="w-6 h-6 text-primary" />
                                         </div>
-                                        <span className="text-3xl font-black font-cinzel">10,000+</span>
+                                        <span className="text-3xl font-black font-cinzel">{mentor.students_count?.toLocaleString() || "0"}</span>
                                     </div>
                                 </div>
                                 <div className="hidden md:block w-px h-12 bg-white/5" />
@@ -245,7 +245,7 @@ const PublicTeacherProfilePage = () => {
 
                         <div className="lg:col-span-4">
                             <div className="bg-primary/5 border border-primary/20 rounded-[3rem] p-10 space-y-10 sticky top-32 backdrop-blur-md">
-                                <h3 className="text-2xl font-black text-white font-cinzel tracking-tight text-center">Kafolatlangan ta'lim</h3>
+                                <h4 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">{t('profile.bio_title')}</h4>
                                 <ul className="space-y-6">
                                     {[
                                         "Professional tajriba",

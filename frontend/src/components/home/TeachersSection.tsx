@@ -42,6 +42,7 @@ const TeachersSection = () => {
                         name: item.name,
                         role: item.position,
                         experience: item.experience,
+                        students_count: item.students_count,
                         image: imageUrl,
                         companies: [item.company],
                         bio: item[`bio_${lang}`] || item.bio_uz,
