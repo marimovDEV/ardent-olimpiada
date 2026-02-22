@@ -116,7 +116,7 @@ const Header = () => {
             <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.ranking')}
             </NavLink>
-            <NavLink to="/all-teachers" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
+            <NavLink to="/teachers" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.mentors')}
             </NavLink>
             <NavLink to="/guide" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
@@ -262,7 +262,7 @@ const Header = () => {
                         <span className="font-bold tracking-wide">{t('nav.ranking')}</span>
                       </NavLink>
                       <NavLink
-                        to="/all-teachers"
+                        to="/teachers"
                         className={({ isActive }) => cn(
                           "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
                           isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"

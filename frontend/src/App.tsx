@@ -140,7 +140,8 @@ const App = () => {
                   <Route path="/guide" element={<GuidePage />} />
                   <Route path="/profession/:id" element={<ProfessionDetailPage />} />
                   <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
-                  <Route path="/all-teachers" element={<PublicTeachersPage />} />
+                  <Route path="/teachers" element={<PublicTeachersPage />} />
+                  <Route path="/teacher-profile/:id" element={<PublicTeacherProfilePage />} />
                   <Route path="/course/:id" element={<CourseDetailPage />} />
 
                   {/* These were previously strictly in DashboardLayout, 
@@ -152,7 +153,6 @@ const App = () => {
                 <Route element={<PublicLayout />}>
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
-                  <Route path="/teachers" element={<Navigate to="/teacher/login" replace />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />
@@ -218,6 +218,7 @@ const App = () => {
 
                 {/* Teacher Routes */}
                 <Route path="/teacher/login" element={<TeacherLoginPage />} />
+                <Route path="/teacher" element={<Navigate to="/teacher/login" replace />} />
                 <Route path="/teacher/admin" element={<Navigate to="/admin" replace />} />
                 <Route path="/teacher" element={<TeacherLayout />}>
                   <Route path="dashboard" element={<TeacherDashboard />} />
