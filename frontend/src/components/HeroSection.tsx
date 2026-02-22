@@ -17,6 +17,18 @@ import Autoplay from "embla-carousel-autoplay";
 
 const HeroSection = () => {
   const { t } = useTranslation();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error("Failed to parse user from local storage");
+      }
+    }
+  }, []);
 
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-[#0B0F1A] min-h-screen flex items-center">
@@ -34,7 +46,7 @@ const HeroSection = () => {
       <div className="container relative z-10 px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left: Content */}
-          <div className="space-y-10">
+          <div className="space-y-12">
             <div className="space-y-6">
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -64,39 +76,6 @@ const HeroSection = () => {
               >
                 {t('hero.subtitle')}
               </motion.p>
-
-              {/* Mobile Stats Grid - 2x2 */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="grid grid-cols-2 gap-4 md:flex md:flex-wrap md:gap-6 pt-2"
-              >
-                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-bold text-primary">10,000+</div>
-                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">
-                    {t('hero.stats.students')}
-                  </div>
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-bold text-primary">50+</div>
-                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">
-                    {t('hero.stats.olympiads')}
-                  </div>
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-bold text-primary">4.9</div>
-                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">
-                    {t('hero.stats.rating')}
-                  </div>
-                </div>
-                <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2 p-4 md:p-0 rounded-2xl bg-white/[0.03] md:bg-transparent border border-white/5 md:border-none">
-                  <div className="text-xl md:text-sm font-bold text-primary">100%</div>
-                  <div className="text-[10px] md:text-xs font-semibold text-white/40 md:text-white/60 tracking-wider">
-                    {t('hero.stats.transparency')}
-                  </div>
-                </div>
-              </motion.div>
             </div>
 
             <motion.div
@@ -116,55 +95,108 @@ const HeroSection = () => {
                 </Link>
               </Button>
             </motion.div>
+
+            {/* Prestige Access Card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="group relative max-w-md"
+            >
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 via-primary/20 to-primary/50 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative overflow-hidden bg-white/[0.03] backdrop-blur-2xl border border-white/5 rounded-3xl p-8 hover:border-primary/30 transition-all duration-500">
+                {/* Shimmer Line */}
+                <div className="absolute top-0 -left-[100%] w-full h-[1px] bg-gradient-to-r from-transparent via-primary/40 to-transparent group-hover:animate-shimmer-line" />
+
+                <div className="flex justify-between items-start mb-8">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-[10px] font-black tracking-widest text-primary/80 uppercase">
+                      <Star className="w-3 h-3 fill-primary" />
+                      {t('hero.prestige.title')}
+                    </div>
+                    <div className="text-xl font-black text-white font-cinzel">
+                      {t('hero.prestige.subtitle')}
+                    </div>
+                  </div>
+                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20">
+                    <Trophy className="w-6 h-6 text-primary" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-6 mb-8 border-y border-white/5 py-6">
+                  <div className="space-y-1">
+                    <div className="text-xl font-bold text-white tracking-tighter">
+                      {user ? user.certificates_count || 0 : "12"}
+                    </div>
+                    <div className="text-[9px] font-bold text-secondary/60 uppercase tracking-wider">
+                      Sertifikat
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xl font-bold text-white tracking-tighter">
+                      {user ? user.olympiads_count || 0 : "4"}
+                    </div>
+                    <div className="text-[9px] font-bold text-secondary/60 uppercase tracking-wider">
+                      {t('hero.prestige.wins')}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-xl font-bold text-white tracking-tighter">
+                      {user ? user.xp || 0 : "4500"}
+                    </div>
+                    <div className="text-[9px] font-bold text-secondary/60 uppercase tracking-wider">
+                      {t('hero.prestige.xp')}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-8">
+                  <div className="flex items-center gap-3 text-xs font-medium text-secondary/80">
+                    <CheckCircle className="w-4 h-4 text-green-500/80" />
+                    {t('hero.prestige.feature_certs')}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs font-medium text-secondary/80">
+                    <CheckCircle className="w-4 h-4 text-green-500/80" />
+                    {t('hero.prestige.feature_olympiads')}
+                  </div>
+                  <div className="flex items-center gap-3 text-xs font-medium text-secondary/80">
+                    <CheckCircle className="w-4 h-4 text-green-500/80" />
+                    {t('hero.prestige.feature_rewards')}
+                  </div>
+                </div>
+
+                <Link
+                  to="/prestige"
+                  className="flex items-center justify-between group/link text-xs font-black text-primary uppercase tracking-widest pt-2 border-t border-white/5"
+                >
+                  {t('hero.prestige.cta')}
+                  <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </motion.div>
           </div>
 
-          {/* Right: Optimized Floating Elements */}
+          {/* Right: 3D Wizard Element */}
           <div className="relative hidden lg:block">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative aspect-square"
+              initial={{ opacity: 0, scale: 0.8, x: 50 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="relative"
             >
-              {/* Main Shield Card - Simplified Magic */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-96 bg-[#111827] rounded-[3rem] border-2 border-primary/20 shadow-2xl overflow-hidden animate-float-slow gold-glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
-                <div className="relative h-full flex flex-col items-center justify-center p-8 text-center space-y-6">
-                  <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center border border-primary/20">
-                    <Trophy className="w-12 h-12 text-primary" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-black uppercase tracking-widest text-primary mb-2">HOGWARTS PRESTIGE</div>
-                    <div className="text-2xl font-black text-white font-cinzel">ELITE MEMBER</div>
-                  </div>
-                  <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: "70%" }}
-                      transition={{ duration: 1, delay: 0.5 }}
-                      className="h-full bg-primary"
-                    />
-                  </div>
-                </div>
-              </div>
+              {/* Magic Glow Effects */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/20 blur-[120px] rounded-full animate-pulse opacity-40" />
+              <div className="absolute top-1/4 left-3/4 w-32 h-32 bg-blue-500/20 blur-[60px] rounded-full animate-float-slow" />
 
-              {/* Smaller Optimized Card */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-0 right-0 w-48 h-48 bg-[#111827]/80 backdrop-blur-md rounded-[2.5rem] border border-white/10 p-6 shadow-xl translate-x-12 -translate-y-12"
-              >
-                <div className="h-full flex flex-col justify-between">
-                  <Star className="w-8 h-8 text-primary fill-primary" />
-                  <div className="space-y-2">
-                    <div className="text-xs font-black text-white italic">Sertifikatlar</div>
-                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                      <div className="w-full h-full bg-primary/30" />
-                    </div>
-                    <div className="w-1/2 h-1.5 bg-white/10 rounded-full" />
-                  </div>
-                </div>
-              </motion.div>
+              <img
+                src="/assets/images/hero/wizard.png"
+                alt="Magic Wizard"
+                className="relative w-full h-auto drop-shadow-[0_0_50px_rgba(250,204,21,0.2)] animate-float"
+              />
+
+              {/* Small Floating Particles (Optional CSS needed for better effect) */}
+              <div className="absolute top-0 right-0 w-4 h-4 bg-primary/40 rounded-full blur-sm animate-ping" />
+              <div className="absolute bottom-1/4 left-1/4 w-2 h-2 bg-blue-400/40 rounded-full blur-sm animate-ping [animation-delay:1s]" />
             </motion.div>
           </div>
         </div>

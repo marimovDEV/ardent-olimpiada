@@ -12,6 +12,16 @@
     },
     "cta_olympiad": "Olimpiadada qatnashish",
     "cta_courses": "Tayyorgarlikni boshlash",
+    "prestige": {
+      "title": "HOGWARTS PRESTIGE",
+      "subtitle": "ELITE MEMBER",
+      "feature_certs": "Nufuzli sertifikatlar",
+      "feature_olympiads": "Yopiq olimpiadalar",
+      "feature_rewards": "Maxsus mukofotlar",
+      "cta": "Prestige haqida",
+      "wins": "G'alaba",
+      "xp": "XP"
+    },
     "prestige_badge": "HOGWARTS PRESTIGE",
     "elite_member": "ELITE MEMBER",
     "certificates": "Sertifikatlar"

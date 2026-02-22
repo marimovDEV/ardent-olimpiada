@@ -297,6 +297,16 @@
     },
     "cta_olympiad": "Участвовать в олимпиаде",
     "cta_courses": "Начать подготовку",
+    "prestige": {
+      "title": "HOGWARTS PRESTIGE",
+      "subtitle": "ELITE MEMBER",
+      "feature_certs": "Престижные сертификаты",
+      "feature_olympiads": "Закрытые олимпиады",
+      "feature_rewards": "Специальные награды",
+      "cta": "О Prestige",
+      "wins": "Побед",
+      "xp": "XP"
+    },
     "prestige_badge": "HOGWARTS PRESTIGE",
     "elite_member": "ELITE MEMBER",
     "certificates": "Сертификаты"
