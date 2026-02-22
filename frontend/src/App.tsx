@@ -72,6 +72,7 @@ import NotFound from "./pages/NotFound";
 import DashboardLayout from "./components/DashboardLayout";
 import PublicLayout from "./components/layouts/PublicLayout";
 import RoleAwareLayout from "./components/layouts/RoleAwareLayout";
+import OlympiadLayout from "./components/layouts/OlympiadLayout";
 import PublicWinnersPage from "./pages/PublicWinnersPage";
 import MockPaymentPage from "./pages/MockPaymentPage";
 import PublicOlympiadsPage from "./pages/PublicOlympiadsPage";
