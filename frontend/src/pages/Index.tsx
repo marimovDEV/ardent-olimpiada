@@ -1,4 +1,5 @@
-import { lazy, Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { lazyWithRetry as lazy } from "@/utils/lazyWithRetry";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/Header";
@@ -19,7 +20,6 @@ const SubjectsSection = lazy(() => import("@/components/SubjectsSection"));
 const TrustSection = lazy(() => import("@/components/landing/TrustSection"));
 
 import { homepageService, HomePageConfig } from "@/services/homepageService";
-import { useEffect, useState } from "react";
 
 const SectionSkeleton = () => (
   <div className="w-full h-[600px] animate-pulse bg-white/5 rounded-[3rem] my-12" />

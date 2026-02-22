@@ -1,4 +1,5 @@
-import { useEffect, lazy } from "react";
+import { useEffect } from "react";
+import { lazyWithRetry as lazy } from "@/utils/lazyWithRetry";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
