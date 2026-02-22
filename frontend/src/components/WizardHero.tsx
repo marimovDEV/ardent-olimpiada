@@ -6,6 +6,21 @@ const Spline = lazy(() => import("@splinetool/react-spline"));
 
 const WizardHero = () => {
     const [hasError, setHasError] = useState(false);
+    const sceneUrl = "https://prod.spline.design/OKp79S2X5IWDcl-F/scene.splinecode";
+
+    useEffect(() => {
+        // Proactively check if the Spline scene is accessible
+        fetch(sceneUrl, { method: 'HEAD' })
+            .then(res => {
+                if (!res.ok) {
+                    console.warn("Spline scene inaccessible, triggering fallback:", res.status);
+                    setHasError(true);
+                }
+            })
+            .catch(() => {
+                setHasError(true);
+            });
+    }, []);
 
     if (hasError) {
         return (
@@ -54,7 +69,7 @@ const WizardHero = () => {
                 }>
                     <Spline
                         className="w-full h-full pointer-events-auto"
-                        scene="https://prod.spline.design/m7P-ST4p9J-L9uRj/scene.splinecode"
+                        scene={sceneUrl}
                         onError={() => setHasError(true)}
                     />
                 </Suspense>
