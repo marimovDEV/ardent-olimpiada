@@ -6,24 +6,7 @@ const Spline = lazy(() => import("@splinetool/react-spline"));
 
 const WizardHero = () => {
     const [hasError, setHasError] = useState(false);
-    const [isChecking, setIsChecking] = useState(true);
-    const sceneUrl = "https://prod.spline.design/OKp79S2X5IWDcl-F/scene.splinecode";
-
-    useEffect(() => {
-        // Proactively check if the Spline scene is accessible
-        fetch(sceneUrl, { method: 'HEAD' })
-            .then(res => {
-                if (!res.ok) {
-                    setHasError(true);
-                }
-            })
-            .catch(() => {
-                setHasError(true);
-            })
-            .finally(() => {
-                setIsChecking(false);
-            });
-    }, []);
+    const sceneUrl = "https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode";
 
     const FallbackCard = () => (
         <motion.div
@@ -53,42 +36,35 @@ const WizardHero = () => {
         </motion.div>
     );
 
-    if (isChecking) {
-        return (
-            <div className="w-full h-full flex items-center justify-center min-h-[400px]">
-                <div className="w-24 h-24 bg-primary/10 rounded-full animate-pulse border-2 border-primary/20 flex items-center justify-center">
-                    <div className="w-12 h-12 bg-primary/20 rounded-full animate-ping" />
-                </div>
-            </div>
-        );
-    }
-
-    if (hasError) {
-        return <FallbackCard />;
-    }
-
     return (
         <div className="relative w-full h-full flex items-center justify-center">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
-                className="w-full h-[600px] lg:h-[800px] relative z-20"
-            >
-                <Suspense fallback={
-                    <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-24 h-24 bg-primary/10 rounded-full animate-pulse border-2 border-primary/20 flex items-center justify-center">
-                            <div className="w-12 h-12 bg-primary/20 rounded-full animate-ping" />
+            {hasError ? (
+                <FallbackCard />
+            ) : (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="w-full h-[600px] lg:h-[800px] relative z-20"
+                >
+                    <Suspense fallback={
+                        <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-24 h-24 bg-primary/10 rounded-full animate-pulse border-2 border-primary/20 flex items-center justify-center">
+                                <div className="w-12 h-12 bg-primary/20 rounded-full animate-ping" />
+                            </div>
                         </div>
-                    </div>
-                }>
-                    <Spline
-                        className="w-full h-full pointer-events-auto"
-                        scene={sceneUrl}
-                        onError={() => setHasError(true)}
-                    />
-                </Suspense>
-            </motion.div>
+                    }>
+                        <Spline
+                            className="w-full h-full pointer-events-auto"
+                            scene={sceneUrl}
+                            onError={() => {
+                                console.warn("Spline failed to load, showing fallback");
+                                setHasError(true);
+                            }}
+                        />
+                    </Suspense>
+                </motion.div>
+            )}
 
             {/* Decorative Magic Orbs */}
             <div className="absolute inset-0 pointer-events-none z-10">
