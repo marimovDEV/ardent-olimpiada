@@ -1,14 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Trophy, ChevronRight, Zap, Sparkles, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { useState, useEffect } from "react";
 import { homepageService } from "@/services/homepageService";
 
 const PublicOlympiadsPage = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [olympiads, setOlympiads] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Redirect students to their dashboard version
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                if (user.role === 'STUDENT') {
+                    navigate('/olympiads', { replace: true });
+                }
+            } catch (e) {
+                // Ignore
+            }
+        }
+    }, [navigate]);
 
     useEffect(() => {
         const fetchOlympiads = async () => {

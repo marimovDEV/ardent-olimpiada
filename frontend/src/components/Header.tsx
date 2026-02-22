@@ -101,10 +101,16 @@ const Header = () => {
             <NavLink to="/" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
               {t('nav.home')}
             </NavLink>
-            <NavLink to="/all-olympiads" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
+            <NavLink
+              to={user?.role === 'STUDENT' ? "/olympiads" : "/all-olympiads"}
+              className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}
+            >
               {t('nav.olympiads')}
             </NavLink>
-            <NavLink to="/all-courses" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
+            <NavLink
+              to={user?.role === 'STUDENT' ? "/courses" : "/all-courses"}
+              className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}
+            >
               {t('nav.courses')}
             </NavLink>
             <NavLink to="/winners" className={({ isActive }) => `nav-link-premium font-cinzel text-xs uppercase tracking-widest ${isActive ? 'text-primary' : 'text-white/60 hover:text-white'}`}>
@@ -223,7 +229,7 @@ const Header = () => {
                         <span className="font-bold tracking-wide">{t('nav.home')}</span>
                       </NavLink>
                       <NavLink
-                        to="/all-olympiads"
+                        to={user?.role === 'STUDENT' ? "/olympiads" : "/all-olympiads"}
                         className={({ isActive }) => cn(
                           "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
                           isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"
@@ -234,7 +240,7 @@ const Header = () => {
                         <span className="font-bold tracking-wide">{t('nav.olympiads')}</span>
                       </NavLink>
                       <NavLink
-                        to="/all-courses"
+                        to={user?.role === 'STUDENT' ? "/courses" : "/all-courses"}
                         className={({ isActive }) => cn(
                           "flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300",
                           isActive ? "bg-primary/10 text-primary" : "text-white/60 hover:bg-white/5 hover:text-white"

@@ -5,9 +5,9 @@ import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import TrustBar from "@/components/home/TrustBar";
 import TimelineSection from "@/components/home/TimelineSection";
-import FinalCTA from "@/components/home/FinalCTA";
 import Footer from "@/components/Footer";
 import AIChatWidget from "@/components/AIChatWidget";
+import { useNavigate } from "react-router-dom";
 
 // Lazy load redesigned sections
 const PrideCarousel = lazy(() => import("@/components/PrideCarousel"));
@@ -28,9 +28,26 @@ const SectionSkeleton = () => (
 const Index = () => {
   const [config, setConfig] = useState<HomePageConfig | null>(null);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
+    // Redirect logged-in users
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        if (user.role === 'STUDENT') {
+          navigate('/dashboard', { replace: true });
+        } else if (user.role === 'TEACHER') {
+          navigate('/teacher/dashboard', { replace: true });
+        }
+      } catch (e) {
+        // Ignore
+      }
+    }
+
     homepageService.getConfig().then(res => setConfig(res.config)).catch(console.error);
-  }, []);
+  }, [navigate]);
   const { t, i18n } = useTranslation();
 
   return (

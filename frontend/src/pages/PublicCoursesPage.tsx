@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { homepageService } from "@/services/homepageService";
 import { getImageUrl } from "@/services/api";
 import { Button } from "@/components/ui/button";
@@ -24,8 +25,24 @@ import * as Icons from "lucide-react";
 
 const PublicCoursesPage = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [courses, setCourses] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Redirect students to their dashboard version
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            try {
+                const user = JSON.parse(userStr);
+                if (user.role === 'STUDENT') {
+                    navigate('/courses', { replace: true });
+                }
+            } catch (e) {
+                // Ignore
+            }
+        }
+    }, [navigate]);
 
     const [selectedSubject, setSelectedSubject] = useState("all_subjects");
     const [selectedGrade, setSelectedGrade] = useState("all_grades");

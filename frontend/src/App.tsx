@@ -70,7 +70,7 @@ import MyCertificatesPage from "./pages/MyCertificatesPage";
 import NotFound from "./pages/NotFound";
 import DashboardLayout from "./components/DashboardLayout";
 import PublicLayout from "./components/layouts/PublicLayout";
-import OlympiadLayout from "./components/layouts/OlympiadLayout";
+import RoleAwareLayout from "./components/layouts/RoleAwareLayout";
 import PublicWinnersPage from "./pages/PublicWinnersPage";
 import MockPaymentPage from "./pages/MockPaymentPage";
 import PublicOlympiadsPage from "./pages/PublicOlympiadsPage";
@@ -126,7 +126,8 @@ const App = () => {
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <Routes>
                 {/* Public Routes with Global Layout */}
-                <Route element={<PublicLayout />}>
+                {/* Shared Routes with Role-Aware Layout */}
+                <Route element={<RoleAwareLayout />}>
                   <Route path="/" element={<Index />} />
                   <Route path="/winners" element={<PublicWinnersPage />} />
                   <Route path="/all-olympiads" element={<PublicOlympiadsPage />} />
@@ -137,10 +138,18 @@ const App = () => {
                   <Route path="/guide" element={<GuidePage />} />
                   <Route path="/profession/:id" element={<ProfessionDetailPage />} />
                   <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
+                  <Route path="/all-teachers" element={<PublicTeachersPage />} />
+                  <Route path="/course/:id" element={<CourseDetailPage />} />
+
+                  {/* These were previously strictly in DashboardLayout, 
+                      but can be shared if we want them accessible with sidebars */}
+                  <Route path="/courses" element={<CoursesPage />} />
+                  <Route path="/olympiads" element={<OlympiadsPage />} />
+                </Route>
+
+                <Route element={<PublicLayout />}>
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
-                  <Route path="/teacher-profile/:id" element={<PublicTeacherProfilePage />} />
-                  <Route path="/all-teachers" element={<PublicTeachersPage />} />
                   <Route path="/teachers" element={<Navigate to="/teacher/login" replace />} />
                 </Route>
 
@@ -154,19 +163,16 @@ const App = () => {
                 <Route path="/register" element={<Navigate to="/auth/register" replace />} />
 
                 {/* Dashboard Layout Routes */}
+                {/* Student Dashboard Layout Routes */}
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/courses" element={<CoursesPage />} />
                   <Route path="/my-courses" element={<MyCoursesPage />} />
-                  <Route path="/olympiads" element={<OlympiadsPage />} />
                   <Route path="/results" element={<ResultsPage />} />
                   <Route path="/my-certificates" element={<MyCertificatesPage />} />
                 </Route>
 
                 <Route path="/course/:id/lesson/:lessonId?" element={<LessonView />} />
-                {/* Course Detail — own context-aware layout (RoleAwareCourseLayout inside the page) */}
-                <Route path="/course/:id" element={<CourseDetailPage />} />
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/olympiad/:id/test" element={<OlympiadTestPage />} />
 
