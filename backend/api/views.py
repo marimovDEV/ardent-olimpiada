@@ -5197,6 +5197,9 @@ class HomePageViewSet(viewsets.ViewSet):
                 'company': "Hogwarts Mentor", # Branding updated
                 'experience': exp,
                 'bio_uz': bio,
+                'bio_ru': bio,
+                'social_links': soc,
+                'image': m.avatar.url if (m.avatar and hasattr(m.avatar, 'url')) else "https://github.com/shadcn.png"
             })
         return Response(data)
 
@@ -5212,8 +5215,7 @@ class HomePageViewSet(viewsets.ViewSet):
         soc = {
             'telegram': tp.telegram_username if tp else '',
             'linkedin': tp.linkedin_profile if tp else '',
-            'instagram': tp.instagram_username if tp else '',
-            'github': tp.github_username if tp else ''
+            'instagram': tp.instagram_username if tp else ''
         }
 
         return Response({
