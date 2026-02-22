@@ -596,8 +596,6 @@ const CourseDetailPage = () => {
         </div>
       </div>
     </div>
-      </div >
-    </div >
   );
 };
 
