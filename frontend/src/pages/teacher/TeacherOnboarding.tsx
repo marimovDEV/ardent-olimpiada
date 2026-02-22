@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
+import ImageCropper from "@/components/common/ImageCropper";
 
 const TeacherOnboarding = () => {
     const navigate = useNavigate();
@@ -43,6 +44,8 @@ const TeacherOnboarding = () => {
     });
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [showCropper, setShowCropper] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
     useEffect(() => {
         fetchProfile();
@@ -80,8 +83,12 @@ const TeacherOnboarding = () => {
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setAvatarFile(file);
-            setAvatarPreview(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageToCrop(reader.result as string);
+                setShowCropper(true);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -203,6 +210,19 @@ const TeacherOnboarding = () => {
                                     </div>
                                     <p className="text-sm font-bold text-muted-foreground">Professional rasm (Avatar) yuklash</p>
                                 </div>
+
+                                {imageToCrop && (
+                                    <ImageCropper
+                                        image={imageToCrop}
+                                        open={showCropper}
+                                        onOpenChange={setShowCropper}
+                                        aspect={1}
+                                        onCropComplete={(croppedFile) => {
+                                            setAvatarFile(croppedFile);
+                                            setAvatarPreview(URL.createObjectURL(croppedFile));
+                                        }}
+                                    />
+                                )}
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-3">

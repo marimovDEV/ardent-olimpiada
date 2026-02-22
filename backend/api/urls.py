@@ -88,6 +88,7 @@ urlpatterns = [
     
     # Admin endpoints
     path('admin/stats/', views.admin_stats, name='admin-stats'),
+    path('admin/settings/commissions/', views.manage_commission_settings, name='manage-commissions'),
     
     # Public Statistics endpoints
     path('stats/public/', views.public_statistics, name='public-statistics'),

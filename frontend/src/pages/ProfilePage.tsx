@@ -17,6 +17,7 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import LevelProgressModal from "@/components/dashboard/LevelProgressModal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ImageCropper from "@/components/common/ImageCropper";
 import {
     Dialog,
     DialogContent,
@@ -676,6 +677,8 @@ const ProfilePage = () => {
     // Avatar
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [showCropper, setShowCropper] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const navigate = useNavigate();
@@ -778,9 +781,12 @@ const ProfilePage = () => {
                 toast({ title: t('dashboard.profile.info.error'), description: "Rasm hajmi 5MB dan oshmasligi kerak", variant: "destructive" });
                 return;
             }
-            setAvatarFile(file);
+
             const reader = new FileReader();
-            reader.onloadend = () => setAvatarPreview(reader.result as string);
+            reader.onload = () => {
+                setImageToCrop(reader.result as string);
+                setShowCropper(true);
+            };
             reader.readAsDataURL(file);
         }
     };
@@ -1156,7 +1162,18 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        {imageToCrop && (
+                            <ImageCropper
+                                image={imageToCrop}
+                                open={showCropper}
+                                onOpenChange={setShowCropper}
+                                aspect={1}
+                                onCropComplete={(croppedFile) => {
+                                    setAvatarFile(croppedFile);
+                                    setAvatarPreview(URL.createObjectURL(croppedFile));
+                                }}
+                            />
+                        )}
                 </TabsContent>
 
                 <TabsContent value="courses" className="focus-visible:outline-none">

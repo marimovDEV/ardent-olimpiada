@@ -77,7 +77,11 @@ interface NotificationSettings {
     smtp_password: string;
     smtp_use_tls: boolean;
 }
-
+interface CommissionSettings {
+    default_commission: number;
+    vip_commission: number;
+    internal_commission: number;
+}
 
 
 interface Permission {
@@ -143,6 +147,12 @@ const AdminSettingsPage = () => {
         smtp_use_tls: true
     });
 
+    const [commissionSettings, setCommissionSettings] = useState<CommissionSettings>({
+        default_commission: 30,
+        vip_commission: 20,
+        internal_commission: 0,
+    });
+
     const [permissions, setPermissions] = useState<Permission[]>([]);
     const [permissionsByCategory, setPermissionsByCategory] = useState<Record<string, Permission[]>>({});
     const [testingEmail, setTestingEmail] = useState(false);
@@ -157,10 +167,11 @@ const AdminSettingsPage = () => {
         try {
             const headers = getAuthHeader();
 
-            const [platformRes, securityRes, notificationRes] = await Promise.all([
+            const [platformRes, securityRes, notificationRes, commissionRes] = await Promise.all([
                 axios.get(`${API_URL}/settings/platform/`, { headers }),
                 axios.get(`${API_URL}/settings/security/`, { headers }),
                 axios.get(`${API_URL}/settings/notifications/`, { headers }),
+                axios.get(`${API_URL}/admin/settings/commissions/`, { headers: getAuthHeader() }),
             ]);
 
 
@@ -174,6 +185,9 @@ const AdminSettingsPage = () => {
             }
             if (notificationRes.data && notificationRes.data.length > 0) {
                 setNotificationSettings(notificationRes.data[0]);
+            }
+            if (commissionRes.data) {
+                setCommissionSettings(commissionRes.data);
             }
         } catch (error) {
             console.error("Error fetching settings:", error);
@@ -254,6 +268,22 @@ const AdminSettingsPage = () => {
             const response = await axios[method](url, notificationSettings, { headers });
             setNotificationSettings(response.data);
             toast.success(t('admin.notificationSettingsSaved'));
+            await fetchAllSettings();
+        } catch (error: any) {
+            console.error("Save error:", error);
+            toast.error(error.response?.data?.detail || t('admin.saveError'));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const saveCommissionSettings = async () => {
+        setSaving(true);
+        try {
+            const headers = getAuthHeader();
+            const response = await axios.post(`${API_URL}/admin/settings/commissions/`, commissionSettings, { headers });
+            setCommissionSettings(response.data.data || response.data);
+            toast.success(t('admin.commissionSettingsSaved') || "Komissiya miqdorlari saqlandi");
             await fetchAllSettings();
         } catch (error: any) {
             console.error("Save error:", error);
@@ -357,6 +387,10 @@ const AdminSettingsPage = () => {
                     <TabsTrigger value="system" className="gap-2">
                         <SettingsIcon className="w-4 h-4" />
                         {t('admin.tabs.system')}
+                    </TabsTrigger>
+                    <TabsTrigger value="commissions" className="gap-2">
+                        <CreditCard className="w-4 h-4" />
+                        Komissiyalar
                     </TabsTrigger>
                 </TabsList>
 
@@ -984,6 +1018,51 @@ const AdminSettingsPage = () => {
 
                     <div className="flex justify-end">
                         <Button onClick={savePlatformSettings} disabled={saving} className="min-w-[140px]">
+                            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                            {t('admin.save')}
+                        </Button>
+                    </div>
+                </TabsContent>
+
+                {/* COMMISSIONS TAB */}
+                <TabsContent value="commissions" className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>O'qituvchilar Komissiyasi (Platforma ulushi)</CardTitle>
+                            <CardDescription>Kurs va olimpiada sotuvlaridan sayt olib qoladigan foizlar</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="space-y-2">
+                                    <Label>Oddiy O'qituvchi (%)</Label>
+                                    <Input
+                                        type="number"
+                                        value={commissionSettings.default_commission}
+                                        onChange={(e) => setCommissionSettings({ ...commissionSettings, default_commission: parseFloat(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>VIP O'qituvchi (%)</Label>
+                                    <Input
+                                        type="number"
+                                        value={commissionSettings.vip_commission}
+                                        onChange={(e) => setCommissionSettings({ ...commissionSettings, vip_commission: parseFloat(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Internal (Xodim) (%)</Label>
+                                    <Input
+                                        type="number"
+                                        value={commissionSettings.internal_commission}
+                                        onChange={(e) => setCommissionSettings({ ...commissionSettings, internal_commission: parseFloat(e.target.value) })}
+                                    />
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="flex justify-end">
+                        <Button onClick={saveCommissionSettings} disabled={saving} className="min-w-[140px]">
                             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                             {t('admin.save')}
                         </Button>

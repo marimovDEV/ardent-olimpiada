@@ -85,6 +85,11 @@ interface TeacherProfile {
     approved_at?: string;
     is_identity_verified: boolean;
     identity_document?: string;
+    teacher_type?: 'NORMAL' | 'VIP' | 'INTERNAL';
+    vip_expire_date?: string | null;
+    is_lifetime_vip?: boolean;
+    is_vip?: boolean;
+    is_internal?: boolean;
 }
 
 interface Teacher {
@@ -132,6 +137,11 @@ const AdminTeachersPage = () => {
     const [passwordResetDialogOpen, setPasswordResetDialogOpen] = useState(false);
     const [newPass, setNewPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
+
+    // VIP Grant State
+    const [vipGrantDialogOpen, setVipGrantDialogOpen] = useState(false);
+    const [vipDuration, setVipDuration] = useState("30");
+    const [vipReason, setVipReason] = useState("");
 
     // Create/Edit State
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -302,6 +312,28 @@ const AdminTeachersPage = () => {
             setConfirmPass("");
         } catch (error) {
             toast.error(t('common.passwordResetError'));
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleGrantVIP = async () => {
+        if (!selectedTeacher) return;
+        setIsSubmitting(true);
+        try {
+            await axios.post(`${API_URL}/users/${selectedTeacher.id}/grant_vip/`, {
+                duration_days: vipDuration === "lifetime" ? -1 : parseInt(vipDuration || "30"),
+                reason: vipReason
+            }, { headers: getAuthHeader() });
+
+            toast.success(t('admin.vipGrantedSuccess') || "VIP muvaffaqiyatli berildi");
+            setVipGrantDialogOpen(false);
+            setVipDuration("30");
+            setVipReason("");
+            fetchTeachers();
+            setViewDialogOpen(false);
+        } catch (error) {
+            toast.error(t('admin.vipGrantError') || "VIP berishda xatolik yuz berdi");
         } finally {
             setIsSubmitting(false);
         }
@@ -626,6 +658,15 @@ const AdminTeachersPage = () => {
                                         <DropdownMenuSeparator className="my-2" />
 
                                         <DropdownMenuItem
+                                            className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-yellow-600 focus:text-yellow-600 focus:bg-yellow-50 dark:focus:bg-yellow-900/20 font-bold"
+                                            onClick={() => { setSelectedTeacher(teacher); setVipGrantDialogOpen(true); }}
+                                        >
+                                            <Award className="w-4 h-4" /> VIP Maqomi
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuSeparator className="my-2" />
+
+                                        <DropdownMenuItem
                                             className="cursor-pointer gap-3 rounded-xl py-2.5 px-3 text-red-700 focus:text-red-700 focus:bg-red-100 dark:focus:bg-red-950 font-black"
                                             onClick={() => handleDeleteTeacher(teacher.id)}
                                         >
@@ -645,10 +686,22 @@ const AdminTeachersPage = () => {
                             </div>
 
                             <div>
-                                <CardTitle className="text-xl font-black text-foreground mb-1">
-                                    {(teacher.first_name && teacher.first_name !== 'undefined') ? teacher.first_name : ''} {(teacher.last_name && teacher.last_name !== 'undefined') ? teacher.last_name : ''}
-                                    {(!teacher.first_name || teacher.first_name === 'undefined') && (!teacher.last_name || teacher.last_name === 'undefined') && teacher.username}
-                                </CardTitle>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <CardTitle className="text-xl font-black text-foreground">
+                                        {(teacher.first_name && teacher.first_name !== 'undefined') ? teacher.first_name : ''} {(teacher.last_name && teacher.last_name !== 'undefined') ? teacher.last_name : ''}
+                                        {(!teacher.first_name || teacher.first_name === 'undefined') && (!teacher.last_name || teacher.last_name === 'undefined') && teacher.username}
+                                    </CardTitle>
+                                    {teacher.teacher_profile?.is_vip && (
+                                        <Badge className="bg-yellow-500 hover:bg-yellow-600 text-white shadow-sm border-none uppercase text-[10px] font-black tracking-widest px-2 py-0.5 ml-1 animate-in fade-in zoom-in duration-300">
+                                            VIP
+                                        </Badge>
+                                    )}
+                                    {teacher.teacher_profile?.is_internal && (
+                                        <Badge className="bg-primary hover:bg-primary/90 text-white shadow-sm border-none uppercase text-[10px] font-black tracking-widest px-2 py-0.5 ml-1 animate-in fade-in zoom-in duration-300">
+                                            Internal
+                                        </Badge>
+                                    )}
+                                </div>
                                 <CardDescription className="flex items-center gap-2 text-sm font-bold text-primary/70">
                                     <Shield className="w-4 h-4" />
                                     {teacher.teacher_profile?.specialization || t('admin.specializationNone')}
@@ -1022,6 +1075,60 @@ const AdminTeachersPage = () => {
                 onVerify={handleVerifyStatus}
                 onToggleIdentity={handleToggleIdentity}
             />
+
+            {/* VIP Grant Dialog */}
+            <Dialog open={vipGrantDialogOpen} onOpenChange={setVipGrantDialogOpen}>
+                <DialogContent className="sm:max-w-[450px] rounded-3xl border-none bg-background shadow-2xl p-0 overflow-hidden">
+                    <DialogDescription className="sr-only">
+                        O'qituvchiga VIP maqomini taqdim etish.
+                    </DialogDescription>
+                    <DialogHeader className="p-8 pb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 flex items-center justify-center mb-4">
+                            <Award className="w-6 h-6 text-yellow-600" />
+                        </div>
+                        <DialogTitle className="text-2xl font-black">{selectedTeacher?.first_name} ga VIP berish</DialogTitle>
+                    </DialogHeader>
+                    <div className="p-8 pt-0 space-y-4">
+                        <div className="space-y-3">
+                            <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">Muddat</Label>
+                            <Select value={vipDuration} onValueChange={setVipDuration}>
+                                <SelectTrigger className="h-14 rounded-2xl bg-muted/30 border-2 border-transparent focus:border-yellow-500/50 font-bold">
+                                    <SelectValue placeholder="Muddatni tanlang" />
+                                </SelectTrigger>
+                                <SelectContent className="rounded-2xl border-border shadow-xl">
+                                    <SelectItem value="30">1 Oy (30 kun)</SelectItem>
+                                    <SelectItem value="90">3 Oy (90 kun)</SelectItem>
+                                    <SelectItem value="180">6 Oy (180 kun)</SelectItem>
+                                    <SelectItem value="365">1 Yil (365 kun)</SelectItem>
+                                    <SelectItem value="lifetime">Umrbod (Cheksiz)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-3">
+                            <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground ml-1">Sabab (Izoh)</Label>
+                            <Input
+                                placeholder="VIP nima uchun berilyapti?"
+                                value={vipReason}
+                                onChange={(e) => setVipReason(e.target.value)}
+                                className="h-14 rounded-2xl bg-muted/30 border-2 border-transparent focus:border-yellow-500/50 font-bold"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter className="p-8 pt-0 gap-3">
+                        <Button variant="outline" onClick={() => setVipGrantDialogOpen(false)} className="h-14 px-8 rounded-2xl font-bold border-2">
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            onClick={handleGrantVIP}
+                            disabled={isSubmitting}
+                            className="h-14 px-8 rounded-2xl font-black bg-yellow-500 hover:bg-yellow-600 text-white shadow-xl shadow-yellow-500/20"
+                        >
+                            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "VIP Berish"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </div>
     );
 };

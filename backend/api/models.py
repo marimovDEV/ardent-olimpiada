@@ -179,6 +179,28 @@ class User(AbstractUser):
         return self.certificates.filter(status='VERIFIED').count()
 
 
+
+class CommissionSettings(models.Model):
+    """Singleton model for platform commission percentages"""
+    default_commission = models.DecimalField(max_digits=5, decimal_places=2, default=30.00, help_text="Normal teachers platform %")
+    vip_commission = models.DecimalField(max_digits=5, decimal_places=2, default=20.00, help_text="VIP teachers platform %")
+    internal_commission = models.DecimalField(max_digits=5, decimal_places=2, default=10.00, help_text="Internal teachers platform %")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'commission_settings'
+        verbose_name_plural = "Commission Settings"
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "Global Commission Settings"
+
+
+
 class Subject(models.Model):
     """Subject/Category Model for CMS"""
     name = models.CharField(max_length=100)
@@ -264,6 +286,7 @@ class Course(models.Model):
     lock_strategy = models.CharField(max_length=20, choices=LOCK_STRATEGY_CHOICES, default='free')
     completion_min_progress = models.IntegerField(default=80, help_text="Kurs tugallandi hisoblash uchun minimal foiz")
     teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='courses', limit_choices_to={'role': 'TEACHER'})
+    teachers = models.ManyToManyField('User', related_name='co_teaching_courses', blank=True, limit_choices_to={'role': 'TEACHER'})
     
     # Advanced Settings
     is_certificate_enabled = models.BooleanField(default=False)
@@ -271,8 +294,11 @@ class Course(models.Model):
     required_final_score = models.IntegerField(default=70, help_text="Sertifikat olish uchun yakuniy imtihondan kutilayotgan minimal ball")
     
     # Payment fields for course creation
+    is_paid_creation = models.BooleanField(default=False, help_text="Whether this course requires a creation fee")
     creation_fee_paid = models.BooleanField(default=False, help_text="Whether teacher paid course creation fee")
     creation_fee_transaction = models.ForeignKey('Transaction', on_delete=models.SET_NULL, null=True, blank=True, related_name='course_creation_fees')
+    
+    is_internal = models.BooleanField(default=False, help_text="Platformaning o'z kursi")
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -381,6 +407,9 @@ class Lesson(models.Model):
     )
     xp_amount = models.IntegerField(default=10, help_text="XP awarded for completing this lesson")
     min_watch_percent = models.IntegerField(default=80, help_text="Dars tugallangan hisoblanishi uchun minimal ko'rish foizi")
+    
+    teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='lessons_assigned', limit_choices_to={'role': 'TEACHER'})
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -607,6 +636,8 @@ class Olympiad(models.Model):
     show_on_home = models.BooleanField(default=False)
     home_order = models.IntegerField(default=0)
     teacher = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='olympiads', limit_choices_to={'role': 'TEACHER'})
+    checker = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='checking_olympiads', limit_choices_to={'role': 'TEACHER'})
+    moderator = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_olympiads', limit_choices_to={'role': 'TEACHER'})
     
     # Rewards Config
     REWARD_STRATEGY_CHOICES = [
@@ -685,6 +716,9 @@ class Olympiad(models.Model):
         ordering = ['-start_date']
     
     # Extended Settings
+    is_paid_creation = models.BooleanField(default=False, help_text="Whether this olympiad requires a creation fee")
+    creation_fee_paid = models.BooleanField(default=False, help_text="Whether teacher paid olympiad creation fee")
+    creation_fee_transaction = models.ForeignKey('Transaction', on_delete=models.SET_NULL, null=True, blank=True, related_name='olympiad_creation_fees')
     eligibility_grades = models.JSONField(blank=True, null=True, help_text="List of eligible grades, e.g. [7, 8, 9]")
     eligibility_regions = models.JSONField(blank=True, null=True, help_text="List of eligible regions")
     technical_config = models.JSONField(blank=True, null=True, help_text="Technical constraints like tab_limit")
@@ -1344,10 +1378,35 @@ class TeacherProfile(models.Model):
     approved_at = models.DateTimeField(null=True, blank=True)
     approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_teachers')
     
-    # Premium subscription
+    # Tiered Teacher System
+    TEACHER_TYPES = [
+        ('NORMAL', 'Oddiy'),
+        ('VIP', 'VIP'),
+        ('INTERNAL', 'Internal (Platforma)'),
+    ]
+    teacher_type = models.CharField(max_length=20, choices=TEACHER_TYPES, default='NORMAL')
+    vip_expire_date = models.DateTimeField(null=True, blank=True)
+    is_lifetime_vip = models.BooleanField(default=False)
+    
+    # Premium subscription (Legacy, can be mapped to VIP)
     is_premium = models.BooleanField(default=False, help_text="Premium teachers can create unlimited courses")
     
     updated_at = models.DateTimeField(auto_now=True)
+    
+    @property
+    def is_vip(self):
+        if self.teacher_type == 'VIP':
+            if self.is_lifetime_vip:
+                return True
+            from django.utils import timezone
+            if self.vip_expire_date and self.vip_expire_date > timezone.now():
+                return True
+            return False
+        return False
+
+    @property
+    def is_internal(self):
+        return self.teacher_type == 'INTERNAL'
     
     class Meta:
         db_table = 'teacher_profiles'
@@ -1369,7 +1428,25 @@ class TeacherWallet(models.Model):
         db_table = 'teacher_wallets'
     
     def __str__(self):
-        return f"{self.teacher.username} - Wallet (Balance: {self.balance})"
+        return f"{self.teacher.username} - Wallet"
+
+
+class VIPLog(models.Model):
+    """Logs for VIP status changes"""
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE, related_name='vip_logs')
+    given_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='given_vips')
+    prev_type = models.CharField(max_length=20)
+    new_type = models.CharField(max_length=20)
+    duration_days = models.IntegerField(null=True, blank=True)
+    reason = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'vip_logs'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.teacher.username}: {self.prev_type} -> {self.new_type}"
 
 class Transaction(models.Model):
     """Transaction history for all wallet operations"""
@@ -1394,6 +1471,8 @@ class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
     course = models.ForeignKey('Course', on_delete=models.SET_NULL, null=True, blank=True, related_name='transactions')
     amount = models.DecimalField(max_digits=12, decimal_places=2)
+    platform_commission = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    teacher_earnings = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     payment_provider = models.CharField(max_length=50, null=True, blank=True, help_text="click, payme, etc")
     payment_id = models.CharField(max_length=255, null=True, blank=True, help_text="External payment ID")

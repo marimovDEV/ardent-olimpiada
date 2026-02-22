@@ -37,6 +37,7 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import { toast } from "@/components/ui/use-toast";
+import ImageCropper from "@/components/common/ImageCropper";
 
 interface Subject {
     id: number;
@@ -89,6 +90,8 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
     const [newSubject, setNewSubject] = useState("");
     const [showNewSubject, setShowNewSubject] = useState(false);
     const [modules, setModules] = useState<{ id?: number, title: string, order: number }[]>([]);
+    const [showCropper, setShowCropper] = useState(false);
+    const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
     useEffect(() => {
         if (open) {
@@ -409,13 +412,29 @@ const CourseWizard = ({ open, onOpenChange, onSuccess, courseId }: CourseWizardP
                                     onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) {
-                                            setFormData({ ...formData, thumbnail: file });
-                                            setThumbnailPreview(URL.createObjectURL(file));
+                                            const reader = new FileReader();
+                                            reader.onload = () => {
+                                                setImageToCrop(reader.result as string);
+                                                setShowCropper(true);
+                                            };
+                                            reader.readAsDataURL(file);
                                         }
                                     }}
                                 />
                             </div>
                         </section>
+
+                        {imageToCrop && (
+                            <ImageCropper
+                                image={imageToCrop}
+                                open={showCropper}
+                                onOpenChange={setShowCropper}
+                                onCropComplete={(croppedFile) => {
+                                    setFormData({ ...formData, thumbnail: croppedFile });
+                                    setThumbnailPreview(URL.createObjectURL(croppedFile));
+                                }}
+                            />
+                        )}
 
                         <section className="space-y-4">
                             <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">

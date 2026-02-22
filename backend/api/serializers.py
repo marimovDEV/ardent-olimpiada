@@ -83,11 +83,16 @@ class NotificationBroadcastSerializer(serializers.ModelSerializer):
 # ============= USER SERIALIZERS =============
 
 class TeacherProfileSerializer(serializers.ModelSerializer):
+    is_vip = serializers.ReadOnlyField()
+    is_internal = serializers.ReadOnlyField()
+    
     class Meta:
         model = TeacherProfile
         fields = ['bio', 'experience_years', 'specialization', 'telegram_username', 
                   'instagram_username', 'youtube_channel', 'linkedin_profile', 
-                  'verification_status', 'rejection_reason', 'approved_at', 'approved_by', 'is_premium',
+                  'verification_status', 'rejection_reason', 'approved_at', 'approved_by', 
+                  'is_premium', 'teacher_type', 'vip_expire_date', 'is_lifetime_vip',
+                  'is_vip', 'is_internal',
                   'is_identity_verified', 'identity_document']
 
 
@@ -471,7 +476,8 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ['id', 'course', 'module', 'title', 'description', 'video_url', 'pdf_url', 
-                  'video_duration', 'duration', 'order', 'is_free', 'is_locked', 'min_watch_percent', 'required_lesson', 'test', 'created_at']
+                  'video_duration', 'duration', 'order', 'is_free', 'is_locked', 'min_watch_percent', 
+                  'required_lesson', 'test', 'teacher', 'created_at']
         read_only_fields = ['id', 'created_at']
 
     def update(self, instance, validated_data):
@@ -749,7 +755,7 @@ class LearningLessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = ['id', 'title', 'description', 'video_url', 'youtube_id', 'video_type', 
                   'video_duration', 'duration', 'pdf_url', 'order', 'is_free', 
-                  'progress', 'is_locked', 'required_lesson', 'practice', 'test', 'content', 'homework']
+                  'progress', 'is_locked', 'required_lesson', 'practice', 'test', 'content', 'homework', 'teacher']
 
     def get_duration(self, obj):
         if obj.video_duration:
@@ -794,7 +800,8 @@ class CourseSerializer(serializers.ModelSerializer):
             'level', 'price', 'teacher_percentage', 'platform_percentage',
             'is_active', 'status', 'lessons_count', 'students_count',
             'rating', 'teacher_name', 'teacher_avatar', 'is_enrolled', 'created_at',
-            'lock_strategy', 'completion_min_progress', 'required_final_score', 'total_duration'
+            'lock_strategy', 'completion_min_progress', 'required_final_score', 'total_duration',
+            'is_internal', 'is_paid_creation', 'creation_fee_paid', 'teachers'
         ]
 
     def get_total_duration(self, obj):
@@ -1017,6 +1024,7 @@ class OlympiadSerializer(serializers.ModelSerializer):
                   'max_attempts', 'tab_switch_limit', 'required_camera', 'required_full_screen', 'disable_copy_paste',
                   'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'created_at',
                   'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time', 'revenue',
+                  'is_paid_creation', 'creation_fee_paid', 'checker', 'moderator',
                   'reward_strategy', 'auto_reward', 'reward_distribution_status']
     
     def get_thumbnail(self, obj):

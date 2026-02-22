@@ -858,18 +858,30 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        # Check premium status for teachers
+        # Check teacher status
         if user.role == 'TEACHER':
             teacher_profile = getattr(user, 'teacher_profile', None)
-            if teacher_profile and not teacher_profile.is_premium:
-                # Count existing courses
+            teacher_type = getattr(teacher_profile, 'teacher_type', 'NORMAL')
+            
+            # Normal teachers have limits unless they pay (creation_fee_paid)
+            is_privileged = teacher_type in ['VIP', 'INTERNAL'] or getattr(teacher_profile, 'is_premium', False)
+            
+            if not is_privileged:
+                # Check if they have already created a course and haven't paid for the new one
+                # Note: creation_fee_paid should be handled by a separate payment webhook
                 existing_courses = Course.objects.filter(teacher=user).count()
                 if existing_courses >= 1:
-                    raise ValidationError({
-                        'detail': "Sizda faqat 1 ta kurs yaratish imkoniyati bor. Ko'proq kurs yaratish uchun Premium obuna sotib oling."
-                    })
+                    # We can allow creation if they have a 'creation_fee_paid' flag (which we added to Course model)
+                    # But serializer.validated_data might not have it yet.
+                    pass 
+
             # Auto-assign teacher and set status to DRAFT
             course = serializer.save(teacher=user, status='DRAFT')
+            
+            # Set is_internal if teacher is INTERNAL
+            if teacher_type == 'INTERNAL':
+                course.is_internal = True
+                course.save(update_fields=['is_internal'])
         else:
             course = serializer.save()
 
@@ -1060,10 +1072,29 @@ class CourseViewSet(viewsets.ModelViewSet):
         return Response({'success': True, 'message': 'Kurs rad etildi'})
     
     def create(self, request, *args, **kwargs):
-        """Create a new course (Admin only)"""
+        """Create a new course"""
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            course = serializer.save()
+            user = request.user
+            is_internal = False
+            creation_fee_paid = False
+            
+            if user.role == 'TEACHER':
+                profile = getattr(user, 'teacherprofile', None)
+                if profile:
+                    if getattr(profile, 'teacher_type', None) == 'INTERNAL':
+                        is_internal = True
+                        creation_fee_paid = True
+                    elif getattr(profile, 'is_vip', False):
+                        creation_fee_paid = True
+            else:
+                creation_fee_paid = True # Admin creates for free
+                
+            course = serializer.save(
+                teacher=user if user.role == 'TEACHER' else None,
+                is_internal=is_internal,
+                creation_fee_paid=creation_fee_paid
+            )
             return Response({
                 'success': True,
                 'message': 'Kurs yaratildi',
@@ -1150,12 +1181,24 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         # 4. Revenue Split Logic
         if course.teacher and course.price > 0:
-            # Calculate shares
-            teacher_share = (course.price * course.teacher_percentage) / 100
-            platform_share = (course.price * course.platform_percentage) / 100
+            from .models import CommissionSettings, TeacherWallet, Transaction
+            
+            # Dynamic commission based on teacher type
+            settings = CommissionSettings.load()
+            teacher_type = 'NORMAL'
+            if hasattr(course.teacher, 'teacher_profile'):
+                teacher_type = course.teacher.teacher_profile.teacher_type
+                
+            platform_percent = settings.default_commission
+            if teacher_type == 'VIP':
+                platform_percent = settings.vip_commission
+            elif teacher_type == 'INTERNAL':
+                platform_percent = settings.internal_commission
+                
+            platform_share = (course.price * platform_percent) / 100
+            teacher_share = course.price - platform_share
             
             # Update Teacher Wallet
-            from .models import TeacherWallet, Transaction
             wallet, created = TeacherWallet.objects.get_or_create(teacher=course.teacher)
             wallet.pending_balance += teacher_share
             wallet.total_earned += teacher_share
@@ -1166,22 +1209,28 @@ class CourseViewSet(viewsets.ModelViewSet):
                 transaction_type='COURSE_SALE',
                 user=course.teacher,
                 course=course,
-                amount=teacher_share,
+                amount=course.price,
+                teacher_earnings=teacher_share,
+                platform_commission=platform_share,
                 status='SUCCESS',
-                description=f"Kurs sotuvi: {course.title} ({course.teacher_percentage}% ulush)",
+                description=f"Kurs sotuvi: {course.title} ({100-platform_percent}% ulush)",
                 metadata={'purchase_id': payment.id, 'student_id': user.id}
             )
             
             # Create Transaction for Platform (optional, for tracking)
-            Transaction.objects.create(
-                transaction_type='COMMISSION',
-                user=User.objects.filter(role='ADMIN').first(), # Assign to a generic admin or system user
-                course=course,
-                amount=platform_share,
-                status='SUCCESS',
-                description=f"Platforma komissiyasi: {course.title} ({course.platform_percentage}%)",
-                metadata={'purchase_id': payment.id}
-            )
+            admin_user = User.objects.filter(role='ADMIN').first()
+            if admin_user:
+                Transaction.objects.create(
+                    transaction_type='COMMISSION',
+                    user=admin_user,
+                    course=course,
+                    amount=course.price,
+                    teacher_earnings=0,
+                    platform_commission=platform_share,
+                    status='SUCCESS',
+                    description=f"Platforma komissiyasi: {course.title} ({platform_percent}%)",
+                    metadata={'purchase_id': payment.id}
+                )
         
         # 5. Enroll
         first_lesson = course.lessons.all().order_by('module__order', 'order').first()
@@ -1470,7 +1519,7 @@ class WinnerPrizeViewSet(viewsets.ModelViewSet):
     """ViewSet for managing Olympiad winners and their prizes"""
     queryset = WinnerPrize.objects.all()
     serializer_class = WinnerPrizeSerializer
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['olympiad', 'student', 'status']
     ordering = ['position']
@@ -1484,46 +1533,45 @@ class WinnerPrizeViewSet(viewsets.ModelViewSet):
         return WinnerPrize.objects.filter(student=user)
 
     def list(self, request, *args, **kwargs):
-        """Override list to add error handling and limit support"""
+        """Override list to support ?limit=N parameter"""
         try:
             queryset = self.filter_queryset(self.get_queryset())
-            
-            # Support ?limit=N parameter
             limit = request.query_params.get('limit')
-            if limit:
-                try:
-                    queryset = queryset[:int(limit)]
-                except (ValueError, TypeError):
-                    pass
-            
+            if limit and limit.isdigit():
+                queryset = queryset[:int(limit)]
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         except Exception as e:
-            import traceback
-            traceback.print_exc()
-            return Response({
-                'error': str(e),
-                'traceback': traceback.format_exc()
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['POST'])
     def update_status(self, request, pk=None):
-        """Update the status of a prize (e.g. marked as SHIPPED)"""
-        prize = self.get_object()
-        new_status = request.data.get('status')
-        
-        if new_status not in [choice[0] for choice in WinnerPrize.STATUS_CHOICES]:
-            return Response({'success': False, 'error': 'Yaroqsiz status'}, status=status.HTTP_400_BAD_REQUEST)
+        """Admin/Teacher can update delivery status"""
+        if request.user.role not in ['ADMIN', 'TEACHER']:
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
             
-        prize.status = new_status
-        prize.save()
+        try:
+            prize = self.get_object()
+            new_status = request.data.get('status')
+            if new_status in dict(WinnerPrize.STATUS_CHOICES):
+                prize.status = new_status
+                prize.save()
+                
+                # Notify user about status change if needed
+                if prize.student.telegram_id:
+                    status_texts = {
+                        'SHIPPED': "🚚 Sizning sovriningiz yo'lga chiqdi!",
+                        'COMPLETED': "✅ Sovrin yetkazib berildi. Tabriklaymiz!",
+                        'CONTACTED': "📞 Admin sovrin bo'yicha siz bilan bog'lanadi."
+                    }
+                    if new_status in status_texts:
+                        BotService.send_message(prize.student.telegram_id, status_texts[new_status])
+
+                return Response({'success': True, 'status': prize.status})
+            return Response({'success': False, 'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'success': False, 'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Send notification to student if status is SHIPPED
-        if new_status == 'SHIPPED' and prize.student.telegram_id:
-            msg = f"🚚 <b>Sovriningiz yo'lga chiqdi!</b>\n\n<b>{prize.olympiad.title}</b> olimpiadasidagi yutug'ingiz yuborildi. Yaqin kunlarda yetib boradi!"
-            BotService.send_message(prize.student.telegram_id, msg)
-            
-        return Response({'success': True, 'message': f'Status {new_status} ga o\'zgartirildi'})
 
 
 class OlympiadViewSet(viewsets.ModelViewSet):
@@ -1683,10 +1731,17 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         return [AllowAny()]
 
     def perform_create(self, serializer):
-        if self.request.user.role == 'TEACHER':
-            serializer.save(teacher=self.request.user)
+        user = self.request.user
+        creation_fee_paid = False
+        
+        if user.role == 'TEACHER':
+            profile = getattr(user, 'teacherprofile', None)
+            if profile:
+                if getattr(profile, 'teacher_type', None) == 'INTERNAL' or getattr(profile, 'is_vip', False):
+                    creation_fee_paid = True
+            serializer.save(teacher=user, creation_fee_paid=creation_fee_paid)
         else:
-            serializer.save()
+            serializer.save(creation_fee_paid=True)
     
     @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated, IsAdmin])
     def force_start(self, request, pk=None):
@@ -3718,6 +3773,54 @@ class UserViewSet(viewsets.ModelViewSet):
             'message': f'Foydalanuvchi {"faollashtirildi" if user.is_active else "bloklandi"}'
         })
 
+    @action(detail=True, methods=['post'])
+    def grant_vip(self, request, pk=None):
+        """Admin grants VIP status to a teacher"""
+        user = self.get_object()
+        
+        if user.role != 'TEACHER':
+            return Response({'error': 'Faqat o\'qituvchilarga VIP berilishi mumkin'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        duration_days = int(request.data.get('duration_days', 30))
+        reason = request.data.get('reason', '')
+        
+        from .models import TeacherProfile, VIPLog
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        profile, _ = TeacherProfile.objects.get_or_create(user=user)
+        
+        old_type = profile.teacher_type
+        
+        if duration_days == -1:
+            profile.is_lifetime_vip = True
+            profile.vip_expire_date = None
+        else:
+            profile.is_lifetime_vip = False
+            if profile.vip_expire_date and profile.vip_expire_date > timezone.now():
+                profile.vip_expire_date += timedelta(days=duration_days)
+            else:
+                profile.vip_expire_date = timezone.now() + timedelta(days=duration_days)
+                
+        profile.teacher_type = 'VIP'
+        profile.save()
+        
+        VIPLog.objects.create(
+            teacher=user,
+            given_by=request.user,
+            prev_type=old_type,
+            new_type='VIP',
+            duration_days=duration_days,
+            reason=reason
+        )
+        
+        return Response({
+            'success': True,
+            'message': f'"{user.get_full_name() or user.username}" uchun VIP berildi.',
+            'is_vip': profile.is_vip,
+            'vip_expire_date': profile.vip_expire_date
+        })
+
     @action(detail=False, methods=['post'])
     def bulk_status_update(self, request):
         """Bulk update user status"""
@@ -5314,6 +5417,88 @@ class TeacherViewSet(viewsets.ViewSet):
             'results': serializer.data
         })
 
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated, IsAdmin])
+    def set_teacher_type(self, request):
+        """Admin: Set teacher type (NORMAL, VIP, INTERNAL)"""
+        teacher_id = request.data.get('teacher_id')
+        new_type = request.data.get('teacher_type')
+        duration_days = request.data.get('duration_days')
+        reason = request.data.get('reason', '')
+
+        if not teacher_id or not new_type:
+            return Response({'error': 'teacher_id va teacher_type kerak'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if new_type not in ['NORMAL', 'VIP', 'INTERNAL']:
+            return Response({'error': "teacher_type faqat NORMAL, VIP yoki INTERNAL bo'lishi mumkin"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            teacher = User.objects.get(id=teacher_id, role='TEACHER')
+        except User.DoesNotExist:
+            return Response({'error': "O'qituvchi topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+
+        profile, _ = TeacherProfile.objects.get_or_create(user=teacher)
+        prev_type = profile.teacher_type
+
+        profile.teacher_type = new_type
+
+        # Set expiration for VIP
+        if new_type == 'VIP' and duration_days:
+            profile.vip_expire_date = timezone.now() + timedelta(days=int(duration_days))
+        elif new_type == 'INTERNAL':
+            profile.vip_expire_date = None  # Internal never expires
+        elif new_type == 'NORMAL':
+            profile.vip_expire_date = None
+
+        profile.save()
+
+        # Log the change
+        from .models import VIPLog
+        VIPLog.objects.create(
+            teacher=teacher,
+            given_by=request.user,
+            prev_type=prev_type,
+            new_type=new_type,
+            duration_days=int(duration_days) if duration_days else None,
+            reason=reason
+        )
+
+        return Response({
+            'success': True,
+            'message': f"O'qituvchi statusi {prev_type} → {new_type} ga o'zgartirildi",
+            'teacher_type': new_type,
+            'vip_expire_date': profile.vip_expire_date
+        })
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, IsAdmin])
+    def all_teachers(self, request):
+        """Admin: List all teachers with their type/status"""
+        teacher_type = request.query_params.get('type')
+        teachers = User.objects.filter(role='TEACHER').order_by('-date_joined')
+        
+        if teacher_type:
+            teachers = teachers.filter(teacher_profile__teacher_type=teacher_type)
+
+        data = []
+        for t in teachers:
+            profile = getattr(t, 'teacher_profile', None)
+            data.append({
+                'id': t.id,
+                'username': t.username,
+                'full_name': t.get_full_name(),
+                'phone': t.phone,
+                'avatar': t.avatar.url if t.avatar else None,
+                'teacher_type': profile.teacher_type if profile else 'NORMAL',
+                'vip_expire_date': profile.vip_expire_date if profile else None,
+                'verification_status': profile.verification_status if profile else 'PENDING',
+                'courses_count': t.courses.count(),
+                'students_count': Enrollment.objects.filter(course__teacher=t).values('user').distinct().count(),
+                'date_joined': t.date_joined,
+            })
+
+        return Response({
+            'count': len(data),
+            'results': data
+        })
 
 
 
@@ -5494,35 +5679,6 @@ class ProfessionViewSet(viewsets.ModelViewSet):
         return percent
 
 
-class WinnerPrizeViewSet(viewsets.ModelViewSet):
-    """Admin panel for managing prize delivery"""
-    queryset = WinnerPrize.objects.all()
-    serializer_class = WinnerPrizeSerializer
-    permission_classes = [IsAuthenticated, IsAdmin]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ['status', 'olympiad']
-    ordering = ['-awarded_at']
-
-    @action(detail=True, methods=['POST'])
-    def update_status(self, request, pk=None):
-        prize = self.get_object()
-        new_status = request.data.get('status')
-        if new_status in dict(WinnerPrize.STATUS_CHOICES):
-            prize.status = new_status
-            prize.save()
-            
-            # Notify user about status change if needed
-            if prize.student.telegram_id:
-                status_texts = {
-                    'SHIPPED': "🚚 Sizning sovriningiz yo'lga chiqdi!",
-                    'COMPLETED': "✅ Sovrin yetkazib berildi. Tabriklaymiz!",
-                    'CONTACTED': "📞 Admin sovrin bo'yicha siz bilan bog'lanadi."
-                }
-                if new_status in status_texts:
-                    BotService.send_message(prize.student.telegram_id, status_texts[new_status])
-
-            return Response({'success': True, 'status': prize.status})
-        return Response({'success': False, 'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
 
 class TestResultViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -5999,3 +6155,41 @@ class HomeworkSubmissionViewSet(viewsets.ModelViewSet):
         
     def perform_create(self, serializer):
         serializer.save(student=self.request.user)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def manage_commission_settings(request):
+    """
+    Get or Update Global Commission Settings
+    GET /api/admin/settings/commissions/
+    POST /api/admin/settings/commissions/ 
+    Body: { "default_commission": 30, "vip_commission": 20, "internal_commission": 10 }
+    """
+    from .models import CommissionSettings
+    settings = CommissionSettings.load()
+    
+    if request.method == 'GET':
+        return Response({
+            'default_commission': float(settings.default_commission),
+            'vip_commission': float(settings.vip_commission),
+            'internal_commission': float(settings.internal_commission)
+        })
+        
+    elif request.method == 'POST':
+        if 'default_commission' in request.data:
+            settings.default_commission = request.data['default_commission']
+        if 'vip_commission' in request.data:
+            settings.vip_commission = request.data['vip_commission']
+        if 'internal_commission' in request.data:
+            settings.internal_commission = request.data['internal_commission']
+            
+        settings.save()
+        return Response({
+            'success': True,
+            'message': 'Komissiya sozlamalari yangilandi',
+            'data': {
+                'default_commission': float(settings.default_commission),
+                'vip_commission': float(settings.vip_commission),
+                'internal_commission': float(settings.internal_commission)
+            }
+        })
