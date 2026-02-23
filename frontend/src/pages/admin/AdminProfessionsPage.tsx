@@ -245,14 +245,14 @@ const AdminProfessionsPage = () => {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                <div className="flex items-center justify-between p-4 bg-muted/50 rounded-2xl border border-dashed border-border/50">
                                     <div className="flex items-center gap-2">
                                         <Label className="font-bold">{t('admin.active')}</Label>
                                         <Switch checked={formData.is_active} onCheckedChange={(c) => setFormData({ ...formData, is_active: c })} />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Label className="font-bold">{t('admin.order')}</Label>
-                                        <Input type="number" className="w-20 rounded-lg" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} />
+                                        <Input type="number" className="w-20 rounded-lg text-foreground bg-background" value={formData.order} onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) })} />
                                     </div>
                                 </div>
                             </TabsContent>
