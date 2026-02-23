@@ -71,6 +71,8 @@ import ResultsPage from "./pages/ResultsPage";
 import MyCoursesPage from "./pages/MyCoursesPage";
 import MyCertificatesPage from "./pages/MyCertificatesPage";
 import NotFound from "./pages/NotFound";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import DashboardLayout from "./components/DashboardLayout";
 import PublicLayout from "./components/layouts/PublicLayout";
 import RoleAwareLayout from "./components/layouts/RoleAwareLayout";
@@ -155,6 +157,8 @@ const App = () => {
                 <Route element={<PublicLayout />}>
                   <Route path="/certificate/verify/:certNumber" element={<CertificateVerifyPage />} />
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />
