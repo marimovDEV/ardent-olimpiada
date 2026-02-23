@@ -288,7 +288,7 @@ class CertificateGenerator:
         c.drawCentredString(left_x, sig_y - 35, "Ardent Olimpiada")
         
         # Right (Verifier)
-        right_x = self.PAGE_WIDTH - 300 # Moved away from QR
+        right_x = self.PAGE_WIDTH - 220 # Moved away from QR and center box
         c.setStrokeColor(self.BORDER_COLOR)
         c.line(right_x - 60, sig_y, right_x + 60, sig_y)
         
