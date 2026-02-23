@@ -40,19 +40,20 @@ const TopItemsChart = () => {
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                        <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 10, bottom: 5 }}>
                             <XAxis type="number" hide />
                             <YAxis
                                 dataKey="name"
                                 type="category"
-                                width={160}
-                                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                                width={120}
+                                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                                tickFormatter={(val) => val.length > 15 ? val.substring(0, 15) + '...' : val}
                             />
                             <Tooltip
                                 cursor={{ fill: 'transparent' }}
                                 contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
                                 itemStyle={{ color: 'hsl(var(--popover-foreground))' }}
-                                formatter={(value: number) => [`${value.toLocaleString()} ${t('olympiadsSection.currency')}`, t('admin.charts.revenue')]}
+                                formatter={(value: number) => [`${value.toLocaleString()} ${t('common.currency')}`, t('admin.charts.revenue')]}
                             />
                             <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={20}>
                                 {data.map((entry, index) => (

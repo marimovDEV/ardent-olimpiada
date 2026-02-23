@@ -133,7 +133,9 @@
     "confirmNewPassword": "Подтвердите новый пароль",
     "passwordResetSuccess": "Пароль успешно обновлен",
     "passwordResetError": "Ошибка при обновлении пароля",
-    "passwordsDoNotMatch": "Пароли не совпадают"
+    "passwordsDoNotMatch": "Пароли не совпадают",
+    "currency": "сум",
+    "download": "Скачать"
   },
   "olympiadTest": {
     "finishConfirm": "Сдать экзамен",
@@ -670,6 +672,13 @@
       "isFinalExam": "Финальный экзамен",
       "isFinalExamDesc": "Должен ли этот тест считаться итоговым экзаменом курса?"
     },
+    "today": "Сегодня",
+    "todayTransactions": "Транзакции за сегодня",
+    "refunds": "Возвраты",
+    "refundsDesc": "Отмененные платежи",
+    "totalRevenue": "Общая выручка",
+    "last7Days": "Последние 7 дней",
+    "last30Days": "Последние 30 дней",
     "analytics": {
       "title": "Аналитика",
       "totalStudents": "Всего студентов",
@@ -696,7 +705,11 @@
       "security": "Безопасность",
       "notifications": "Уведомления",
       "roles": "Роли",
-      "system": "Система"
+      "system": "Система",
+      "stats": "Статистика",
+      "transactions": "Транзакции",
+      "botPayments": "Платежи через бот",
+      "settings": "Настройки"
     },
     "botPayments": "Платежи через бот",
     "cms": "Редактирование сайта",

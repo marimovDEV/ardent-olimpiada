@@ -27,7 +27,7 @@ const FinanceTrendChart = () => {
 
     return (
         <div className="bg-card p-6 rounded-2xl border border-border shadow-sm h-full flex flex-col">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                     <h3 className="font-bold text-lg text-foreground">{t('admin.financeTrend')}</h3>
                     <p className="text-xs text-muted-foreground">{t('admin.financeTrendDesc')}</p>

@@ -158,7 +158,9 @@
     "passwordResetSuccess": "Parol muvaffaqiyatli yangilandi",
     "passwordResetError": "Parolni yangilashda xatolik yuz berdi",
     "passwordsDoNotMatch": "Parollar mos kelmadi",
-    "fillFields": "Barcha maydonlarni to'ldiring"
+    "fillFields": "Barcha maydonlarni to'ldiring",
+    "currency": "so'm",
+    "download": "Yuklab olish"
   },
   "success": {
     "purchase_completed": "Muvaffaqiyatli sotib olindi",
@@ -620,6 +622,13 @@
       "isFinalExam": "Final imtihon",
       "isFinalExamDesc": "Bu test kursning yakuniy imtihoni hisoblansinmi?"
     },
+    "today": "Bugun",
+    "todayTransactions": "Bugungi tranzaksiyalar",
+    "refunds": "Qaytarilgan to'lovlar",
+    "refundsDesc": "Voz kechilgan to'lovlar",
+    "totalRevenue": "Umumiy Tushum",
+    "last7Days": "Oxirgi 7 kun",
+    "last30Days": "Oxirgi 30 kun",
     "analytics": {
       "title": "Analitika",
       "totalStudents": "Jami o'quvchilar",
@@ -646,7 +655,11 @@
       "security": "Xavfsizlik",
       "notifications": "Bildirishnomalar",
       "roles": "Rollar",
-      "system": "Tizim"
+      "system": "Tizim",
+      "stats": "Statistika",
+      "transactions": "Tranzaksiyalar",
+      "botPayments": "Bot To'lovlari",
+      "settings": "Sozlamalar"
     },
     "botPayments": "Bot To'lovlari",
     "cms": "Sayt Tahriri",
