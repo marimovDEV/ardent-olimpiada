@@ -110,7 +110,7 @@ export default function FinanceTransactions() {
 
     const handleApprove = async (id: number) => {
         try {
-            await axios.post(`${API_URL}/payments/${id}/approve/`, {}, { headers: getAuthHeader() });
+            await axios.post(`${API_URL}/payments/${id}/confirm/`, {}, { headers: getAuthHeader() });
             setTransactions(prev => prev.map(t => t.id === id ? { ...t, status: "COMPLETED" } : t));
             toast.success(t('common.successMessage'));
         } catch (error) {
@@ -329,6 +329,21 @@ export default function FinanceTransactions() {
                                 <div className="text-muted-foreground">{t('admin.status')}:</div>
                                 <div>{getStatusBadge(selectedTrx.status)}</div>
                             </div>
+
+                            {(selectedTrx as any).receipt_image && (
+                                <div className="mt-4 border border-border rounded-lg overflow-hidden">
+                                    <div className="bg-muted px-3 py-2 text-xs font-semibold">To'lov cheki (kvitansiya)</div>
+                                    <img
+                                        src={(selectedTrx as any).receipt_image}
+                                        alt="To'lov cheki"
+                                        className="w-full max-h-[300px] object-contain bg-black/5"
+                                        controls={false}
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = 'https://placehold.co/400x300?text=Rasm+topilmadi';
+                                        }}
+                                    />
+                                </div>
+                            )}
                         </div>
                     )}
                     <DialogFooter>
