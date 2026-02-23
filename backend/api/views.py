@@ -5767,6 +5767,117 @@ class ProfessionViewSet(viewsets.ModelViewSet):
             'progress': UserProfessionProgressSerializer(progress).data
         })
 
+    @action(detail=True, methods=['GET'])
+    def progress(self, request, pk=None):
+        """Get Career Engine progress for a profession"""
+        profession = self.get_object()
+        try:
+            from .services.career_engine_service import CareerEngineService
+            state = CareerEngineService.get_or_create_state(request.user, profession)
+            data = {
+                'total_xp': state.total_xp,
+                'status': state.status,
+                'current_level_id': state.current_level_id if state.current_level else None,
+                'current_level_title': state.current_level.title if state.current_level else None,
+            }
+            return Response({'success': True, 'progress': data})
+        except Exception as e:
+            return Response({'success': False, 'message': str(e)}, status=400)
+
+    @action(detail=True, methods=['POST'])
+    def sync_builder(self, request, pk=None):
+        """Sync the entire Career Engine graph (Levels & Nodes) from the Admin Builder"""
+        from .models import ProfessionLevel, ProfessionNode
+        from django.db import transaction
+        
+        profession = self.get_object()
+        levels_data = request.data.get('levels', [])
+        
+        try:
+            with transaction.atomic():
+                # Keep track of active level IDs to delete removed ones
+                active_level_ids = []
+                
+                for l_data in levels_data:
+                    # Update or Create Level
+                    if l_data.get('id'):
+                        level = ProfessionLevel.objects.get(id=l_data['id'], profession=profession)
+                        level.level_number = l_data.get('level_number', level.level_number)
+                        level.title = l_data.get('title', level.title)
+                        level.unlock_xp = l_data.get('unlock_xp', level.unlock_xp)
+                        level.order = l_data.get('order', level.order)
+                        level.is_prestige_only = l_data.get('is_prestige_only', level.is_prestige_only)
+                        level.save()
+                    else:
+                        level = ProfessionLevel.objects.create(
+                            profession=profession,
+                            level_number=l_data.get('level_number', 1),
+                            title=l_data.get('title', ''),
+                            unlock_xp=l_data.get('unlock_xp', 0),
+                            order=l_data.get('order', 0),
+                            is_prestige_only=l_data.get('is_prestige_only', False)
+                        )
+                    active_level_ids.append(level.id)
+                    
+                    # Sync Nodes for this Level
+                    active_node_ids = []
+                    nodes_data = l_data.get('nodes', [])
+                    
+                    for n_data in nodes_data:
+                        if n_data.get('id'):
+                            node = ProfessionNode.objects.get(id=n_data['id'], level=level)
+                            node.title = n_data.get('title', node.title)
+                            node.node_type = n_data.get('node_type', node.node_type)
+                            node.reference_id = n_data.get('reference_id', node.reference_id)
+                            node.is_required = n_data.get('is_required', node.is_required)
+                            node.xp_reward = n_data.get('xp_reward', node.xp_reward)
+                            node.unlock_condition = n_data.get('unlock_condition', node.unlock_condition)
+                            node.order = n_data.get('order', node.order)
+                            node.save()
+                        else:
+                            node = ProfessionNode.objects.create(
+                                level=level,
+                                title=n_data.get('title', ''),
+                                node_type=n_data.get('node_type', 'course'),
+                                reference_id=n_data.get('reference_id', None),
+                                is_required=n_data.get('is_required', True),
+                                xp_reward=n_data.get('xp_reward', 0),
+                                unlock_condition=n_data.get('unlock_condition', None),
+                                order=n_data.get('order', 0)
+                            )
+                        active_node_ids.append(node.id)
+                        
+                    # Delete removed nodes in this level
+                    level.nodes.exclude(id__in=active_node_ids).delete()
+                    
+                # Delete removed levels in this profession
+                profession.levels.exclude(id__in=active_level_ids).delete()
+                
+            return Response({'success': True, 'message': 'Graph synchronized successfully.'})
+        except Exception as e:
+            return Response({'success': False, 'message': str(e)}, status=400)
+
+    @action(detail=False, methods=['POST'], url_path='node/(?P<node_id>[^/.]+)/complete')
+    def complete_node(self, request, node_id=None):
+        """Complete a specific Career Engine node"""
+        from .models import ProfessionNode
+        from .services.career_engine_service import CareerEngineService
+        from django.shortcuts import get_object_or_404
+        
+        node = get_object_or_404(ProfessionNode, id=node_id)
+        score = request.data.get('score', 0)
+        
+        try:
+            progress, _ = CareerEngineService.complete_node(request.user, node, score=int(score))
+            return Response({
+                'success': True,
+                'message': 'Tugun yakunlandi va XP qo\'shildi!',
+            })
+        except ValueError as e:
+            return Response({'success': False, 'message': str(e)}, status=400)
+        except Exception as e:
+            return Response({'success': False, 'message': 'Xatolik yuz berdi'}, status=500)
+
     def _recalculate_progress(self, user, profession, progress_item=None):
         """Helper to calculate % of mandatory courses completed in this roadmap"""
         if not progress_item:

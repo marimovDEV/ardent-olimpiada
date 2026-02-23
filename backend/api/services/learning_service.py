@@ -272,6 +272,28 @@ class LearningService:
             from api.services.profession_service import ProfessionService
             ProfessionService.update_all_active_professions(user)
             
+            # 🚀 HOGWARTS CAREER ENGINE HOOK: Auto-complete Course Nodes
+            try:
+                from api.models import ProfessionNode, UserProfessionState
+                from api.services.career_engine_service import CareerEngineService
+                
+                # Get all active profession states for the user
+                active_states = UserProfessionState.objects.filter(user=user, status='active')
+                for state in active_states:
+                    if state.current_level:
+                        # Find if there's a course node in the current level for this course
+                        nodes = state.current_level.nodes.filter(
+                            node_type='course', 
+                            reference_id=course.id
+                        )
+                        for node in nodes:
+                            try:
+                                CareerEngineService.complete_node(user, node, score=100)
+                            except Exception as e:
+                                print(f"CareerEngine Error completing course node: {e}")
+            except Exception as e:
+                print(f"CareerEngine Error: {e}")
+            
             # Create certificate if not already exists AND it's enabled for course
             if course.is_certificate_enabled and not Certificate.objects.filter(user=user, course=course).exists():
                 from api.utils import generate_unique_id

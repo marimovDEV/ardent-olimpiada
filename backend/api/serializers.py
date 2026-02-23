@@ -6,6 +6,7 @@ from .models import (
     TicketMessage, Payment, BotConfig, LevelReward, User, Course, Lesson, Enrollment, Olympiad, Question,
     HomePageConfig, HomeStat, HomeStep, HomeAdvantage, FreeCourseSection, FreeCourseLessonCard, Subject, TeacherProfile, Notification,
     Profession, ProfessionSubject, ProfessionRoadmapStep, UserProfessionProgress,
+    ProfessionLevel, ProfessionNode, UserProfessionState, UserNodeProgress, # Added new models
     Module, LessonPractice, LessonTest, Lead, LessonProgress,
     Testimonial, Winner, Banner, AIAssistantFAQ,
     NotificationTemplate, NotificationBroadcast,
@@ -614,18 +615,63 @@ class ProfessionRoadmapStepSerializer(serializers.ModelSerializer):
         return False
 
 
+class ProfessionNodeSerializer(serializers.ModelSerializer):
+    user_status = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ProfessionNode
+        fields = ['id', 'title', 'node_type', 'reference_id', 'is_required', 
+                  'xp_reward', 'unlock_condition', 'order', 'user_status']
+
+    def get_user_status(self, obj):
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and user.is_authenticated:
+            prog = UserNodeProgress.objects.filter(user=user, node=obj).first()
+            if prog:
+                return {
+                    'status': prog.status,
+                    'score': prog.score,
+                    'completed_at': prog.completed_at
+                }
+        return {'status': 'locked'}
+
+class ProfessionLevelSerializer(serializers.ModelSerializer):
+    nodes = ProfessionNodeSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = ProfessionLevel
+        fields = ['id', 'level_number', 'title', 'unlock_xp', 'order', 'is_prestige_only', 'nodes']
+        
+
+class UserProfessionStateSerializer(serializers.ModelSerializer):
+    current_level_id = serializers.PrimaryKeyRelatedField(source='current_level', read_only=True)
+    
+    class Meta:
+        model = UserProfessionState
+        fields = ['id', 'current_level_id', 'total_xp', 'status', 'started_at', 'updated_at']
+
 class ProfessionSerializer(serializers.ModelSerializer):
     required_subjects = ProfessionSubjectSerializer(many=True, read_only=True)
     roadmap_steps = ProfessionRoadmapStepSerializer(many=True, read_only=True)
     user_progress = serializers.SerializerMethodField()
+    levels = ProfessionLevelSerializer(many=True, read_only=True)
+    user_state = serializers.SerializerMethodField()
     
     class Meta:
         model = Profession
-        fields = ['id', 'name', 'description', 'icon', 'color', 'is_active', 'order',
+        fields = ['id', 'name', 'slug', 'description', 'icon', 'color', 'is_active', 'order',
                   'suitability', 'requirements', 'salary_range', 'learning_time',
-                  'certification_info', 'career_opportunities',
-                  'primary_subject', 'required_xp',
-                  'required_subjects', 'roadmap_steps', 'user_progress']
+                  'certification_info', 'career_opportunities', 'prestige_only',
+                  'primary_subject', 'required_xp', 'total_required_xp',
+                  'required_subjects', 'roadmap_steps', 'user_progress', 'levels', 'user_state']
+
+    def get_user_state(self, obj):
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and user.is_authenticated:
+            state = UserProfessionState.objects.filter(user=user, profession=obj).first()
+            if state:
+                return UserProfessionStateSerializer(state).data
+        return None
 
     def get_user_progress(self, obj):
         user = self.context.get('request').user if self.context.get('request') else None

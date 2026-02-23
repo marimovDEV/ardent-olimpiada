@@ -1628,8 +1628,11 @@ class Profession(models.Model):
     order = models.IntegerField(default=0)
     
     # Career Engine enhancements
+    slug = models.SlugField(max_length=100, blank=True, null=True, unique=True)
+    prestige_only = models.BooleanField(default=False)
     primary_subject = models.ForeignKey('Subject', on_delete=models.SET_NULL, null=True, blank=True, related_name='professions_featured')
     required_xp = models.IntegerField(default=0, help_text="Kasbni ochish uchun kerakli XP")
+    total_required_xp = models.IntegerField(default=0, help_text="Kasb uchun umumiy talab qilingan XP")
     
     # Roadmap / Career Info
     suitability = models.TextField(blank=True, help_text="Kimlar uchun mos")
@@ -1712,6 +1715,94 @@ class UserProfessionProgress(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.profession.name} ({self.progress_percent}%)"
+
+
+class ProfessionLevel(models.Model):
+    """Career Level within a Profession (e.g. Apprentice, Adept, Master)"""
+    profession = models.ForeignKey(Profession, on_delete=models.CASCADE, related_name='levels')
+    level_number = models.IntegerField()
+    title = models.CharField(max_length=100)
+    unlock_xp = models.IntegerField(default=0, help_text="Ushbu levelni ochish uchun talab etiladigan XP")
+    order = models.IntegerField(default=0)
+    is_prestige_only = models.BooleanField(default=False)
+    
+    class Meta:
+        db_table = 'profession_levels'
+        ordering = ['profession', 'order', 'level_number']
+        
+    def __str__(self):
+        return f"{self.profession.name} - Level {self.level_number}: {self.title}"
+
+
+class ProfessionNode(models.Model):
+    """Specific nodes/steps within a Profession Level"""
+    NODE_TYPES = [
+        ('course', 'Course'),
+        ('olympiad', 'Olympiad'),
+        ('project', 'Project'),
+        ('exam', 'Exam'),
+        ('certificate', 'Certificate'),
+        ('custom', 'Custom Task'),
+    ]
+    level = models.ForeignKey(ProfessionLevel, on_delete=models.CASCADE, related_name='nodes')
+    title = models.CharField(max_length=200)
+    node_type = models.CharField(max_length=20, choices=NODE_TYPES, default='course')
+    reference_id = models.IntegerField(blank=True, null=True, help_text="Course/Olympiad/etc ID")
+    is_required = models.BooleanField(default=True, help_text="Ushbu bosqich majburiymi?")
+    xp_reward = models.IntegerField(default=0, help_text="Ushbu qadamni yakunlash uchun beriladigan XP")
+    unlock_condition = models.JSONField(blank=True, null=True, help_text="Shartlar (min_score, required_nodes, etc.)")
+    order = models.IntegerField(default=0)
+    
+    class Meta:
+        db_table = 'profession_nodes'
+        ordering = ['level', 'order']
+        
+    def __str__(self):
+        return f"{self.level.profession.name} - {self.level.title} - Node: {self.title}"
+
+
+class UserProfessionState(models.Model):
+    """Tracks a user's overall progress in a specific profession"""
+    STATUS_CHOICES = [
+        ('locked', 'Locked'),
+        ('active', 'Active'),
+        ('completed', 'Completed'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profession_states')
+    profession = models.ForeignKey(Profession, on_delete=models.CASCADE, related_name='user_states')
+    current_level = models.ForeignKey(ProfessionLevel, on_delete=models.SET_NULL, null=True, blank=True)
+    total_xp = models.IntegerField(default=0)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='locked')
+    started_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'user_profession_states'
+        unique_together = ['user', 'profession']
+        
+    def __str__(self):
+        return f"{self.user.username} -> {self.profession.name} ({self.status})"
+
+
+class UserNodeProgress(models.Model):
+    """Tracks a user's completion of individual profession nodes"""
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='node_progress')
+    node = models.ForeignKey(ProfessionNode, on_delete=models.CASCADE, related_name='user_progress')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    score = models.IntegerField(default=0, blank=True, null=True)
+    completed_at = models.DateTimeField(blank=True, null=True)
+    
+    class Meta:
+        db_table = 'user_node_progress'
+        unique_together = ['user', 'node']
+        
+    def __str__(self):
+        return f"{self.user.username} -> {self.node.title} ({self.status})"
 
 
 class Lead(models.Model):

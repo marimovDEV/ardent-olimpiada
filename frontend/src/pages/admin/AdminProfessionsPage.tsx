@@ -309,13 +309,22 @@ const AdminProfessionsPage = () => {
                                 <div className="p-6 bg-slate-900 text-white rounded-[2rem] shadow-xl">
                                     <div className="flex items-center gap-3 mb-4">
                                         <Map className="w-6 h-6 text-primary" />
-                                        <h3 className="text-xl font-black">Roadmap Qadamlari</h3>
+                                        <h3 className="text-xl font-black">Hogwarts Career Engine</h3>
                                     </div>
                                     <p className="text-slate-400 text-sm mb-4">
-                                        Roadmap qadamlarini (Kurslar, Olimpiadalar va Loyihalar) hozircha alohida Roadmap menyusi orqali boshqaring.
+                                        Kasb bosqichlari (Level), node'lar va XP iqtisodiyotini boshqarish uchun Karyera Quruvchi (Builder) sahifasiga o'ting.
                                     </p>
-                                    <Button variant="secondary" className="w-full rounded-xl font-bold bg-white/10 hover:bg-white/20 border-none text-white">
-                                        Roadmap tahrirlash (Tez kunda)
+                                    <Button
+                                        variant="secondary"
+                                        className="w-full rounded-xl font-bold bg-white/10 hover:bg-white/20 border-none text-white"
+                                        disabled={!editingProfession?.id}
+                                        onClick={() => {
+                                            if (editingProfession?.id) {
+                                                window.location.href = `/admin/professions/${editingProfession.id}/builder`;
+                                            }
+                                        }}
+                                    >
+                                        {!editingProfession?.id ? "Avval kasbni saqlang" : "Career Builder'ni ochish"}
                                     </Button>
                                 </div>
                             </TabsContent>

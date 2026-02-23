@@ -145,6 +145,29 @@ class OlympiadService:
         from api.services.profession_service import ProfessionService
         ProfessionService.update_all_active_professions(user)
 
+        # 🚀 HOGWARTS CAREER ENGINE HOOK: Auto-complete Olympiad Nodes
+        try:
+            from api.models import ProfessionNode, UserProfessionState
+            from api.services.career_engine_service import CareerEngineService
+            
+            # Get all active profession states for the user
+            active_states = UserProfessionState.objects.filter(user=user, status='active')
+            for state in active_states:
+                if state.current_level:
+                    # Find if there's an olympiad node in the current level for this olympiad
+                    nodes = state.current_level.nodes.filter(
+                        node_type='olympiad', 
+                        reference_id=olympiad.id
+                    )
+                    for node in nodes:
+                        try:
+                            # Pass the actual score percentage achieved as the node score
+                            CareerEngineService.complete_node(user, node, score=int(percentage))
+                        except Exception as e:
+                            print(f"CareerEngine Error completing olympiad node: {e}")
+        except Exception as e:
+            print(f"CareerEngine Error: {e}")
+
         # Telegram Notification
         if user.telegram_id:
             from api.telegram_service import TelegramService

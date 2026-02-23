@@ -37,7 +37,9 @@ import AdminOlympiadWizard from "./pages/admin/olympiad-wizard/AdminOlympiadWiza
 import AdminOlympiadParticipantsPage from "./pages/admin/AdminOlympiadParticipantsPage";
 import AdminOlympiadResultsPage from "./pages/admin/AdminOlympiadResultsPage";
 import AdminProfessionsPage from "./pages/admin/AdminProfessionsPage";
+import AdminCareerBuilderPage from "./pages/admin/AdminCareerBuilderPage";
 import AdminFinancePage from "./pages/admin/AdminFinancePage";
+import FinanceTransactions from "./pages/admin/finance/FinanceTransactions";
 import AdminSupportPage from "./pages/admin/AdminSupportPage";
 import AdminCertificatesPage from "./pages/admin/AdminCertificatesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
@@ -202,7 +204,9 @@ const App = () => {
                   <Route path="olympiads/:id/participants/:userId/analysis" element={<AdminParticipantAnalysisPage />} />
                   <Route path="olympiads/:id/results" element={<AdminOlympiadResultsPage />} />
                   <Route path="professions" element={<AdminProfessionsPage />} />
+                  <Route path="professions/:id/builder" element={<AdminCareerBuilderPage />} />
                   <Route path="finance" element={<AdminFinancePage />} />
+                  <Route path="finance/transactions" element={<FinanceTransactions />} />
                   <Route path="support" element={<AdminSupportPage />} />
                   <Route path="certificates" element={<AdminCertificatesPage />} />
                   <Route path="delivery" element={<AdminDeliveryPage />} />

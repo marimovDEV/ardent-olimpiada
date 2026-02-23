@@ -4,6 +4,7 @@ from .models import (
     OlympiadRegistration, TestResult, Certificate, SupportTicket,
     TicketMessage, Payment, BotConfig, TeacherProfile, Subject,
     Profession, ProfessionSubject, ProfessionRoadmapStep,
+    ProfessionLevel, ProfessionNode, UserProfessionState, UserNodeProgress,
     AIAssistantFAQ, AIConversation, AIMessage, AIUnansweredQuestion,
     PlatformSettings, SecuritySettings, NotificationSettings,
     PaymentProviderConfig, Permission, RolePermission, AuditLog
@@ -167,6 +168,31 @@ class ProfessionRoadmapStepAdmin(admin.ModelAdmin):
     list_filter = ['profession', 'step_type']
     search_fields = ['title', 'description']
     search_fields = ['title', 'description']
+
+
+@admin.register(ProfessionLevel)
+class ProfessionLevelAdmin(admin.ModelAdmin):
+    list_display = ['profession', 'level_number', 'title', 'unlock_xp', 'order', 'is_prestige_only']
+    list_filter = ['profession', 'is_prestige_only']
+    search_fields = ['title']
+
+@admin.register(ProfessionNode)
+class ProfessionNodeAdmin(admin.ModelAdmin):
+    list_display = ['level', 'title', 'node_type', 'is_required', 'xp_reward', 'order']
+    list_filter = ['level__profession', 'node_type', 'is_required']
+    search_fields = ['title']
+
+@admin.register(UserProfessionState)
+class UserProfessionStateAdmin(admin.ModelAdmin):
+    list_display = ['user', 'profession', 'current_level', 'total_xp', 'status']
+    list_filter = ['profession', 'status']
+    search_fields = ['user__username', 'user__email']
+
+@admin.register(UserNodeProgress)
+class UserNodeProgressAdmin(admin.ModelAdmin):
+    list_display = ['user', 'node', 'status', 'score', 'completed_at']
+    list_filter = ['status']
+    search_fields = ['user__username', 'node__title']
 
 
 # ===== SETTINGS ADMIN =====
