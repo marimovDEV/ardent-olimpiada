@@ -1,5 +1,5 @@
 
-import { DollarSign, TrendingUp, TrendingDown, CreditCard, Activity } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, CreditCard, Activity, ArrowDownRight } from "lucide-react";
 import FinanceTrendChart from "@/components/admin/bi/FinanceTrendChart";
 import TopItemsChart from "@/components/admin/bi/TopItemsChart";
 import { useTranslation } from "react-i18next";
