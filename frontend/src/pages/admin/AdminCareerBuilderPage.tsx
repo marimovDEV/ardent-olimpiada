@@ -44,6 +44,16 @@ interface Profession {
     levels: Level[];
 }
 
+interface Course {
+    id: number;
+    title: string;
+}
+
+interface Olympiad {
+    id: number;
+    title: string;
+}
+
 const AdminCareerBuilderPage = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -51,11 +61,27 @@ const AdminCareerBuilderPage = () => {
 
     const [profession, setProfession] = useState<Profession | null>(null);
     const [levels, setLevels] = useState<Level[]>([]);
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [olympiads, setOlympiads] = useState<Olympiad[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchData();
+        fetchOptions();
     }, [id]);
+
+    const fetchOptions = async () => {
+        try {
+            const [coursesRes, olympiadsRes] = await Promise.all([
+                axios.get(`${API_URL}/courses/`, { headers: getAuthHeader() }),
+                axios.get(`${API_URL}/olympiads/`, { headers: getAuthHeader() })
+            ]);
+            setCourses(coursesRes.data.results || coursesRes.data);
+            setOlympiads(olympiadsRes.data.results || olympiadsRes.data);
+        } catch (error) {
+            console.error("Failed to load options", error);
+        }
+    };
 
     const fetchData = async () => {
         try {
@@ -80,7 +106,7 @@ const AdminCareerBuilderPage = () => {
     const addLevel = () => {
         setLevels(prev => [...prev, {
             level_number: prev.length + 1,
-            title: `Level ${prev.length + 1}`,
+            title: `Bosqich ${prev.length + 1}`,
             unlock_xp: prev.length * 1000,
             order: prev.length,
             is_prestige_only: false,
@@ -106,7 +132,7 @@ const AdminCareerBuilderPage = () => {
         setLevels(prev => {
             const next = [...prev];
             next[levelIndex].nodes.push({
-                title: "Yangi tugun",
+                title: "Yangi vazifa",
                 node_type: "course",
                 reference_id: null,
                 is_required: true,
@@ -175,10 +201,10 @@ const AdminCareerBuilderPage = () => {
                         <h1 className="text-3xl font-black tracking-tight flex items-center gap-3">
                             {profession.name}
                             <span className="text-lg bg-primary/10 text-primary px-3 py-1 rounded-full font-bold">
-                                Career Engine Builder
+                                Karyera Quruvchi
                             </span>
                         </h1>
-                        <p className="text-muted-foreground">Bosqichlar, XP iqtisodiyoti va unlock shartlarini yarating.</p>
+                        <p className="text-muted-foreground">Bosqichlar, vazifalar, XP iqtisodiyoti va ochilish shartlarini yarating.</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -208,7 +234,7 @@ const AdminCareerBuilderPage = () => {
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1.5 w-32">
-                                    <Label className="text-xs font-bold text-yellow-600 dark:text-yellow-500">Unlock XP</Label>
+                                    <Label className="text-xs font-bold text-yellow-600 dark:text-yellow-500">Kerakli XP</Label>
                                     <Input
                                         type="number"
                                         value={level.unlock_xp}
@@ -219,7 +245,7 @@ const AdminCareerBuilderPage = () => {
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2 bg-purple-500/10 px-3 py-2 rounded-xl border border-purple-500/20">
-                                    <Label className="text-xs font-bold text-purple-700 dark:text-purple-400">Prestige Only</Label>
+                                    <Label className="text-xs font-bold text-purple-700 dark:text-purple-400">Faqat VIP uchun</Label>
                                     <Switch
                                         checked={level.is_prestige_only}
                                         onCheckedChange={(c) => updateLevel(lIndex, 'is_prestige_only', c)}
@@ -241,7 +267,7 @@ const AdminCareerBuilderPage = () => {
 
                                     <div className="flex-1 grid grid-cols-4 gap-4 items-center">
                                         <div className="col-span-1 space-y-1">
-                                            <Label className="text-[10px] uppercase text-muted-foreground font-bold">Tugun nomi</Label>
+                                            <Label className="text-[10px] uppercase text-muted-foreground font-bold">Vazifa nomi</Label>
                                             <Input
                                                 value={node.title}
                                                 onChange={(e) => updateNode(lIndex, nIndex, 'title', e.target.value)}
@@ -267,17 +293,49 @@ const AdminCareerBuilderPage = () => {
                                             </Select>
                                         </div>
                                         <div className="col-span-1 space-y-1">
-                                            <Label className="text-[10px] uppercase text-muted-foreground font-bold">ID (Ref)</Label>
-                                            <Input
-                                                type="number"
-                                                value={node.reference_id || ''}
-                                                onChange={(e) => updateNode(lIndex, nIndex, 'reference_id', parseInt(e.target.value) || null)}
-                                                className="h-8 text-sm font-mono"
-                                                placeholder="Masalan: 5"
-                                            />
+                                            <Label className="text-[10px] uppercase text-muted-foreground font-bold">Bog'langan Resurs</Label>
+
+                                            {node.node_type === 'course' ? (
+                                                <Select
+                                                    value={node.reference_id ? node.reference_id.toString() : ""}
+                                                    onValueChange={(v) => updateNode(lIndex, nIndex, 'reference_id', parseInt(v))}
+                                                >
+                                                    <SelectTrigger className="h-8 text-sm">
+                                                        <SelectValue placeholder="Kursni tanlang" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {courses.map(c => (
+                                                            <SelectItem key={c.id} value={c.id.toString()}>{c.title}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            ) : node.node_type === 'olympiad' ? (
+                                                <Select
+                                                    value={node.reference_id ? node.reference_id.toString() : ""}
+                                                    onValueChange={(v) => updateNode(lIndex, nIndex, 'reference_id', parseInt(v))}
+                                                >
+                                                    <SelectTrigger className="h-8 text-sm">
+                                                        <SelectValue placeholder="Olimpiadani tanlang" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {olympiads.map(o => (
+                                                            <SelectItem key={o.id} value={o.id.toString()}>{o.title}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            ) : (
+                                                <Input
+                                                    type="number"
+                                                    value={node.reference_id || ''}
+                                                    onChange={(e) => updateNode(lIndex, nIndex, 'reference_id', parseInt(e.target.value) || null)}
+                                                    className="h-8 text-sm font-mono"
+                                                    disabled={node.node_type !== 'project' && node.node_type !== 'certificate' && node.node_type !== 'custom'}
+                                                    placeholder={node.node_type === 'custom' ? "Ixtiyoriy ID" : "ID"}
+                                                />
+                                            )}
                                         </div>
                                         <div className="col-span-1 space-y-1">
-                                            <Label className="text-[10px] uppercase text-muted-foreground font-bold text-green-600">XP Reward</Label>
+                                            <Label className="text-[10px] uppercase text-muted-foreground font-bold text-green-600">Beriladigan XP</Label>
                                             <Input
                                                 type="number"
                                                 value={node.xp_reward}
@@ -304,7 +362,7 @@ const AdminCareerBuilderPage = () => {
 
                             <Button variant="outline" size="sm" className="w-full mt-2 border-dashed bg-transparent" onClick={() => addNode(lIndex)}>
                                 <Plus className="w-4 h-4 mr-2" />
-                                Yangi tugun (Node) qo'shish
+                                Yangi vazifa qo'shish
                             </Button>
                         </CardContent>
                     </Card>
@@ -312,7 +370,7 @@ const AdminCareerBuilderPage = () => {
 
                 <Button variant="secondary" className="w-full h-14 rounded-2xl border-2 border-dashed font-bold text-muted-foreground bg-transparent hover:bg-muted/50" onClick={addLevel}>
                     <Plus className="w-5 h-5 mr-2" />
-                    Yangi bosqich (Level) qo'shish
+                    Yangi bosqich qo'shish
                 </Button>
             </div>
         </div>
