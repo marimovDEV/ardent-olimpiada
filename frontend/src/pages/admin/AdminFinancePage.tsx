@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Receipt, Settings, Smartphone } from "lucide-react";
+import { LayoutDashboard, Receipt, Settings, Smartphone, Download } from "lucide-react";
 import FinanceDashboard from "./finance/FinanceDashboard";
 import FinanceTransactions from "./finance/FinanceTransactions";
 import FinanceSettings from "./finance/FinanceSettings";
@@ -10,8 +10,11 @@ import AdminBotPayments from "./settings/AdminBotPayments"; // Reuse existing
 import { getAuthHeader } from "@/services/api";
 import { API_URL } from "@/services/api";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 export default function AdminFinancePage() {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState("dashboard");
     const [stats, setStats] = useState({ total: 0, today_count: 0, refunded: 0 });
     const [loading, setLoading] = useState(true);
