@@ -262,7 +262,7 @@ const AdminProfessionsPage = () => {
                                     <div className="space-y-2 p-6 bg-primary/5 rounded-[2rem] border border-primary/10">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Layout className="w-5 h-5 text-primary" />
-                                            <Label className="font-black text-lg">Asosiy Ecosystem Fan</Label>
+                                            <Label className="font-black text-lg">Asosiy Tizim Fani</Label>
                                         </div>
                                         <Select
                                             value={formData.primary_subject?.toString() || "none"}
@@ -278,13 +278,13 @@ const AdminProfessionsPage = () => {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        <p className="text-[10px] text-slate-500 italic mt-2">Ushbu fan sahifasida ushbu kasb "Featured" bo'lib ko'rinadi</p>
+                                        <p className="text-[10px] text-slate-500 italic mt-2">Ushbu fan sahifasida ushbu kasb "Asosiy" bo'lib ko'rinadi</p>
                                     </div>
 
                                     <div className="space-y-2 p-6 bg-yellow-500/5 rounded-[2rem] border border-yellow-500/10">
                                         <div className="flex items-center gap-2 mb-2">
                                             <Star className="w-5 h-5 text-yellow-600" />
-                                            <Label className="font-black text-lg">Kelatli XP (Level)</Label>
+                                            <Label className="font-black text-lg">Kerakli XP (Bosqich)</Label>
                                         </div>
                                         <Input
                                             type="number"
@@ -309,10 +309,10 @@ const AdminProfessionsPage = () => {
                                 <div className="p-6 bg-slate-900 text-white rounded-[2rem] shadow-xl">
                                     <div className="flex items-center gap-3 mb-4">
                                         <Map className="w-6 h-6 text-primary" />
-                                        <h3 className="text-xl font-black">Hogwarts Career Engine</h3>
+                                        <h3 className="text-xl font-black">Hogwarts Karyera Tizimi</h3>
                                     </div>
                                     <p className="text-slate-400 text-sm mb-4">
-                                        Kasb bosqichlari (Level), node'lar va XP iqtisodiyotini boshqarish uchun Karyera Quruvchi (Builder) sahifasiga o'ting.
+                                        Kasb bosqichlari, vazifalar va XP iqtisodiyotini boshqarish uchun Karyera Quruvchi sahifasiga o'ting.
                                     </p>
                                     <Button
                                         variant="secondary"
@@ -324,7 +324,7 @@ const AdminProfessionsPage = () => {
                                             }
                                         }}
                                     >
-                                        {!editingProfession?.id ? "Avval kasbni saqlang" : "Career Builder'ni ochish"}
+                                        {!editingProfession?.id ? "Avval kasbni saqlang" : "Karyera Quruvchini ochish"}
                                     </Button>
                                 </div>
                             </TabsContent>

@@ -23,16 +23,25 @@ import api from "@/services/api";
 import { toast } from "sonner";
 import * as Icons from "lucide-react";
 
-interface RoadmapStep {
+interface CareerNode {
     id: number;
     title: string;
-    description: string;
-    step_type_display: string;
-    course_id: number | null;
-    course_title: string | null;
-    is_mandatory: boolean;
-    is_course_completed: boolean;
-    order: number;
+    node_type: string;
+    reference_id: number | null;
+    is_required: boolean;
+    xp_reward: number;
+    status?: 'locked' | 'active' | 'completed';
+    progress_info?: any;
+}
+
+interface CareerLevel {
+    id: number;
+    level_number: number;
+    title: string;
+    unlock_xp: number;
+    is_prestige_only: boolean;
+    status?: 'locked' | 'active' | 'completed';
+    nodes: CareerNode[];
 }
 
 interface Profession {
@@ -47,7 +56,7 @@ interface Profession {
     learning_time: string;
     certification_info: string;
     career_opportunities: string;
-    roadmap_steps: RoadmapStep[];
+    levels?: CareerLevel[];
     user_progress?: {
         progress_percent: number;
         status: string;
@@ -69,11 +78,30 @@ const ProfessionDetailPage = () => {
 
     const fetchProfession = async () => {
         try {
-            const res = await api.get(`/professions/${id}/`);
-            setProfession(res.data);
+            // Fetch profession details via the new progress endpoint if logged in
+            const token = localStorage.getItem('token');
+            const url = token ? `/professions/${id}/progress/` : `/professions/${id}/`;
+            const header = token ? { headers: { Authorization: `Token ${token}` } } : {};
+
+            const res = await api.get(url, header);
+
+            if (token && res.data.profession) {
+                // Formatting data from /progress/ endpoint
+                setProfession({
+                    ...res.data.profession,
+                    levels: res.data.levels,
+                    user_progress: {
+                        progress_percent: res.data.state?.status === 'completed' ? 100 : Math.round((res.data.state?.current_xp || 0) / 1000), // temp calc
+                        status: res.data.state?.status,
+                        current_xp: res.data.state?.current_xp || 0
+                    }
+                });
+            } else {
+                setProfession(res.data);
+            }
         } catch (error) {
             console.error(error);
-            toast.error(t('common.error', "Xatolik yuz berdi"));
+            toast.error("Ma'lumotlarni yuklashda xatolik yuz berdi");
         } finally {
             setLoading(false);
         }
@@ -211,48 +239,112 @@ const ProfessionDetailPage = () => {
                                 <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg">
                                     <Brain className="w-6 h-6" />
                                 </div>
-                                <h2 className="text-3xl font-black tracking-tight">{t('professions.view_roadmap', "O'rganish yo'li (Roadmap)")}</h2>
+                                <h2 className="text-3xl font-black tracking-tight">Karyera yo'lakchasi</h2>
                                 <div className="flex-1 h-px bg-border ml-4"></div>
                             </div>
 
-                            <div className="space-y-6">
-                                {profession.roadmap_steps.length > 0 ? (
-                                    profession.roadmap_steps.map((step, idx) => (
-                                        <div key={step.id} className={`group flex gap-6 p-8 bg-card rounded-[2rem] border transition-all ${step.is_course_completed ? 'border-green-500/50 bg-green-500/5' : 'border-border hover:border-primary/50'} hover:shadow-xl`}>
-                                            <div className="flex-shrink-0 relative">
-                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black transition-all ${step.is_course_completed ? 'bg-green-500 text-white' : 'bg-muted group-hover:bg-primary group-hover:text-white'}`}>
-                                                    {step.is_course_completed ? <CheckCircle2 className="w-7 h-7" /> : idx + 1}
-                                                </div>
-                                                {idx < profession.roadmap_steps.length - 1 && (
-                                                    <div className="absolute top-14 left-1/2 -translate-x-1/2 w-0.5 h-12 bg-gradient-to-b from-primary/20 to-transparent" />
-                                                )}
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
-                                                    <h3 className="text-xl font-black group-hover:text-primary transition-colors">{step.title}</h3>
-                                                    {step.course_id && (
-                                                        <Link to={`/course/${step.course_id}`}>
-                                                            <Button size="sm" variant={step.is_course_completed ? "outline" : "default"} className="rounded-xl h-8 text-xs">
-                                                                {step.is_course_completed ? t('common.completed', "Tugatilgan") : t('common.start_course', "Kursni boshlash")}
-                                                                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                                                            </Button>
-                                                        </Link>
+                            <div className="space-y-8 relative before:absolute before:inset-0 before:ml-[3.25rem] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-1 before:bg-gradient-to-b before:from-transparent before:via-primary/20 before:to-transparent">
+                                {profession.levels && profession.levels.length > 0 ? (
+                                    profession.levels.map((level, lIdx) => (
+                                        <div key={level.id} className="relative z-10 w-full mb-12">
+                                            {/* Level Header */}
+                                            <div className="flex items-center justify-center mb-8 sticky top-24 z-20">
+                                                <div className="bg-background px-6 py-2 rounded-full border-2 border-primary/20 shadow-xl shadow-primary/5 flex items-center gap-3">
+                                                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-black text-sm">
+                                                        {level.level_number}
+                                                    </span>
+                                                    <h3 className="font-black text-lg text-foreground tracking-tight">{level.title}</h3>
+                                                    {level.is_prestige_only && (
+                                                        <span className="bg-purple-500/10 text-purple-500 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider">
+                                                            VIP
+                                                        </span>
                                                     )}
                                                 </div>
-                                                <p className="text-muted-foreground font-medium mb-3">{step.description}</p>
-                                                {step.course_title && (
-                                                    <div className="flex items-center gap-2 text-primary font-bold text-xs bg-primary/5 px-3 py-1.5 rounded-lg w-fit">
-                                                        <Play className="w-3 h-3 fill-current" />
-                                                        {step.course_title}
-                                                    </div>
-                                                )}
+                                            </div>
+
+                                            {/* Nodes List */}
+                                            <div className="space-y-6">
+                                                {level.nodes?.map((node, nIdx) => {
+                                                    const isCompleted = node.status === 'completed';
+                                                    const isLocked = level.status === 'locked' || node.status === 'locked';
+                                                    return (
+                                                        <div key={node.id} className={`group flex flex-col md:flex-row gap-6 p-6 rounded-[2rem] border-2 transition-all duration-300 relative overflow-hidden
+                                                            ${isCompleted ? 'border-green-500/30 bg-green-500/5' :
+                                                                isLocked ? 'border-border/50 bg-muted/30 opacity-70 grayscale' :
+                                                                    'border-primary/20 bg-background hover:border-primary/50 hover:shadow-2xl shadow-sm'}`}
+                                                        >
+                                                            {isLocked && <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] z-10" />}
+
+                                                            <div className="flex-shrink-0 flex justify-center md:items-start z-20 relative">
+                                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-inner transition-all duration-500
+                                                                    ${isCompleted ? 'bg-gradient-to-br from-green-400 to-green-600 text-white scale-110 shadow-green-500/50' :
+                                                                        isLocked ? 'bg-muted text-muted-foreground' :
+                                                                            'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white'}`}>
+                                                                    {isCompleted ? <CheckCircle2 className="w-8 h-8 drop-shadow-md" /> :
+                                                                        isLocked ? <Lock className="w-6 h-6" /> :
+                                                                            (nIdx + 1)}
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="flex-1 z-20">
+                                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <h4 className="text-xl font-black tracking-tight">{node.title}</h4>
+                                                                        {!node.is_required && (
+                                                                            <span className="text-[10px] uppercase font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                                                                                Ixtiyoriy
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+
+                                                                    <div className="flex items-center gap-3">
+                                                                        {node.xp_reward > 0 && (
+                                                                            <div className="flex items-center gap-1.5 px-3 py-1 bg-yellow-500/10 text-yellow-600 rounded-xl border border-yellow-500/20 font-black text-sm shadow-sm">
+                                                                                <Zap className="w-4 h-4 fill-current" />
+                                                                                +{node.xp_reward} XP
+                                                                            </div>
+                                                                        )}
+                                                                        {node.node_type === 'course' && node.reference_id && !isLocked && (
+                                                                            <Link to={`/course/${node.reference_id}`}>
+                                                                                <Button size="sm" variant={isCompleted ? "outline" : "default"} className={`rounded-xl h-9 text-xs font-bold transition-all ${isCompleted ? 'border-green-500/50 text-green-600 hover:bg-green-500/10' : 'shadow-lg shadow-primary/25'}`}>
+                                                                                    {isCompleted ? "Qayta ko'rish" : "Boshlash"}
+                                                                                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                                                                                </Button>
+                                                                            </Link>
+                                                                        )}
+                                                                        {node.node_type === 'olympiad' && node.reference_id && !isLocked && (
+                                                                            <Link to={`/olympiads/${node.reference_id}`}>
+                                                                                <Button size="sm" variant={isCompleted ? "outline" : "default"} className={`rounded-xl h-9 text-xs font-bold transition-all ${isCompleted ? 'border-green-500/50 text-green-600 hover:bg-green-500/10' : 'shadow-lg shadow-primary/25'}`}>
+                                                                                    {isCompleted ? "Qayta urinish" : "Qatnashish"}
+                                                                                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                                                                                </Button>
+                                                                            </Link>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+
+                                                                <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-4">
+                                                                    Ushbu vazifani muvaffaqiyatli yakunlab, tajriba (XP) to'plang va keyingi manzillarga yo'l oching!
+                                                                </p>
+
+                                                                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                                                                    <Target className="w-4 h-4" />
+                                                                    Vazifa turi: <span className="text-foreground">{node.node_type}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-center py-12 bg-muted/20 rounded-3xl border border-dashed border-border">
-                                        <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                                        <p className="text-muted-foreground font-bold">{t('professions.no_steps', "Hozircha yo'l xaritasi mavjud emas")}</p>
+                                    <div className="text-center py-20 bg-card rounded-[3rem] border-2 border-dashed border-border shadow-sm">
+                                        <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <Target className="w-10 h-10 text-muted-foreground" />
+                                        </div>
+                                        <h3 className="text-xl font-black mb-2">Hozircha yo'l xaritasi mavjud emas</h3>
+                                        <p className="text-muted-foreground font-medium max-w-sm mx-auto">Adminlar tez orada ushbu kasb uchun ajoyib qadamlarni qo'shishadi.</p>
                                     </div>
                                 )}
                             </div>
