@@ -42,13 +42,22 @@ const NotificationBell = () => {
     }, [isOpen]);
 
     const fetchUnreadCount = async () => {
+        if (!navigator.onLine) return; // Skip polling if offline
+
         const token = localStorage.getItem('token');
         if (!token) return;
 
         try {
-            const res = await axios.get(`${API_URL}/notifications/unread_count/`, { headers: getAuthHeader() });
+            const res = await axios.get(`${API_URL}/notifications/unread_count/`, {
+                headers: getAuthHeader(),
+                timeout: 10000 // 10 second timeout to avoid long hangs
+            });
             setUnreadCount(res.data.count);
         } catch (error) {
+            if (axios.isAxiosError(error) && (!error.response || error.code === 'ECONNABORTED')) {
+                // Silently ignore network/timeout errors to avoid console spam
+                return;
+            }
             console.error("Failed to fetch notification count", error);
         }
     };
