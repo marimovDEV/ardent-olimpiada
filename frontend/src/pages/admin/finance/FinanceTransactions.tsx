@@ -58,6 +58,9 @@ export default function FinanceTransactions() {
     const [refundId, setRefundId] = useState<number | null>(null);
     const [refundReason, setRefundReason] = useState("");
 
+    // Details State
+    const [selectedTrx, setSelectedTrx] = useState<Transaction | null>(null);
+
     useEffect(() => {
         fetchTransactions();
     }, []);
@@ -103,6 +106,16 @@ export default function FinanceTransactions() {
         }
         setRefundId(null);
         setRefundReason("");
+    };
+
+    const handleApprove = async (id: number) => {
+        try {
+            await axios.post(`${API_URL}/payments/${id}/approve/`, {}, { headers: getAuthHeader() });
+            setTransactions(prev => prev.map(t => t.id === id ? { ...t, status: "COMPLETED" } : t));
+            toast.success(t('common.successMessage'));
+        } catch (error) {
+            toast.error(t('common.errorOccurred'));
+        }
     };
 
     const filteredTransactions = transactions.filter(trx => {
@@ -249,9 +262,17 @@ export default function FinanceTransactions() {
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>{t('admin.actions')}</DropdownMenuLabel>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem className="cursor-pointer">
+                                                    <DropdownMenuItem className="cursor-pointer" onClick={() => setSelectedTrx(trx)}>
                                                         <Eye className="w-4 h-4 mr-2" /> {t('admin.details')}
                                                     </DropdownMenuItem>
+                                                    {trx.status === 'PENDING' && (
+                                                        <DropdownMenuItem
+                                                            className="cursor-pointer text-green-600 focus:text-green-700 focus:bg-green-50"
+                                                            onClick={() => handleApprove(trx.id)}
+                                                        >
+                                                            <RefreshCcw className="w-4 h-4 mr-2" /> Tasdiqlash
+                                                        </DropdownMenuItem>
+                                                    )}
                                                     {trx.status === 'COMPLETED' && (
                                                         <DropdownMenuItem
                                                             className="cursor-pointer text-yellow-600 focus:text-yellow-700 focus:bg-yellow-50"
@@ -277,6 +298,44 @@ export default function FinanceTransactions() {
                     </Table>
                 </div>
             </div>
+
+            {/* Details Dialog */}
+            <Dialog open={!!selectedTrx} onOpenChange={(open) => !open && setSelectedTrx(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>{t('admin.details')}</DialogTitle>
+                        <DialogDescription>
+                            To'lov ma'lumotlari: {selectedTrx?.payment_id || selectedTrx?.id}
+                        </DialogDescription>
+                    </DialogHeader>
+                    {selectedTrx && (
+                        <div className="space-y-4 py-4">
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div className="text-muted-foreground">{t('admin.id')}:</div>
+                                <div className="font-mono">{selectedTrx.payment_id || selectedTrx.id}</div>
+
+                                <div className="text-muted-foreground">{t('admin.user')}:</div>
+                                <div>{selectedTrx.user?.full_name || selectedTrx.user?.username || `User #${selectedTrx.user}`} ({selectedTrx.user?.phone})</div>
+
+                                <div className="text-muted-foreground">{t('admin.sumMethod')}:</div>
+                                <div>{formatMoney(selectedTrx.amount)} ({selectedTrx.payment_method})</div>
+
+                                <div className="text-muted-foreground">{t('admin.description')}:</div>
+                                <div>{selectedTrx.description}</div>
+
+                                <div className="text-muted-foreground">{t('admin.date')}:</div>
+                                <div>{new Date(selectedTrx.created_at).toLocaleString('ru-RU')}</div>
+
+                                <div className="text-muted-foreground">{t('admin.status')}:</div>
+                                <div>{getStatusBadge(selectedTrx.status)}</div>
+                            </div>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setSelectedTrx(null)}>{t('common.close')}</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Refund Dialog */}
             <Dialog open={!!refundId} onOpenChange={(open) => !open && setRefundId(null)}>
