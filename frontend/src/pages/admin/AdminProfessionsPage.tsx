@@ -268,7 +268,7 @@ const AdminProfessionsPage = () => {
                                             value={formData.primary_subject?.toString() || "none"}
                                             onValueChange={(v) => setFormData({ ...formData, primary_subject: v === "none" ? null : parseInt(v) })}
                                         >
-                                            <SelectTrigger className="rounded-xl border-primary/20 bg-white shadow-sm">
+                                            <SelectTrigger className="rounded-xl border-primary/20 bg-background text-foreground shadow-sm">
                                                 <SelectValue placeholder="Fan tanlang" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -290,7 +290,7 @@ const AdminProfessionsPage = () => {
                                             type="number"
                                             value={formData.required_xp}
                                             onChange={(e) => setFormData({ ...formData, required_xp: parseInt(e.target.value) || 0 })}
-                                            className="rounded-xl border-yellow-500/20 bg-white shadow-sm font-black text-xl text-yellow-700"
+                                            className="rounded-xl border-yellow-500/20 bg-background shadow-sm font-black text-xl text-yellow-700 dark:text-yellow-500"
                                         />
                                         <p className="text-[10px] text-slate-500 italic mt-2">Kasbni to'liq ochish uchun talab etiladigan umumiy XP</p>
                                     </div>
