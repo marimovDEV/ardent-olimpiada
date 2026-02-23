@@ -29,7 +29,7 @@ const TopItemsChart = () => {
             <h3 className="font-bold text-lg mb-2 text-foreground">{t('admin.topItemsTitle')}</h3>
             <p className="text-xs text-muted-foreground mb-6">{t('admin.topItemsDesc')}</p>
 
-            <div className="w-full h-[250px] flex-1">
+            <div className="w-full h-[300px] min-h-[300px] mt-2">
                 {loading ? (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
                         {t('common.loading')}

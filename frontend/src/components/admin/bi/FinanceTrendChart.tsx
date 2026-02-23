@@ -42,7 +42,7 @@ const FinanceTrendChart = () => {
                 </select>
             </div>
 
-            <div className="w-full h-[250px] flex-1">
+            <div className="w-full h-[300px] min-h-[300px] mt-4">
                 {loading ? (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">
                         {t('common.loading')}
