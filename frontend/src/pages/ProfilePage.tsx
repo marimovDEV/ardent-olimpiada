@@ -124,35 +124,21 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
             <DialogContent className="sm:max-w-md bg-card border border-border">
                 <DialogHeader>
                     <DialogTitle>Hisobni to'ldirish</DialogTitle>
-                    <DialogDescription>To'lov tizimini tanlang va summani kiriting.</DialogDescription>
+                    <DialogDescription>Hozirda hisobni to'ldirish faqat Telegram orqali admin bilan bog'lanish yordamida amalga oshiriladi.</DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                        <Label>To'lov tizimi</Label>
-                        <RadioGroup defaultValue="PAYME" value={method} onValueChange={setMethod} className="grid grid-cols-2 gap-4">
-                            <div>
-                                <RadioGroupItem value="PAYME" id="payme" className="peer sr-only" />
-                                <Label htmlFor="payme" className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:bg-primary/5 cursor-pointer">
-                                    <span className="text-lg font-bold">Payme</span>
-                                </Label>
-                            </div>
-                            <div>
-                                <RadioGroupItem value="CLICK" id="click" className="peer sr-only" />
-                                <Label htmlFor="click" className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:bg-primary/5 cursor-pointer">
-                                    <span className="text-lg font-bold">Click</span>
-                                </Label>
-                            </div>
-                        </RadioGroup>
+                <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
+                    <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21.54 2.15l-19 9.5a1 1 0 0 0-.15 1.76l5.77 2.3 2.15 7a1 1 0 0 0 1.83.18l3.14-3.5 4.54 3.63a1 1 0 0 0 1.57-.46l4.5-18a1 1 0 0 0-1.2-1.31L21.54 2.15z" />
+                        </svg>
                     </div>
-                    <div className="space-y-2">
-                        <Label>Summa (UZS)</Label>
-                        <Input type="number" placeholder="Masalan: 50000" value={amount} onChange={(e) => setAmount(e.target.value)} className="rounded-xl h-11" />
-                    </div>
+                    <p className="text-sm font-medium text-foreground">Siz admin orqali Payme, Click yoki boshqa uzatish xizmatlari orqali to'lovlarni amalga oshirishingiz mumkin.</p>
                 </div>
-                <DialogFooter>
-                    <Button onClick={handleTopUp} disabled={loading} className="w-full bg-primary text-background hover:bg-primary/90 rounded-xl font-bold h-12 shadow-primary/20">
-                        {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                        To'lashga o'tish
+                <DialogFooter className="sm:justify-center">
+                    <Button
+                        onClick={() => window.open('https://t.me/Ardent_support_bot', '_blank')}
+                        className="w-full bg-[#2AABEE] text-white hover:bg-[#229ED9] rounded-xl font-bold h-12 shadow-md">
+                        Telegram orqali to'lash
                     </Button>
                 </DialogFooter>
             </DialogContent>
