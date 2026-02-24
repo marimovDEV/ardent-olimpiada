@@ -224,7 +224,7 @@ const AIAssistant = ({ onTalkToAdmin, onClose }: AIAssistantProps) => {
             </div>
 
             {/* Input Area */}
-            <div className="p-5 bg-card dark:bg-slate-900 border-t border-border dark:border-slate-800 space-y-4">
+            <div className="p-5 pb-24 lg:pb-5 bg-card dark:bg-slate-900 border-t border-border dark:border-slate-800 space-y-4">
                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto no-scrollbar">
                     {faqs.map(faq => (
                         <button
@@ -237,7 +237,7 @@ const AIAssistant = ({ onTalkToAdmin, onClose }: AIAssistantProps) => {
                     ))}
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 relative z-10">
                     <Input
                         placeholder={language === 'uz' ? "Savolingizni yozing..." : "Напишите ваш вопрос..."}
                         value={input}
@@ -257,7 +257,7 @@ const AIAssistant = ({ onTalkToAdmin, onClose }: AIAssistantProps) => {
 
                 <Button
                     variant="ghost"
-                    className="w-full text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 h-8 mt-2"
+                    className="w-full text-xs text-muted-foreground hover:text-primary hover:bg-primary/5 h-8 mt-2 relative z-10"
                     onClick={onTalkToAdmin}
                 >
                     <User className="w-3.5 h-3.5 mr-2" />
