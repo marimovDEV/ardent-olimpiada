@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Truck, Search, MapPin, Package, CheckCircle, Clock, Filter, Phone, User as UserIcon, Calendar } from "lucide-react";
+import { Truck, Search, MapPin, Package, CheckCircle, Clock, Filter, Phone, User as UserIcon, Calendar, Trophy } from "lucide-react";
 import { API_URL, getAuthHeader } from "@/services/api";
 import axios from "axios";
 import { toast } from "sonner";
