@@ -19,6 +19,12 @@ export default {
         cinzel: ['Cinzel', 'serif'],
       },
       colors: {
+        hogwarts: {
+          dark: '#0F172A',
+          surface: '#1E293B',
+          gold: '#FBBF24',
+          light: '#F8FAFC'
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

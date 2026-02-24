@@ -116,14 +116,9 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="flex items-center justify-between px-4 h-14 border-b border-border/50 bg-card cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <CreditCard className="w-4 h-4 text-primary" />
-                        </div>
-                        <span className="font-medium">To'lovlar / Hisobni to'ldirish</span>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                <div className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors w-full bg-white">
+                    <span className="font-semibold text-hogwarts-dark text-[15px]">To'lovlar / Hisobni to'ldirish</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
                 </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-card border border-border">
@@ -403,172 +398,173 @@ const ProfilePage = () => {
     const displayAvatar = avatarPreview || user.avatar;
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-background pb-20 selection:bg-primary/30 w-full animate-fade-in lg:mt-6 overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-3xl border-x border-border/10">
+        <div className="min-h-screen bg-hogwarts-light pb-24 w-full animate-fade-in overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-3xl border-x border-gray-100 shadow-sm">
             <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" className="hidden" />
 
             {editMode && <EditProfileDialog user={user} onClose={() => setEditMode(false)} onSave={updateLocalUser} />}
 
-            {/* 1. Fixed Top Header (Mobile) */}
-            <header className="fixed top-0 w-full bg-white dark:bg-card/80 backdrop-blur-xl h-14 flex items-center justify-between px-4 border-b border-border/50 z-40 lg:hidden">
-                <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-foreground active:scale-95 transition">
+            {/* 1. Compact Header */}
+            <header className="sticky top-0 w-full bg-hogwarts-light/90 backdrop-blur-xl h-14 flex items-center justify-between px-4 z-40 lg:hidden">
+                <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-hogwarts-dark active:scale-95 transition">
                     <ArrowLeft className="w-5 h-5" />
                 </button>
-                <h1 className="font-bold text-lg">Profil</h1>
-                <button onClick={() => navigate('/settings')} className="p-2 -mr-2 text-muted-foreground hover:text-foreground active:scale-95 transition">
+                <h1 className="font-bold text-lg text-hogwarts-dark tracking-tight">Profil</h1>
+                <button onClick={() => navigate('/settings')} className="p-2 -mr-2 text-hogwarts-dark/70 hover:text-hogwarts-dark active:scale-95 transition">
                     <Settings className="w-5 h-5" />
                 </button>
             </header>
 
-            {/* Content Wrapper */}
-            <div className="p-4 space-y-4 pt-[72px] lg:pt-4">
-                {/* 2. Profile Card */}
-                <div className="bg-white dark:bg-card rounded-2xl p-4 shadow-sm border border-border relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mr-20 -mt-20 blur-2xl"></div>
+            {/* 2. Profile Hero Card */}
+            <div className="mx-4 mt-4 p-5 rounded-3xl bg-gradient-to-br from-hogwarts-dark to-hogwarts-surface text-white shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none" />
 
-                    <div className="relative flex items-center gap-4">
-                        <div className="relative" onClick={() => fileInputRef.current?.click()}>
-                            {displayAvatar ? (
-                                <img src={displayAvatar} alt={fullName} className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 bg-muted" />
-                            ) : (
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FACC15] to-[#CA8A04] flex items-center justify-center text-xl font-bold border-2 border-primary/20 text-white shadow-md">
-                                    {initials}
-                                </div>
-                            )}
-                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary text-background rounded-full flex items-center justify-center border-2 border-white dark:border-card shadow-sm active:scale-90 transition cursor-pointer">
-                                <Camera className="w-3 h-3" />
+                <div className="relative z-10 flex items-center gap-4">
+                    <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                        {displayAvatar ? (
+                            <img className="w-16 h-16 rounded-full border-2 border-hogwarts-gold object-cover shadow-md" src={displayAvatar} alt={fullName} />
+                        ) : (
+                            <div className="w-16 h-16 rounded-full bg-hogwarts-surface flex items-center justify-center text-xl font-bold border-2 border-hogwarts-gold text-white shadow-md">
+                                {initials}
                             </div>
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                            <h2 className="text-lg font-black truncate">{fullName}</h2>
-                            <p className="text-sm text-muted-foreground truncate">@{user.username}</p>
-                            <div className="flex items-center gap-2 mt-1 -ml-1">
-                                <Badge variant="secondary" className="scale-90 text-[10px] bg-primary/10 text-primary border-0 font-bold uppercase tracking-wider">Lvl {user.level || 1}</Badge>
-                                {(user.certificates_count ?? 0) > 0 && (
-                                    <span className="flex items-center text-xs font-semibold text-yellow-500">
-                                        <Trophy className="w-3 h-3 mr-0.5" /> {user.certificates_count} ta
-                                    </span>
-                                )}
-                            </div>
+                        )}
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-hogwarts-gold text-hogwarts-dark rounded-full flex items-center justify-center border-2 border-hogwarts-surface shadow-sm active:scale-90 transition">
+                            <Camera className="w-3 h-3" />
                         </div>
                     </div>
-
-                    <div className="mt-5 space-y-1.5">
-                        <div className="flex justify-between text-xs font-semibold">
-                            <span className="text-muted-foreground">Umumiy progress</span>
-                            <span className="text-primary">{user.level_progress?.progress_percent || 0}%</span>
-                        </div>
-                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
-                                style={{ width: `${user.level_progress?.progress_percent || 0}%` }}
-                            ></div>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground/60 tracking-wider text-right">Keyingi darajagacha {user.level_progress?.xp_left || 0} XP</p>
+                    <div>
+                        <h2 className="text-xl font-bold">{fullName}</h2>
+                        <p className="text-sm font-medium text-gray-300">Lvl {user.level || 1}</p>
                     </div>
                 </div>
 
-                {/* 3. Quick Stats Row */}
-                <div className="grid grid-cols-3 text-center divide-x divide-border mt-4 bg-white dark:bg-card rounded-2xl py-4 shadow-sm border border-border">
-                    <div className="flex flex-col items-center justify-center px-2">
-                        <span className="text-lg font-black text-foreground mb-0.5">{activeCourse ? 1 : 0}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase font-semibold">Kurslar</span>
+                <div className="relative z-10 mt-5">
+                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden shadow-inner">
+                        <div className="bg-hogwarts-gold h-full rounded-full transition-all duration-1000" style={{ width: `${user.level_progress?.progress_percent || 0}%` }}></div>
                     </div>
-                    <div className="flex flex-col items-center justify-center px-2">
-                        <span className="text-lg font-black text-foreground mb-0.5">{user.certificates_count || 0}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase font-semibold">Sertifikat</span>
+                    <p className="text-xs mt-2 text-gray-300 font-medium text-right">
+                        Keyingi darajagacha {user.level_progress?.xp_left || 0} XP
+                    </p>
+                </div>
+            </div>
+
+            {/* 3. AI Mentor Card */}
+            <div className="mx-4 mt-6 p-5 bg-gradient-to-br from-hogwarts-gold to-yellow-500 rounded-2xl shadow-lg relative overflow-hidden border border-yellow-300/50">
+                <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/20 rounded-full blur-xl pointer-events-none" />
+                <div className="flex justify-between items-center relative z-10">
+                    <div>
+                        <h3 className="font-black text-hogwarts-dark text-lg flex items-center gap-2">
+                            🤖 AI Mentor
+                        </h3>
+                        <p className="text-sm text-hogwarts-dark/80 font-semibold mt-0.5">
+                            Savollaringizni so‘rang
+                        </p>
                     </div>
-                    <div className="flex flex-col items-center justify-center px-2">
-                        <span className="text-lg font-black text-foreground mb-0.5">{user.xp || 0}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase font-semibold">Soat (XP)</span>
-                    </div>
+                    <button
+                        onClick={() => navigate('/ai-mentor')}
+                        className="bg-hogwarts-dark hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl shadow-md active:scale-95 transition-all text-sm">
+                        Boshlash
+                    </button>
+                </div>
+            </div>
+
+            {/* 4. Stats Grid 2x2 */}
+            <div className="grid grid-cols-2 gap-4 mx-4 mt-6">
+                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Kurslar</p>
+                    <p className="text-2xl font-black text-hogwarts-dark">{activeCourse ? 1 : 0}</p>
                 </div>
 
-                {/* 4. Primary Action Button */}
-                <Button
-                    className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-sm shadow-indigo-500/20 active:scale-[0.98] transition-all text-base mt-2"
-                    onClick={() => {
-                        if (activeCourse) navigate(`/course/${activeCourse.course.id}`);
-                        else navigate('/courses');
-                    }}
-                >
-                    {activeCourse ? "Davom ettirish" : "Kurslarni ko'rish"}
-                </Button>
-
-                {/* 5. Active Course Card (Only if enrolled) */}
-                {activeCourse && (
-                    <div
-                        onClick={() => navigate(`/course/${activeCourse.course.id}`)}
-                        className="bg-white dark:bg-card mt-4 rounded-2xl p-4 shadow-sm border border-border flex items-center gap-4 cursor-pointer active:scale-[0.98] transition"
-                    >
-                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0 relative">
-                            {activeCourse.course.thumbnail ? (
-                                <img src={getImageUrl(activeCourse.course.thumbnail)} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="w-full h-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                                    <BookOpen className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-sm truncate">{activeCourse.course.title}</h3>
-                            <div className="flex items-center justify-between mb-1 mt-1">
-                                <span className="text-[10px] text-muted-foreground">Progress</span>
-                                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">{activeCourse.progress}%</span>
-                            </div>
-                            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                                <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${activeCourse.progress}%` }}></div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* 6. Secondary Menu List */}
-                <div className="bg-white dark:bg-card mt-4 rounded-2xl overflow-hidden shadow-sm border border-border divide-y divide-border">
-                    <div onClick={() => setEditMode(true)} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
-                        <div className="flex items-center gap-3">
-                            <User className="w-5 h-5 text-muted-foreground" />
-                            <span className="font-medium">Profilni tahrirlash</span>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
-                    </div>
-
-                    <div onClick={() => navigate('/my-certificates')} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
-                        <div className="flex items-center gap-3">
-                            <Award className="w-5 h-5 text-muted-foreground" />
-                            <span className="font-medium">Sertifikatlar</span>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
-                    </div>
-
-                    <div onClick={() => navigate('/olympiads')} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
-                        <div className="flex items-center gap-3">
-                            <Calendar className="w-5 h-5 text-muted-foreground" />
-                            <span className="font-medium">Olimpiadalar</span>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
-                    </div>
-
-                    <TopUpDialog onSuccess={loadUser} />
-
-                    <div onClick={() => window.open('https://t.me/Ardent_support_bot', '_blank')} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
-                        <div className="flex items-center gap-3">
-                            <HelpCircle className="w-5 h-5 text-muted-foreground" />
-                            <span className="font-medium">Yordam</span>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
-                    </div>
-
-                    <div onClick={handleLogout} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/10 transition active:scale-[0.98] text-red-600">
-                        <div className="flex items-center gap-3">
-                            <LogOut className="w-5 h-5" />
-                            <span className="font-medium">Chiqish</span>
-                        </div>
-                    </div>
+                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Sertifikatlar</p>
+                    <p className="text-2xl font-black text-hogwarts-dark">{user.certificates_count || 0}</p>
                 </div>
 
-                {/* Spacer block to allow scrolling down past the bottom nav */}
-                <div className="h-20"></div>
+                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">XP</p>
+                    <p className="text-2xl font-black text-hogwarts-dark">{user.xp || 0}</p>
+                </div>
+
+                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Progress</p>
+                    <p className="text-2xl font-black text-hogwarts-dark">{user.level_progress?.progress_percent || 0}%</p>
+                </div>
+            </div>
+
+            {/* 5. Continue Course Card */}
+            {activeCourse ? (
+                <div className="mx-4 mt-6 bg-white rounded-3xl shadow-medium overflow-hidden border border-gray-100">
+                    <div className="h-32 bg-gray-100 relative">
+                        {activeCourse.course.thumbnail ? (
+                            <img src={getImageUrl(activeCourse.course.thumbnail)} className="w-full h-full object-cover" alt="" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-hogwarts-surface text-white">
+                                <BookOpen className="w-8 h-8 opacity-50" />
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-hogwarts-dark/80 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-3 left-4 text-white font-bold text-[11px] uppercase tracking-wider bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg">
+                            Darslik
+                        </div>
+                    </div>
+                    <div className="p-5">
+                        <h4 className="font-bold text-hogwarts-dark text-lg mb-3 leading-tight line-clamp-1">{activeCourse.course.title}</h4>
+                        <div className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-1.5 uppercase">
+                            <span>Progress</span>
+                            <span className="text-hogwarts-dark">{activeCourse.progress || 0}%</span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                            <div className="bg-hogwarts-gold h-full rounded-full transition-all" style={{ width: `${activeCourse.progress || 0}%` }}></div>
+                        </div>
+                        <button
+                            onClick={() => navigate(`/course/${activeCourse.course.id}`)}
+                            className="mt-5 w-full bg-hogwarts-dark hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all">
+                            Davom ettirish
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div className="mx-4 mt-6 bg-white rounded-3xl shadow-medium p-6 text-center border border-gray-100">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <BookOpen className="w-8 h-8 text-gray-300" />
+                    </div>
+                    <h4 className="font-bold text-hogwarts-dark mb-1">Kurslar mavjud emas</h4>
+                    <p className="text-sm text-gray-500 mb-4">Ta'limni boshlash uchun kurs tanlang</p>
+                    <button
+                        onClick={() => navigate('/courses')}
+                        className="w-full bg-hogwarts-dark text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all">
+                        Kurslarni ko'rish
+                    </button>
+                </div>
+            )}
+
+            {/* 6. Menu List */}
+            <div className="mx-4 mt-6 bg-white rounded-2xl shadow-soft border border-gray-100 flex flex-col overflow-hidden divide-y divide-gray-100 mb-8">
+                <div onClick={() => setEditMode(true)} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark text-[15px]">Profilni tahrirlash</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                </div>
+
+                <div onClick={() => navigate('/my-certificates')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark text-[15px]">Sertifikatlar</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                </div>
+
+                <div onClick={() => navigate('/olympiads')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark text-[15px]">Olimpiadalar</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                </div>
+
+                <TopUpDialog onSuccess={loadUser} />
+
+                <div onClick={() => window.open('https://t.me/Ardent_support_bot', '_blank')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark text-[15px]">Yordam</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                </div>
+
+                <div onClick={handleLogout} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-red-50 active:bg-red-100 transition-colors">
+                    <span className="font-semibold text-red-500 text-[15px]">Chiqish</span>
+                    <LogOut className="w-5 h-5 text-red-500/50" />
+                </div>
             </div>
 
             {imageToCrop && (
