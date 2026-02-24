@@ -332,13 +332,12 @@ const Header = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
-    </div>
-    </header >
+    </header>
   );
 };
 
