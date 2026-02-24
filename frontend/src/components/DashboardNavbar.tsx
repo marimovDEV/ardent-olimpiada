@@ -121,6 +121,14 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                         </div>
                     )}
 
+                    {/* Coin Balance (Mobile & Desktop) */}
+                    <div
+                        className="flex items-center justify-center bg-primary/5 hover:bg-primary/10 px-2.5 py-1 md:px-4 md:py-2 rounded-full md:rounded-2xl border border-primary/10 cursor-pointer transition-all group shadow-sm"
+                        onClick={() => setPaymentOpen(true)}
+                    >
+                        <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-90 md:scale-110 group-hover:rotate-12 transition-transform duration-500" />
+                    </div>
+
                     {/* Desktop Only Actions */}
                     <div className="hidden lg:flex items-center gap-4">
                         {user.role === 'TEACHER' && (
@@ -142,13 +150,6 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                                 </Link>
                             )
                         )}
-
-                        <div
-                            className="flex items-center gap-2 bg-primary/5 hover:bg-primary/10 px-4 py-2 rounded-2xl border border-primary/10 cursor-pointer transition-all group shadow-sm"
-                            onClick={() => setPaymentOpen(true)}
-                        >
-                            <ArdCoin amount={parseFloat(user.balance || 0)} className="scale-110 group-hover:rotate-12 transition-transform duration-500" />
-                        </div>
 
                         <div className="relative group">
                             <NotificationBell />
