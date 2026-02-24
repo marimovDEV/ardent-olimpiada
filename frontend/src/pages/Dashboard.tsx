@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, Loader2, Award, Trophy, Zap, PlayCircle, BookOpen, Star, Crown, History, ArrowRight, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
+import { AlertTriangle, Loader2, Award, Trophy, Zap, PlayCircle, BookOpen, Star, Crown, History, ArrowRight, ChevronDown, ChevronUp, ChevronRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
