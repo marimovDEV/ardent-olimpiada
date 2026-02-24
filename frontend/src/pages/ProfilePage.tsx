@@ -116,9 +116,9 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors w-full bg-white">
-                    <span className="font-semibold text-hogwarts-dark text-[15px]">To'lovlar / Hisobni to'ldirish</span>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                <div className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-muted/50 active:bg-gray-100 transition-colors w-full bg-white dark:bg-card">
+                    <span className="font-semibold text-hogwarts-dark dark:text-foreground text-[15px]">To'lovlar / Hisobni to'ldirish</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300 dark:text-muted-foreground" />
                 </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md bg-card border border-border">
@@ -398,18 +398,18 @@ const ProfilePage = () => {
     const displayAvatar = avatarPreview || user.avatar;
 
     return (
-        <div className="min-h-screen bg-hogwarts-light pb-24 w-full animate-fade-in overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-3xl border-x border-gray-100 shadow-sm">
+        <div className="min-h-screen bg-hogwarts-light dark:bg-background pb-24 w-full animate-fade-in overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-3xl border-x border-gray-100 dark:border-border/10 shadow-sm">
             <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" className="hidden" />
 
             {editMode && <EditProfileDialog user={user} onClose={() => setEditMode(false)} onSave={updateLocalUser} />}
 
             {/* 1. Compact Header */}
-            <header className="sticky top-0 w-full bg-hogwarts-light/90 backdrop-blur-xl h-14 flex items-center justify-between px-4 z-40 lg:hidden">
-                <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-hogwarts-dark active:scale-95 transition">
+            <header className="sticky top-0 w-full bg-hogwarts-light/90 dark:bg-card/80 backdrop-blur-xl h-14 flex items-center justify-between px-4 z-40 lg:hidden">
+                <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-hogwarts-dark dark:text-foreground active:scale-95 transition">
                     <ArrowLeft className="w-5 h-5" />
                 </button>
-                <h1 className="font-bold text-lg text-hogwarts-dark tracking-tight">Profil</h1>
-                <button onClick={() => navigate('/settings')} className="p-2 -mr-2 text-hogwarts-dark/70 hover:text-hogwarts-dark active:scale-95 transition">
+                <h1 className="font-extrabold text-lg text-hogwarts-dark dark:text-foreground tracking-tight uppercase font-cinzel">Profil</h1>
+                <button onClick={() => navigate('/settings')} className="p-2 -mr-2 text-hogwarts-dark/70 dark:text-muted-foreground hover:text-hogwarts-dark dark:hover:text-foreground active:scale-95 transition">
                     <Settings className="w-5 h-5" />
                 </button>
             </header>
@@ -452,7 +452,7 @@ const ProfilePage = () => {
                 <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/20 rounded-full blur-xl pointer-events-none" />
                 <div className="flex justify-between items-center relative z-10">
                     <div>
-                        <h3 className="font-black text-hogwarts-dark text-lg flex items-center gap-2">
+                        <h3 className="font-black text-hogwarts-dark text-lg flex items-center gap-2 uppercase font-cinzel">
                             🤖 AI Mentor
                         </h3>
                         <p className="text-sm text-hogwarts-dark/80 font-semibold mt-0.5">
@@ -469,31 +469,31 @@ const ProfilePage = () => {
 
             {/* 4. Stats Grid 2x2 */}
             <div className="grid grid-cols-2 gap-4 mx-4 mt-6">
-                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Kurslar</p>
-                    <p className="text-2xl font-black text-hogwarts-dark">{activeCourse ? 1 : 0}</p>
+                <div className="bg-white dark:bg-card rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 dark:text-muted-foreground uppercase tracking-wider mb-1">Kurslar</p>
+                    <p className="text-2xl font-black text-hogwarts-dark dark:text-foreground">{activeCourse ? 1 : 0}</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Sertifikatlar</p>
-                    <p className="text-2xl font-black text-hogwarts-dark">{user.certificates_count || 0}</p>
+                <div className="bg-white dark:bg-card rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 dark:text-muted-foreground uppercase tracking-wider mb-1">Sertifikatlar</p>
+                    <p className="text-2xl font-black text-hogwarts-dark dark:text-foreground">{user.certificates_count || 0}</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">XP</p>
-                    <p className="text-2xl font-black text-hogwarts-dark">{user.xp || 0}</p>
+                <div className="bg-white dark:bg-card rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 dark:text-muted-foreground uppercase tracking-wider mb-1">XP</p>
+                    <p className="text-2xl font-black text-hogwarts-dark dark:text-foreground">{user.xp || 0}</p>
                 </div>
 
-                <div className="bg-white rounded-2xl p-4 shadow-soft border border-gray-100 flex flex-col justify-center items-center text-center">
-                    <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Progress</p>
-                    <p className="text-2xl font-black text-hogwarts-dark">{user.level_progress?.progress_percent || 0}%</p>
+                <div className="bg-white dark:bg-card rounded-2xl p-4 shadow-soft border border-gray-100 dark:border-border flex flex-col justify-center items-center text-center">
+                    <p className="text-[11px] font-bold text-gray-400 dark:text-muted-foreground uppercase tracking-wider mb-1">Progress</p>
+                    <p className="text-2xl font-black text-hogwarts-dark dark:text-foreground">{user.level_progress?.progress_percent || 0}%</p>
                 </div>
             </div>
 
             {/* 5. Continue Course Card */}
             {activeCourse ? (
-                <div className="mx-4 mt-6 bg-white rounded-3xl shadow-medium overflow-hidden border border-gray-100">
-                    <div className="h-32 bg-gray-100 relative">
+                <div className="mx-4 mt-6 bg-white dark:bg-card rounded-3xl shadow-medium overflow-hidden border border-gray-100 dark:border-border">
+                    <div className="h-32 bg-gray-100 dark:bg-muted relative">
                         {activeCourse.course.thumbnail ? (
                             <img src={getImageUrl(activeCourse.course.thumbnail)} className="w-full h-full object-cover" alt="" />
                         ) : (
@@ -507,63 +507,63 @@ const ProfilePage = () => {
                         </div>
                     </div>
                     <div className="p-5">
-                        <h4 className="font-bold text-hogwarts-dark text-lg mb-3 leading-tight line-clamp-1">{activeCourse.course.title}</h4>
-                        <div className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-1.5 uppercase">
+                        <h4 className="font-bold text-hogwarts-dark dark:text-foreground text-lg mb-3 leading-tight line-clamp-1">{activeCourse.course.title}</h4>
+                        <div className="flex items-center justify-between text-[11px] font-bold text-gray-400 dark:text-muted-foreground mb-1.5 uppercase">
                             <span>Progress</span>
-                            <span className="text-hogwarts-dark">{activeCourse.progress || 0}%</span>
+                            <span className="text-hogwarts-dark dark:text-foreground">{activeCourse.progress || 0}%</span>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-gray-100 dark:bg-muted rounded-full h-2 overflow-hidden">
                             <div className="bg-hogwarts-gold h-full rounded-full transition-all" style={{ width: `${activeCourse.progress || 0}%` }}></div>
                         </div>
                         <button
                             onClick={() => navigate(`/course/${activeCourse.course.id}`)}
-                            className="mt-5 w-full bg-hogwarts-dark hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all">
+                            className="mt-5 w-full bg-hogwarts-dark dark:bg-primary hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all">
                             Davom ettirish
                         </button>
                     </div>
                 </div>
             ) : (
-                <div className="mx-4 mt-6 bg-white rounded-3xl shadow-medium p-6 text-center border border-gray-100">
-                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <BookOpen className="w-8 h-8 text-gray-300" />
+                <div className="mx-4 mt-6 bg-white dark:bg-card rounded-3xl shadow-medium p-6 text-center border border-gray-100 dark:border-border">
+                    <div className="w-16 h-16 bg-gray-50 dark:bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+                        <BookOpen className="w-8 h-8 text-gray-300 dark:text-muted-foreground" />
                     </div>
-                    <h4 className="font-bold text-hogwarts-dark mb-1">Kurslar mavjud emas</h4>
-                    <p className="text-sm text-gray-500 mb-4">Ta'limni boshlash uchun kurs tanlang</p>
+                    <h4 className="font-bold text-hogwarts-dark dark:text-foreground mb-1">Kurslar mavjud emas</h4>
+                    <p className="text-sm text-gray-500 dark:text-muted-foreground mb-4">Ta'limni boshlash uchun kurs tanlang</p>
                     <button
                         onClick={() => navigate('/courses')}
-                        className="w-full bg-hogwarts-dark text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all">
+                        className="w-full bg-hogwarts-dark dark:bg-primary text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all">
                         Kurslarni ko'rish
                     </button>
                 </div>
             )}
 
             {/* 6. Menu List */}
-            <div className="mx-4 mt-6 bg-white rounded-2xl shadow-soft border border-gray-100 flex flex-col overflow-hidden divide-y divide-gray-100 mb-8">
-                <div onClick={() => setEditMode(true)} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                    <span className="font-semibold text-hogwarts-dark text-[15px]">Profilni tahrirlash</span>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
+            <div className="mx-4 mt-6 bg-white dark:bg-card rounded-2xl shadow-soft border border-gray-100 dark:border-border flex flex-col overflow-hidden divide-y divide-gray-100 dark:divide-border/50 mb-8">
+                <div onClick={() => setEditMode(true)} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-muted/50 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark dark:text-foreground text-[15px]">Profilni tahrirlash</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300 dark:text-muted-foreground" />
                 </div>
 
-                <div onClick={() => navigate('/my-certificates')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                    <span className="font-semibold text-hogwarts-dark text-[15px]">Sertifikatlar</span>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                <div onClick={() => navigate('/my-certificates')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-muted/50 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark dark:text-foreground text-[15px]">Sertifikatlar</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300 dark:text-muted-foreground" />
                 </div>
 
-                <div onClick={() => navigate('/olympiads')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                    <span className="font-semibold text-hogwarts-dark text-[15px]">Olimpiadalar</span>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                <div onClick={() => navigate('/olympiads')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-muted/50 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark dark:text-foreground text-[15px]">Olimpiadalar</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300 dark:text-muted-foreground" />
                 </div>
 
                 <TopUpDialog onSuccess={loadUser} />
 
-                <div onClick={() => window.open('https://t.me/Ardent_support_bot', '_blank')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 transition-colors">
-                    <span className="font-semibold text-hogwarts-dark text-[15px]">Yordam</span>
-                    <ChevronRight className="w-5 h-5 text-gray-300" />
+                <div onClick={() => window.open('https://t.me/Ardent_support_bot', '_blank')} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-gray-50 active:bg-gray-100 dark:hover:bg-muted/50 transition-colors">
+                    <span className="font-semibold text-hogwarts-dark dark:text-foreground text-[15px]">Yordam</span>
+                    <ChevronRight className="w-5 h-5 text-gray-300 dark:text-muted-foreground" />
                 </div>
 
-                <div onClick={handleLogout} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-red-50 active:bg-red-100 transition-colors">
+                <div onClick={handleLogout} className="flex items-center justify-between p-4 px-5 cursor-pointer hover:bg-red-50 active:bg-red-100 dark:hover:bg-destructive/10 transition-colors">
                     <span className="font-semibold text-red-500 text-[15px]">Chiqish</span>
-                    <LogOut className="w-5 h-5 text-red-500/50" />
+                    <LogOut className="w-5 h-5 text-red-500/50 dark:text-red-500" />
                 </div>
             </div>
 
