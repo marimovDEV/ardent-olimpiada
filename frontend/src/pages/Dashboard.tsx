@@ -13,7 +13,7 @@ import TelegramStatus from "@/components/dashboard/TelegramStatus";
 import SubjectStats from "@/components/dashboard/SubjectStats";
 import LevelProgressModal from "@/components/dashboard/LevelProgressModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 
 interface DashboardData {
   has_active_courses: boolean;
@@ -274,7 +274,7 @@ const Dashboard = () => {
               >
                 <div className="h-28 bg-muted relative">
                   {course.thumbnail ? (
-                    <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
+                    <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
                       <BookOpen className="w-8 h-8 text-indigo-500/50" />
