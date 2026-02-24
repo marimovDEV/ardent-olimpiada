@@ -121,7 +121,7 @@ const TeacherOlympiadResultsPage = () => {
             const winnersList = Object.entries(selectedWinners).map(([pos, res]) => ({
                 user_id: res.user_id,
                 position: parseInt(pos),
-                prize_id: prizes.find(p => p.condition.includes(pos))?.id
+                prize_id: prizes.find(p => p.condition?.includes(pos))?.id
             }));
 
             const res = await axios.post(
@@ -186,8 +186,8 @@ const TeacherOlympiadResultsPage = () => {
                             {[1, 2, 3].map(pos => (
                                 <div key={pos} className="flex items-center gap-4 p-4 rounded-2xl border border-border bg-muted/30">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black ${pos === 1 ? 'bg-yellow-400 text-yellow-950 shadow-gold' :
-                                            pos === 2 ? 'bg-slate-300 text-slate-800' :
-                                                'bg-amber-600 text-amber-50'
+                                        pos === 2 ? 'bg-slate-300 text-slate-800' :
+                                            'bg-amber-600 text-amber-50'
                                         }`}>
                                         {pos}
                                     </div>
@@ -212,7 +212,7 @@ const TeacherOlympiadResultsPage = () => {
                                     <div className="text-right">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Sovrin</p>
                                         <p className="text-sm font-bold text-primary">
-                                            {prizes.find(p => p.condition.includes(pos.toString()))?.name || "Belgilanmagan"}
+                                            {prizes.find(p => p.condition?.includes(pos.toString()))?.name || "Belgilanmagan"}
                                         </p>
                                     </div>
                                 </div>
