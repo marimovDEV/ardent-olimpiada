@@ -2,6 +2,7 @@ import time
 import requests
 import json
 import logging
+from decimal import Decimal
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from api.models import BotConfig, User, Olympiad, OlympiadRegistration, Payment, WinnerPrize, PrizeAddress
@@ -531,8 +532,9 @@ class Command(BaseCommand):
                 return
 
             user = payment.user
-            rate = self.get_rate()
-            coins_amount = payment.amount / rate # Rough calc back
+            rate = Decimal(str(self.get_rate()))
+            coins_amount = Decimal(payment.amount) / rate # Safe Decimal calc
+            coins_amount_int = int(coins_amount)
 
             new_caption = msg.get('caption', '') + "\n\n"
 
@@ -562,7 +564,7 @@ class Command(BaseCommand):
                 
                 # Notify User
                 if user.telegram_id:
-                    self.send_message(user.telegram_id, f"✅ <b>To'lov tasdiqlandi!</b>\n\nHisobingizga {int(coins_amount)} Coin qo'shildi.")
+                    self.send_message(user.telegram_id, f"✅ <b>To'lov tasdiqlandi!</b>\n\nHisobingizga {coins_amount_int} Coin qo'shildi.")
 
             elif action == 'reject':
                 payment.status = 'FAILED'
