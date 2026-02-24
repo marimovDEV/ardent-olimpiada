@@ -1,4 +1,4 @@
-import { API_URL as API_BASE } from "@/services/api";
+import { API_URL as API_BASE, getImageUrl } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -171,7 +171,7 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                                     <div className="w-10 h-10 rounded-full p-0.5 bg-gradient-to-br from-indigo-500/40 to-purple-500/40 group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-500">
                                         <div className="w-full h-full rounded-full bg-card border-2 border-background overflow-hidden relative shadow-sm">
                                             {user.avatar_url || user.avatar ? (
-                                                <img src={user.avatar_url || user.avatar} alt="Avatar" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                <img src={getImageUrl(user.avatar_url || user.avatar)} alt="Avatar" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-600 font-black text-lg">
                                                     {(user.first_name?.[0] || user.username?.[0] || 'U').toUpperCase()}
@@ -223,7 +223,7 @@ const DashboardNavbar = ({ onMobileMenuClick }: NavbarProps) => {
                     <Link to="/profile" className="block lg:hidden ml-1 active:scale-95 transition-transform">
                         <div className="w-8 h-8 rounded-full border-2 border-background shadow-sm overflow-hidden bg-muted">
                             {user.avatar_url || user.avatar ? (
-                                <img src={user.avatar_url || user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                                <img src={getImageUrl(user.avatar_url || user.avatar)} alt="Avatar" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-500/20 to-purple-500/20 text-indigo-600 font-bold text-sm">
                                     {(user.first_name?.[0] || user.username?.[0] || 'U').toUpperCase()}

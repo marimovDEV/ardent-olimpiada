@@ -421,7 +421,7 @@ const ProfilePage = () => {
                 <div className="relative z-10 flex items-center gap-4">
                     <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                         {displayAvatar ? (
-                            <img className="w-16 h-16 rounded-full border-2 border-hogwarts-gold object-cover shadow-md" src={displayAvatar} alt={fullName} />
+                            <img className="w-16 h-16 rounded-full border-2 border-hogwarts-gold object-cover shadow-md" src={getImageUrl(displayAvatar)} alt={fullName} />
                         ) : (
                             <div className="w-16 h-16 rounded-full bg-hogwarts-surface flex items-center justify-center text-xl font-bold border-2 border-hogwarts-gold text-white shadow-md">
                                 {initials}
