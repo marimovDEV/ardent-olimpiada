@@ -7,16 +7,23 @@ interface DayStatus {
     status: 'COMPLETED' | 'MISSED' | 'PENDING';
 }
 
+const translateDay = (dayStr: string) => {
+    const days: Record<string, string> = {
+        'Mon': 'Dush', 'Tue': 'Sesh', 'Wed': 'Chor', 'Thu': 'Pay', 'Fri': 'Juma', 'Sat': 'Shan', 'Sun': 'Yak'
+    };
+    return days[dayStr] || dayStr;
+};
+
 const StreakCalendar = ({ calendar }: { calendar: DayStatus[] }) => {
     const { t } = useTranslation();
     return (
         <div className="bg-card border border-border rounded-2xl p-4 md:p-6 backdrop-blur-sm">
-            <h3 className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-4">{t('dashboard.calendar.activity')}</h3>
+            <h3 className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-4">{t('dashboard.calendar.activity', "So'nggi 7 kunlik faollik")}</h3>
             <div className="overflow-x-auto pb-2 -mx-2 px-2 md:mx-0 md:px-0">
                 <div className="flex justify-between md:justify-around items-center min-w-[320px] gap-2">
                     {calendar.map((day, i) => (
                         <div key={i} className="flex flex-col items-center gap-2 group cursor-default flex-1 min-w-[40px]">
-                            <span className={`text-[10px] md:text-xs font-bold ${day.status === 'COMPLETED' ? 'text-foreground' : 'text-muted-foreground'}`}>{day.day}</span>
+                            <span className={`text-[10px] md:text-xs font-bold ${day.status === 'COMPLETED' ? 'text-foreground' : 'text-muted-foreground'}`}>{translateDay(day.day)}</span>
 
                             <div className={`
                                 w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all duration-300 border

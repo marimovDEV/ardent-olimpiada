@@ -203,7 +203,7 @@ const DailyGoals = () => {
                             <Target className="w-8 h-8 text-primary" />
                             BUGUNGI MAQSADINGIZ
                         </h2>
-                        <p className="text-[10px] text-secondary font-black uppercase tracking-[0.3em] opacity-60">Success is a habit</p>
+                        <p className="text-[10px] text-secondary font-black uppercase tracking-[0.3em] opacity-60">Muvaffaqiyat - bu odat</p>
                     </div>
                     <div className="text-[11px] font-black text-primary bg-primary/10 border border-primary/20 px-4 py-1.5 rounded-full uppercase tracking-widest leading-none">
                         {completedCount}/{goals.length} Bajarildi

@@ -169,7 +169,7 @@ const Dashboard = () => {
               </div>
               <div className="w-px h-12 bg-white/10 hidden md:block" />
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] opacity-60">Current Rank</span>
+                <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] opacity-60">Joriy Reyting</span>
                 <div className="flex items-center gap-3">
                   <Crown className="w-6 h-6 text-primary" />
                   <span className="text-4xl font-black text-white italic font-cinzel">#{data.hero?.ranking || 0}</span>
@@ -200,14 +200,14 @@ const Dashboard = () => {
         <div className="mt-16 space-y-5">
           <div className="flex justify-between items-end">
             <div className="space-y-1">
-              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-cinzel">Next Level Progress</span>
+              <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] font-cinzel">Keyingi Daraja Progressi</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-4xl font-black text-white italic font-cinzel leading-none">{data.level.xp_current}</span>
                 <span className="text-sm font-black text-muted-foreground uppercase opacity-60">/ 500 XP</span>
               </div>
             </div>
             <div className="text-right space-y-1">
-              <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] font-cinzel opacity-40">Ready to Evolve</span>
+              <span className="text-[10px] font-black text-secondary uppercase tracking-[0.3em] font-cinzel opacity-40">Yangi darajaga tayyor</span>
               <div className="text-2xl font-black text-primary italic font-cinzel">{data.level.progress_percent}%</div>
             </div>
           </div>
@@ -233,28 +233,28 @@ const Dashboard = () => {
           label={t('dashboard.stats.streak', 'STREAK')}
           value={`${data.hero?.streak_days || 0} KUN`}
           icon={Zap}
-          trend="🔥 On Fire"
+          trend="🔥 Olovdek"
           color="orange"
         />
         <DashboardStatCard
-          label={t('dashboard.stats.totalXp', 'TOTAL XP')}
+          label={t('dashboard.stats.totalXp', 'UMUMIY XP')}
           value={data.level.xp_current + (data.level.current - 1) * 500}
           icon={Trophy}
-          trend="🚀 Level Top"
+          trend="🚀 Yuqori daraja"
           color="primary"
         />
         <DashboardStatCard
-          label={t('dashboard.stats.rank', 'RANKING')}
+          label={t('dashboard.stats.rank', 'REYTING')}
           value={`#${data.hero?.ranking || 0}`}
           icon={Crown}
           trend="🏆 Top 5%"
           color="primary"
         />
         <DashboardStatCard
-          label={t('dashboard.stats.certificates', 'CERTIFICATES')}
+          label={t('dashboard.stats.certificates', 'SERTIFIKATLAR')}
           value={`${data.hero?.certificates_count || 0}`}
           icon={Award}
-          trend="✨ Certified"
+          trend="✨ Sertifikatlangan"
           color="yellow"
         />
       </div>
@@ -277,7 +277,7 @@ const Dashboard = () => {
                   <BookOpen className="w-10 h-10 text-primary" />
                   O'RGANISHNI DAVOM ETTIRING
                 </h2>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-60">Never stop growing</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-60">O'sishdan to'xtamang</p>
               </div>
               <Link to="/my-courses">
                 <Button variant="ghost" className="h-12 px-6 rounded-xl border border-white/5 hover:bg-white/5 text-secondary font-black uppercase tracking-widest text-[10px] transition-all">
@@ -298,7 +298,7 @@ const Dashboard = () => {
                 <Star className="w-10 h-10 text-primary" />
                 YO'NALISHLAR
               </h2>
-              <p className="text-[10px] text-secondary font-black uppercase tracking-[0.3em] opacity-60">Expertise areas</p>
+              <p className="text-[10px] text-secondary font-black uppercase tracking-[0.3em] opacity-60">Mutaxassislik sohalari</p>
             </div>
             <SubjectStats stats={data.subject_stats} />
           </div>
@@ -315,7 +315,7 @@ const Dashboard = () => {
                 <History className="w-6 h-6 text-primary" />
                 SO'NGGI FAOLIYAT
               </h3>
-              <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-40">Your timeline</p>
+              <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-40">Sizning tarixingiz</p>
             </div>
             <RecentActivity />
           </div>
@@ -327,7 +327,7 @@ const Dashboard = () => {
                 <Zap className="w-6 h-6 text-orange-400" />
                 FAOLLIK KALENDARI
               </h3>
-              <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-40">Consistency is key</p>
+              <p className="text-[10px] text-secondary font-black uppercase tracking-widest opacity-40">Barqarorlik - muvaffaqiyat kaliti</p>
             </div>
             <StreakCalendar calendar={data.calendar} />
           </div>
