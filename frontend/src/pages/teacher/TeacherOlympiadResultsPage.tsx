@@ -306,77 +306,80 @@ const TeacherOlympiadResultsPage = () => {
                                             </span>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button variant="ghost" size="sm" className="gap-2 text-primary" onClick={() => {
-                                                        setReviewResult(res);
-                                                        setShowReviewModal(true);
-                                                    }}>
-                                                        <Eye className="w-4 h-4" />
-                                                        Ko'rish
-                                                    </Button>
+                                            <div className="flex items-center justify-end gap-1">
+                                                <Button variant="ghost" size="sm" className="gap-2 text-primary" onClick={() => {
+                                                    setReviewResult(res);
+                                                    setShowReviewModal(true);
+                                                }}>
+                                                    <Eye className="w-4 h-4" />
+                                                    Ko'rish
+                                                </Button>
 
-                                                    <Button variant="ghost" size="sm" className="gap-2" onClick={() => {
-                                                        setSelectedResult(res);
-                                                        setGradingScore(res.score.toString());
-                                                        setGradingComment(res.feedback || "");
-                                                    }}>
-                                                        <Edit className="w-4 h-4" />
-                                                        Baholash
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Baholash: {res.student}</DialogTitle>
-                                                        <DialogDescription>
-                                                            Ushbu ishtirokchi uchun yakuniy ballni belgilang.
-                                                        </DialogDescription>
-                                                    </DialogHeader>
-                                                    <div className="grid gap-4 py-4">
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label htmlFor="score" className="text-right font-bold">Ball</Label>
-                                                            <Input
-                                                                id="score"
-                                                                type="number"
-                                                                className="col-span-3"
-                                                                value={gradingScore}
-                                                                onChange={(e) => setGradingScore(e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div className="flex flex-col gap-2">
-                                                            <Label htmlFor="comment" className="font-bold">Izoh / Feedback</Label>
-                                                            <Textarea
-                                                                id="comment"
-                                                                placeholder="O'quvchi uchun izoh yoki xatoliklar haqida feedback yozing..."
-                                                                className="min-h-[120px] bg-muted/30 border-border/50 focus:border-primary/50"
-                                                                value={gradingComment}
-                                                                onChange={(e) => setGradingComment(e.target.value)}
-                                                            />
-                                                            <p className="text-[10px] text-muted-foreground italic">
-                                                                Ushbu izoh o'quvchining shaxsiy kabinetida ko'rinadi.
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <Button variant="outline" onClick={() => setSelectedResult(null)}>Bekor qilish</Button>
-                                                        <Button onClick={handleGrade} disabled={isGrading}>
-                                                            <Save className="w-4 h-4 mr-2" />
-                                                            Saqlash
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button variant="ghost" size="sm" className="gap-2" onClick={() => {
+                                                            setSelectedResult(res);
+                                                            setGradingScore(res.score.toString());
+                                                            setGradingComment(res.feedback || "");
+                                                        }}>
+                                                            <Edit className="w-4 h-4" />
+                                                            Baholash
                                                         </Button>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </Dialog>
+                                                    </DialogTrigger>
+                                                    <DialogContent>
+                                                        <DialogHeader>
+                                                            <DialogTitle>Baholash: {res.student}</DialogTitle>
+                                                            <DialogDescription>
+                                                                Ushbu ishtirokchi uchun yakuniy ballni belgilang.
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                        <div className="grid gap-4 py-4">
+                                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                                <Label htmlFor="score" className="text-right font-bold">Ball</Label>
+                                                                <Input
+                                                                    id="score"
+                                                                    type="number"
+                                                                    className="col-span-3"
+                                                                    value={gradingScore}
+                                                                    onChange={(e) => setGradingScore(e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div className="flex flex-col gap-2">
+                                                                <Label htmlFor="comment" className="font-bold">Izoh / Feedback</Label>
+                                                                <Textarea
+                                                                    id="comment"
+                                                                    placeholder="O'quvchi uchun izoh yoki xatoliklar haqida feedback yozing..."
+                                                                    className="min-h-[120px] bg-muted/30 border-border/50 focus:border-primary/50"
+                                                                    value={gradingComment}
+                                                                    onChange={(e) => setGradingComment(e.target.value)}
+                                                                />
+                                                                <p className="text-[10px] text-muted-foreground italic">
+                                                                    Ushbu izoh o'quvchining shaxsiy kabinetida ko'rinadi.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <DialogFooter>
+                                                            <Button variant="outline" onClick={() => setSelectedResult(null)}>Bekor qilish</Button>
+                                                            <Button onClick={handleGrade} disabled={isGrading}>
+                                                                <Save className="w-4 h-4 mr-2" />
+                                                                Saqlash
+                                                            </Button>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
-                    )}
-                </CardContent>
-            </Card>
+                    )
+                    }
+                </CardContent >
+            </Card >
 
             {/* Answer Review Dialog */}
-            <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
+            < Dialog open={showReviewModal} onOpenChange={setShowReviewModal} >
                 <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-primary/20 bg-[#0B0F1A]/95 backdrop-blur-xl">
                     <DialogHeader className="p-6 pb-2 border-b border-white/5">
                         <div className="flex items-center justify-between">
@@ -474,8 +477,8 @@ const TeacherOlympiadResultsPage = () => {
                         </Button>
                     </DialogFooter>
                 </DialogContent>
-            </Dialog>
-        </div>
+            </Dialog >
+        </div >
     );
 };
 
