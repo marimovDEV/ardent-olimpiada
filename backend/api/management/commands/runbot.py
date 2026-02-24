@@ -2,7 +2,8 @@ import time
 import requests
 import json
 import logging
-from decimal import Decimal
+import traceback
+from decimal import Decimal, ROUND_HALF_UP
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from api.models import BotConfig, User, Olympiad, OlympiadRegistration, Payment, WinnerPrize, PrizeAddress
@@ -533,7 +534,8 @@ class Command(BaseCommand):
 
             user = payment.user
             rate = Decimal(str(self.get_rate()))
-            coins_amount = Decimal(payment.amount) / rate # Safe Decimal calc
+            # Safe Decimal calc with rounding
+            coins_amount = (Decimal(payment.amount) / rate).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
             coins_amount_int = int(coins_amount)
 
             new_caption = msg.get('caption', '') + "\n\n"
@@ -581,14 +583,15 @@ class Command(BaseCommand):
                 "message_id": message_id,
                 "caption": new_caption,
                 "parse_mode": "HTML",
-                "reply_markup": None # Remove buttons
+                "reply_markup": {"inline_keyboard": []} # Properly remove buttons
             })
 
             self.send_request("answerCallbackQuery", {"callback_query_id": callback['id'], "text": "Bajarildi"})
 
         except Exception as e:
             logger.error(f"Callback Error: {e}")
-            self.send_request("answerCallbackQuery", {"callback_query_id": callback['id'], "text": "Xatolik"})
+            logger.error(traceback.format_exc())
+            self.send_request("answerCallbackQuery", {"callback_query_id": callback['id'], "text": f"Xatolik: {str(e)[:50]}"})
 
     # --- HELPERS ---
 
