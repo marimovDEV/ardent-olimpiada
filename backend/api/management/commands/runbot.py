@@ -552,15 +552,16 @@ class Command(BaseCommand):
                     payment.completed_at = timezone.now()
                     payment.save()
                     
-                    # Add Balance
-                    user = payment.user
-                    user.refresh_from_db() # Ensure latest balance
+                    # Add Balance with locking to prevent race conditions
+                    user = User.objects.select_for_update().get(pk=payment.user.pk)
                     old_balance = user.balance
                     
                     user.balance += coins_amount
                     user.save()
                     
-                    logger.info(f"💰 Balance Updated: User {user.id} ({user.phone}) | {old_balance} -> {user.balance} (+{coins_amount})")
+                    logger.info(f"💰 [PAYMENT CONFIRM] User ID: {user.id} | Username: {user.username}")
+                    logger.info(f"💰 Balance Change: {old_balance} -> {user.balance} (+{coins_amount})")
+                    print(f"DEBUG: Balance Updated for {user.username}: {old_balance} -> {user.balance} (+{coins_amount})")
                 
                 new_caption += "✅ <b>TASDIQLANDI</b>"
                 
