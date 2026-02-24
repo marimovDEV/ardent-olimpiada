@@ -1991,7 +1991,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         """Get all questions for admin/teacher management"""
         olympiad = self.get_object()
         questions = olympiad.questions.all().order_by('order')
-        return Response(QuestionSerializer(questions, many=True).data)
+        return Response(QuestionAdminSerializer(questions, many=True).data)
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def ranking(self, request, pk=None):

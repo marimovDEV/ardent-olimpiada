@@ -1149,7 +1149,7 @@ class OlympiadSerializer(serializers.ModelSerializer):
 
 
 class OlympiadDetailSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True, read_only=True)
+    questions = serializers.SerializerMethodField()
     is_registered = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
     total_score = serializers.SerializerMethodField()
@@ -1165,6 +1165,18 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
 
     def get_start_time(self, obj):
         return obj.start_date
+
+    def get_questions(self, obj):
+        request = self.context.get('request')
+        user = request.user if request else None
+        
+        # Order questions
+        questions = obj.questions.all().order_by('order')
+        
+        # For teachers and admins, show correct answers and explanations
+        if user and user.is_authenticated and user.role in ['ADMIN', 'TEACHER']:
+            return QuestionAdminSerializer(questions, many=True).data
+        return QuestionSerializer(questions, many=True).data
 
     def get_revenue(self, obj):
         request = self.context.get('request')

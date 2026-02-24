@@ -401,57 +401,67 @@ const TeacherOlympiadResultsPage = () => {
                         </div>
                     </DialogHeader>
 
-                    <ScrollArea className="flex-1 p-6">
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 custom-scrollbar">
                         <div className="space-y-6">
                             {olympiad?.questions?.map((q: any, idx: number) => {
                                 const studentAnswer = reviewResult?.answers?.[q.id.toString()];
-                                const isCorrect = studentAnswer?.toString().trim().toLowerCase() === q.correct_answer?.toString().trim().toLowerCase();
+                                // Normalized comparison
+                                const normalizedStudent = studentAnswer?.toString().trim().toLowerCase() || "";
+                                const normalizedCorrect = q.correct_answer?.toString().trim().toLowerCase() || "";
+
+                                const isAnswered = studentAnswer !== undefined && studentAnswer !== "";
+                                const isCorrect = isAnswered && normalizedStudent === normalizedCorrect;
 
                                 return (
                                     <div key={q.id} className={`p-5 rounded-2xl border transition-all duration-300 ${isCorrect
                                         ? 'bg-green-500/5 border-green-500/20'
-                                        : studentAnswer === undefined || studentAnswer === ""
-                                            ? 'bg-muted/30 border-border/50 opacity-80'
+                                        : !isAnswered
+                                            ? 'bg-slate-500/5 border-slate-500/20 opacity-80'
                                             : 'bg-red-500/5 border-red-500/20'
                                         }`}>
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex gap-4">
                                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black shrink-0 ${isCorrect
                                                     ? 'bg-green-500 text-white'
-                                                    : studentAnswer === undefined || studentAnswer === ""
-                                                        ? 'bg-muted text-muted-foreground'
+                                                    : !isAnswered
+                                                        ? 'bg-slate-500 text-white'
                                                         : 'bg-red-500 text-white'
                                                     }`}>
                                                     {idx + 1}
                                                 </div>
-                                                <div>
-                                                    <h4 className="text-lg font-bold leading-tight mb-2">{q.title}</h4>
-                                                    <div className="prose prose-invert prose-sm text-muted-foreground max-w-none" dangerouslySetInnerHTML={{ __html: q.text }} />
+                                                <div className="flex-1 overflow-hidden">
+                                                    <h4 className="text-lg font-bold leading-tight mb-2 break-words">{q.title || `Savol - ${idx + 1}`}</h4>
+                                                    <div className="prose prose-invert prose-sm text-muted-foreground max-w-none break-words" dangerouslySetInnerHTML={{ __html: q.text }} />
                                                 </div>
                                             </div>
-                                            <Badge variant={isCorrect ? "default" : "destructive"} className={isCorrect ? "bg-green-600/20 text-green-400 border-green-500/30" : "bg-red-600/20 text-red-400 border-red-500/30"}>
-                                                {isCorrect ? "To'g'ri" : "Xato"}
+                                            <Badge variant={isCorrect ? "default" : "destructive"} className={isCorrect
+                                                ? "bg-green-600/20 text-green-400 border-green-500/30 whitespace-nowrap"
+                                                : !isAnswered
+                                                    ? "bg-slate-600/20 text-slate-400 border-slate-500/30 whitespace-nowrap"
+                                                    : "bg-red-600/20 text-red-400 border-red-500/30 whitespace-nowrap"
+                                            }>
+                                                {isCorrect ? "To'g'ri" : !isAnswered ? "Javobsiz" : "Xato"}
                                             </Badge>
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-12">
-                                            <div className="p-3 rounded-xl bg-background/50 border border-border/50">
+                                            <div className={`p-3 rounded-xl border ${isCorrect ? 'bg-green-500/5 border-green-500/20' : !isAnswered ? 'bg-background/30 border-border/50' : 'bg-red-500/5 border-red-500/20'}`}>
                                                 <p className="text-[10px] font-black uppercase text-muted-foreground mb-1 tracking-widest">O'quvchi javobi</p>
-                                                <p className={`font-bold ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-                                                    {studentAnswer || <span className="text-muted-foreground font-normal italic">Javob berilmagan</span>}
+                                                <p className={`font-bold ${isCorrect ? 'text-green-400' : !isAnswered ? 'text-muted-foreground italic' : 'text-red-400'}`}>
+                                                    {studentAnswer || "Javob berilmagan"}
                                                 </p>
                                             </div>
-                                            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
-                                                <p className="text-[10px] font-black uppercase text-green-500/70 mb-1 tracking-widest">To'g'ri javob</p>
-                                                <p className="font-extrabold text-green-500">{q.correct_answer}</p>
+                                            <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
+                                                <p className="text-[10px] font-black uppercase text-primary/70 mb-1 tracking-widest">To'g'ri javob</p>
+                                                <p className="font-extrabold text-primary">{q.correct_answer || "Belgilanmagan"}</p>
                                             </div>
                                         </div>
 
-                                        {!isCorrect && q.explanation && (
-                                            <div className="mt-4 ml-12 p-3 rounded-xl bg-primary/5 border border-primary/10 flex gap-3">
-                                                <AlertTriangle className="w-5 h-5 text-primary shrink-0" />
+                                        {q.explanation && (
+                                            <div className="mt-4 ml-12 p-3 rounded-xl bg-white/5 border border-white/10 flex gap-3">
+                                                <AlertTriangle className="w-5 h-5 text-yellow-500 shrink-0" />
                                                 <div>
-                                                    <p className="text-[10px] font-black uppercase text-primary/70 mb-1 tracking-widest">Tushuntirish</p>
+                                                    <p className="text-[10px] font-black uppercase text-yellow-500/70 mb-1 tracking-widest">Tushuntirish</p>
                                                     <p className="text-sm text-muted-foreground italic">{q.explanation}</p>
                                                 </div>
                                             </div>
@@ -460,7 +470,7 @@ const TeacherOlympiadResultsPage = () => {
                                 );
                             })}
                         </div>
-                    </ScrollArea>
+                    </div>
 
                     <DialogFooter className="p-6 border-t border-white/5 bg-muted/20">
                         <Button variant="outline" className="border-border/50" onClick={() => setShowReviewModal(false)}>
