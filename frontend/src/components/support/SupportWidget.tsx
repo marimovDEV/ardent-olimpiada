@@ -35,13 +35,13 @@ const SupportWidget = () => {
     return (
         <>
             {/* Trigger Button */}
-            <div className="fixed bottom-6 right-6 z-50">
+            <div className="fixed bottom-24 right-4 z-[100]">
                 <Button
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`h-14 w-14 rounded-full shadow-2xl transition-all duration-300 ${isOpen ? 'bg-gray-900 rotate-90 scale-90' : 'bg-blue-600 hover:bg-blue-700 hover:scale-110'} z-50`}
+                    className={`h-14 w-14 rounded-full shadow-2xl transition-all duration-300 ${isOpen ? 'bg-gray-900 rotate-90 scale-90' : 'bg-gradient-to-br from-hogwarts-gold to-amber-500 hover:scale-110'}`}
                 >
-                    {isOpen ? <X className="w-6 h-6" /> : (
-                        activeTicketId ? <Sparkles className="w-6 h-6 text-yellow-200 fill-current" /> : <Bot className="w-7 h-7 fill-current" />
+                    {isOpen ? <X className="w-6 h-6 text-white" /> : (
+                        activeTicketId ? <Sparkles className="w-6 h-6 text-white fill-current" /> : <Bot className="w-7 h-7 text-[#0F172A] fill-current" />
                     )}
                 </Button>
 
@@ -61,7 +61,7 @@ const SupportWidget = () => {
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-full sm:h-[600px] bg-white dark:bg-slate-900 sm:rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden z-40 flex flex-col"
+                        className="fixed bottom-0 right-0 sm:bottom-24 sm:right-6 w-full sm:w-[400px] h-full sm:h-[600px] bg-white dark:bg-slate-900 sm:rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-800 overflow-hidden z-[90] flex flex-col"
                     >
                         {view === 'ai' && !activeTicketId ? (
                             <AIAssistant onTalkToAdmin={() => setView('wizard')} onClose={reset} />
