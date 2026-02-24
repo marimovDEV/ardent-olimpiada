@@ -128,157 +128,177 @@ const Dashboard = () => {
   const continueCourse = data.enrolled_courses?.[0];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-background pb-24 selection:bg-primary/30 w-full animate-fade-in overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-3xl border-x border-border/10">
+    <div className="min-h-screen bg-gray-50 dark:bg-background pb-24 selection:bg-primary/30 w-full animate-fade-in overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-7xl lg:px-8 lg:border-none">
 
       {/* 2. TRUE HERO SECTION / PREMIUM GRADIENT CARD */}
-      <div className="mx-4 mt-4 p-5 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl text-white shadow-lg relative overflow-hidden group cursor-pointer" onClick={() => setIsProgressModalOpen(true)}>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none" />
-        <div className="relative z-10 space-y-4">
+      <div className="mx-4 lg:mx-0 mt-4 p-5 lg:p-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl lg:rounded-3xl text-white shadow-lg relative overflow-hidden group cursor-pointer" onClick={() => setIsProgressModalOpen(true)}>
+        <div className="absolute top-0 right-0 w-32 h-32 lg:w-64 lg:h-64 bg-white/10 rounded-full blur-2xl -mr-16 -mt-16 lg:-mr-32 lg:-mt-32 pointer-events-none" />
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
           {/* Top User Row */}
-          <div className="flex justify-between items-start">
+          <div className="space-y-4">
             <div>
-              <h1 className="text-2xl font-black leading-tight">
+              <h1 className="text-2xl lg:text-4xl font-black leading-tight">
                 👋 Salom, {data.hero?.user_name || 'Talaba'}
               </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="bg-white/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm inline-flex">
+              <div className="flex items-center gap-2 mt-1 lg:mt-2">
+                <div className="bg-white/20 px-2 py-0.5 rounded text-[10px] lg:text-xs font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm inline-flex">
                   Lvl {data.level.current}
                 </div>
-                <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm">
-                  <Crown className="w-3 h-3 text-yellow-300 fill-yellow-300" />
+                <div className="flex items-center gap-1 bg-white/20 px-2 py-0.5 rounded text-[10px] lg:text-xs font-bold uppercase tracking-wider backdrop-blur-sm shadow-sm">
+                  <Crown className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-300 fill-yellow-300" />
                   #{data.hero?.ranking || 0}
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Progress Bar inside hero card */}
-          <div className="space-y-1.5 pt-2">
-            <div className="flex justify-between text-[11px] font-bold text-white/90">
-              <span>XP Progress</span>
-              <span>{data.level.xp_current} / 500 XP</span>
+            {/* Progress Bar inside hero card */}
+            <div className="space-y-1.5 pt-2 lg:w-96">
+              <div className="flex justify-between text-[11px] lg:text-xs font-bold text-white/90">
+                <span>XP Progress</span>
+                <span>{data.level.xp_current} / 500 XP</span>
+              </div>
+              <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden shadow-inner">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${data.level.progress_percent}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-full relative"
+                >
+                  <div className="absolute inset-0 bg-white/20 w-1/2 rounded-full" />
+                </motion.div>
+              </div>
             </div>
-            <div className="h-2 w-full bg-black/20 rounded-full overflow-hidden shadow-inner">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${data.level.progress_percent}%` }}
-                transition={{ duration: 1, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-yellow-400 to-yellow-300 rounded-full relative"
-              >
-                <div className="absolute inset-0 bg-white/20 w-1/2 rounded-full" />
-              </motion.div>
+          </div>
+
+          {/* Large Screen Quick Stats */}
+          <div className="hidden lg:grid grid-cols-2 gap-4">
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 w-40">
+              <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1">Streak</p>
+              <p className="text-2xl font-black text-white">{data.hero?.streak_days || 0} Kun</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/10 w-40">
+              <p className="text-[10px] font-bold text-white/60 uppercase tracking-widest mb-1">Status</p>
+              <p className="text-2xl font-black text-white italic">#{data.hero?.ranking || 0}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3. PRIMARY QUICK ACTION */}
-      <button
-        onClick={() => continueCourse ? navigate(`/course/${continueCourse.id}`) : navigate('/courses')}
-        className="mx-4 mt-4 w-[calc(100%-2rem)] py-3 h-14 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-      >
-        <PlayCircle className="w-5 h-5" />
-        {continueCourse ? "Kursni davom ettirish" : "Kurs topish"}
-      </button>
+      <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:mt-8">
+        {/* Main Content Area (Left on Desktop) */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* 3. PRIMARY QUICK ACTION */}
+          <button
+            onClick={() => continueCourse ? navigate(`/course/${continueCourse.id}`) : navigate('/courses')}
+            className="mx-4 lg:mx-0 mt-4 lg:mt-0 w-[calc(100%-2rem)] lg:w-full py-3 h-14 lg:h-16 rounded-xl lg:rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md lg:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-base lg:text-lg"
+          >
+            <PlayCircle className="w-5 h-5 lg:w-6 lg:h-6" />
+            {continueCourse ? "Kursni davom ettirish" : "Kurs topish"}
+          </button>
 
-      {/* 4. BUGUNGI MAQSAD (Moved up) */}
-      <div className="px-4 mt-6">
-        <DailyGoals />
-      </div>
-
-      {/* 5. STATS GRID 2x2 */}
-      <div className="grid grid-cols-2 gap-4 mt-6 mx-4">
-        {/* Streak */}
-        <div className="bg-white dark:bg-card p-4 rounded-2xl shadow-sm border border-border flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-1">
-            <Zap className="w-4 h-4 text-orange-500 fill-orange-500" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Streak</span>
-          </div>
-          <div className="text-xl font-black text-foreground">{data.hero?.streak_days || 0} Kun</div>
-        </div>
-
-        {/* Total XP (Current Level points + previously earned) */}
-        <div className="bg-white dark:bg-card p-4 rounded-2xl shadow-sm border border-border flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-1">
-            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Umumiy XP</span>
-          </div>
-          <div className="text-xl font-black text-foreground">{(data.level?.xp_current || 0) + ((data.level?.current || 1) - 1) * 500}</div>
-        </div>
-
-        {/* Rank */}
-        <div className="bg-white dark:bg-card p-4 rounded-2xl shadow-sm border border-border flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-1">
-            <Crown className="w-4 h-4 text-indigo-500" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Reyting</span>
-          </div>
-          <div className="text-xl font-black text-foreground italic">#{data.hero?.ranking || 0}</div>
-        </div>
-
-        {/* Certs */}
-        <div className="bg-white dark:bg-card p-4 rounded-2xl shadow-sm border border-border flex flex-col justify-center">
-          <div className="flex items-center gap-2 mb-1">
-            <Award className="w-4 h-4 text-emerald-500" />
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Sertifikatlar</span>
-          </div>
-          <div className="text-xl font-black text-foreground">{data.hero?.certificates_count || 0} ta</div>
-        </div>
-      </div>
-
-      {/* 6. MINI KURSLARIM */}
-      {data.enrolled_courses && data.enrolled_courses.length > 0 && (
-        <div className="px-4 mt-6 space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-muted-foreground pl-1">Mini-Kurslarim</h2>
-            <Link to="/my-courses" className="text-xs font-bold text-indigo-600 active:scale-95 transition">Hammasi</Link>
+          {/* 4. BUGUNGI MAQSAD */}
+          <div className="px-4 lg:px-0">
+            <DailyGoals />
           </div>
 
-          <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
-            {data.enrolled_courses.slice(0, 3).map((course: any) => (
-              <Link
-                key={course.id}
-                to={`/course/${course.id}`}
-                className="min-w-[280px] w-[280px] snap-center bg-white dark:bg-card rounded-2xl shadow-md border border-border/50 overflow-hidden flex-shrink-0 active:scale-[0.98] transition-transform"
-              >
-                <div className="h-32 bg-muted relative">
-                  {course.thumbnail ? (
-                    <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center">
-                      <BookOpen className="w-10 h-10 text-indigo-300" />
+          {/* 6. MINI KURSLARIM */}
+          {data.enrolled_courses && data.enrolled_courses.length > 0 && (
+            <div className="px-4 lg:px-0 space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm lg:text-base font-black text-muted-foreground pl-1 uppercase tracking-widest">Mini-Kurslarim</h2>
+                <Link to="/my-courses" className="text-xs lg:text-sm font-bold text-indigo-600 hover:text-indigo-700 active:scale-95 transition">Hammasi</Link>
+              </div>
+
+              <div className="flex lg:grid lg:grid-cols-2 overflow-x-auto lg:overflow-visible gap-4 lg:gap-6 pb-4 lg:pb-0 snap-x snap-mandatory scrollbar-hide lg:scrollbar-default -mx-4 lg:mx-0 px-4 lg:px-0">
+                {data.enrolled_courses.slice(0, 4).map((course: any) => (
+                  <Link
+                    key={course.id}
+                    to={`/course/${course.id}`}
+                    className="min-w-[280px] lg:min-w-0 w-[280px] lg:w-full snap-center bg-white dark:bg-card rounded-2xl lg:rounded-3xl shadow-md border border-border/50 overflow-hidden flex-shrink-0 active:scale-[0.98] transition-all hover:shadow-xl hover:border-indigo-500/30"
+                  >
+                    <div className="h-32 lg:h-40 bg-muted relative">
+                      {course.thumbnail ? (
+                        <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center">
+                          <BookOpen className="w-10 h-10 text-indigo-300" />
+                        </div>
+                      )}
+                      <div className="absolute top-3 left-3 bg-background/90 backdrop-blur px-2.5 py-1 rounded text-[10px] lg:text-xs font-bold text-primary shadow-sm uppercase tracking-wider">
+                        {course.subject || "Umumiy"}
+                      </div>
                     </div>
-                  )}
-                  <div className="absolute top-2 left-2 bg-background/90 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-primary shadow-sm">
-                    {course.subject || "Umumiy"}
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-[15px] line-clamp-1 mb-3">{course.title}</h3>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[11px] font-medium text-muted-foreground">Progress</span>
-                    <span className="text-[11px] font-black text-indigo-600">{course.progress || 0}%</span>
-                  </div>
-                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${course.progress || 0}%` }}></div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                    <div className="p-4 lg:p-6">
+                      <h3 className="font-bold text-[15px] lg:text-lg lg:font-black line-clamp-1 mb-3">{course.title}</h3>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] lg:text-xs font-medium text-muted-foreground uppercase">Progress</span>
+                        <span className="text-[11px] lg:text-xs font-black text-indigo-600">{course.progress || 0}%</span>
+                      </div>
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${course.progress || 0}%` }}></div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* 7. SO'NGGI FAOLIYAT & KALENDAR (VERY BOTTOM) */}
-      <div className="px-4 mt-2 space-y-6">
-        <RecentActivity />
+        {/* Sidebar Widgets (Right on Desktop) */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* 5. STATS GRID 2x2 */}
+          <div className="grid grid-cols-2 gap-4 lg:gap-6 mx-4 lg:mx-0 lg:mt-0">
+            {/* Streak */}
+            <div className="bg-white dark:bg-card p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-sm border border-border flex flex-col justify-center transition-all hover:border-orange-500/30 hover:shadow-md">
+              <div className="flex items-center gap-2 mb-1 lg:mb-2">
+                <Zap className="w-4 h-4 lg:w-5 lg:h-5 text-orange-500 fill-orange-500" />
+                <span className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-wider">Streak</span>
+              </div>
+              <div className="text-xl lg:text-2xl font-black text-foreground">{data.hero?.streak_days || 0} Kun</div>
+            </div>
 
-        <div className="bg-white dark:bg-card border border-border p-5 rounded-2xl shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="w-5 h-5 text-orange-500" />
-            <h3 className="font-bold text-[15px]">Faollik kalendari</h3>
+            {/* Total XP */}
+            <div className="bg-white dark:bg-card p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-sm border border-border flex flex-col justify-center transition-all hover:border-yellow-500/30 hover:shadow-md">
+              <div className="flex items-center gap-2 mb-1 lg:mb-2">
+                <Star className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-500 fill-yellow-500" />
+                <span className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-wider">Umumiy XP</span>
+              </div>
+              <div className="text-xl lg:text-2xl font-black text-foreground">{(data.level?.xp_current || 0) + ((data.level?.current || 1) - 1) * 500}</div>
+            </div>
+
+            {/* Rank */}
+            <div className="bg-white dark:bg-card p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-sm border border-border flex flex-col justify-center transition-all hover:border-indigo-500/30 hover:shadow-md">
+              <div className="flex items-center gap-2 mb-1 lg:mb-2">
+                <Crown className="w-4 h-4 lg:w-5 lg:h-5 text-indigo-500" />
+                <span className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-wider">Reyting</span>
+              </div>
+              <div className="text-xl lg:text-2xl font-black text-foreground italic">#{data.hero?.ranking || 0}</div>
+            </div>
+
+            {/* Certs */}
+            <div className="bg-white dark:bg-card p-4 lg:p-6 rounded-2xl lg:rounded-3xl shadow-sm border border-border flex flex-col justify-center transition-all hover:border-emerald-500/30 hover:shadow-md">
+              <div className="flex items-center gap-2 mb-1 lg:mb-2">
+                <Award className="w-4 h-4 lg:w-5 lg:h-5 text-emerald-500" />
+                <span className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-wider">Sertifikatlar</span>
+              </div>
+              <div className="text-xl lg:text-2xl font-black text-foreground">{data.hero?.certificates_count || 0} ta</div>
+            </div>
           </div>
-          <StreakCalendar calendar={data.calendar} />
+
+          {/* 7. SO'NGGI FAOLIYAT & KALENDAR */}
+          <div className="px-4 lg:px-0 space-y-6">
+            <RecentActivity />
+
+            <div className="bg-white dark:bg-card border border-border p-5 lg:p-6 rounded-2xl lg:rounded-3xl shadow-sm">
+              <div className="flex items-center gap-2 mb-4 lg:mb-6">
+                <Calendar className="w-5 h-5 lg:w-6 lg:h-6 text-orange-500" />
+                <h3 className="font-bold text-[15px] lg:text-lg">Faollik kalendari</h3>
+              </div>
+              <StreakCalendar calendar={data.calendar} />
+            </div>
+          </div>
         </div>
       </div>
 
