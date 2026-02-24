@@ -2,31 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-    User, MapPin, School, GraduationCap, Calendar, Phone, Trophy, Star,
-    Zap, Edit3, Save, X, Camera, ArrowLeft, AtSign, Loader2, CheckCircle, XCircle,
-    BookOpen, CreditCard, Award, Download, CheckCircle2, ChevronDown
+    User, Award, Zap, Camera, ArrowLeft, Loader2, CheckCircle, XCircle,
+    BookOpen, CreditCard, ChevronRight, Settings, LogOut, HelpCircle, Trophy, Calendar
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
-import {
-    Table, TableBody, TableCell, TableHead, TableHeader, TableRow
-} from "@/components/ui/table";
 import { API_URL, getAuthHeader } from "@/services/api";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import LevelProgressModal from "@/components/dashboard/LevelProgressModal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ImageCropper from "@/components/common/ImageCropper";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // --- Types ---
 interface UserData {
@@ -57,10 +46,6 @@ interface UserData {
     };
 }
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
 interface Course {
     id: number;
     title: string;
@@ -85,43 +70,6 @@ interface Enrollment {
     is_completed: boolean;
 }
 
-interface OlympiadResult {
-    id: number;
-    olympiad: {
-        id: number;
-        title: string;
-        subject: string;
-    };
-    score: number;
-    correct_answers: number;
-    total_questions: number;
-    submitted_at: string;
-}
-
-interface OlympiadRegistration {
-    id: number;
-    olympiad: {
-        id: number;
-        title: string;
-        subject: string;
-        start_time: string;
-        status: string;
-    };
-    registered_at: string;
-    status: string;
-}
-
-interface Transaction {
-    id: number;
-    amount: string;
-    description: string;
-    payment_method: string;
-    status: string;
-    created_at: string;
-    payment_id: string;
-}
-
-// --- Constants ---
 const REGIONS = [
     "Toshkent shahri", "Toshkent viloyati", "Andijon viloyati", "Buxoro viloyati",
     "Farg'ona viloyati", "Jizzax viloyati", "Xorazm viloyati", "Namangan viloyati",
@@ -137,420 +85,6 @@ const GRADES = [
     { value: "GRADUATE", label: "Bitiruvchi" },
 ];
 
-const getSubjectTheme = (subject: any) => {
-    switch (String(subject || "").toLowerCase()) {
-        case 'matematika': return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
-        case 'fizika': return { bg: 'from-primary/30 to-primary/50', text: 'text-primary', light: 'bg-primary/10' };
-        case 'informatika': return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
-        default: return { bg: 'from-primary/20 to-primary/40', text: 'text-primary', light: 'bg-primary/5' };
-    }
-};
-
-// --- Sub-Components ---
-
-const MyCoursesTab = () => {
-    const { t } = useTranslation();
-    const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchEnrollments();
-    }, []);
-
-    const fetchEnrollments = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/courses/my_courses/`, { headers: getAuthHeader() });
-            if (res.data.success) {
-                setEnrollments(res.data.enrollments);
-            }
-        } catch (error) {
-            console.error("Courses error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <div className="text-center py-10"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /></div>;
-
-    if (enrollments.length === 0) {
-        return (
-            <div className="text-center py-16 border-2 border-dashed rounded-2xl bg-muted/50 border-border">
-                <BookOpen className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
-                <h3 className="text-xl font-bold text-foreground mb-2">{t('dashboard.profile.empty.coursesTitle')}</h3>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    {t('dashboard.profile.empty.coursesDesc')}
-                </p>
-                <Link to="/courses">
-                    <Button className="bg-primary text-background hover:bg-primary/90 rounded-xl font-bold px-8 h-12 shadow-gold">{t('dashboard.profile.empty.viewCourses')}</Button>
-                </Link>
-            </div>
-        );
-    }
-
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-            {enrollments.map((enrollment) => {
-                const { course } = enrollment;
-                const theme = getSubjectTheme(course.subject);
-
-                return (
-                    <Link
-                        key={course.id}
-                        to={`/course/${course.id}`}
-                        className="group bg-[#111827] rounded-2xl border border-white/5 hover:border-primary/50 shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
-                    >
-                        {/* Thumbnail */}
-                        <div className="h-40 relative overflow-hidden bg-muted">
-                            {course.thumbnail ? (
-                                <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                            ) : (
-                                <div className={`w-full h-full bg-gradient-to-br ${theme.bg} flex items-center justify-center`}>
-                                    <BookOpen className="w-12 h-12 text-white/30" />
-                                </div>
-                            )}
-                            <div className="absolute top-2 right-2 bg-white/90 dark:bg-black/80 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold shadow-sm">
-                                {course.level || 'General'}
-                            </div>
-                        </div>
-
-                        <div className="p-5 flex-1 flex flex-col">
-                            <div className="flex items-center justify-between mb-2">
-                                <span className={`text-xs font-bold uppercase ${theme.text} bg-muted px-2 py-1 rounded`}>
-                                    {course.subject}
-                                </span>
-                                {enrollment.is_completed && (
-                                    <span className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">
-                                        <CheckCircle className="w-3 h-3" /> {t('dashboard.profile.status.completed')}
-                                    </span>
-                                )}
-                            </div>
-
-                            <h3 className="font-bold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                                {course.title}
-                            </h3>
-
-                            {/* Progress Bar */}
-                            <div className="mt-auto pt-4">
-                                <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                                    <span>{t('dashboard.profile.status.progress')}</span>
-                                    <span>{enrollment.progress || 0}%</span>
-                                </div>
-                                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <div
-                                        className={'h-full rounded-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04]'}
-                                        style={{ width: `${enrollment.progress || 0}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                    </Link>
-                );
-            })}
-        </div>
-    );
-};
-
-const MyOlympiadsTab = () => {
-    const { t } = useTranslation();
-    const [registrations, setRegistrations] = useState<OlympiadRegistration[]>([]);
-    const [results, setResults] = useState<OlympiadResult[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const [regRes, resRes] = await Promise.all([
-                axios.get(`${API_URL}/olympiads/my_registrations/`, { headers: getAuthHeader() }),
-                axios.get(`${API_URL}/test-results/`, { headers: getAuthHeader() })
-            ]);
-
-            if (regRes.data.success || Array.isArray(regRes.data)) setRegistrations(regRes.data.registrations || regRes.data);
-            // TestResultViewSet returns list directly (no .success wrapper usually unless custom response)
-            // But let's check ViewSet. Usually ViewSet list returns [ ... ] or { count: ..., results: [...] } if pagination.
-            // TestResultViewSet uses StandardPagination probably? ModelViewSet defaults to StandardPagination if set globally.
-            // Checking backend/api/views.py TestResultViewSet definition.
-            // It inherits ReadOnlyModelViewSet.
-            // If pagination is on, data is { results: [...] }.
-            // Let's assume pagination is on (standard).
-            const data = resRes.data;
-            if (data.results) setResults(data.results);
-            else if (Array.isArray(data)) setResults(data);
-
-        } catch (error) {
-            console.error("Olympiads error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <div className="text-center py-10"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /></div>;
-
-    if (registrations.length === 0 && results.length === 0) {
-        return (
-            <div className="text-center py-16 border-2 border-dashed rounded-2xl bg-muted/50 border-border">
-                <Trophy className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
-                <h3 className="text-xl font-bold text-foreground mb-2">{t('dashboard.profile.empty.olympiadsTitle')}</h3>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    {t('dashboard.profile.empty.olympiadsDesc')}
-                </p>
-                <Link to="/olympiads">
-                    <Button>{t('dashboard.profile.empty.viewOlympiads')}</Button>
-                </Link>
-            </div>
-        );
-    }
-
-    return (
-        <div className="space-y-8 animate-fade-in">
-            {/* Active Registrations */}
-            {registrations.length > 0 && (
-                <div>
-                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
-                        <Calendar className="w-5 h-5 text-primary" />
-                        {t('dashboard.profile.olympiads.active')}
-                    </h3>
-                    <div className="grid gap-4">
-                        {registrations.map(reg => (
-                            <div key={reg.id} className="bg-card p-5 rounded-xl border border-card-border flex items-center justify-between shadow-sm">
-                                <div>
-                                    <h4 className="font-bold text-lg text-primary">{reg.olympiad.title}</h4>
-                                    <div className="flex items-center gap-3 text-sm text-secondary mt-1">
-                                        <span className="bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">{reg.olympiad.subject}</span>
-                                        <span className="flex items-center gap-1">
-                                            <Calendar className="w-3 h-3" />
-                                            {new Date(reg.olympiad.start_time).toLocaleString()}
-                                        </span>
-                                    </div>
-                                </div>
-                                <Badge variant={reg.olympiad.status === 'ACTIVE' ? 'default' : 'secondary'}>
-                                    {reg.olympiad.status === 'ACTIVE' ? t('dashboard.profile.olympiads.status.active') : t('dashboard.profile.olympiads.status.upcoming')}
-                                </Badge>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Past Results */}
-            {results.length > 0 && (
-                <div>
-                    <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-foreground">
-                        <Trophy className="w-5 h-5 text-yellow-500" />
-                        {t('dashboard.profile.olympiads.results')}
-                    </h3>
-                    <div className="grid gap-4">
-                        {results.map(res => (
-                            <div key={res.id} className="bg-card p-4 sm:p-5 rounded-xl border border-border flex flex-col gap-4 shadow-sm">
-                                <div>
-                                    <h4 className="font-bold text-base sm:text-lg text-foreground">{res.olympiad.title}</h4>
-                                    <p className="text-sm text-muted-foreground">{new Date(res.submitted_at).toLocaleDateString()}</p>
-                                </div>
-
-                                <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-black text-primary">{res.score}%</div>
-                                        <div className="text-xs text-muted-foreground">{t('dashboard.profile.olympiads.result')}</div>
-                                    </div>
-                                    <div className="text-center px-4 border-l border-white/10">
-                                        <div className="text-lg font-bold text-green-500">{res.correct_answers} / {res.total_questions}</div>
-                                        <div className="text-xs text-muted-foreground">{t('dashboard.profile.olympiads.correct')}</div>
-                                    </div>
-                                    <div className="flex flex-col sm:flex-row gap-2 ml-auto">
-                                        <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary/10" asChild>
-                                            <Link to={`/olympiad/${res.olympiad.id}/result`}>
-                                                <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
-                                                {t('dashboard.profile.olympiads.viewResult')}
-                                            </Link>
-                                        </Button>
-                                        <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary hover:bg-primary/5" asChild>
-                                            <Link to={`/olympiad/${res.olympiad.id}/results`}>
-                                                <Trophy className="w-4 h-4 mr-2 text-yellow-500" />
-                                                {t('dashboard.profile.olympiads.analysis')}
-                                            </Link>
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-};
-
-const PaymentsTab = () => {
-    const { t } = useTranslation();
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchTransactions();
-    }, []);
-
-    const fetchTransactions = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/payments/`, { headers: getAuthHeader() });
-            setTransactions(res.data.results || res.data);
-        } catch (error) {
-            console.error("Payments error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <div className="text-center py-10"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /></div>;
-
-    if (transactions.length === 0) {
-        return (
-            <div className="text-center py-16 border-2 border-dashed rounded-2xl bg-muted/50 border-border">
-                <CreditCard className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
-                <h3 className="text-xl font-bold text-foreground mb-2">{t('dashboard.profile.empty.paymentsTitle')}</h3>
-                <p className="text-muted-foreground">
-                    {t('dashboard.profile.empty.paymentsDesc')}
-                </p>
-            </div>
-        );
-    }
-
-    return (
-        <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm animate-fade-in">
-            <div className="overflow-x-auto">
-                <Table>
-                    <TableHeader className="bg-muted/50">
-                        <TableRow>
-                            <TableHead>{t('dashboard.profile.payments.id')}</TableHead>
-                            <TableHead>{t('dashboard.profile.payments.desc')}</TableHead>
-                            <TableHead>{t('dashboard.profile.payments.amount')}</TableHead>
-                            <TableHead>{t('dashboard.profile.payments.date')}</TableHead>
-                            <TableHead>{t('dashboard.profile.payments.status')}</TableHead>
-                            <TableHead className="text-right">{t('dashboard.profile.payments.method')}</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {transactions.map((trx) => (
-                            <TableRow key={trx.id}>
-                                <TableCell className="font-mono text-xs text-muted-foreground">{trx.payment_id || trx.id}</TableCell>
-                                <TableCell className="font-medium">
-                                    <div className="flex items-center gap-2">
-                                        {trx.description?.toLowerCase().includes('kurs') ?
-                                            <BookOpen className="w-4 h-4 text-primary" /> :
-                                            <Trophy className="w-4 h-4 text-primary" />
-                                        }
-                                        {trx.description}
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="font-bold">{parseInt(trx.amount).toLocaleString()} UZS</span>
-                                </TableCell>
-                                <TableCell className="text-muted-foreground text-sm">{new Date(trx.created_at).toLocaleDateString()}</TableCell>
-                                <TableCell>
-                                    <Badge variant="outline" className={`
-                                        ${trx.status === 'COMPLETED' ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800' :
-                                            trx.status === 'FAILED' ? 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800' :
-                                                'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800'}
-                                    `}>
-                                        {trx.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right text-sm text-muted-foreground">{trx.payment_method}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-        </div>
-    );
-};
-
-
-const MyCertificatesTab = () => {
-    const { t } = useTranslation();
-    const [certificates, setCertificates] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchCertificates();
-    }, []);
-
-    const fetchCertificates = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/certificates/`, { headers: getAuthHeader() });
-            setCertificates(res.data.results || res.data);
-        } catch (error) {
-            console.error("Certificates error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    if (loading) return <div className="text-center py-10"><Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" /></div>;
-
-    if (certificates.length === 0) {
-        return (
-            <div className="text-center py-16 border-2 border-dashed rounded-2xl bg-muted/50 border-border">
-                <Award className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
-                <h3 className="text-xl font-bold text-foreground mb-2">{t('dashboard.profile.empty.certificatesTitle') || "Sertifikatlar mavjud emas"}</h3>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    {t('dashboard.profile.empty.certificatesDesc') || "Kurslar va olimpiadalarni muvaffaqiyatli tugatib sertifikatlarni qo'lga kiriting."}
-                </p>
-                <Link to="/courses">
-                    <Button>{t('dashboard.profile.empty.viewCourses')}</Button>
-                </Link>
-            </div>
-        );
-    }
-
-    return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-            {certificates.map((cert) => (
-                <div key={cert.id} className="bg-card rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-all flex flex-col items-center text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg shadow-orange-500/20">
-                        <Award className="w-8 h-8 text-white" />
-                    </div>
-
-                    <h3 className="font-bold text-lg mb-1">{cert.course?.title || cert.olympiad?.title || "Sertifikat"}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{cert.cert_number}</p>
-
-                    <div className="w-full bg-muted/30 rounded-xl p-3 mb-4 space-y-2">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{t('dashboard.profile.payments.date')}:</span>
-                            <span className="font-medium">{new Date(cert.issued_at).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Holat:</span>
-                            <Badge variant={cert.status === 'VERIFIED' ? 'default' : 'secondary'}>
-                                {cert.status === 'VERIFIED' ? 'Tasdiqlangan' : 'Kutilmoqda'}
-                            </Badge>
-                        </div>
-                    </div>
-
-                    {cert.status === 'VERIFIED' && (
-                        <div className="flex gap-2 w-full mt-auto">
-                            <a href={`${API_URL}/certificates/${cert.id}/download/`} target="_blank" rel="noopener noreferrer" className="flex-1">
-                                <Button variant="outline" className="w-full">
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Yuklash
-                                </Button>
-                            </a>
-                            <Link to={`/certificate/verify/${cert.cert_number}`} className="flex-1">
-                                <Button className="w-full btn-primary">
-                                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                                    Tekshirish
-                                </Button>
-                            </Link>
-                        </div>
-                    )}
-                </div>
-            ))}
-        </div>
-    );
-};
-
-
 // --- TopUp Component ---
 const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     const [amount, setAmount] = useState('');
@@ -560,31 +94,20 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
 
     const handleTopUp = async () => {
         if (!amount || isNaN(Number(amount)) || Number(amount) < 1000) {
-            toast({
-                title: "Xatolik",
-                description: "Minimal summa 1000 so'm",
-                variant: "destructive"
-            });
+            toast({ title: "Xatolik", description: "Minimal summa 1000 so'm", variant: "destructive" });
             return;
         }
         setLoading(true);
         try {
             const res = await axios.post(`${API_URL}/payments/initiate/`, {
-                type: 'TOPUP',
-                amount: Number(amount),
-                method,
-                reference_id: 'wallet_topup' // generic ref
+                type: 'TOPUP', amount: Number(amount), method, reference_id: 'wallet_topup'
             }, { headers: getAuthHeader() });
 
             if (res.data.success && res.data.payment_url) {
                 window.location.href = res.data.payment_url;
             }
         } catch (err) {
-            toast({
-                title: "Xatolik",
-                description: "Xatolik yuz berdi",
-                variant: "destructive"
-            });
+            toast({ title: "Xatolik", description: "Xatolik yuz berdi", variant: "destructive" });
         } finally {
             setLoading(false);
         }
@@ -593,17 +116,20 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90 text-background font-bold gap-2 shadow-lg shadow-gold/20 transition-all rounded-xl h-11">
-                    <CreditCard className="w-4 h-4" />
-                    Hisobni to'ldirish
-                </Button>
+                <div className="flex items-center justify-between px-4 h-14 border-b border-border/50 bg-card cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <CreditCard className="w-4 h-4 text-primary" />
+                        </div>
+                        <span className="font-medium">To'lovlar / Hisobni to'ldirish</span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md bg-card border border-border">
                 <DialogHeader>
                     <DialogTitle>Hisobni to'ldirish</DialogTitle>
-                    <DialogDescription>
-                        To'lov tizimini tanlang va summani kiriting.
-                    </DialogDescription>
+                    <DialogDescription>To'lov tizimini tanlang va summani kiriting.</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                     <div className="space-y-2">
@@ -611,19 +137,13 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
                         <RadioGroup defaultValue="PAYME" value={method} onValueChange={setMethod} className="grid grid-cols-2 gap-4">
                             <div>
                                 <RadioGroupItem value="PAYME" id="payme" className="peer sr-only" />
-                                <Label
-                                    htmlFor="payme"
-                                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                                >
+                                <Label htmlFor="payme" className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:bg-primary/5 cursor-pointer">
                                     <span className="text-lg font-bold">Payme</span>
                                 </Label>
                             </div>
                             <div>
                                 <RadioGroupItem value="CLICK" id="click" className="peer sr-only" />
-                                <Label
-                                    htmlFor="click"
-                                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                                >
+                                <Label htmlFor="click" className="flex flex-col items-center justify-between rounded-xl border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:bg-primary/5 cursor-pointer">
                                     <span className="text-lg font-bold">Click</span>
                                 </Label>
                             </div>
@@ -631,16 +151,11 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
                     </div>
                     <div className="space-y-2">
                         <Label>Summa (UZS)</Label>
-                        <Input
-                            type="number"
-                            placeholder="Masalan: 50000"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                        />
+                        <Input type="number" placeholder="Masalan: 50000" value={amount} onChange={(e) => setAmount(e.target.value)} className="rounded-xl h-11" />
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button onClick={handleTopUp} disabled={loading} className="w-full bg-primary text-background hover:bg-primary/90 rounded-xl font-bold h-12 shadow-gold/20">
+                    <Button onClick={handleTopUp} disabled={loading} className="w-full bg-primary text-background hover:bg-primary/90 rounded-xl font-bold h-12 shadow-primary/20">
                         {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         To'lashga o'tish
                     </Button>
@@ -650,33 +165,143 @@ const TopUpDialog = ({ onSuccess }: { onSuccess: () => void }) => {
     );
 };
 
+// --- Profile Edit Component ---
+const EditProfileDialog = ({ user, onClose, onSave }: { user: UserData, onClose: () => void, onSave: (u: UserData) => void }) => {
+    const { t } = useTranslation();
+    const [isLoading, setIsLoading] = useState(false);
+    const [username, setUsername] = useState(user.username || '');
+    const [firstName, setFirstName] = useState(user.first_name || '');
+    const [lastName, setLastName] = useState(user.last_name || '');
+    const [phone, setPhone] = useState(user.phone || '');
+    const [birthDate, setBirthDate] = useState(user.birth_date || '');
+    const [region, setRegion] = useState(user.region || '');
+    const [school, setSchool] = useState(user.school || '');
+    const [grade, setGrade] = useState(user.grade || '');
+    const { toast } = useToast();
+
+    // Username validation
+    const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
+
+    const checkUsername = async (newUsername: string) => {
+        if (!newUsername || newUsername.length < 3 || newUsername === user.username) return;
+        setUsernameStatus('checking');
+        try {
+            const res = await fetch(`${API_URL}/auth/check-username/?username=${newUsername}`);
+            const data = await res.json();
+            setUsernameStatus(data.available ? 'available' : 'taken');
+        } catch {
+            setUsernameStatus('available');
+        }
+    };
+
+    const handleSave = async () => {
+        if (usernameStatus === 'taken') {
+            toast({ title: t('dashboard.profile.info.error'), description: t('dashboard.profile.info.usernameTaken'), variant: "destructive" });
+            return;
+        }
+        setIsLoading(true);
+        try {
+            const res = await axios.put(`${API_URL}/auth/profile/`, {
+                username, first_name: firstName, last_name: lastName, phone,
+                birth_date: birthDate || null, region, school, grade
+            }, { headers: getAuthHeader() });
+
+            if (res.data.success) {
+                onSave({ ...user, ...res.data.user });
+                toast({ title: t('dashboard.profile.info.saved') });
+                onClose();
+            }
+        } catch (err: any) {
+            toast({ title: t('dashboard.profile.info.error'), description: err.response?.data?.error || "Error", variant: "destructive" });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed flex inset-0 z-50 bg-background/80 backdrop-blur-sm pt-14 lg:pt-0 overflow-y-auto w-full h-full">
+            <div className="m-auto w-full max-w-lg bg-card rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-border">
+                <div className="p-4 border-b flex justify-between items-center bg-card sticky top-0 z-10">
+                    <h2 className="font-bold text-lg">Profilni tahrirlash</h2>
+                    <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full"><XCircle className="w-5 h-5" /></Button>
+                </div>
+                <div className="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
+                    <div>
+                        <label className="text-sm font-medium mb-1 block">Username</label>
+                        <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                            <input type="text" value={username} onChange={(e) => { const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''); setUsername(val); if (val.length >= 3) checkUsername(val); else setUsernameStatus('idle'); }} className={`w-full h-11 pl-8 pr-10 rounded-xl border bg-background focus:ring-1 focus:ring-primary outline-none transition-all ${usernameStatus === 'taken' ? 'border-red-500' : 'border-border'}`} />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />}
+                                {usernameStatus === 'available' && <CheckCircle className="w-4 h-4 text-green-500" />}
+                                {usernameStatus === 'taken' && <XCircle className="w-4 h-4 text-red-500" />}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-sm font-medium mb-1 block">Ism</label>
+                            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full h-11 px-3 rounded-xl border border-border bg-background focus:ring-1 focus:ring-primary outline-none" placeholder="Ism" />
+                        </div>
+                        <div>
+                            <label className="text-sm font-medium mb-1 block">Familiya</label>
+                            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full h-11 px-3 rounded-xl border border-border bg-background focus:ring-1 focus:ring-primary outline-none" placeholder="Familiya" />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium mb-1 block">Telefon</label>
+                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full h-11 px-3 rounded-xl border border-border bg-background focus:ring-1 focus:ring-primary outline-none" placeholder="+998" />
+                    </div>
+                    <div>
+                        <label className="text-sm font-medium mb-1 block">Viloyat</label>
+                        <Select value={region || ""} onValueChange={setRegion}>
+                            <SelectTrigger className="w-full h-11 rounded-xl bg-background border-border">
+                                <SelectValue placeholder="Viloyatni tanlang" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {REGIONS.map(r => (<SelectItem key={r} value={r}>{r}</SelectItem>))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-sm font-medium mb-1 block">Sinf</label>
+                            <Select value={grade || ""} onValueChange={setGrade}>
+                                <SelectTrigger className="w-full h-11 rounded-xl bg-background border-border">
+                                    <SelectValue placeholder="Sinf tanlang" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {GRADES.map(g => (<SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div>
+                            <label className="text-sm font-medium mb-1 block">Maktab / OTM</label>
+                            <input type="text" value={school} onChange={(e) => setSchool(e.target.value)} className="w-full h-11 px-3 rounded-xl border border-border bg-background focus:ring-1 focus:ring-primary outline-none" placeholder="Maktab qismi" />
+                        </div>
+                    </div>
+                </div>
+                <div className="p-4 border-t bg-muted/20">
+                    <Button onClick={handleSave} disabled={isLoading || usernameStatus === 'taken'} className="w-full h-12 rounded-xl text-base font-bold bg-primary hover:bg-primary/90">
+                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+                        Saqlash
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 // --- Main Profile Page Component ---
 
 const ProfilePage = () => {
     const { t } = useTranslation();
     const [user, setUser] = useState<UserData | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState("profile");
-    const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
+    const [activeCourse, setActiveCourse] = useState<Enrollment | null>(null);
+    const [editMode, setEditMode] = useState(false);
 
-    // Edit form state
-    const [username, setUsername] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [birthDate, setBirthDate] = useState('');
-    const [region, setRegion] = useState('');
-    const [school, setSchool] = useState('');
-    const [grade, setGrade] = useState('');
-
-    // Username validation
-    const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
-    const [usernameError, setUsernameError] = useState('');
-
-    // Avatar
+    // Avatar states
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-    const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [showCropper, setShowCropper] = useState(false);
     const [imageToCrop, setImageToCrop] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -686,6 +311,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         loadUser();
+        fetchActiveCourse();
     }, []);
 
     const loadUser = async () => {
@@ -700,8 +326,6 @@ const ProfilePage = () => {
                 console.error('Error fetching user from API');
             }
         }
-
-        // Load initially from local storage or fallback
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             try {
@@ -716,72 +340,26 @@ const ProfilePage = () => {
     const updateLocalUser = (userData: UserData) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
-
-        // Initialize form
-        setUsername(userData.username || '');
-        setFirstName(userData.first_name || '');
-        setLastName(userData.last_name || '');
-        setPhone(userData.phone || '');
-        setBirthDate(userData.birth_date || '');
-        setRegion(userData.region || '');
-        setSchool(userData.school || '');
-        setGrade(userData.grade || '');
         setAvatarPreview(userData.avatar || null);
     };
 
-    // Check username availability
-    const checkUsername = async (newUsername: string) => {
-        if (!newUsername || newUsername.length < 3) {
-            setUsernameError(t('dashboard.profile.info.usernameLength'));
-            setUsernameStatus('idle');
-            return;
-        }
-
-        if (user && newUsername === user.username) {
-            setUsernameStatus('available');
-            setUsernameError('');
-            return;
-        }
-
-        if (!/^[a-zA-Z0-9_]+$/.test(newUsername)) {
-            setUsernameError(t('dashboard.profile.info.usernameChars'));
-            setUsernameStatus('idle');
-            return;
-        }
-
-        setUsernameStatus('checking');
-        setUsernameError('');
-
+    const fetchActiveCourse = async () => {
         try {
-            const res = await fetch(`${API_URL}/auth/check-username/?username=${newUsername}`);
-            const data = await res.json();
-
-            if (data.available) {
-                setUsernameStatus('available');
-                setUsernameError('');
-            } else {
-                setUsernameStatus('taken');
-                setUsernameError(t('dashboard.profile.info.usernameTaken'));
+            const res = await axios.get(`${API_URL}/courses/my_courses/`, { headers: getAuthHeader() });
+            if (res.data.success && res.data.enrollments && res.data.enrollments.length > 0) {
+                // Find highest progress that is not 100%, or just the first course
+                const inProgress = res.data.enrollments.find((e: Enrollment) => !e.is_completed);
+                setActiveCourse(inProgress || res.data.enrollments[0]);
             }
-        } catch (err) {
-            setUsernameStatus('available');
-            setUsernameError('');
+        } catch (error) {
+            console.error(error);
         }
-    };
+    }
 
-    // Handle avatar file selection
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            if (!file.type.startsWith('image/')) {
-                toast({ title: t('dashboard.profile.info.error'), description: "Faqat rasm fayllari yuklash mumkin", variant: "destructive" });
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                toast({ title: t('dashboard.profile.info.error'), description: "Rasm hajmi 5MB dan oshmasligi kerak", variant: "destructive" });
-                return;
-            }
-
+            if (!file.type.startsWith('image/')) return;
             const reader = new FileReader();
             reader.onload = () => {
                 setImageToCrop(reader.result as string);
@@ -791,70 +369,31 @@ const ProfilePage = () => {
         }
     };
 
-    const handleSave = async () => {
-        if (!user) return;
-        if (usernameStatus === 'taken') {
-            toast({ title: t('dashboard.profile.info.error'), description: t('dashboard.profile.info.usernameTaken'), variant: "destructive" });
-            return;
-        }
-
-        setIsLoading(true);
+    const handleAvatarUpload = async (croppedFile: File) => {
+        const formData = new FormData();
+        formData.append('avatar', croppedFile);
         try {
-            let avatarUrl = user.avatar;
-
-            if (avatarFile) {
-                const formData = new FormData();
-                formData.append('avatar', avatarFile);
-                try {
-                    const avatarRes = await axios.post(`${API_URL}/auth/upload-avatar/`, formData, {
-                        headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
-                    });
-                    if (avatarRes.data.avatar_url) {
-                        avatarUrl = avatarRes.data.avatar_url;
-                    }
-                } catch (err) {
-                    avatarUrl = avatarPreview;
-                }
+            const res = await axios.post(`${API_URL}/auth/upload-avatar/`, formData, {
+                headers: { ...getAuthHeader(), 'Content-Type': 'multipart/form-data' }
+            });
+            if (res.data.avatar_url && user) {
+                updateLocalUser({ ...user, avatar: res.data.avatar_url });
             }
-
-            const res = await axios.put(`${API_URL}/auth/profile/`, {
-                username, first_name: firstName, last_name: lastName, phone,
-                birth_date: birthDate || null, region, school, grade
-            }, { headers: getAuthHeader() });
-
-            if (res.data.success) {
-                const savedUser = { ...user, ...res.data.user, avatar: avatarUrl };
-                updateLocalUser(savedUser);
-                setIsEditing(false);
-                setAvatarFile(null);
-                setUsernameStatus('idle');
-                toast({ title: t('dashboard.profile.info.saved') });
-            }
-        } catch (err: any) {
-            toast({ title: t('dashboard.profile.info.error'), description: err.response?.data?.error || "Error", variant: "destructive" });
-        } finally {
-            setIsLoading(false);
+        } catch (err) {
+            toast({ title: "Xatolik", description: "Avatar yuklashda xatolik yuz berdi", variant: "destructive" });
         }
     };
 
-    const handleCancel = () => {
-        if (user) updateLocalUser(user);
-        setIsEditing(false);
-    };
-
-    const getGradeLabel = (gradeValue?: string) => {
-        if (!gradeValue) return '-';
-        const found = GRADES.find(g => g.value === gradeValue);
-        return found ? found.label : gradeValue;
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/auth/login');
     };
 
     if (!user) {
         return (
-            <div className="p-8 flex items-center justify-center min-h-[400px]">
-                <div className="text-center">
-                    <p className="text-muted-foreground mb-4">{t('dashboard.profile.notFound')}</p>
-                    <Button onClick={() => navigate('/auth/login')}>{t('dashboard.profile.login')}</Button>
-                </div>
+            <div className="flex items-center justify-center min-h-[100dvh]">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
         );
     }
@@ -864,340 +403,183 @@ const ProfilePage = () => {
     const displayAvatar = avatarPreview || user.avatar;
 
     return (
-        <div className="p-4 md:p-8 max-w-5xl mx-auto animate-fade-in min-h-screen">
+        <div className="min-h-screen bg-gray-50 dark:bg-background pb-20 selection:bg-primary/30 w-full animate-fade-in lg:mt-6 overflow-x-hidden md:max-w-xl md:mx-auto lg:max-w-3xl border-x border-border/10">
             <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" className="hidden" />
 
-            {/* Back Button */}
-            <div className="mb-6">
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-                >
+            {editMode && <EditProfileDialog user={user} onClose={() => setEditMode(false)} onSave={updateLocalUser} />}
+
+            {/* 1. Fixed Top Header (Mobile) */}
+            <header className="fixed top-0 w-full bg-white dark:bg-card/80 backdrop-blur-xl h-14 flex items-center justify-between px-4 border-b border-border/50 z-40 lg:hidden">
+                <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-foreground active:scale-95 transition">
                     <ArrowLeft className="w-5 h-5" />
-                    <span>{t('dashboard.profile.back')}</span>
                 </button>
-            </div>
+                <h1 className="font-bold text-lg">Profil</h1>
+                <button onClick={() => navigate('/settings')} className="p-2 -mr-2 text-muted-foreground hover:text-foreground active:scale-95 transition">
+                    <Settings className="w-5 h-5" />
+                </button>
+            </header>
 
+            {/* Content Wrapper */}
+            <div className="p-4 space-y-4 pt-[72px] lg:pt-4">
+                {/* 2. Profile Card */}
+                <div className="bg-white dark:bg-card rounded-2xl p-4 shadow-sm border border-border relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mr-20 -mt-20 blur-2xl"></div>
 
-            {/* Profile Header Card */}
-            <div className="bg-[#111827] rounded-3xl p-6 md:p-10 text-white mb-8 relative overflow-hidden shadow-2xl border border-white/5 ring-1 ring-white/5">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-10">
-                    {/* Avatar - Larger on mobile */}
-                    <div className="relative group">
-                        {displayAvatar ? (
-                            <img src={displayAvatar} alt={fullName} className="w-40 h-40 md:w-48 md:h-48 rounded-3xl object-cover border-4 border-primary/20 shadow-2xl" />
-                        ) : (
-                            <div className="w-40 h-40 md:w-48 md:h-48 rounded-3xl bg-gradient-to-br from-[#FACC15] to-[#CA8A04] flex items-center justify-center text-6xl md:text-7xl font-bold border-4 border-white/10 shadow-2xl">
-                                {initials}
-                            </div>
-                        )}
-                        {isEditing && (
-                            <button
-                                onClick={() => fileInputRef.current?.click()}
-                                className="absolute -bottom-2 -right-2 w-12 h-12 bg-primary text-background rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer border-4 border-[#111827]"
-                            >
-                                <Camera className="w-6 h-6" />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Info */}
-                    <div className="text-center md:text-left flex-1 w-full">
-                        <h1 className="text-4xl md:text-5xl font-black mb-2 font-cinzel text-primary tracking-tight">{fullName}</h1>
-                        <p className="text-lg text-white/60 mb-8 font-medium">@{user.username}</p>
-
-                        {/* Gamification Stats - More spacing */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full mb-8">
-                            <div className="flex items-center gap-5 bg-white/5 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/10 transition-colors border border-white/5">
-                                <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                    <Star className="w-8 h-8 text-primary shadow-gold" />
+                    <div className="relative flex items-center gap-4">
+                        <div className="relative" onClick={() => fileInputRef.current?.click()}>
+                            {displayAvatar ? (
+                                <img src={displayAvatar} alt={fullName} className="w-16 h-16 rounded-full object-cover border-2 border-primary/20 bg-muted" />
+                            ) : (
+                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FACC15] to-[#CA8A04] flex items-center justify-center text-xl font-bold border-2 border-primary/20 text-white shadow-md">
+                                    {initials}
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-black text-white whitespace-nowrap">{user.level || 1}</p>
-                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.level')}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-5 bg-white/5 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/10 transition-colors border border-white/5">
-                                <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                    <Zap className="w-8 h-8 text-primary shadow-gold" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-black text-white whitespace-nowrap">{user.xp || 0}</p>
-                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.xp')}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-5 bg-white/5 px-6 py-5 rounded-2xl backdrop-blur-sm min-w-0 hover:bg-white/10 transition-colors border border-white/5">
-                                <div className="w-16 h-16 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                    <Trophy className="w-8 h-8 text-primary shadow-gold" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-3xl font-black text-white whitespace-nowrap">{user.certificates_count || 0}</p>
-                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mt-1 font-cinzel">{t('dashboard.profile.achievements')}</p>
-                                </div>
+                            )}
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary text-background rounded-full flex items-center justify-center border-2 border-white dark:border-card shadow-sm active:scale-90 transition cursor-pointer">
+                                <Camera className="w-3 h-3" />
                             </div>
                         </div>
 
-                        {/* Financial Section - Improved */}
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-white/5 p-5 rounded-2xl border border-white/5">
-                            <div className="flex items-center gap-4 flex-1 min-w-0">
-                                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                    <CreditCard className="w-7 h-7 text-primary" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-xs text-white/50 uppercase font-black tracking-widest mb-1 font-cinzel">{t('dashboard.profile.balance')}</p>
-                                    <p className="text-3xl font-black text-white whitespace-nowrap">{parseFloat(user.balance || "0").toLocaleString()} <span className="text-primary/70 text-lg">UZS</span></p>
-                                </div>
-                            </div>
-                            <div className="flex-shrink-0">
-                                <TopUpDialog onSuccess={() => loadUser()} />
-                            </div>
-                        </div>
-
-                        {/* Level Progress Bar (Dynamic) */}
-                        <div
-                            className="mt-8 w-full max-w-lg cursor-pointer group/xp transition-all hover:scale-[1.02] active:scale-[0.98]"
-                            onClick={() => setIsProgressModalOpen(true)}
-                        >
-                            <div className="flex justify-between text-xs font-black text-white/50 mb-3 uppercase tracking-widest group-hover/xp:text-primary transition-colors font-cinzel">
-                                <span>{t('dashboard.widgets.xpLeft', { xp: user.level_progress?.xp_left || 0 })}</span>
-                                <span>{user.level_progress?.progress_percent || 0}%</span>
-                            </div>
-                            <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden backdrop-blur-sm border border-white/10 ring-1 ring-white/0 group-hover/xp:ring-primary/20 transition-all">
-                                <div
-                                    className="h-full bg-gradient-to-r from-[#FACC15] to-[#CA8A04] rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(250,204,21,0.5)]"
-                                    style={{ width: `${user.level_progress?.progress_percent || 0}%` }}
-                                ></div>
+                        <div className="flex-1 min-w-0">
+                            <h2 className="text-lg font-black truncate">{fullName}</h2>
+                            <p className="text-sm text-muted-foreground truncate">@{user.username}</p>
+                            <div className="flex items-center gap-2 mt-1 -ml-1">
+                                <Badge variant="secondary" className="scale-90 text-[10px] bg-primary/10 text-primary border-0 font-bold uppercase tracking-wider">Lvl {user.level || 1}</Badge>
+                                {(user.certificates_count ?? 0) > 0 && (
+                                    <span className="flex items-center text-xs font-semibold text-yellow-500">
+                                        <Trophy className="w-3 h-3 mr-0.5" /> {user.certificates_count} ta
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    <div className="self-start">
-                        {!isEditing ? (
-                            <Button onClick={() => setIsEditing(true)} size="lg" className="gap-2 bg-primary hover:bg-primary/90 text-background border-0 shadow-lg shadow-gold/20 transition-all font-bold px-8 h-12 rounded-xl">
-                                <Edit3 className="w-5 h-5" /> {t('dashboard.profile.edit')}
-                            </Button>
-                        ) : (
-                            <div className="flex gap-3">
-                                <Button onClick={handleCancel} variant="outline" size="lg" className="text-white border-white/20 hover:bg-white/10 px-8 h-12 rounded-xl">
-                                    <X className="w-5 h-5 mr-2" /> {t('dashboard.profile.cancel')}
-                                </Button>
-                                <Button onClick={handleSave} disabled={isLoading || usernameStatus === 'taken'} size="lg" className="bg-primary text-background hover:bg-primary/90 border-0 px-8 h-12 font-bold shadow-lg shadow-gold/20 rounded-xl">
-                                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
-                                    {t('dashboard.profile.save')}
-                                </Button>
-                            </div>
-                        )}
+                    <div className="mt-5 space-y-1.5">
+                        <div className="flex justify-between text-xs font-semibold">
+                            <span className="text-muted-foreground">Umumiy progress</span>
+                            <span className="text-primary">{user.level_progress?.progress_percent || 0}%</span>
+                        </div>
+                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
+                                style={{ width: `${user.level_progress?.progress_percent || 0}%` }}
+                            ></div>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground/60 tracking-wider text-right">Keyingi darajagacha {user.level_progress?.xp_left || 0} XP</p>
                     </div>
                 </div>
-            </div>
 
-            {/* TABS CONTENT */}
-            <Tabs defaultValue="profile" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="flex overflow-x-auto mb-8 bg-card p-1 rounded-2xl border border-border h-auto gap-1 snap-x snap-mandatory scrollbar-hide">
-                    <TabsTrigger value="profile" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.info')}</TabsTrigger>
-                    <TabsTrigger value="courses" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.courses')}</TabsTrigger>
-                    <TabsTrigger value="olympiads" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.olympiads')}</TabsTrigger>
-                    <TabsTrigger value="certificates" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.certificates') || "Sertifikatlar"}</TabsTrigger>
-                    <TabsTrigger value="payments" className="py-3 px-4 rounded-xl data-[state=active]:bg-primary/10 data-[state=active]:text-primary font-medium whitespace-nowrap snap-start flex-shrink-0">{t('dashboard.profile.tabs.payments')}</TabsTrigger>
-                </TabsList>
+                {/* 3. Quick Stats Row */}
+                <div className="grid grid-cols-3 text-center divide-x divide-border mt-4 bg-white dark:bg-card rounded-2xl py-4 shadow-sm border border-border">
+                    <div className="flex flex-col items-center justify-center px-2">
+                        <span className="text-lg font-black text-foreground mb-0.5">{activeCourse ? 1 : 0}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase font-semibold">Kurslar</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center px-2">
+                        <span className="text-lg font-black text-foreground mb-0.5">{user.certificates_count || 0}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase font-semibold">Sertifikat</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center px-2">
+                        <span className="text-lg font-black text-foreground mb-0.5">{user.xp || 0}</span>
+                        <span className="text-[10px] text-muted-foreground uppercase font-semibold">Soat (XP)</span>
+                    </div>
+                </div>
 
-                <TabsContent value="profile" className="space-y-6 focus-visible:outline-none">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Account Info */}
-                        <div className="bg-[#111827] rounded-2xl p-6 shadow-sm border border-white/5">
-                            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                <AtSign className="w-5 h-5 text-primary" /> {t('dashboard.profile.info.account')}
-                            </h2>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.username')}</label>
-                                    {isEditing ? (
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
-                                            <input
-                                                type="text"
-                                                value={username}
-                                                onChange={(e) => {
-                                                    const val = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
-                                                    setUsername(val);
-                                                    if (val.length >= 3) checkUsername(val);
-                                                    else setUsernameStatus('idle');
-                                                }}
-                                                className={`w-full h-12 pl-10 pr-10 rounded-xl bg-muted/50 border outline-none ${usernameStatus === 'taken' ? 'border-red-500' : 'border-border focus:border-primary'} text-foreground`}
-                                            />
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                                                {usernameStatus === 'checking' && <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />}
-                                                {usernameStatus === 'available' && <CheckCircle className="w-4 h-4 text-green-500" />}
-                                                {usernameStatus === 'taken' && <XCircle className="w-4 h-4 text-red-500" />}
-                                            </div>
-                                            {usernameError && <p className="text-red-500 text-xs mt-1">{usernameError}</p>}
-                                        </div>
-                                    ) : (
-                                        <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border">@{user.username}</p>
-                                    )}
+                {/* 4. Primary Action Button */}
+                <Button
+                    className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-sm shadow-indigo-500/20 active:scale-[0.98] transition-all text-base mt-2"
+                    onClick={() => {
+                        if (activeCourse) navigate(`/course/${activeCourse.course.id}`);
+                        else navigate('/courses');
+                    }}
+                >
+                    {activeCourse ? "Davom ettirish" : "Kurslarni ko'rish"}
+                </Button>
+
+                {/* 5. Active Course Card (Only if enrolled) */}
+                {activeCourse && (
+                    <div
+                        onClick={() => navigate(`/course/${activeCourse.course.id}`)}
+                        className="bg-white dark:bg-card mt-4 rounded-2xl p-4 shadow-sm border border-border flex items-center gap-4 cursor-pointer active:scale-[0.98] transition"
+                    >
+                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0 relative">
+                            {activeCourse.course.thumbnail ? (
+                                <img src={activeCourse.course.thumbnail} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                                    <BookOpen className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                                 </div>
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.role')}</label>
-                                    <div className="flex">
-                                        <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest font-cinzel ${user.role === 'ADMIN' ? 'bg-primary/20 text-primary border border-primary/20' : 'bg-primary/10 text-primary/80 border border-primary/10'}`}>
-                                            {user.role === 'ADMIN' ? t('dashboard.profile.info.admin') : t('dashboard.profile.info.student')}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            )}
                         </div>
-
-                        {/* Personal Info */}
-                        <div className="bg-[#111827] rounded-2xl p-6 shadow-sm border border-white/5">
-                            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                <User className="w-5 h-5 text-primary" /> {t('dashboard.profile.info.personal')}
-                            </h2>
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.firstName')}</label>
-                                        {isEditing ? (
-                                            <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground" placeholder={t('dashboard.profile.info.firstName')} />
-                                        ) : (
-                                            <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border">{user.first_name || '-'}</p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.lastName')}</label>
-                                        {isEditing ? (
-                                            <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground" placeholder={t('dashboard.profile.info.lastName')} />
-                                        ) : (
-                                            <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border">{user.last_name || '-'}</p>
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.phone')}</label>
-                                    {isEditing ? (
-                                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground" placeholder="+998" />
-                                    ) : (
-                                        <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border">{user.phone || '-'}</p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.birthDate')}</label>
-                                    {isEditing ? (
-                                        <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground" />
-                                    ) : (
-                                        <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border">{user.birth_date || '-'}</p>
-                                    )}
-                                </div>
+                        <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-sm truncate">{activeCourse.course.title}</h3>
+                            <div className="flex items-center justify-between mb-1 mt-1">
+                                <span className="text-[10px] text-muted-foreground">Progress</span>
+                                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">{activeCourse.progress}%</span>
                             </div>
-                        </div>
-
-                        {/* Education */}
-                        <div className="bg-[#111827] rounded-2xl p-6 shadow-sm border border-white/5 md:col-span-2">
-                            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                                <School className="w-5 h-5 text-primary" /> {t('dashboard.profile.info.education')}
-                            </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.region')}</label>
-                                    {isEditing ? (
-                                        <Select value={region || ""} onValueChange={setRegion}>
-                                            <SelectTrigger className="w-full h-12 bg-muted/50 border-border focus:ring-primary rounded-xl">
-                                                <SelectValue placeholder={t('dashboard.profile.info.region')} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {REGIONS.map(r => (
-                                                    <SelectItem key={r} value={r}>
-                                                        {r}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    ) : (
-                                        <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-muted-foreground" />
-                                            {user.region || '-'}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">
-                                        {grade === 'STUDENT' ? t('auth.university') : t('dashboard.profile.info.school')}
-                                    </label>
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            value={school}
-                                            onChange={(e) => setSchool(e.target.value)}
-                                            className="w-full h-12 px-4 rounded-xl bg-muted/50 border border-border focus:border-primary outline-none text-foreground"
-                                            placeholder={grade === 'STUDENT' ? t('auth.placeholders.university', 'OTM nomini kiriting') : t('dashboard.profile.info.school')}
-                                        />
-                                    ) : (
-                                        <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border flex items-center gap-2">
-                                            <School className="w-4 h-4 text-muted-foreground" />
-                                            {user.school || '-'}
-                                        </p>
-                                    )}
-                                </div>
-                                <div>
-                                    <label className="text-sm text-muted-foreground mb-1 block">{t('dashboard.profile.info.grade')}</label>
-                                    {isEditing ? (
-                                        <Select value={grade || ""} onValueChange={setGrade}>
-                                            <SelectTrigger className="w-full h-12 bg-muted/50 border-border focus:ring-primary rounded-xl">
-                                                <SelectValue placeholder={t('dashboard.profile.info.grade')} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {GRADES.map(g => (
-                                                    <SelectItem key={g.value} value={g.value}>
-                                                        {g.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    ) : (
-                                        <p className="font-medium text-foreground bg-muted/50 px-4 py-3 rounded-xl border border-border flex items-center gap-2">
-                                            <GraduationCap className="w-4 h-4 text-muted-foreground" />
-                                            {getGradeLabel(user.grade)}
-                                        </p>
-                                    )}
-                                </div>
+                            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                                <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${activeCourse.progress}%` }}></div>
                             </div>
                         </div>
                     </div>
-                    {imageToCrop && (
-                        <ImageCropper
-                            image={imageToCrop}
-                            open={showCropper}
-                            onOpenChange={setShowCropper}
-                            aspect={1}
-                            onCropComplete={(croppedFile) => {
-                                setAvatarFile(croppedFile);
-                                setAvatarPreview(URL.createObjectURL(croppedFile));
-                            }}
-                        />
-                    )}
-                </TabsContent>
+                )}
 
-                <TabsContent value="courses" className="focus-visible:outline-none">
-                    <MyCoursesTab />
-                </TabsContent>
+                {/* 6. Secondary Menu List */}
+                <div className="bg-white dark:bg-card mt-4 rounded-2xl overflow-hidden shadow-sm border border-border divide-y divide-border">
+                    <div onClick={() => setEditMode(true)} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
+                        <div className="flex items-center gap-3">
+                            <User className="w-5 h-5 text-muted-foreground" />
+                            <span className="font-medium">Profilni tahrirlash</span>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+                    </div>
 
-                <TabsContent value="olympiads" className="focus-visible:outline-none">
-                    <MyOlympiadsTab />
-                </TabsContent>
+                    <div onClick={() => navigate('/my-certificates')} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
+                        <div className="flex items-center gap-3">
+                            <Award className="w-5 h-5 text-muted-foreground" />
+                            <span className="font-medium">Sertifikatlar</span>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+                    </div>
 
-                <TabsContent value="certificates" className="focus-visible:outline-none">
-                    <MyCertificatesTab />
-                </TabsContent>
+                    <div onClick={() => navigate('/olympiads')} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
+                        <div className="flex items-center gap-3">
+                            <Calendar className="w-5 h-5 text-muted-foreground" />
+                            <span className="font-medium">Olimpiadalar</span>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+                    </div>
 
-                <TabsContent value="payments" className="focus-visible:outline-none">
-                    <PaymentsTab />
-                </TabsContent>
-            </Tabs>
-            <LevelProgressModal
-                isOpen={isProgressModalOpen}
-                onClose={() => setIsProgressModalOpen(false)}
-                user={user}
-            />
+                    <TopUpDialog onSuccess={loadUser} />
+
+                    <div onClick={() => window.open('https://t.me/Ardent_support_bot', '_blank')} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-muted/50 transition active:scale-[0.98]">
+                        <div className="flex items-center gap-3">
+                            <HelpCircle className="w-5 h-5 text-muted-foreground" />
+                            <span className="font-medium">Yordam</span>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
+                    </div>
+
+                    <div onClick={handleLogout} className="flex items-center justify-between px-4 h-14 cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/10 transition active:scale-[0.98] text-red-600">
+                        <div className="flex items-center gap-3">
+                            <LogOut className="w-5 h-5" />
+                            <span className="font-medium">Chiqish</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Spacer block to allow scrolling down past the bottom nav */}
+                <div className="h-20"></div>
+            </div>
+
+            {imageToCrop && (
+                <ImageCropper
+                    image={imageToCrop}
+                    open={showCropper}
+                    onOpenChange={setShowCropper}
+                    aspect={1}
+                    onCropComplete={(croppedFile) => handleAvatarUpload(croppedFile)}
+                />
+            )}
         </div>
     );
 };
