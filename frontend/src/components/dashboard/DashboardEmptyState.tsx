@@ -1,3 +1,4 @@
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -157,7 +158,7 @@ const DashboardEmptyState = ({
                                 {course.thumbnail ? (
                                     <div className="relative h-40 overflow-hidden">
                                         <img
-                                            src={course.thumbnail}
+                                            src={getImageUrl(course.thumbnail)}
                                             alt={course.title}
                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                         />

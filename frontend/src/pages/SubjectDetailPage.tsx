@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
-import { API_URL } from "@/services/api";
+import { API_URL, getImageUrl } from "@/services/api";
 import * as Icons from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -231,7 +231,7 @@ const SubjectDetailPage = () => {
                                                 <Card className="overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group border-slate-200">
                                                     <div className="aspect-video bg-slate-100 relative overflow-hidden">
                                                         {course.thumbnail ? (
-                                                            <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                            <img src={getImageUrl(course.thumbnail)} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center">
                                                                 <BookOpen className="w-12 h-12 text-slate-300" />

@@ -7,7 +7,7 @@ import {
     BookOpen, CreditCard, ChevronRight, Settings, LogOut, HelpCircle, Trophy, Calendar
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
-import { API_URL, getAuthHeader } from "@/services/api";
+import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -503,7 +503,7 @@ const ProfilePage = () => {
                     >
                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-muted flex-shrink-0 relative">
                             {activeCourse.course.thumbnail ? (
-                                <img src={activeCourse.course.thumbnail} alt="" className="w-full h-full object-cover" />
+                                <img src={getImageUrl(activeCourse.course.thumbnail)} alt="" className="w-full h-full object-cover" />
                             ) : (
                                 <div className="w-full h-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
                                     <BookOpen className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
