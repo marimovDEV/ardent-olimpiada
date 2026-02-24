@@ -11,7 +11,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { AuthGuideSide } from "@/components/auth/AuthGuideSide";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -381,7 +380,6 @@ const AuthPage = ({ mode }: AuthPageProps) => {
         </button>
         <div className="h-6 w-px bg-white/10 mx-1" /> {/* Divider */}
         <LanguageSwitcher />
-        <ThemeToggle />
       </div>
 
       {/* Floating Sparkles (Visual Flourish) */}

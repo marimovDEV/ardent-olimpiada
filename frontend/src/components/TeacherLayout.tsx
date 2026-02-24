@@ -12,7 +12,6 @@ import {
     Wallet
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { API_URL, getBaseUrl, getImageUrl } from "@/services/api";
@@ -183,10 +182,6 @@ const TeacherLayout = () => {
                 </nav>
 
                 <div className="p-4 border-t border-border bg-black/20">
-                    <div className="flex items-center justify-between mb-4 px-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground font-cinzel">{t('dashboard.navbar.settings')}</span>
-                        <ThemeToggle />
-                    </div>
                     <Button
                         variant="outline"
                         size="sm"

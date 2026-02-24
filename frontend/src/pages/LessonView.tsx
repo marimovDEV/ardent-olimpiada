@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import {
     ArrowLeft,
     ChevronLeft,
@@ -260,7 +259,6 @@ const LessonView = () => {
                         <div className="flex items-center gap-3">
                             <div className="flex items-center gap-2 mr-2">
                                 <LanguageSwitcher />
-                                <ThemeToggle />
                             </div>
 
                             <Button

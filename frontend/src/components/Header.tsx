@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
   Menu,
@@ -10,8 +9,6 @@ import {
   Trophy,
   User,
   Languages,
-  Sun,
-  Moon,
   Globe,
   Zap
 } from "lucide-react";
@@ -36,7 +33,6 @@ import { cn } from "@/lib/utils";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t, i18n } = useTranslation();
-  const { theme, setTheme } = useTheme();
   const location = useLocation();
 
   const token = localStorage.getItem('token');
@@ -68,9 +64,6 @@ const Header = () => {
     }
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#0B0F1A]/80 backdrop-blur-xl">
@@ -143,11 +136,6 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Theme Toggle */}
-            <Button variant="ghost" size="icon" className="rounded-full text-white/60 hover:text-primary transition-colors" onClick={toggleTheme}>
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
 
             {isLoggedIn ? (
               <div className="flex items-center gap-2 md:gap-3">
@@ -308,56 +296,49 @@ const Header = () => {
                             🇷🇺 RU
                           </Button>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={toggleTheme}
-                          className="rounded-xl w-10 h-10 border-white/10"
-                        >
-                          {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                        </Button>
                       </div>
+                    </div>
 
-                      {/* User Actions */}
-                      <div className="grid grid-cols-1 gap-3 pt-2">
-                        {isLoggedIn ? (
-                          <>
-                            <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
-                              <Button className="w-full h-12 rounded-2xl bg-primary text-background font-black shadow-gold">
-                                <Zap className="w-4 h-4 mr-2" />
-                                {t('nav.dashboard')}
-                              </Button>
-                            </Link>
-                            <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
-                              <Button variant="outline" className="w-full h-12 rounded-2xl border-white/10 font-bold">
-                                {t('nav.profile', 'Profil')}
-                              </Button>
-                            </Link>
-                          </>
-                        ) : (
-                          <>
-                            <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                              <Button variant="outline" className="w-full h-12 rounded-2xl border-white/10 font-bold">
-                                {t('nav.login')}
-                              </Button>
-                            </Link>
-                            <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                              <Button className="w-full h-12 rounded-2xl bg-primary text-background font-black shadow-gold">
-                                {t('nav.register')}
-                              </Button>
-                            </Link>
-                          </>
-                        )}
-                      </div>
+                    {/* User Actions */}
+                    <div className="grid grid-cols-1 gap-3 pt-2">
+                      {isLoggedIn ? (
+                        <>
+                          <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                            <Button className="w-full h-12 rounded-2xl bg-primary text-background font-black shadow-gold">
+                              <Zap className="w-4 h-4 mr-2" />
+                              {t('nav.dashboard')}
+                            </Button>
+                          </Link>
+                          <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                            <Button variant="outline" className="w-full h-12 rounded-2xl border-white/10 font-bold">
+                              {t('nav.profile', 'Profil')}
+                            </Button>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <Link to="/auth/login" onClick={() => setIsMenuOpen(false)}>
+                            <Button variant="outline" className="w-full h-12 rounded-2xl border-white/10 font-bold">
+                              {t('nav.login')}
+                            </Button>
+                          </Link>
+                          <Link to="/auth/register" onClick={() => setIsMenuOpen(false)}>
+                            <Button className="w-full h-12 rounded-2xl bg-primary text-background font-black shadow-gold">
+                              {t('nav.register')}
+                            </Button>
+                          </Link>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
-              </SheetContent>
-            </Sheet>
-          </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-    </header>
+    </div>
+    </header >
   );
 };
 

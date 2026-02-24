@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'next-themes';
 import {
-    User, Lock, Globe, Moon, Sun, Monitor,
+    User, Lock, Globe,
     Save, Loader2, ChevronRight, CheckCircle2, AlertCircle,
     ArrowLeft
 } from 'lucide-react';
@@ -20,7 +19,6 @@ import { useToast } from "@/components/ui/use-toast";
 
 const SettingsPage = () => {
     const { t, i18n } = useTranslation();
-    const { theme, setTheme } = useTheme();
     const { toast: uiToast } = useToast();
     const navigate = useNavigate();
 
@@ -71,7 +69,7 @@ const SettingsPage = () => {
         try {
             await authService.updateProfile(profileData);
             toast.success(t('settings.profile_updated', 'Profil muvaffaqiyatli yangilandi'));
-            // Update local user 
+            // Update local user
             const updatedUser = { ...user, ...profileData };
             setUser(updatedUser);
             localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -304,42 +302,6 @@ const SettingsPage = () => {
                                 >
                                     <span className="text-lg font-black tracking-widest">РУССКИЙ</span>
                                     <span className="text-[10px] opacity-70 font-bold uppercase tracking-widest">Кириллица</span>
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Theme Settings */}
-                    <Card className="border-border/40 shadow-xl shadow-black/5 rounded-3xl overflow-hidden">
-                        <CardHeader className="bg-muted/30">
-                            <CardTitle className="text-xl font-bold">{t('settings.preferences.theme', 'Ilova dizayni')}</CardTitle>
-                            <CardDescription>{t('settings.preferences.theme_desc', 'Ranglar mavzusini tanlang')}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                            <div className="grid grid-cols-3 gap-4">
-                                <Button
-                                    variant={theme === 'light' ? 'default' : 'outline'}
-                                    className="h-24 rounded-2xl flex flex-col gap-2 bg-muted/10"
-                                    onClick={() => setTheme('light')}
-                                >
-                                    <Sun className="w-5 h-5 text-yellow-500" />
-                                    <span className="text-xs font-bold uppercase tracking-wider">{t('settings.themes.light', 'Yorug\'')}</span>
-                                </Button>
-                                <Button
-                                    variant={theme === 'dark' ? 'default' : 'outline'}
-                                    className="h-24 rounded-2xl flex flex-col gap-2 bg-muted/10"
-                                    onClick={() => setTheme('dark')}
-                                >
-                                    <Moon className="w-5 h-5 text-indigo-400" />
-                                    <span className="text-xs font-bold uppercase tracking-wider">{t('settings.themes.dark', 'Tungi')}</span>
-                                </Button>
-                                <Button
-                                    variant={theme === 'system' ? 'default' : 'outline'}
-                                    className="h-24 rounded-2xl flex flex-col gap-2 bg-muted/10"
-                                    onClick={() => setTheme('system')}
-                                >
-                                    <Monitor className="w-5 h-5 text-blue-500" />
-                                    <span className="text-xs font-bold uppercase tracking-wider">{t('settings.themes.system', 'Tizim')}</span>
                                 </Button>
                             </div>
                         </CardContent>

@@ -11,8 +11,6 @@ import {
     Menu,
     PlayCircle,
     LogOut,
-    Moon,
-    Sun,
     Globe,
     FileCheck
 } from "lucide-react";
@@ -142,50 +140,44 @@ const DashboardLayout = () => {
                             <Globe className="w-4 h-4 text-primary" />
                             <span className="text-xs uppercase">{i18n.language === 'uz' ? 'UZ' : 'RU'}</span>
                         </Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="shrink-0 rounded-xl bg-white/5 border-white/5 hover:bg-white/10 text-white h-10 w-10"
-                            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                        >
-                            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        </Button>
-                    </div>
-
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start text-destructive/80 hover:text-destructive hover:bg-destructive/10 gap-3 px-5 rounded-2xl h-12 font-bold transition-all"
-                        onClick={handleLogout}
-                    >
-                        <LogOut className="w-5 h-5" />
-                        {t('dashboard.menu.logout')}
+                        <Globe className="w-4 h-4 text-primary" />
+                        <span className="text-xs uppercase">{i18n.language === 'uz' ? 'UZ' : 'RU'}</span>
                     </Button>
                 </div>
-            </aside>
 
-            {/* Main Content Wrapper */}
-            <div className="flex-1 flex flex-col min-w-0 h-[100dvh] relative">
-                {/* Fixed Premium Navbar */}
-                <DashboardNavbar onMobileMenuClick={() => setIsMobileMenuOpen(true)} />
-
-                {/* Page Content */}
-                <main className="flex-1 overflow-y-auto w-full relative pb-24 lg:pb-0 scroll-smooth">
-                    {/* Top Alert Banner if needed */}
-                    <TelegramBotBanner />
-
-                    <div className="relative z-10">
-                        <Outlet />
-                    </div>
-
-                    {/* Floating Support Widget */}
-                    <SupportWidget />
-                </main>
-
-                {/* Mobile Bottom Navigation */}
-                <MobileBottomNav />
-            </div>
+                <Button
+                    variant="ghost"
+                    className="w-full justify-start text-destructive/80 hover:text-destructive hover:bg-destructive/10 gap-3 px-5 rounded-2xl h-12 font-bold transition-all"
+                    onClick={handleLogout}
+                >
+                    <LogOut className="w-5 h-5" />
+                    {t('dashboard.menu.logout')}
+                </Button>
         </div>
+            </aside >
+
+    {/* Main Content Wrapper */ }
+    < div className = "flex-1 flex flex-col min-w-0 h-[100dvh] relative" >
+        {/* Fixed Premium Navbar */ }
+        < DashboardNavbar onMobileMenuClick = {() => setIsMobileMenuOpen(true)} />
+
+{/* Page Content */ }
+<main className="flex-1 overflow-y-auto w-full relative pb-24 lg:pb-0 scroll-smooth">
+    {/* Top Alert Banner if needed */}
+    <TelegramBotBanner />
+
+    <div className="relative z-10">
+        <Outlet />
+    </div>
+
+    {/* Floating Support Widget */}
+    <SupportWidget />
+</main>
+
+{/* Mobile Bottom Navigation */ }
+<MobileBottomNav />
+            </div >
+        </div >
     );
 };
 
