@@ -448,20 +448,20 @@ const ProfilePage = () => {
             </div>
 
             {/* 3. AI Mentor Card */}
-            <div className="mx-4 mt-6 p-5 bg-gradient-to-br from-hogwarts-gold to-yellow-500 rounded-2xl shadow-lg relative overflow-hidden border border-yellow-300/50">
+            <div className="mx-4 mt-6 p-5 bg-[#FBBF24] rounded-2xl shadow-lg relative overflow-hidden border border-[#FCD34D]/50 text-brand">
                 <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/20 rounded-full blur-xl pointer-events-none" />
                 <div className="flex justify-between items-center relative z-10">
                     <div>
-                        <h3 className="font-black text-hogwarts-dark text-lg flex items-center gap-2 uppercase font-cinzel">
+                        <h3 className="font-black text-[#0F172A] text-lg flex items-center gap-2 uppercase font-cinzel">
                             🤖 AI Mentor
                         </h3>
-                        <p className="text-sm text-hogwarts-dark/80 font-semibold mt-0.5">
+                        <p className="text-sm text-[#0F172A]/80 font-semibold mt-0.5">
                             Savollaringizni so‘rang
                         </p>
                     </div>
                     <button
                         onClick={() => navigate('/ai-mentor')}
-                        className="bg-hogwarts-dark hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl shadow-md active:scale-95 transition-all text-sm">
+                        className="bg-[#0F172A] hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl shadow-md active:scale-95 transition-all text-sm">
                         Boshlash
                     </button>
                 </div>
