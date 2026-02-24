@@ -130,54 +130,49 @@ const DashboardLayout = () => {
                 </nav>
 
                 <div className="p-6 border-t border-white/5 space-y-4">
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 justify-center gap-2 rounded-xl bg-white/5 border-white/5 hover:bg-white/10 text-white font-bold h-10"
-                            onClick={toggleLanguage}
-                        >
-                            <Globe className="w-4 h-4 text-primary" />
-                            <span className="text-xs uppercase">{i18n.language === 'uz' ? 'UZ' : 'RU'}</span>
-                        </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full justify-center gap-2 rounded-xl bg-white/5 border-white/5 hover:bg-white/10 text-white font-bold h-10"
+                        onClick={toggleLanguage}
+                    >
                         <Globe className="w-4 h-4 text-primary" />
                         <span className="text-xs uppercase">{i18n.language === 'uz' ? 'UZ' : 'RU'}</span>
                     </Button>
+
+                    <Button
+                        variant="ghost"
+                        className="w-full justify-start text-destructive/80 hover:text-destructive hover:bg-destructive/10 gap-3 px-5 rounded-2xl h-12 font-bold transition-all"
+                        onClick={handleLogout}
+                    >
+                        <LogOut className="w-5 h-5" />
+                        {t('dashboard.menu.logout')}
+                    </Button>
                 </div>
+            </aside>
 
-                <Button
-                    variant="ghost"
-                    className="w-full justify-start text-destructive/80 hover:text-destructive hover:bg-destructive/10 gap-3 px-5 rounded-2xl h-12 font-bold transition-all"
-                    onClick={handleLogout}
-                >
-                    <LogOut className="w-5 h-5" />
-                    {t('dashboard.menu.logout')}
-                </Button>
+            {/* Main Content Wrapper */}
+            <div className="flex-1 flex flex-col min-w-0 h-[100dvh] relative">
+                {/* Fixed Premium Navbar */}
+                <DashboardNavbar onMobileMenuClick={() => setIsMobileMenuOpen(true)} />
+
+                {/* Page Content */}
+                <main className="flex-1 overflow-y-auto w-full relative pb-24 lg:pb-0 scroll-smooth">
+                    {/* Top Alert Banner if needed */}
+                    <TelegramBotBanner />
+
+                    <div className="relative z-10">
+                        <Outlet />
+                    </div>
+
+                    {/* Floating Support Widget */}
+                    <SupportWidget />
+                </main>
+
+                {/* Mobile Bottom Navigation */}
+                <MobileBottomNav />
+            </div>
         </div>
-            </aside >
-
-    {/* Main Content Wrapper */ }
-    < div className = "flex-1 flex flex-col min-w-0 h-[100dvh] relative" >
-        {/* Fixed Premium Navbar */ }
-        < DashboardNavbar onMobileMenuClick = {() => setIsMobileMenuOpen(true)} />
-
-{/* Page Content */ }
-<main className="flex-1 overflow-y-auto w-full relative pb-24 lg:pb-0 scroll-smooth">
-    {/* Top Alert Banner if needed */}
-    <TelegramBotBanner />
-
-    <div className="relative z-10">
-        <Outlet />
-    </div>
-
-    {/* Floating Support Widget */}
-    <SupportWidget />
-</main>
-
-{/* Mobile Bottom Navigation */ }
-<MobileBottomNav />
-            </div >
-        </div >
     );
 };
 
