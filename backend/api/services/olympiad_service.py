@@ -122,7 +122,7 @@ class OlympiadService:
                     score += q.points
                 
         # Calculate stats
-        percentage = (score / total_points * 100) if total_points > 0 else 0
+        percentage = round((score / total_points * 100), 2) if total_points > 0 else 0
         attempt.score = score
         attempt.percentage = percentage
         attempt.time_taken = (timezone.now() - attempt.submitted_at).seconds # Approximate

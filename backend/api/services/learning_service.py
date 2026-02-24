@@ -166,7 +166,7 @@ class LearningService:
                     if str(user_val) == str(q.correct_answer):
                         score += 1
                 
-                percentage = (score / total_q * 100) if total_q > 0 else 0
+                percentage = round((score / total_q * 100), 2) if total_q > 0 else 0
                 progress.test_score = int(percentage)
                 progress.test_attempts += 1
             except LessonTest.DoesNotExist:

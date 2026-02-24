@@ -2108,7 +2108,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 
         # Calculate percentage
         total_points = sum(q.points for q in all_questions.values())
-        percentage = (score / total_points * 100) if total_points > 0 else 0
+        percentage = round((score / total_points * 100), 2) if total_points > 0 else 0
         
         # Update or Save result
         if result:
@@ -2437,7 +2437,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 # Recalculate percentage based on total points
                 total_points = sum(q.points for q in olympiad.questions.all())
                 if total_points > 0:
-                    result.percentage = (result.score / total_points) * 100
+                    result.percentage = round((result.score / total_points) * 100, 2)
                 
             if comment:
                 result.feedback = comment
