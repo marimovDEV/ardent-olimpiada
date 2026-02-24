@@ -2412,7 +2412,9 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 'time_taken': res.time_taken,
                 'status': res.status,
                 'submitted_at': res.submitted_at,
-                'region': res.user.region
+                'region': res.user.region,
+                'answers': res.answers,
+                'feedback': res.feedback
             })
         
         return Response({
@@ -2436,6 +2438,9 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 total_points = sum(q.points for q in olympiad.questions.all())
                 if total_points > 0:
                     result.percentage = (result.score / total_points) * 100
+                
+            if comment:
+                result.feedback = comment
                 
             result.save()
             return Response({'success': True, 'message': 'Natija yangilandi'})

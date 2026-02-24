@@ -855,6 +855,7 @@ class TestResult(models.Model):
     
     status = models.CharField(max_length=20, default='COMPLETED') # IN_PROGRESS, COMPLETED, DISQUALIFIED, CHECKING
     disqualified_reason = models.TextField(blank=True, null=True)
+    feedback = models.TextField(blank=True, null=True, help_text="Teacher's feedback for the student")
     submitted_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

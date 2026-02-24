@@ -18,8 +18,15 @@ import {
     User,
     ChevronRight,
     MessageSquare,
-    Save
+    Save,
+    Eye,
+    ClipboardCheck,
+    AlertTriangle,
+    Check
 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
@@ -48,6 +55,8 @@ const TeacherOlympiadResultsPage = () => {
     const [selectedWinners, setSelectedWinners] = useState<Record<number, any>>({}); // {position: result}
     const [isConfirming, setIsConfirming] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [reviewResult, setReviewResult] = useState<any>(null);
 
     useEffect(() => {
         fetchResults();
@@ -299,10 +308,18 @@ const TeacherOlympiadResultsPage = () => {
                                         <TableCell className="text-right">
                                             <Dialog>
                                                 <DialogTrigger asChild>
+                                                    <Button variant="ghost" size="sm" className="gap-2 text-primary" onClick={() => {
+                                                        setReviewResult(res);
+                                                        setShowReviewModal(true);
+                                                    }}>
+                                                        <Eye className="w-4 h-4" />
+                                                        Ko'rish
+                                                    </Button>
+
                                                     <Button variant="ghost" size="sm" className="gap-2" onClick={() => {
                                                         setSelectedResult(res);
                                                         setGradingScore(res.score.toString());
-                                                        setGradingComment("");
+                                                        setGradingComment(res.feedback || "");
                                                     }}>
                                                         <Edit className="w-4 h-4" />
                                                         Baholash
@@ -326,15 +343,18 @@ const TeacherOlympiadResultsPage = () => {
                                                                 onChange={(e) => setGradingScore(e.target.value)}
                                                             />
                                                         </div>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label htmlFor="comment" className="text-right font-bold">Izoh</Label>
-                                                            <Input
+                                                        <div className="flex flex-col gap-2">
+                                                            <Label htmlFor="comment" className="font-bold">Izoh / Feedback</Label>
+                                                            <Textarea
                                                                 id="comment"
-                                                                placeholder="Ixtiyoriy izoh..."
-                                                                className="col-span-3"
+                                                                placeholder="O'quvchi uchun izoh yoki xatoliklar haqida feedback yozing..."
+                                                                className="min-h-[120px] bg-muted/30 border-border/50 focus:border-primary/50"
                                                                 value={gradingComment}
                                                                 onChange={(e) => setGradingComment(e.target.value)}
                                                             />
+                                                            <p className="text-[10px] text-muted-foreground italic">
+                                                                Ushbu izoh o'quvchining shaxsiy kabinetida ko'rinadi.
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <DialogFooter>
@@ -354,6 +374,107 @@ const TeacherOlympiadResultsPage = () => {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Answer Review Dialog */}
+            <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-primary/20 bg-[#0B0F1A]/95 backdrop-blur-xl">
+                    <DialogHeader className="p-6 pb-2 border-b border-white/5">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                        <ClipboardCheck className="w-6 h-6" />
+                                    </div>
+                                    {reviewResult?.student} - Javoblar tahlili
+                                </DialogTitle>
+                                <DialogDescription className="mt-1">
+                                    Olimpiada savollariga berilgan javoblar va to'g'ri javoblar bilan solishtirish.
+                                </DialogDescription>
+                            </div>
+                            <div className="text-right px-4">
+                                <p className="text-sm font-bold text-primary">{reviewResult?.score} / {olympiad?.questions?.reduce((acc: number, q: any) => acc + q.points, 0)} ball</p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">{reviewResult?.percentage}% natija</p>
+                            </div>
+                        </div>
+                    </DialogHeader>
+
+                    <ScrollArea className="flex-1 p-6">
+                        <div className="space-y-6">
+                            {olympiad?.questions?.map((q: any, idx: number) => {
+                                const studentAnswer = reviewResult?.answers?.[q.id.toString()];
+                                const isCorrect = studentAnswer?.toString().trim().toLowerCase() === q.correct_answer?.toString().trim().toLowerCase();
+
+                                return (
+                                    <div key={q.id} className={`p-5 rounded-2xl border transition-all duration-300 ${isCorrect
+                                        ? 'bg-green-500/5 border-green-500/20'
+                                        : studentAnswer === undefined || studentAnswer === ""
+                                            ? 'bg-muted/30 border-border/50 opacity-80'
+                                            : 'bg-red-500/5 border-red-500/20'
+                                        }`}>
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="flex gap-4">
+                                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black shrink-0 ${isCorrect
+                                                    ? 'bg-green-500 text-white'
+                                                    : studentAnswer === undefined || studentAnswer === ""
+                                                        ? 'bg-muted text-muted-foreground'
+                                                        : 'bg-red-500 text-white'
+                                                    }`}>
+                                                    {idx + 1}
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-lg font-bold leading-tight mb-2">{q.title}</h4>
+                                                    <div className="prose prose-invert prose-sm text-muted-foreground max-w-none" dangerouslySetInnerHTML={{ __html: q.text }} />
+                                                </div>
+                                            </div>
+                                            <Badge variant={isCorrect ? "default" : "destructive"} className={isCorrect ? "bg-green-600/20 text-green-400 border-green-500/30" : "bg-red-600/20 text-red-400 border-red-500/30"}>
+                                                {isCorrect ? "To'g'ri" : "Xato"}
+                                            </Badge>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-12">
+                                            <div className="p-3 rounded-xl bg-background/50 border border-border/50">
+                                                <p className="text-[10px] font-black uppercase text-muted-foreground mb-1 tracking-widest">O'quvchi javobi</p>
+                                                <p className={`font-bold ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
+                                                    {studentAnswer || <span className="text-muted-foreground font-normal italic">Javob berilmagan</span>}
+                                                </p>
+                                            </div>
+                                            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20">
+                                                <p className="text-[10px] font-black uppercase text-green-500/70 mb-1 tracking-widest">To'g'ri javob</p>
+                                                <p className="font-extrabold text-green-500">{q.correct_answer}</p>
+                                            </div>
+                                        </div>
+
+                                        {!isCorrect && q.explanation && (
+                                            <div className="mt-4 ml-12 p-3 rounded-xl bg-primary/5 border border-primary/10 flex gap-3">
+                                                <AlertTriangle className="w-5 h-5 text-primary shrink-0" />
+                                                <div>
+                                                    <p className="text-[10px] font-black uppercase text-primary/70 mb-1 tracking-widest">Tushuntirish</p>
+                                                    <p className="text-sm text-muted-foreground italic">{q.explanation}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </ScrollArea>
+
+                    <DialogFooter className="p-6 border-t border-white/5 bg-muted/20">
+                        <Button variant="outline" className="border-border/50" onClick={() => setShowReviewModal(false)}>
+                            Yopish
+                        </Button>
+                        <Button className="gap-2 bg-primary shadow-gold" onClick={() => {
+                            setShowReviewModal(false);
+                            setSelectedResult(reviewResult);
+                            setGradingScore(reviewResult?.score?.toString());
+                            setGradingComment(reviewResult?.feedback || "");
+                        }}>
+                            <Edit className="w-4 h-4" />
+                            Baholashni boshlash
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

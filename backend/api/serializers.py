@@ -1221,7 +1221,7 @@ class TestResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestResult
         fields = ['id', 'user', 'olympiad', 'answers', 'score', 
-                  'percentage', 'time_taken', 'submitted_at', 'status', 'disqualified_reason', 'correct_answers', 'total_questions']
+                  'percentage', 'time_taken', 'submitted_at', 'status', 'disqualified_reason', 'feedback', 'correct_answers', 'total_questions']
 
     def get_correct_answers(self, obj):
         # For now return score as proxy for correct count
