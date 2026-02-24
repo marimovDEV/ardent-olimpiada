@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import CoursesPage from "./pages/CoursesPage";
 import CourseDetailPage from "./pages/CourseDetailPage";
 import ProfessionDetailPage from "./pages/ProfessionDetailPage";
@@ -175,6 +176,7 @@ const App = () => {
                 <Route element={<DashboardLayout />}>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/profile" element={<ProfilePage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/my-courses" element={<MyCoursesPage />} />
                   <Route path="/results" element={<ResultsPage />} />
                   <Route path="/my-certificates" element={<MyCertificatesPage />} />

@@ -8,6 +8,10 @@ const authService = {
     updateProfile: async (data: any) => {
         const response = await api.patch("/auth/profile/", data);
         return response.data;
+    },
+    changePassword: async (data: any) => {
+        const response = await api.post("/auth/change-password/", data);
+        return response.data;
     }
 };
 
