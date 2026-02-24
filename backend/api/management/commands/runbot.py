@@ -590,6 +590,13 @@ class Command(BaseCommand):
 
     # --- HELPERS ---
 
+    def get_rate(self):
+        """Get current ArdCoin exchange rate from settings"""
+        settings = PlatformSettings.objects.first()
+        if settings and settings.ardcoin_exchange_rate:
+            return float(settings.ardcoin_exchange_rate)
+        return 1.0  # Default to 1 so'm if not set
+
     def handle_contact_login(self, chat_id, phone, first_name):
         """Handle contact sharing for quick login"""
         # Normalize phone
