@@ -68,13 +68,21 @@
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #FACC15 0%, #CA8A04 100%);
-    --gradient-purple: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
-    --gradient-gold: linear-gradient(135deg, #FACC15 0%, #EAB308 100%);
+    --gradient-purple: linear-gradient(135deg, #4B0082 0%, #A855F7 100%);
+    --gradient-gold: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+    --gradient-royal: linear-gradient(135deg, #4B0082 0%, #FFD700 100%);
     --gradient-dark: linear-gradient(135deg, #0B0F1A 0%, #111827 100%);
 
+    /* Theme Colors */
+    --royal-purple: 275 100% 25%;
+    /* #4B0082 */
+    --gold-accent: 45 100% 50%;
+    /* #FFD700 */
+
     /* Shadows & Effects */
-    --shadow-gold: 0 10px 40px -10px rgba(250, 204, 21, 0.5);
-    --shadow-card: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+    --shadow-gold: 0 10px 40px -10px rgba(250, 204, 21, 0.4);
+    --shadow-purple: 0 10px 40px -10px rgba(75, 0, 130, 0.4);
+    --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
 
   /* Force dark mode by default for that magical vibe if preferred, 

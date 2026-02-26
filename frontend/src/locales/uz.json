@@ -24,7 +24,8 @@
     },
     "prestige_badge": "HOGWARTS PRESTIGE",
     "elite_member": "ELITE MEMBER",
-    "certificates": "Sertifikatlar"
+    "certificates": "Sertifikatlar",
+    "student": "Talaba"
   },
   "global": {
     "updated": "Muvaffaqiyatli yangilandi",
@@ -194,10 +195,16 @@
     "warningMsg": "DIQQAT! Tabdan chiqish taqiqlanadi! ({{count}}/{{limit}})",
     "warningNoCopy": "Nusxa ko'chirish taqiqlanadi!"
   },
-  "olympiadResult": {
-    "title": "Imtihon Natijalari",
-    "successDesc": "Sizning natijangiz muvaffaqiyatli saqlandi.",
-    "score": "Umumiy Ball",
+  "subjectsSection": {
+    "title": "Yo'nalishlar",
+    "subtitle": "O'z sohangizni tanlang va mutaxassis bo'ling",
+    "viewAll": "Barchasini ko'rish",
+    "student": "Bitiruvchi / Talaba"
+  },
+  "auth": {
+    "login": "Kirish",
+    "register": "Ro'yxatdan o'tish",
+    "grade": "sinf / bosqich",
     "efficiency": "Ko'rsatkich",
     "time": "Vaqt",
     "rank": "O'rin",

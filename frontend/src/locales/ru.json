@@ -193,10 +193,16 @@
     "waitingDesc": "Пожалуйста, дождитесь публикации результатов. Удачи всем!",
     "resultsIn": "До публикации результатов осталось:"
   },
-  "courses": "Курсы",
-  "modules": {
-    "Algebra Asoslari": "Основы Алгебры",
-    "Kombinatorika": "Комбинаторика",
+  "hero": {
+    "student": "Студент"
+  },
+  "subjectsSection": {
+    "student": "Выпускник / Студент"
+  },
+  "auth": {
+    "login": "Вход",
+    "register": "Регистрация",
+    "grade": "класс / курс",
     "1-Modul: Kirish va O'rnatish": "Модуль 1: Введение и Установка",
     "2-Modul: O'zgaruvchilar va Ma'lumot Turlari": "Модуль 2: Переменные и Типы данных",
     "3-Modul: Shart Operatlari va Sikllar": "Модуль 3: Условные операторы и Циклы"

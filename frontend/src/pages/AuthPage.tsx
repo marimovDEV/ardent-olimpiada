@@ -352,13 +352,13 @@ const AuthPage = ({ mode }: AuthPageProps) => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-[#0a0a0b] text-white">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-[#0F0F1A] text-white">
       {/* Dynamic Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Animated Gradient Orbs */}
-        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-primary/10 rounded-full blur-[120px] animate-blob mix-blend-screen" />
-        <div className="absolute -bottom-[20%] -right-[10%] w-[70vw] h-[70vw] bg-primary-dark/10 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-screen" />
-        <div className="absolute top-[30%] left-[30%] w-[40vw] h-[40vw] bg-secondary-light/10 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-screen" />
+        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] bg-purple-900/20 rounded-full blur-[120px] animate-blob mix-blend-screen" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[70vw] h-[70vw] bg-amber-900/10 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-screen" />
+        <div className="absolute top-[30%] left-[30%] w-[40vw] h-[40vw] bg-purple-600/10 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-screen" />
 
         {/* Grid Pattern Overlay */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
@@ -399,10 +399,10 @@ const AuthPage = ({ mode }: AuthPageProps) => {
           {/* Logo / Header */}
           <div className="mb-8 flex flex-col items-center text-center">
             <Link to="/" className="flex flex-col items-center gap-3 mb-6 group">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-gold group-hover:scale-110 transition-transform duration-500">
-                <img src="/logo.jpg" alt="Logo" className="w-10 h-10 object-contain" />
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4B0082] to-[#A855F7] flex items-center justify-center shadow-purple group-hover:scale-110 transition-transform duration-500">
+                <img src="/logo.jpg" alt="Logo" className="w-10 h-10 object-contain rounded-lg shadow-gold" />
               </div>
-              <h1 className="text-4xl font-black font-cinzel tracking-widest text-primary">
+              <h1 className="text-4xl font-black font-cinzel tracking-widest text-[#FFD700]">
                 HOGWARTS
               </h1>
               <p className="text-sm font-medium italic text-muted-foreground/80 tracking-widest uppercase font-cinzel">
@@ -475,7 +475,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-14 bg-primary hover:bg-primary-light text-primary-foreground font-black uppercase tracking-widest rounded-xl shadow-gold transition-all hover:scale-[1.02] active:scale-[0.98] font-cinzel"
+                  className="w-full h-14 bg-gradient-to-r from-[#4B0082] to-[#6A0DAD] hover:from-[#6A0DAD] hover:to-[#7B68EE] text-white font-black uppercase tracking-widest rounded-xl shadow-purple transition-all hover:scale-[1.02] active:scale-[0.98] font-cinzel border border-[#FFD700]/20"
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
@@ -497,7 +497,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
             {mode === 'register' && step === 1 && (
               <form onSubmit={handleSendCode} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="group">
-                  <label className="text-xs font-medium text-gray-400 ml-1 mb-1 block group-focus-within:text-green-400 transition-colors">{t('auth.phone')}</label>
+                  <label className="text-xs font-medium text-gray-400 ml-1 mb-1 block group-focus-within:text-[#FFD700] transition-colors">{t('auth.phone')}</label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">+998</span>
                     <input
@@ -505,17 +505,17 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                       value={phone}
                       onChange={(e) => setPhone(formatPhone(e.target.value).slice(0, 9))}
                       placeholder="90 123 45 67"
-                      className="w-full h-14 pl-16 pr-4 rounded-xl bg-white/5 border border-white/10 focus:border-green-500 focus:bg-white/10 focus:ring-4 focus:ring-green-500/10 outline-none transition-all font-medium text-lg text-white placeholder-gray-600"
+                      className="w-full h-14 pl-16 pr-4 rounded-xl bg-[#1A1A2E] border border-[#2C2C3E] focus:border-[#FFD700] focus:ring-4 focus:ring-[#FFD700]/10 outline-none transition-all font-medium text-lg text-white placeholder-gray-600"
                       autoFocus
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
-                  <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                    <ShieldCheck className="w-4 h-4 text-green-400" />
+                <div className="flex items-center gap-3 p-3 bg-[#4B0082]/10 border border-[#4B0082]/20 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-[#4B0082]/20 flex items-center justify-center flex-shrink-0">
+                    <ShieldCheck className="w-4 h-4 text-[#A855F7]" />
                   </div>
-                  <div className="text-xs text-green-200">
+                  <div className="text-xs text-purple-200">
                     <span className="block font-bold mb-0.5">
                       {t('auth.secureRegistration')}
                     </span>
@@ -526,7 +526,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-14 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-green-900/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full h-14 bg-gradient-to-r from-[#4B0082] to-[#6A0DAD] hover:from-[#6A0DAD] hover:to-[#7B68EE] text-white font-bold rounded-xl shadow-lg shadow-purple-900/20 transition-all hover:scale-[1.02] active:scale-[0.98] border border-[#FFD700]/20"
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
@@ -584,7 +584,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full h-14 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg"
+                    className="w-full h-14 bg-gradient-to-r from-[#4B0082] to-[#6A0DAD] hover:from-[#6A0DAD] hover:to-[#7B68EE] text-white font-bold rounded-xl shadow-lg border border-[#FFD700]/20"
                     disabled={isLoading}
                   >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
@@ -594,7 +594,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                   <button
                     type="button"
                     onClick={() => { setStep(1); setOtp(""); setError(""); }}
-                    className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
+                    className="text-sm text-gray-500 hover:text-[#FFD700] transition-colors"
                   >
                     ← {t('auth.errors.phoneRequired')}? {t('common.change')}
                   </button>
@@ -682,7 +682,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                   <button type="button" onClick={() => setStep(2)} className="w-14 h-14 rounded-xl border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors">
                     <ArrowLeft className="w-5 h-5 text-gray-400" />
                   </button>
-                  <Button type="submit" size="lg" className="flex-1 h-14 bg-gradient-to-r from-yellow-600 to-orange-600 font-bold rounded-xl text-white">
+                  <Button type="submit" size="lg" className="flex-1 h-14 bg-gradient-to-r from-[#4B0082] to-[#6A0DAD] font-bold rounded-xl text-white border border-[#FFD700]/20 shadow-purple">
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : t('auth.savePassword')}
                   </Button>
                 </div>
@@ -714,7 +714,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                   <button type="button" onClick={() => setStep(3)} className="w-14 h-14 rounded-xl border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors">
                     <ArrowLeft className="w-5 h-5 text-gray-400" />
                   </button>
-                  <Button type="submit" size="lg" className="flex-1 h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg shadow-purple-900/20" disabled={isLoading}>
+                  <Button type="submit" size="lg" className="flex-1 h-14 bg-gradient-to-r from-[#4B0082] to-[#6A0DAD] hover:from-[#6A0DAD] hover:to-[#7B68EE] text-white font-bold rounded-xl shadow-lg shadow-purple-900/20 border border-[#FFD700]/10" disabled={isLoading}>
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <span>{t('auth.finish')} <CheckCircle2 className="inline w-5 h-5 ml-1" /></span>}
                   </Button>
                 </div>
