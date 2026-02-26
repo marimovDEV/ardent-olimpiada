@@ -972,9 +972,9 @@ class CourseViewSet(viewsets.ModelViewSet):
         # Admin sees all
         if user.is_authenticated and user.role == 'ADMIN':
             queryset = Course.objects.all()
-        # Teacher sees own courses
+        # Teacher sees own courses and co-taught courses
         elif user.is_authenticated and user.role == 'TEACHER':
-            queryset = Course.objects.filter(teacher=user)
+            queryset = Course.objects.filter(Q(teacher=user) | Q(teachers=user)).distinct()
         else:
             # Public
             queryset = Course.objects.filter(is_active=True)
@@ -5433,8 +5433,8 @@ class TeacherViewSet(viewsets.ViewSet):
         if user.role not in ['TEACHER', 'ADMIN']:
              return Response({'error': 'Not authorized'}, status=status.HTTP_403_FORBIDDEN)
 
-        # 1. Total Students (Unique students enrolled in teacher's courses)
-        courses = Course.objects.filter(teacher=user)
+        # 1. Total Students (Unique students enrolled in teacher's courses/co-taught courses)
+        courses = Course.objects.filter(Q(teacher=user) | Q(teachers=user)).distinct()
         students_count = Enrollment.objects.filter(course__in=courses).values('user').distinct().count()
 
         # 2. Active Courses
@@ -5467,7 +5467,7 @@ class TeacherViewSet(viewsets.ViewSet):
     def students(self, request):
         """List unique students enrolled in teacher's courses with progress"""
         user = request.user
-        courses = Course.objects.filter(teacher=user)
+        courses = Course.objects.filter(Q(teacher=user) | Q(teachers=user)).distinct()
         enrollments = Enrollment.objects.filter(course__in=courses).select_related('user', 'course').order_by('-created_at')
         
         data = []
@@ -5506,7 +5506,7 @@ class TeacherViewSet(viewsets.ViewSet):
         if user.role == 'ADMIN':
              courses = Course.objects.all().order_by('-created_at')
         else:
-             courses = Course.objects.filter(teacher=user).order_by('-created_at')
+             courses = Course.objects.filter(Q(teacher=user) | Q(teachers=user)).distinct().order_by('-created_at')
         
         serializer = CourseSerializer(courses, many=True)
         return Response({
@@ -5520,7 +5520,7 @@ class TeacherViewSet(viewsets.ViewSet):
         if user.role == 'ADMIN':
             course = get_object_or_404(Course, pk=pk)
         else:
-            course = get_object_or_404(Course, pk=pk, teacher=user)
+            course = get_object_or_404(Course, Q(teacher=user) | Q(teachers=user), pk=pk)
         
         serializer = TeacherCourseDetailSerializer(course)
         return Response(serializer.data)
@@ -5532,7 +5532,9 @@ class TeacherViewSet(viewsets.ViewSet):
         if user.role == 'ADMIN':
              olympiads = Olympiad.objects.all().order_by('-created_at')
         else:
-             olympiads = Olympiad.objects.filter(teacher=user).order_by('-created_at')
+             olympiads = Olympiad.objects.filter(
+                 Q(teacher=user) | Q(checker=user) | Q(moderator=user)
+             ).distinct().order_by('-created_at')
         
         serializer = OlympiadSerializer(olympiads, many=True)
         return Response({
