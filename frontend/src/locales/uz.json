@@ -203,9 +203,9 @@
       "students": "o'quvchi",
       "olympiads": "olimpiada",
       "start_course": "Kursni boshlash",
-      "view_olympiads": "Olimpiadalarni ko'rish",
-      "student": "Bitiruvchi / Talaba"
-    }
+      "view_olympiads": "Olimpiadalarni ko'rish"
+    },
+    "student": "Bitiruvchi / Talaba"
   },
   "auth": {
     "login": "Kirish",
