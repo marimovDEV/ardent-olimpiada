@@ -328,7 +328,8 @@
     },
     "secureRegistration": "Безопасная Регистрация",
     "telegramCode": "Код подтверждения будет отправлен через Telegram",
-    "alreadyMember": "Уже зарегистрированы?"
+    "alreadyMember": "Уже зарегистрированы?",
+    "noAccount": "Нет аккаунта?"
   },
   "lessons": {
     "lesson": "Урок",

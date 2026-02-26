@@ -304,7 +304,8 @@
     },
     "secureRegistration": "Xavfsiz Ro'yxatdan O'tish",
     "telegramCode": "Tasdiqlash kodi Telegram orqali yuboriladi",
-    "alreadyMember": "Profilingiz bormi?"
+    "alreadyMember": "Profilingiz bormi?",
+    "noAccount": "Hisobingiz yo'qmi?"
   },
   "courses": "Kurslar",
   "modules": {
