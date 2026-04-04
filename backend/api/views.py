@@ -2227,9 +2227,8 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         """Get leaderboard for olympiad"""
         olympiad = self.get_object()
         
-        # Security: Only show leaderboard if published, or if user is teacher/admin
         is_staff = request.user.is_authenticated and (request.user.role in ['ADMIN', 'TEACHER'])
-        can_see_details = olympiad.status == 'PUBLISHED' or is_staff
+        is_published = olympiad.status == 'PUBLISHED'
         
         completed_results = TestResult.objects.filter(
             olympiad=olympiad,
@@ -2261,7 +2260,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
 
         # Check result time for leaderboard visibility
         now = timezone.now()
-        is_results_open = True
+        is_results_open = is_published
         if olympiad.result_time and now < olympiad.result_time:
             is_results_open = False
             
@@ -2312,7 +2311,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
 
         return Response({
             'success': True,
-            'status': 'WAITING_RESULTS' if not is_results_open else olympiad.status,
+            'status': 'WAITING_RESULTS' if is_published and not is_results_open else olympiad.status,
             'title': olympiad.title,
             'subject': olympiad.subject,
             'date': olympiad.start_date,
@@ -3820,7 +3819,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_object()
 
     def get_permissions(self):
-        """Allow users to update their own teacher profile and verify themselves"""
+        """Allow authenticated self-service for teacher onboarding actions."""
         if self.action in ['update_teacher_profile', 'verify_teacher']:
             return [IsAuthenticated()]
         return [permission() for permission in self.permission_classes]
@@ -3958,16 +3957,43 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.get_object()
         status_val = request.data.get('status', '').upper()
         rejection_reason = request.data.get('rejection_reason', '')
+        is_admin = request.user.role == 'ADMIN'
+        is_self_request = user == request.user
         
         if status_val not in ['APPROVED', 'REJECTED', 'BLOCKED', 'PENDING']:
             return Response({'error': 'Noto\'g\'ri status'}, status=status.HTTP_400_BAD_REQUEST)
             
         profile, _ = TeacherProfile.objects.get_or_create(user=user)
+
+        if not is_admin:
+            if not is_self_request:
+                return Response({'error': 'Ruxsat yo\'q'}, status=status.HTTP_403_FORBIDDEN)
+            if request.user.role != 'TEACHER':
+                return Response(
+                    {'error': 'Faqat o\'qituvchi hisoblari onboarding arizasini yubora oladi'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            if status_val != 'PENDING':
+                return Response(
+                    {'error': 'Faqat PENDING statusini yuborishingiz mumkin'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            profile.verification_status = 'PENDING'
+            profile.rejection_reason = ""
+            profile.save(update_fields=['verification_status', 'rejection_reason'])
+
+            return Response({
+                'success': True,
+                'message': 'Ariza moderatorga yuborildi',
+                'user_role': user.role
+            })
+
         profile.verification_status = status_val
         
         if status_val == 'APPROVED':
             user.role = 'TEACHER'
-            user.is_staff = True # Allow access to teacher dashboard
+            user.is_staff = False
             user.is_active = True
             user.save(update_fields=['role', 'is_staff', 'is_active'])
             
@@ -3994,6 +4020,8 @@ class UserViewSet(viewsets.ModelViewSet):
         elif status_val == 'BLOCKED':
             user.is_active = False
             user.save(update_fields=['is_active'])
+        elif status_val == 'PENDING':
+            profile.rejection_reason = ""
             
         profile.save()
         

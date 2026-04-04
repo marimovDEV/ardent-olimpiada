@@ -167,7 +167,7 @@ const ProfessionsSection = () => {
                             </div>
 
                             {/* Action */}
-                            <Link to={`/professions/${prof.id}`} className="mt-auto">
+                            <Link to={`/profession/${prof.id}`} className="mt-auto">
                                 <Button className="w-full h-12 rounded-xl text-base font-semibold group-hover:bg-primary group-hover:text-white transition-all">
                                     {t('professions.start_path', 'Tayyorlanishni boshlash')}
                                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

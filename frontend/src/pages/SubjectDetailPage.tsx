@@ -344,7 +344,7 @@ const SubjectDetailPage = () => {
 
                     {/* Roadmap Tab */}
                     <TabsContent value="roadmap" className="relative p-6 sm:p-12 bg-slate-50 rounded-[3rem] overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[url('/path.svg')] opacity-10 pointer-events-none" />
+                        <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid-pattern.svg')] opacity-10 pointer-events-none" />
 
                         <div className="max-w-4xl mx-auto space-y-24 relative">
                             {subject.professions[0]?.roadmap_steps?.map((step, idx) => (
@@ -420,4 +420,3 @@ const SubjectDetailPage = () => {
 };
 
 export default SubjectDetailPage;
-

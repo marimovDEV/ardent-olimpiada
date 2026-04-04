@@ -84,6 +84,8 @@ import PublicOlympiadsPage from "./pages/PublicOlympiadsPage";
 import PublicCoursesPage from "./pages/PublicCoursesPage";
 import SubjectsPage from "./pages/SubjectsPage";
 import AboutPage from "./pages/AboutPage";
+import ProfessionsPage from "./pages/ProfessionsPage";
+import ProfessionLegacyRedirect from "./pages/ProfessionLegacyRedirect";
 import OlympiadLeaderboardPage from "./pages/OlympiadLeaderboardPage";
 import GuidePage from "./pages/GuidePage";
 import PublicTeacherProfilePage from "./pages/PublicTeacherProfilePage";
@@ -143,6 +145,8 @@ const App = () => {
                   <Route path="/all-courses" element={<PublicCoursesPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/guide" element={<GuidePage />} />
+                  <Route path="/professions" element={<ProfessionsPage />} />
+                  <Route path="/professions/:id" element={<ProfessionLegacyRedirect />} />
                   <Route path="/profession/:id" element={<ProfessionDetailPage />} />
                   <Route path="/olympiad/:id" element={<OlympiadDetailPage />} />
                   <Route path="/teachers" element={<PublicTeachersPage />} />
@@ -160,6 +164,12 @@ const App = () => {
                   <Route path="/certificate/verify" element={<CertificateVerifyPage />} />
                   <Route path="/terms" element={<TermsPage />} />
                   <Route path="/privacy" element={<PrivacyPage />} />
+                  <Route path="/support" element={<Navigate to="/guide" replace />} />
+                  <Route path="/contact" element={<Navigate to="/guide" replace />} />
+                  <Route path="/blog" element={<Navigate to="/about" replace />} />
+                  <Route path="/careers" element={<Navigate to="/about" replace />} />
+                  <Route path="/prestige" element={<Navigate to="/about" replace />} />
+                  <Route path="/pathways" element={<Navigate to="/professions" replace />} />
                 </Route>
 
                 <Route path="/auth/login" element={<AuthPage mode="login" />} />
@@ -185,8 +195,6 @@ const App = () => {
                 <Route path="/course/:id/lesson/:lessonId?" element={<LessonView />} />
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/olympiad/:id/test" element={<OlympiadTestPage />} />
-
-                <Route path="/course/:id/lesson/:lessonId?" element={<LessonView />} />
 
                 {/* Olympiad Mode Layout */}
                 <Route element={<OlympiadLayout />}>

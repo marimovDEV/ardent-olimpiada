@@ -1136,13 +1136,15 @@ class OlympiadSerializer(serializers.ModelSerializer):
         return None
 
     def get_is_registered(self, obj):
-        user = self.context.get('request').user if self.context.get('request') else None
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
         if user and user.is_authenticated:
             return OlympiadRegistration.objects.filter(user=user, olympiad=obj).exists()
         return False
 
     def get_is_completed(self, obj):
-        user = self.context.get('request').user if self.context.get('request') else None
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
         if user and user.is_authenticated:
             return TestResult.objects.filter(user=user, olympiad=obj, status='COMPLETED').exists()
         return False

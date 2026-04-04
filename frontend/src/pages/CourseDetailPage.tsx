@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Play, Clock, Users, Star, CheckCircle2, Lock, ChevronDown, ChevronUp,
   Trophy, ArrowLeft, GraduationCap, BookOpen, Loader2, ShoppingCart, Check, Gift,
-  Globe, AlertTriangle
+  Globe, AlertTriangle, Settings
 } from "lucide-react";
 import ArdCoin from "@/components/ArdCoin";
 import PaymentModal from "@/components/payment/PaymentModal";
@@ -264,7 +264,7 @@ const CourseDetailPage = () => {
                 Dasturni tahrirlash
               </Button>
             </Link>
-            <Link to={`/teacher/courses/${id}/students`}>
+            <Link to="/teacher/students">
               <Button variant="outline" size="sm" className="h-9 gap-2 rounded-xl">
                 <Users className="w-4 h-4" />
                 O'quvchilar

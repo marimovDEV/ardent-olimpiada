@@ -1,9 +1,11 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
-from api.models import User, Olympiad, TestResult
+from api.models import User, Olympiad, TestResult, TeacherProfile
 from rest_framework.test import APIClient
 import datetime
 
+
+@override_settings(SECURE_SSL_REDIRECT=False)
 class OlympiadVisibilityTest(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -50,3 +52,48 @@ class OlympiadVisibilityTest(TestCase):
         response = self.client.get(f'/api/olympiads/{self.olympiad.id}/leaderboard/')
         self.assertEqual(response.status_code, 200)
         self.assertGreater(len(response.data['leaderboard']), 0)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class TeacherVerificationFlowTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.student = User.objects.create_user(username='student2', password='testpassword', role='STUDENT')
+        self.teacher = User.objects.create_user(username='teacher2', password='testpassword', role='TEACHER')
+        self.admin = User.objects.create_user(username='admin1', password='testpassword', role='ADMIN')
+        TeacherProfile.objects.create(user=self.teacher, bio='Bio', specialization='Math')
+
+    def test_student_cannot_self_approve_teacher_role(self):
+        self.client.force_authenticate(user=self.student)
+        response = self.client.post('/api/users/me/verify_teacher/', {'status': 'APPROVED'}, format='json')
+
+        self.assertEqual(response.status_code, 403)
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.role, 'STUDENT')
+
+    def test_teacher_can_submit_pending_for_self(self):
+        self.client.force_authenticate(user=self.teacher)
+        response = self.client.post('/api/users/me/verify_teacher/', {'status': 'PENDING'}, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.teacher.refresh_from_db()
+        self.assertEqual(self.teacher.role, 'TEACHER')
+        self.assertEqual(self.teacher.teacher_profile.verification_status, 'PENDING')
+
+    def test_teacher_cannot_change_other_user_verification(self):
+        self.client.force_authenticate(user=self.teacher)
+        response = self.client.post(f'/api/users/{self.student.id}/verify_teacher/', {'status': 'APPROVED'}, format='json')
+
+        self.assertEqual(response.status_code, 403)
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.role, 'STUDENT')
+
+    def test_admin_can_approve_teacher_without_staff_access(self):
+        self.client.force_authenticate(user=self.admin)
+        response = self.client.post(f'/api/users/{self.teacher.id}/verify_teacher/', {'status': 'APPROVED'}, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.teacher.refresh_from_db()
+        self.assertEqual(self.teacher.role, 'TEACHER')
+        self.assertFalse(self.teacher.is_staff)
+        self.assertEqual(self.teacher.teacher_profile.verification_status, 'APPROVED')
