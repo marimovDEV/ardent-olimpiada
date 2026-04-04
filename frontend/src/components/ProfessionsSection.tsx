@@ -1,30 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ComponentType } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
     Briefcase,
     ArrowRight,
-    Code,
-    Calculator,
-    Microscope,
-    Globe,
-    PenTool,
-    Building2,
-    Stethoscope,
-    Scale,
     Star,
-    Sparkles,
     GraduationCap,
-    CheckCircle2
 } from "lucide-react";
-import { professionService, Profession } from "@/services/professionService";
+import { professionService, Profession, ProfessionSubject } from "@/services/professionService";
 import * as Icons from "lucide-react";
+
+type FallbackProfession = Profession & {
+    required_subjects: Array<ProfessionSubject>;
+};
 
 // Helper to render dynamic icon
 const DynamicIcon = ({ name, className }: { name: string; className?: string }) => {
-    // @ts-ignore
-    const Icon = Icons[name] || Briefcase;
+    const iconMap = Icons as Record<string, ComponentType<{ className?: string }>>;
+    const Icon = iconMap[name] ?? Briefcase;
     return <Icon className={className} />;
 };
 
@@ -54,18 +48,21 @@ const ProfessionsSection = () => {
     }
 
     // Default fallbacks if no professions via APi yet (during dev)
-    const displayProfessions = professions.length > 0 ? professions : [
+    const fallbackProfessions: FallbackProfession[] = [
         {
             id: 1,
             name: t('professions.list.software_engineer.name'),
             description: t('professions.list.software_engineer.description'),
             icon: "Code",
             color: "bg-blue-600",
+            is_active: true,
+            order: 1,
             required_subjects: [
-                { name: t('subjects.matematika'), importance: 5 },
-                { name: t('subjects.informatika'), importance: 5 },
-                { name: t('subjects.ingliz_tili'), importance: 4 }
-            ]
+                { subject_id: 1, name: t('subjects.matematika'), icon: "Calculator", importance: 5, order: 1 },
+                { subject_id: 2, name: t('subjects.informatika'), icon: "Code", importance: 5, order: 2 },
+                { subject_id: 3, name: t('subjects.ingliz_tili'), icon: "Globe", importance: 4, order: 3 }
+            ],
+            roadmap_steps: []
         },
         {
             id: 2,
@@ -73,11 +70,14 @@ const ProfessionsSection = () => {
             description: t('professions.list.doctor.description'),
             icon: "Stethoscope",
             color: "bg-emerald-600",
+            is_active: true,
+            order: 2,
             required_subjects: [
-                { name: "Biologiya", importance: 5 },
-                { name: t('subjects.kimyo'), importance: 5 },
-                { name: "Ona tili", importance: 3 }
-            ]
+                { subject_id: 4, name: "Biologiya", icon: "Microscope", importance: 5, order: 1 },
+                { subject_id: 5, name: t('subjects.kimyo'), icon: "FlaskConical", importance: 5, order: 2 },
+                { subject_id: 6, name: "Ona tili", icon: "PenTool", importance: 3, order: 3 }
+            ],
+            roadmap_steps: []
         },
         {
             id: 3,
@@ -85,13 +85,17 @@ const ProfessionsSection = () => {
             description: t('professions.list.engineer.description'),
             icon: "Building2",
             color: "bg-orange-600",
+            is_active: true,
+            order: 3,
             required_subjects: [
-                { name: t('subjects.fizika'), importance: 5 },
-                { name: t('subjects.matematika'), importance: 5 },
-                { name: "Chizmachilik", importance: 4 }
-            ]
+                { subject_id: 7, name: t('subjects.fizika'), icon: "Atom", importance: 5, order: 1 },
+                { subject_id: 8, name: t('subjects.matematika'), icon: "Calculator", importance: 5, order: 2 },
+                { subject_id: 9, name: "Chizmachilik", icon: "Ruler", importance: 4, order: 3 }
+            ],
+            roadmap_steps: []
         }
     ];
+    const displayProfessions = professions.length > 0 ? professions : fallbackProfessions;
 
     return (
         <section id="professions" className="py-16 md:py-24 relative bg-background transition-colors duration-300">
@@ -149,7 +153,6 @@ const ProfessionsSection = () => {
                                     {t('professions.required_subjects', 'Talab etiladigan fanlar')}
                                 </div>
                                 <div className="space-y-3">
-                                    {/* @ts-ignore */}
                                     {prof.required_subjects?.map((subj, idx) => (
                                         <div key={idx} className="flex items-center justify-between text-sm">
                                             <span className="font-medium">{subj.name}</span>

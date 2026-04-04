@@ -68,7 +68,7 @@ const DashboardLayout = () => {
         { path: '/my-courses', label: t('dashboard.menu.myCourses'), icon: PlayCircle },
         { path: '/olympiads', label: t('dashboard.menu.olympiads'), icon: Trophy },
         { path: '/results', label: t('dashboard.menu.results'), icon: Award },
-        { path: '/my-certificates', label: 'Sertifikatlarim', icon: FileCheck },
+        { path: '/my-certificates', label: t('dashboard.menu.certificates', { defaultValue: t('certificates') }), icon: FileCheck },
     ];
 
     const handleLogout = () => {

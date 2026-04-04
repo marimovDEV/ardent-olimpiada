@@ -7,11 +7,11 @@ const MobileBottomNav = () => {
     const { t } = useTranslation();
 
     const navItems = [
-        { path: "/dashboard", label: "Home", icon: LayoutGrid },
-        { path: "/courses", label: "Kurslar", icon: BookOpen },
-        { path: "/olympiads", label: "Olimpiada", icon: Trophy },
-        { path: "/results", label: "Reyting", icon: Award },
-        { path: "/profile", label: "Profil", icon: User },
+        { path: "/dashboard", label: t('dashboard.menu.home'), icon: LayoutGrid },
+        { path: "/courses", label: t('dashboard.menu.allCourses'), icon: BookOpen },
+        { path: "/olympiads", label: t('dashboard.menu.olympiads'), icon: Trophy },
+        { path: "/results", label: t('dashboard.menu.results'), icon: Award },
+        { path: "/profile", label: t('nav.profile', { defaultValue: "Profil" }), icon: User },
     ];
 
     return (

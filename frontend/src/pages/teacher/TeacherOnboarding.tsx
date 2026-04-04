@@ -24,9 +24,11 @@ import { toast } from "sonner";
 import axios from "axios";
 import { API_URL, getAuthHeader } from "@/services/api";
 import ImageCropper from "@/components/common/ImageCropper";
+import { useTranslation } from "react-i18next";
 
 const TeacherOnboarding = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,37 +50,37 @@ const TeacherOnboarding = () => {
     const [imageToCrop, setImageToCrop] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchProfile();
-    }, []);
+        const fetchProfile = async () => {
+            try {
+                const res = await axios.get(`${API_URL}/auth/me/`, { headers: getAuthHeader() });
+                const user = res.data.user;
+                setFormData({
+                    first_name: user.first_name || "",
+                    last_name: user.last_name || "",
+                    bio: user.teacher_profile?.bio || "",
+                    specialization: user.teacher_profile?.specialization || "",
+                    experience_years: user.teacher_profile?.experience_years || 0,
+                    telegram_username: user.teacher_profile?.telegram_username || "",
+                    instagram_username: user.teacher_profile?.instagram_username || "",
+                    youtube_channel: user.teacher_profile?.youtube_channel || "",
+                    linkedin_profile: user.teacher_profile?.linkedin_profile || ""
+                });
+                if (user.avatar_url) setAvatarPreview(user.avatar_url);
 
-    const fetchProfile = async () => {
-        try {
-            const res = await axios.get(`${API_URL}/auth/me/`, { headers: getAuthHeader() });
-            const user = res.data.user;
-            setFormData({
-                first_name: user.first_name || "",
-                last_name: user.last_name || "",
-                bio: user.teacher_profile?.bio || "",
-                specialization: user.teacher_profile?.specialization || "",
-                experience_years: user.teacher_profile?.experience_years || 0,
-                telegram_username: user.teacher_profile?.telegram_username || "",
-                instagram_username: user.teacher_profile?.instagram_username || "",
-                youtube_channel: user.teacher_profile?.youtube_channel || "",
-                linkedin_profile: user.teacher_profile?.linkedin_profile || ""
-            });
-            if (user.avatar_url) setAvatarPreview(user.avatar_url);
-
-            // If already verified or submission is pending (has bio), they shouldn't be here
-            if (user.teacher_profile?.verification_status === 'APPROVED' ||
-                (user.teacher_profile?.verification_status === 'PENDING' && user.teacher_profile?.bio)) {
-                navigate('/teacher/dashboard');
+                // If already verified or submission is pending (has bio), they shouldn't be here
+                if (user.teacher_profile?.verification_status === 'APPROVED' ||
+                    (user.teacher_profile?.verification_status === 'PENDING' && user.teacher_profile?.bio)) {
+                    navigate('/teacher/dashboard');
+                }
+            } catch (error) {
+                toast.error("Profilni yuklashda xatolik");
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            toast.error("Profilni yuklashda xatolik");
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
+
+        void fetchProfile();
+    }, [navigate]);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -159,8 +161,8 @@ const TeacherOnboarding = () => {
         <div className="min-h-screen bg-muted/40 py-12 px-4 flex items-center justify-center">
             <div className="w-full max-w-2xl">
                 <div className="text-center mb-10">
-                    <h1 className="text-4xl font-black text-foreground tracking-tight mb-3">Xush kelibsiz! 👋</h1>
-                    <p className="text-muted-foreground text-lg font-medium">Tizimda ishlashni boshlash uchun profilingizni to'ldiring.</p>
+                    <h1 className="text-4xl font-black text-foreground tracking-tight mb-3">{t('teacher.onboarding.welcome', { defaultValue: "Xush kelibsiz!" })} 👋</h1>
+                    <p className="text-muted-foreground text-lg font-medium">{t('teacher.onboarding.intro', { defaultValue: "Tizimda ishlashni boshlash uchun profilingizni to'ldiring." })}</p>
 
                     {/* Progress Bar */}
                     <div className="flex items-center justify-center gap-4 mt-8">

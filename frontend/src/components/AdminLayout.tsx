@@ -1,6 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { toast } from "sonner";
 import {
     LayoutDashboard,
     Users,
@@ -58,7 +57,9 @@ const AdminLayout = () => {
             const user = JSON.parse(userStr);
             isAdmin = user.role === 'ADMIN';
         }
-    } catch (e) { }
+    } catch (_error) {
+        isAdmin = false;
+    }
 
     if (!isAdmin) {
         return null; // Or a loader
@@ -77,7 +78,7 @@ const AdminLayout = () => {
         { icon: GraduationCap, label: t('admin.teachers.title'), path: "/admin/teachers" },
         { icon: BookOpen, label: t('admin.courses.title'), path: "/admin/courses" },
         { icon: Trophy, label: t('admin.olympiads.title'), path: "/admin/olympiads" },
-        { icon: Truck, label: 'Yetkazib berish', path: "/admin/delivery" },
+        { icon: Truck, label: t('admin.delivery', { defaultValue: "Yetkazib berish" }), path: "/admin/delivery" },
         { icon: DollarSign, label: t('admin.finance'), path: "/admin/finance" },
         { icon: PanelTop, label: t('admin.cms'), path: "/admin/cms" },
         { icon: Briefcase, label: t('admin.professions'), path: "/admin/professions" },

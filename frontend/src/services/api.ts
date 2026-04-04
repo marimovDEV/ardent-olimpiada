@@ -91,7 +91,7 @@ api.interceptors.response.use(
 
 export const getAuthHeader = () => {
     const token = localStorage.getItem('token');
-    const headers: any = {
+    const headers: Record<string, string> = {
         'Content-Type': 'application/json'
     };
     if (token) {

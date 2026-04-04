@@ -91,6 +91,11 @@ import GuidePage from "./pages/GuidePage";
 import PublicTeacherProfilePage from "./pages/PublicTeacherProfilePage";
 import PublicTeachersPage from "./pages/PublicTeachersPage";
 
+type HttpLikeError = {
+  response?: {
+    status?: number;
+  };
+};
 
 const queryClient = new QueryClient();
 
@@ -112,10 +117,11 @@ const App = () => {
           if (user) {
             localStorage.setItem('user', JSON.stringify(user));
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
+          const status = (error as HttpLikeError)?.response?.status;
           // Global Axios interceptor in api.ts handles 401/403 (logout/redirect)
           // We only log other errors here.
-          if (error.response?.status !== 401 && error.response?.status !== 403) {
+          if (status !== 401 && status !== 403) {
             console.error("Failed to sync language from profile:", error);
           }
         }

@@ -18,7 +18,7 @@ const API_BASE = API_URL;
 interface Course {
   id: number;
   title: string;
-  subject: any;
+  subject: string | number | { id?: number; name?: string; slug?: string };
   subject_name?: string;
   level: string;
   language: string;
@@ -41,6 +41,16 @@ interface Course {
     updated_at: string;
   };
 }
+
+type ApiError = {
+  response?: {
+    status?: number;
+    data?: {
+      detail?: string;
+      error?: string;
+    };
+  };
+};
 
 interface Lesson {
   id: number;
@@ -87,57 +97,57 @@ const CourseDetailPage = () => {
   const [showPayModal, setShowPayModal] = useState(false);
 
   useEffect(() => {
-    loadCourse();
-    loadUserBalance();
-  }, [id]);
-
-  const loadUserBalance = () => {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      if (user.balance !== undefined) {
-        setUserBalance(parseFloat(user.balance));
-      }
-    }
-  };
-
-  const loadCourse = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/courses/${id}/`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setCourse(data);
-        setIsEnrolled(data.is_enrolled);
-        loadModules();
-      } else {
-        navigate('/courses');
-      }
-    } catch (err) {
-      console.error('Error fetching course:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadModules = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/courses/${id}/modules/`);
-      if (res.ok) {
-        const data = await res.json();
-        const moduleList = Array.isArray(data) ? data : data.results || [];
-        setModules(moduleList);
-        if (moduleList.length > 0) {
-          setExpandedModules([moduleList[0].id]);
+    const loadUserBalance = () => {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (user.balance !== undefined) {
+          setUserBalance(parseFloat(user.balance));
         }
       }
-    } catch (err) {
-      console.error('Error fetching modules:', err);
-    }
-  };
+    };
+
+    const loadModules = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/courses/${id}/modules/`);
+        if (res.ok) {
+          const data = await res.json();
+          const moduleList = Array.isArray(data) ? data : data.results || [];
+          setModules(moduleList);
+          if (moduleList.length > 0) {
+            setExpandedModules([moduleList[0].id]);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching modules:', err);
+      }
+    };
+
+    const loadCourse = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_BASE}/courses/${id}/`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setCourse(data);
+          setIsEnrolled(data.is_enrolled);
+          await loadModules();
+        } else {
+          navigate('/courses');
+        }
+      } catch (err) {
+        console.error('Error fetching course:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadCourse();
+    loadUserBalance();
+  }, [id, navigate]);
 
   const handleEnroll = async () => {
     const token = localStorage.getItem('token');
@@ -159,7 +169,7 @@ const CourseDetailPage = () => {
     purchaseWithWallet(token);
   };
 
-  const enrollDirectly = async (token: string) => {
+  const enrollDirectly = async (_token: string) => {
     setIsPurchasing(true);
     try {
       const res = await api.post(`/courses/${id}/enroll/`);
@@ -169,15 +179,15 @@ const CourseDetailPage = () => {
         toast.success(t('dashboard.courseDetail.successEnroll'));
         setTimeout(() => navigate('/my-courses'), 1500);
       }
-    } catch (err: any) {
-      const errorData = err.response?.data;
+    } catch (err: unknown) {
+      const errorData = (err as ApiError).response?.data;
       toast.error(errorData?.detail || t('common.error'));
     } finally {
       setIsPurchasing(false);
     }
   };
 
-  const purchaseWithWallet = async (token: string) => {
+  const purchaseWithWallet = async (_token: string) => {
     if (!confirm(t('dashboard.courseDetail.confirmPurchase', { price: course?.price }))) return;
 
     setIsPurchasing(true);
@@ -201,11 +211,12 @@ const CourseDetailPage = () => {
       } else {
         toast.error(res.data.error || t('dashboard.courseDetail.errorPurchase'));
       }
-    } catch (err: any) {
-      const errorData = err.response?.data;
+    } catch (err: unknown) {
+      const apiError = err as ApiError;
+      const errorData = apiError.response?.data;
       // If it's a 401/403, the interceptor will handle the logout.
       // We only handle other errors here.
-      if (err.response?.status !== 401 && err.response?.status !== 403) {
+      if (apiError.response?.status !== 401 && apiError.response?.status !== 403) {
         toast.error(errorData?.error || t('common.serverError'));
       }
     } finally {
@@ -251,23 +262,23 @@ const CourseDetailPage = () => {
       {/* Teacher Management Bar (If applicable) */}
       {userRole === 'TEACHER' && (
         <div className="max-w-7xl mx-auto w-full px-6 mb-4 flex items-center justify-between bg-card p-4 rounded-2xl border border-border shadow-sm">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-bold text-primary flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              Boshqaruv:
-            </span>
-          </div>
-          <div className="flex gap-2">
+            <div className="flex items-center gap-4">
+              <span className="text-sm font-bold text-primary flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                {t('common.management', { defaultValue: "Boshqaruv" })}:
+              </span>
+            </div>
+            <div className="flex gap-2">
             <Link to={`/teacher/courses/${id}/edit`}>
               <Button variant="outline" size="sm" className="h-9 gap-2 rounded-xl">
                 <Settings className="w-4 h-4" />
-                Dasturni tahrirlash
+                {t('teacher.courses.editCourse', { defaultValue: "Dasturni tahrirlash" })}
               </Button>
             </Link>
             <Link to="/teacher/students">
               <Button variant="outline" size="sm" className="h-9 gap-2 rounded-xl">
                 <Users className="w-4 h-4" />
-                O'quvchilar
+                {t('teacher.dashboard.stats.students', { defaultValue: "O'quvchilar" })}
               </Button>
             </Link>
           </div>
