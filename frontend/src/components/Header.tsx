@@ -86,7 +86,7 @@ const Header = () => {
               <div className="absolute inset-0 bg-primary/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <span className="text-xl md:text-2xl font-black font-cinzel tracking-wider text-primary">
-              HOGWARTS
+              HOGWORDS
             </span>
           </a>
 
@@ -197,7 +197,7 @@ const Header = () => {
                       <SheetTitle className="text-left">
                         <div className="flex items-center gap-2">
                           <img src="/logo.jpg" alt="Logo" className="w-8 h-8 object-contain" />
-                          <span className="text-xl font-black font-cinzel tracking-wider text-primary">HOGWARTS</span>
+                          <span className="text-xl font-black font-cinzel tracking-wider text-primary">HOGWORDS</span>
                         </div>
                       </SheetTitle>
                     </SheetHeader>

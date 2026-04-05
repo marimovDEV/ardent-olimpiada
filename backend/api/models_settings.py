@@ -5,7 +5,7 @@ from django.db import models
 class PlatformSettings(models.Model):
     """Comprehensive Platform Settings"""
     # Basic Info
-    platform_name = models.CharField(max_length=255, default='Ardent')
+    platform_name = models.CharField(max_length=255, default='Hogwords')
     support_email = models.EmailField(default='support@ardent.uz')
     currency = models.CharField(max_length=3, default='UZS')
     default_language = models.CharField(max_length=2, choices=[('uz', 'Uzbek'), ('ru', 'Russian')], default='uz')

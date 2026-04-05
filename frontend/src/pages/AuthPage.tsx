@@ -403,7 +403,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
                 <img src="/logo.jpg" alt="Logo" className="w-10 h-10 object-contain rounded-lg shadow-gold" />
               </div>
               <h1 className="text-4xl font-black font-cinzel tracking-widest text-[#FFD700]">
-                HOGWARTS
+                HOGWORDS
               </h1>
               <p className="text-sm font-medium italic text-muted-foreground/80 tracking-widest uppercase font-cinzel">
                 Magic of Knowledge
@@ -929,7 +929,7 @@ const AuthPage = ({ mode }: AuthPageProps) => {
 
           <div className="mt-8 pt-6 border-t border-white/5 text-center">
             <p className="text-xs text-muted-foreground/50 font-medium">
-              &copy; {new Date().getFullYear()} Hogwarts Olimpiada. {t('auth.footer.rights')} <br />
+              &copy; {new Date().getFullYear()} Hogwords Olimpiada. {t('auth.footer.rights')} <br />
               {t('auth.footer.secure')}
             </p>
           </div>

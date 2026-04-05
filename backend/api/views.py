@@ -4530,10 +4530,10 @@ def telegram_webhook(request):
                 if user:
                     show_main_menu(chat_id, f"Qaytganingizdan xursandmiz, <b>{user.first_name}</b>!")
                 else:
-                    welcome_text = "👋 <b>Ardent Olimpiada botiga xush kelibsiz!</b>\n\nHisobingizni bog'lash uchun platformadagi profilingizdan foydalaning."
+                    welcome_text = "👋 <b>Hogwords Olimpiada botiga xush kelibsiz!</b>\n\nHisobingizni bog'lash uchun platformadagi profilingizdan foydalaning."
                     reply_markup = {
                         "inline_keyboard": [[
-                            {"text": "🚀 Platformada ro'yxatdan o'tish", "url": "https://ardent.uz/auth"}
+                            {"text": "🚀 Platformada ro'yxatdan o'tish", "url": "https://hogwords.uz/auth"}
                         ]]
                     }
                     BotService.send_message(chat_id, welcome_text, reply_markup=reply_markup)
@@ -5234,7 +5234,7 @@ class HomePageViewSet(viewsets.ViewSet):
                 'id': m.id,
                 'name': m.get_full_name() or m.username,
                 'position': pos,
-                'company': "Hogwarts Mentor", # Branding updated
+                'company': "Hogwords Mentor", # Branding updated
                 'experience': exp,
                 'students_count': students,
                 'bio_uz': bio,
@@ -5264,7 +5264,7 @@ class HomePageViewSet(viewsets.ViewSet):
             'id': mentor.id,
             'name': mentor.get_full_name() or mentor.username,
             'position': pos,
-            'company': "Hogwarts Mentor",
+            'company': "Hogwords Mentor",
             'experience': exp,
             'students_count': students,
             'bio_uz': bio,
@@ -6124,7 +6124,7 @@ class AdminDashboardViewSet(viewsets.ViewSet):
 
 class AIAssistantFAQViewSet(viewsets.ModelViewSet):
     """
-    ViewSet for Ardent AI (Smart FAQ Assistant)
+    ViewSet for Hogwords AI (Smart FAQ Assistant)
     """
     queryset = AIAssistantFAQ.objects.all()
     serializer_class = AIAssistantFAQSerializer

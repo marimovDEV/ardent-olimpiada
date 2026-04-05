@@ -55,7 +55,7 @@ const PrivacyPage = () => {
 
                         <section>
                             <h2 className="text-2xl mb-4">4. Uchinchi tomonga ma'lumot taqdim etish</h2>
-                            <p>Hogwarts platformasi foydalanuvchilarning shaxsiy ma'lumotlarini qonunchilikda belgilangan hollar (masalan, sud qarori) dan tashqari, <strong>hech qanday uchinchi marketing agentliklariga sotmaydi</strong> va ularga fosh etmaydi. Faqat to'lovlarni amalga oshirishda uz/ru to'lov protokollari qoidalariga rioya qilinadi.</p>
+                            <p>Hogwords platformasi foydalanuvchilarning shaxsiy ma'lumotlarini qonunchilikda belgilangan hollar (masalan, sud qarori) dan tashqari, <strong>hech qanday uchinchi marketing agentliklariga sotmaydi</strong> va ularga fosh etmaydi. Faqat to'lovlarni amalga oshirishda uz/ru to'lov protokollari qoidalariga rioya qilinadi.</p>
                         </section>
 
                         <section>

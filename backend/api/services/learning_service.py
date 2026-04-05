@@ -272,7 +272,7 @@ class LearningService:
             from api.services.profession_service import ProfessionService
             ProfessionService.update_all_active_professions(user)
             
-            # 🚀 HOGWARTS CAREER ENGINE HOOK: Auto-complete Course Nodes
+            # 🚀 HOGWORDS CAREER ENGINE HOOK: Auto-complete Course Nodes
             try:
                 from api.models import ProfessionNode, UserProfessionState
                 from api.services.career_engine_service import CareerEngineService

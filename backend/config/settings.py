@@ -150,8 +150,8 @@ REST_FRAMEWORK = {
 
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Ardent Olimpiada API',
-    'DESCRIPTION': 'API documentation for Ardent Olimpiada platform',
+    'TITLE': 'Hogwords Olimpiada API',
+    'DESCRIPTION': 'API documentation for Hogwords Olimpiada platform',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
@@ -170,7 +170,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apiexample@gmail.com'
 EMAIL_HOST_PASSWORD = 'password'
-DEFAULT_FROM_EMAIL = 'Ardent Olimpiada <noreply@ardent.uz>'
+DEFAULT_FROM_EMAIL = 'Hogwords Olimpiada <noreply@ardent.uz>'
 
 
 # Wallet System Settings

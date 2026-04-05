@@ -580,7 +580,7 @@ const CourseContentManager = ({ courseId, onClose }: CourseContentManagerProps) 
                                             <FileText className="w-10 h-10 text-primary" />
                                         </div>
                                         <h4 className="font-black text-foreground mb-2">Standard Template</h4>
-                                        <p className="text-xs text-muted-foreground font-bold mb-6">Ardent Academy Professional Certificate Design</p>
+                                        <p className="text-xs text-muted-foreground font-bold mb-6">Hogwords Academy Professional Certificate Design</p>
                                         <Button variant="outline" className="rounded-2xl h-12 px-8 font-black border-primary/20 text-primary hover:bg-primary/5">
                                             Preview Template
                                         </Button>

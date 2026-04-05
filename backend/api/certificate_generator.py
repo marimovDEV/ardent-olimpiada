@@ -285,7 +285,7 @@ class CertificateGenerator:
         c.setFont("Helvetica-Bold", 12)
         c.drawCentredString(left_x, sig_y - 20, "Direktor")
         c.setFont("Helvetica", 10)
-        c.drawCentredString(left_x, sig_y - 35, "Ardent Olimpiada")
+        c.drawCentredString(left_x, sig_y - 35, "Hogwords Olimpiada")
         
         # Right (Verifier)
         right_x = self.PAGE_WIDTH - 220 # Moved away from QR and center box

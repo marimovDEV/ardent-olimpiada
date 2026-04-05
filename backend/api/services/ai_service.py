@@ -137,12 +137,12 @@ class AIService:
         if language == 'uz':
             responses = [
                 f"{context_hint}Hozircha o'rganish jarayonidaman, lekin sizga yordam berishga harakat qilaman. Savolingizni operatorimizga yo'naltirishim mumkin.",
-                f"{context_hint}Kechirasiz, bunga aniq javob topa olmadim. Ardent platformasi haqida savollaringiz bo'lsa, yordam berishim mumkin.",
+                f"{context_hint}Kechirasiz, bunga aniq javob topa olmadim. Hogwords platformasi haqida savollaringiz bo'lsa, yordam berishim mumkin.",
             ]
         else:
             responses = [
                 f"{context_hint}Я пока учусь, но постараюсь вам помочь. Могу перенаправить ваш вопрос оператору.",
-                f"{context_hint}Извините, я не нашел точного ответа. Если у вас есть вопросы о платформе Ardent, я готов помочь.",
+                f"{context_hint}Извините, я не нашел точного ответа. Если у вас есть вопросы о платформе Hogwords, я готов помочь.",
             ]
             
         return random.choice(responses)

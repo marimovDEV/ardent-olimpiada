@@ -13,7 +13,7 @@
     "cta_olympiad": "Olimpiadada qatnashish",
     "cta_courses": "Tayyorgarlikni boshlash",
     "prestige": {
-      "title": "HOGWARTS PRESTIGE",
+      "title": "HOGWORDS PRESTIGE",
       "subtitle": "ELITE MEMBER",
       "feature_certs": "Nufuzli sertifikatlar",
       "feature_olympiads": "Yopiq olimpiadalar",
@@ -22,7 +22,7 @@
       "wins": "G'alaba",
       "xp": "XP"
     },
-    "prestige_badge": "HOGWARTS PRESTIGE",
+    "prestige_badge": "HOGWORDS PRESTIGE",
     "elite_member": "ELITE MEMBER",
     "certificates": "Sertifikatlar",
     "student": "Talaba"
@@ -294,7 +294,7 @@
       "secure": "Xavfsiz ro'yxatdan o'tish"
     },
     "rightSide": {
-      "title": "Hogwarts-ga xush kelibsiz",
+      "title": "Hogwords-ga xush kelibsiz",
       "subtitle": "Bilim va g'alaba sari yo'lingiz shu yerdan boshlanadi",
       "badge": "№1 Ta'lim platformasi",
       "loginTitle": "Xush kelibsiz!",
@@ -970,7 +970,7 @@
     },
     "ai": {
       "title": "AI Yordamchi",
-      "controlCenter": "Hogwarts AI Boshqaruv Markazi",
+      "controlCenter": "Hogwords AI Boshqaruv Markazi",
       "analyticsSubtitle": "Analitika, FAQ boshqaruvi va AI sinov maydoni",
       "newKnowledge": "Yangi bilim",
       "knowledgeBase": "Bilimlar Bazasi",
@@ -1345,9 +1345,9 @@
     "olympiadsCount": "Olimpiadalar soni"
   },
   "aiChat": {
-    "title": "Hogwarts AI",
+    "title": "Hogwords AI",
     "status": "Online • Yordamchi",
-    "greeting": "Assalomu alaykum! Men Hogwarts AI yordamchiman. Sizga qanday yordam bera olaman?",
+    "greeting": "Assalomu alaykum! Men Hogwords AI yordamchiman. Sizga qanday yordam bera olaman?",
     "quickQuestions": "Tezkor savollar:",
     "placeholder": "Savolingizni yozing...",
     "suggestions": {
@@ -2101,7 +2101,7 @@
       "qr_title": "QR-kodli Sertifikatlar",
       "qr_desc": "Yutuqlarni soxtalashtirib bo'lmaydi. Istalgan vaqtda QR-kod orqali tekshirish imkoniyati."
     },
-    "whyUs": "Nega aynan Hogwarts Olimpiada?",
+    "whyUs": "Nega aynan Hogwords Olimpiada?",
     "subtitle": "Bizning maqsadimiz - O'zbekiston yoshlarini xalqaro darajadagi bilim bilan ta'minlash.",
     "problem": {
       "badge": "Muammo",
@@ -2125,12 +2125,12 @@
   "guide": {
     "hero": {
       "badge": "Platforma Qo'llanmasi",
-      "title": "Hogwarts platformasidan qanday foydalaniladi?",
+      "title": "Hogwords platformasidan qanday foydalaniladi?",
       "subtitle": "2–3 daqiqada platformani to‘liq tushunib oling va o‘qishni boshlang 🎓"
     },
     "platform": {
-      "title": "Hogwarts nima?",
-      "description": "Hogwarts - bu zamonaviy ta'lim platformasi. Bu yerda siz professional kurslarni o'rganishingiz, olimpiadalarda qatnashishingiz va o'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.",
+      "title": "Hogwords nima?",
+      "description": "Hogwords - bu zamonaviy ta'lim platformasi. Bu yerda siz professional kurslarni o'rganishingiz, olimpiadalarda qatnashishingiz va o'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.",
       "courses": "Kurslar",
       "coursesDesc": "Professional ustozlardan video darslar, amaliy mashg'ulotlar va testlar",
       "olympiads": "Olimpiadalar",
@@ -2262,7 +2262,7 @@
       "email": "Email yuborish"
     },
     "nav": {
-      "overview": "Hogwarts nima?",
+      "overview": "Hogwords nima?",
       "gettingStarted": "Boshlash",
       "courses": "Kurslar",
       "olympiads": "Olimpiadalar",
@@ -2278,7 +2278,7 @@
     }
   },
   "auth_guide": {
-    "title": "Hogwarts — Bilim va Olimpiadalar Platformasi",
+    "title": "Hogwords — Bilim va Olimpiadalar Platformasi",
     "subtitle": "Qanday ishlaydi? Juda oddiy 👇",
     "step1": "Kiring yoki ro‘yxatdan o‘ting",
     "step2": "Kurs yoki olimpiadani tanlang",

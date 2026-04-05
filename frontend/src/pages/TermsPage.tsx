@@ -30,7 +30,7 @@ const TermsPage = () => {
 
                         <section>
                             <h2 className="text-2xl mt-0 mb-4">1. Umumiy qoidalar</h2>
-                            <p>Ushbu Foydalanish shartlari ("Shartlar") Hogwarts platformasida ("Platforma") ro'yxatdan o'tgan barcha foydalanuvchilar o'rtasidagi munosabatlarni tartibga soladi. Platformaga kirish yoki undan foydalanish orqali siz ushbu shartlarga rozi ekanligingizni tasdiqlaysiz.</p>
+                            <p>Ushbu Foydalanish shartlari ("Shartlar") Hogwords platformasida ("Platforma") ro'yxatdan o'tgan barcha foydalanuvchilar o'rtasidagi munosabatlarni tartibga soladi. Platformaga kirish yoki undan foydalanish orqali siz ushbu shartlarga rozi ekanligingizni tasdiqlaysiz.</p>
                         </section>
 
                         <section>

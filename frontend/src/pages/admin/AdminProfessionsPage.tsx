@@ -309,7 +309,7 @@ const AdminProfessionsPage = () => {
                                 <div className="p-6 bg-slate-900 text-white rounded-[2rem] shadow-xl">
                                     <div className="flex items-center gap-3 mb-4">
                                         <Map className="w-6 h-6 text-primary" />
-                                        <h3 className="text-xl font-black">Hogwarts Karyera Tizimi</h3>
+                                        <h3 className="text-xl font-black">Hogwords Karyera Tizimi</h3>
                                     </div>
                                     <p className="text-slate-400 text-sm mb-4">
                                         Kasb bosqichlari, vazifalar va XP iqtisodiyotini boshqarish uchun Karyera Quruvchi sahifasiga o'ting.

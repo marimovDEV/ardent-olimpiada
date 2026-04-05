@@ -10,11 +10,11 @@ from api.models import (
 platform_settings, created = PlatformSettings.objects.get_or_create(
     id=1,
     defaults={
-        'platform_name': 'Ardent',
+        'platform_name': 'Hogwords',
         'support_email': 'support@ardent.uz',
         'currency': 'UZS',
         'default_language': 'uz',
-        'platform_description': 'Ardent - O\'zbekistondagi eng yaxshi ta\'lim platformasi',
+        'platform_description': 'Hogwords - O\'zbekistondagi eng yaxshi ta\'lim platformasi',
         'contact_phone': '+998 90 123 45 67',
         'contact_address': 'Toshkent, O\'zbekiston',
         'telegram_url': 'https://t.me/ardent_uz',

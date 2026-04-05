@@ -43,10 +43,10 @@ const PlatformOverview = () => {
                     className="text-center mb-12"
                 >
                     <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                        {t('guide.platform.title', 'Ardent nima?')}
+                        {t('guide.platform.title', 'Hogwords nima?')}
                     </h2>
                     <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
-                        {t('guide.platform.description', 'Ardent - bu zamonaviy ta\'lim platformasi. Bu yerda siz professional kurslarni o\'rganishingiz, olimpiadalarda qatnashishingiz va o\'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.')}
+                        {t('guide.platform.description', 'Hogwords - bu zamonaviy ta\'lim platformasi. Bu yerda siz professional kurslarni o\'rganishingiz, olimpiadalarda qatnashishingiz va o\'z bilimingizni sertifikatlar bilan tasdiqlay olasiz.')}
                     </p>
                 </motion.div>
 

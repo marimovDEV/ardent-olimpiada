@@ -734,7 +734,7 @@ class OlympiadPrize(models.Model):
     """Prizes for Olympiad Winners"""
     PRIZE_TYPES = [
         ('PHYSICAL', 'Fizik sovrin (Medal, Kitob...)'),
-        ('COIN', 'Ardent Coin'),
+        ('COIN', 'Hogwords Coin'),
         ('XP', 'Tajriba balli (XP)'),
     ]
     

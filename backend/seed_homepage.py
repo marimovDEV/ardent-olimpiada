@@ -50,8 +50,8 @@ def seed_homepage():
         name='Madina Karimova',
         defaults={
             'profession': 'O\'quvchi',
-            'text_uz': 'Ardent Olimpiada bilan o\'z bilimimni sezilarli darajada oshirdim.',
-            'text_ru': 'С Ardent Olimpiada я значительно улучшила свои знания.',
+            'text_uz': 'Hogwords Olimpiada bilan o\'z bilimimni sezilarli darajada oshirdim.',
+            'text_ru': 'С Hogwords Olimpiada я значительно улучшила свои знания.',
             'rating': 5
         }
     )

@@ -103,7 +103,7 @@ const DashboardLayout = () => {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-xl font-black font-cinzel text-white tracking-tighter group-hover:text-primary transition-colors leading-none">HOGWARTS</span>
+                            <span className="text-xl font-black font-cinzel text-white tracking-tighter group-hover:text-primary transition-colors leading-none">HOGWORDS</span>
                             <span className="text-[10px] font-bold text-[#FACC15] uppercase tracking-[0.2em] mt-1">Academy</span>
                         </div>
                     </Link>

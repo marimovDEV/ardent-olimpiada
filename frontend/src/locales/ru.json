@@ -205,7 +205,7 @@
     "cta_olympiad": "Участвовать в олимпиаде",
     "cta_courses": "Начать подготовку",
     "prestige": {
-      "title": "HOGWARTS PRESTIGE",
+      "title": "HOGWORDS PRESTIGE",
       "subtitle": "ELITE MEMBER",
       "feature_certs": "Престижные сертификаты",
       "feature_olympiads": "Закрытые олимпиады",
@@ -214,7 +214,7 @@
       "wins": "Побед",
       "xp": "XP"
     },
-    "prestige_badge": "HOGWARTS PRESTIGE",
+    "prestige_badge": "HOGWORDS PRESTIGE",
     "elite_member": "ELITE MEMBER",
     "certificates": "Сертификаты",
     "student": "Студент / Выпускник"
@@ -318,7 +318,7 @@
       "secure": "Безопасная регистрация"
     },
     "rightSide": {
-      "title": "Добро пожаловать в Hogwarts",
+      "title": "Добро пожаловать в Hogwords",
       "subtitle": "Ваш путь к знаниям и победам начинается здесь",
       "badge": "Образовательная платформа №1",
       "loginTitle": "С возвращением!",
@@ -1020,7 +1020,7 @@
     },
     "ai": {
       "title": "AI Помощник",
-      "controlCenter": "Центр управления Hogwarts AI",
+      "controlCenter": "Центр управления Hogwords AI",
       "analyticsSubtitle": "Аналитика, управление FAQ и тестовая зона AI",
       "newKnowledge": "Новое знание",
       "knowledgeBase": "База знаний",
@@ -1381,9 +1381,9 @@
     "course": "Курс"
   },
   "aiChat": {
-    "title": "Hogwarts AI",
+    "title": "Hogwords AI",
     "status": "Онлайн • Помощник",
-    "greeting": "Здравствуйте! Я помощник Hogwarts AI. Чем могу вам помочь?",
+    "greeting": "Здравствуйте! Я помощник Hogwords AI. Чем могу вам помочь?",
     "quickQuestions": "Быстрые вопросы:",
     "placeholder": "Напишите ваш вопрос...",
     "suggestions": {
@@ -2102,7 +2102,7 @@
       "qr_title": "Сертификаты с QR-кодом",
       "qr_desc": "Достижения невозможно подделать. Проверка через QR-код в любое время."
     },
-    "whyUs": "Почему именно Hogwarts Olimpiada?",
+    "whyUs": "Почему именно Hogwords Olimpiada?",
     "subtitle": "Наша цель - предоставить молодежи Узбекистана знания международного уровня.",
     "problem": {
       "badge": "Проблема",
@@ -2126,12 +2126,12 @@
   "guide": {
     "hero": {
       "badge": "Руководство платформы",
-      "title": "Как пользоваться платформой Hogwarts?",
+      "title": "Как пользоваться платформой Hogwords?",
       "subtitle": "Поймите платформу за 2–3 минуты и начните обучение 🎓"
     },
     "platform": {
-      "title": "Что такое Hogwarts?",
-      "description": "Hogwarts - это современная образовательная платформа. Здесь вы можете изучать профессиональные курсы, участвовать в олимпиадах и подтверждать свои знания сертификатами.",
+      "title": "Что такое Hogwords?",
+      "description": "Hogwords - это современная образовательная платформа. Здесь вы можете изучать профессиональные курсы, участвовать в олимпиадах и подтверждать свои знания сертификатами.",
       "courses": "Курсы",
       "coursesDesc": "Видеоуроки, практические занятия и тесты от профессиональных учителей",
       "olympiads": "Олимпиады",
@@ -2263,7 +2263,7 @@
       "email": "Отправить Email"
     },
     "nav": {
-      "overview": "Что такое Hogwarts?",
+      "overview": "Что такое Hogwords?",
       "gettingStarted": "Начало",
       "courses": "Курсы",
       "olympiads": "Олимпиады",
@@ -2279,7 +2279,7 @@
     }
   },
   "auth_guide": {
-    "title": "Hogwarts — Платформа Знаний и Олимпиад",
+    "title": "Hogwords — Платформа Знаний и Олимпиад",
     "subtitle": "Как это работает? Очень просто 👇",
     "step1": "Войдите или зарегистрируйтесь",
     "step2": "Выберите курс или олимпиаду",

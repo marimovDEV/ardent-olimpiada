@@ -37,7 +37,7 @@ class PlatformSettingsViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         # Ensure at least one settings object exists
         if not PlatformSettings.objects.exists():
-            PlatformSettings.objects.create(platform_name="Ardent Olimpiada")
+            PlatformSettings.objects.create(platform_name="Hogwords Olimpiada")
             
         return super().list(request, *args, **kwargs)
     
@@ -110,8 +110,8 @@ class NotificationSettingsViewSet(viewsets.ModelViewSet):
             
             # Send test email
             send_mail(
-                subject='Ardent Platform - Test Email',
-                message='This is a test email from Ardent Platform. Your SMTP configuration is working correctly!',
+                subject='Hogwords Platform - Test Email',
+                message='This is a test email from Hogwords Platform. Your SMTP configuration is working correctly!',
                 from_email=settings_obj.smtp_username,
                 recipient_list=[test_email],
                 fail_silently=False,

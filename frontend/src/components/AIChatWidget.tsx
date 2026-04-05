@@ -242,7 +242,7 @@ const AIChatWidget = () => {
                                             <Send className="w-5 h-5" />
                                         </Button>
                                     </form>
-                                    <p className="text-center text-[9px] text-secondary/40 mt-4 uppercase tracking-[0.2em] font-black">Powered by Ardent AI</p>
+                                    <p className="text-center text-[9px] text-secondary/40 mt-4 uppercase tracking-[0.2em] font-black">Powered by Hogwords AI</p>
                                 </div>
                             </Card>
                         </motion.div>

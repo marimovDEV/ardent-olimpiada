@@ -242,7 +242,7 @@ const Step5Rewards = ({ data, update, olympiadId }: { data: any, update: (d: any
                                     onChange={(e: any) => setPrizeForm({ ...prizeForm, prize_type: e.target.value })}
                                 >
                                     <option value="PHYSICAL">Fizik (Medal, Kitob...)</option>
-                                    <option value="COIN">Ardent Coin</option>
+                                    <option value="COIN">Hogwords Coin</option>
                                     <option value="XP">Tajriba (XP)</option>
                                 </select>
                             </div>

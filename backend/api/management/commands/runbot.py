@@ -34,7 +34,7 @@ class Command(BaseCommand):
     user_states = {}
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('🚀 Starting Ardent Olimpiada Interactive Bot...'))
+        self.stdout.write(self.style.SUCCESS('🚀 Starting Hogwords Olimpiada Interactive Bot...'))
         
         # 1. Load Configuration
         config = BotConfig.objects.filter(is_active=True).first()
@@ -255,7 +255,7 @@ class Command(BaseCommand):
             else:
                 welcome_text = (
                     "👋 <b>Assalomu alaykum!</b>\n\n"
-                    "Bu <b>Ardent Olimpiada</b> rasmiy boti.\n"
+                    "Bu <b>Hogwords Olimpiada</b> rasmiy boti.\n"
                     "Hisobingizga kirish uchun telefon raqamingizni yuboring:"
                 )
                 
