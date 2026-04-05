@@ -45,36 +45,54 @@ interface Participant {
     prize_item?: string;
 }
 
-const mockLeaderboard: Record<string, any> = {
-    "1": {
-        title: "Matematika Respublika Olimpiadasi 2024",
-        subject: "Matematika",
-        date: "2024-03-15",
-        participantsCount: 1248,
-        avgScore: 78,
-        participants: [
-            { id: 1, rank: 1, name: "Azizbek Toxirov", region: "Toshkent", score: 96, max_score: 100, time: "42m" },
-            { id: 2, rank: 2, name: "Malika Karimova", region: "Samarqand", score: 93, max_score: 100, time: "45m" },
-            { id: 3, rank: 3, name: "Javohir Aliyev", region: "Buxoro", score: 91, max_score: 100, time: "48m" },
-            { id: 4, rank: 4, name: "Nodira Rahimova", region: "Farg'ona", score: 89, max_score: 100, time: "50m" },
-            { id: 5, rank: 5, name: "Bekzod Nazarov", region: "Andijon", score: 87, max_score: 100, time: "52m" },
-            { id: 6, rank: 6, name: "Sitora Islomova", region: "Namangan", score: 85, max_score: 100, time: "55m" },
-            { id: 7, rank: 7, name: "Rustam Ahmedov", region: "Xorazm", score: 84, max_score: 100, time: "58m" },
-        ]
-    },
-    "2": {
-        title: "Fizika Challenge 2024",
-        subject: "Fizika",
-        date: "2024-04-20",
-        participantsCount: 856,
-        avgScore: 65,
-        participants: [
-            { id: 1, rank: 1, name: "Sardor Umarov", region: "Xorazm", score: 94, max_score: 100, time: "55m" },
-            { id: 2, rank: 2, name: "Dilnoza Saidova", region: "Navoiy", score: 91, max_score: 100, time: "58m" },
-            { id: 3, rank: 3, name: "Temur Qodirov", region: "Qashqadaryo", score: 88, max_score: 100, time: "60m" },
-        ]
-    }
-};
+interface LeaderboardMyResult {
+    rank: number;
+    score: number;
+    time: string;
+}
+
+interface LeaderboardApiResult {
+    rank: number;
+    score: number;
+    time_taken: number;
+}
+
+interface LeaderboardApiParticipant {
+    rank: number;
+    student?: string;
+    region?: string;
+    score: number;
+    time_taken: number;
+    prize_status?: string;
+    prize_item?: string;
+}
+
+interface LeaderboardApiResponse {
+    success?: boolean;
+    status: string;
+    title: string;
+    subject: string;
+    date: string;
+    participants_count: number;
+    avg_score: number;
+    best_time: number;
+    regions_count: number;
+    my_result?: LeaderboardApiResult | null;
+    leaderboard?: LeaderboardApiParticipant[];
+}
+
+interface LeaderboardData {
+    status: string;
+    title: string;
+    subject: string;
+    date: string;
+    participantsCount: number;
+    avgScore: number;
+    bestTime: string;
+    regionsCount: number;
+    myResult: LeaderboardMyResult | null;
+    participants: Participant[];
+}
 
 const PrizeStatusBadge = ({ status }: { status?: string }) => {
     const { t } = useTranslation();
@@ -126,7 +144,7 @@ const getMedalStyles = (rank: number) => {
 const OlympiadLeaderboardPage = () => {
     const { id } = useParams();
     const { t, i18n } = useTranslation();
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<LeaderboardData | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedRegion, setSelectedRegion] = useState("all");
     const [timeLeft, setTimeLeft] = useState<string>("");
@@ -167,10 +185,10 @@ const OlympiadLeaderboardPage = () => {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
-                    const jsonData = await res.json();
+                    const jsonData = await res.json() as LeaderboardApiResponse;
                     if (jsonData.success) {
                         // Adapt API data to UI structure
-                        const adaptedData = {
+                        const adaptedData: LeaderboardData = {
                             status: jsonData.status,
                             title: jsonData.title,
                             subject: jsonData.subject,
@@ -183,7 +201,7 @@ const OlympiadLeaderboardPage = () => {
                                 ...jsonData.my_result,
                                 time: formatTime(jsonData.my_result.time_taken)
                             } : null,
-                            participants: (jsonData.leaderboard || []).map((p: any) => ({
+                            participants: (jsonData.leaderboard || []).map((p) => ({
                                 id: p.rank,
                                 rank: p.rank,
                                 name: p.student || 'Ishtirokchi',
@@ -227,9 +245,9 @@ const OlympiadLeaderboardPage = () => {
     const participants = data?.participants || [];
 
     // Get unique regions for the filter
-    const uniqueRegions = Array.from(new Set(participants.map((p: any) => p.region))).sort() as string[];
+    const uniqueRegions = Array.from(new Set(participants.map((p) => p.region))).sort() as string[];
 
-    const filteredParticipants = participants.filter((p: any) => {
+    const filteredParticipants = participants.filter((p) => {
         const name = p?.name || "";
         const region = p?.region || "";
         const search = (searchQuery || "").toLowerCase();
@@ -502,7 +520,7 @@ const OlympiadLeaderboardPage = () => {
                                     </thead>
                                     <tbody className="divide-y divide-border">
                                         {otherParticipants.length > 0 ? (
-                                            otherParticipants.map((p: any) => (
+                                            otherParticipants.map((p) => (
                                                 <tr key={p.id} className="hover:bg-muted/50 transition-colors group">
                                                     <td className="px-8 py-5">
                                                         <span className="font-black text-muted-foreground text-sm group-hover:text-foreground transition-colors">#{p.rank}</span>
@@ -571,7 +589,7 @@ const OlympiadLeaderboardPage = () => {
     );
 };
 
-const WinnerCard = ({ participant, rank, isFeatured = false }: { participant: any; rank: number; isFeatured?: boolean }) => {
+const WinnerCard = ({ participant, rank, isFeatured = false }: { participant: Participant; rank: number; isFeatured?: boolean }) => {
     const medal = getMedalStyles(rank);
     const { t } = useTranslation();
     if (!medal) return null;

@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +24,23 @@ interface Question {
     code_template?: string;
 }
 
+interface OlympiadQuestionSettings {
+    is_random?: boolean;
+    time_limit_per_question?: number;
+}
+
+const getQuestionErrorMessage = (error: unknown, fallback: string) => {
+    if (axios.isAxiosError(error)) {
+        const data = error.response?.data;
+        if (typeof data === "object" && data !== null) {
+            const record = data as Record<string, unknown>;
+            if (typeof record.error === "string") return record.error;
+            if (typeof record.detail === "string") return record.detail;
+        }
+    }
+    return fallback;
+};
+
 const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: boolean }) => {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [loading, setLoading] = useState(false);
@@ -45,43 +61,38 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
         code_template: ""
     });
 
-    useEffect(() => {
-        if (olympiadId) fetchQuestions();
-    }, [olympiadId]);
+    const [olympiadSettings, setOlympiadSettings] = useState<OlympiadQuestionSettings | null>(null);
 
-    const [olympiadSettings, setOlympiadSettings] = useState<any>(null);
-
-    useEffect(() => {
-        if (olympiadId) {
-            fetchQuestions();
-            fetchOlympiadSettings();
-        }
-    }, [olympiadId]);
-
-    const fetchOlympiadSettings = async () => {
+    const fetchOlympiadSettings = useCallback(async () => {
         try {
-            const res = await axios.get(`${API_URL}/olympiads/${olympiadId}/`, { headers: getAuthHeader() });
+            const res = await axios.get<OlympiadQuestionSettings>(`${API_URL}/olympiads/${olympiadId}/`, { headers: getAuthHeader() });
             setOlympiadSettings(res.data);
         } catch (error) {
             console.error("Failed to fetch settings");
         }
-    };
+    }, [olympiadId]);
 
-    const fetchQuestions = async () => {
+    const fetchQuestions = useCallback(async () => {
         setLoading(true);
         try {
             // Use dedicated admin endpoint to fetch questions
-            const res = await axios.get(`${API_URL}/olympiads/${olympiadId}/get_questions/`, { headers: getAuthHeader() });
+            const res = await axios.get<Question[]>(`${API_URL}/olympiads/${olympiadId}/get_questions/`, { headers: getAuthHeader() });
 
             if (Array.isArray(res.data)) {
-                setQuestions(res.data.sort((a: any, b: any) => a.order - b.order));
+                setQuestions([...res.data].sort((a, b) => a.order - b.order));
             }
         } catch (error) {
             console.error("Failed to load questions");
         } finally {
             setLoading(false);
         }
-    };
+    }, [olympiadId]);
+
+    useEffect(() => {
+        if (!olympiadId) return;
+        void fetchQuestions();
+        void fetchOlympiadSettings();
+    }, [fetchOlympiadSettings, fetchQuestions, olympiadId]);
 
     const handleSaveQuestion = async () => {
         if (!olympiadId) {
@@ -111,21 +122,20 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                 toast.success("Savol qo'shildi");
             }
             setIsDialogOpen(false);
-            fetchQuestions();
-        } catch (error: any) {
+            await fetchQuestions();
+        } catch (error: unknown) {
             console.error(error);
-            const msg = error.response?.data?.error || error.response?.data?.detail || "Xatolik yuz berdi";
-            if (error.response?.data?.errors) {
+            if (axios.isAxiosError(error) && error.response?.data && typeof error.response.data === "object" && error.response.data !== null && "errors" in error.response.data) {
                 // Validation errors
-                const errors = error.response.data.errors;
+                const errors = (error.response.data as { errors: Record<string, string> }).errors;
                 Object.keys(errors).forEach(key => {
                     toast.error(`${key}: ${errors[key]}`);
                 });
             } else {
-                if (error.response?.data?.request_data) {
-                    console.log("Request Data:", error.response.data.request_data);
+                if (axios.isAxiosError(error) && error.response?.data && typeof error.response.data === "object" && error.response.data !== null && "request_data" in error.response.data) {
+                    console.log("Request Data:", (error.response.data as { request_data: unknown }).request_data);
                 }
-                toast.error(`Xatolik: ${msg}`);
+                toast.error(`Xatolik: ${getQuestionErrorMessage(error, "Xatolik yuz berdi")}`);
             }
         } finally {
             setLoading(false);
@@ -137,7 +147,7 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
         try {
             await axios.delete(`${API_URL}/questions/${id}/`, { headers: getAuthHeader() });
             toast.success("O'chirildi");
-            fetchQuestions();
+            await fetchQuestions();
         } catch (err) {
             toast.error("O'chirishda xatolik");
         }
@@ -168,14 +178,14 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
             toast.dismiss(toastId);
             if (res.data.success) {
                 toast.success(res.data.message);
-                fetchQuestions();
+                await fetchQuestions();
             } else {
                 toast.error(res.data.error || "Yuklashda xatolik");
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.dismiss(toastId);
             console.error(error);
-            toast.error(error.response?.data?.error || "Yuklashda xatolik yuz berdi");
+            toast.error(getQuestionErrorMessage(error, "Yuklashda xatolik yuz berdi"));
         }
 
         // Reset input
@@ -296,7 +306,7 @@ const Step4Questions = ({ olympiadId, isEdit }: { olympiadId: number, isEdit: bo
                             </div>
                             <div className="w-1/3 space-y-2">
                                 <Label>Turi</Label>
-                                <Select value={qForm.type} onValueChange={(val: any) => setQForm({ ...qForm, type: val })}>
+                                <Select value={qForm.type} onValueChange={(val: Question["type"]) => setQForm({ ...qForm, type: val })}>
                                     <SelectTrigger><SelectValue /></SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="MCQ">Test (Variantli)</SelectItem>

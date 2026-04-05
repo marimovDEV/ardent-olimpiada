@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow
@@ -41,50 +41,86 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
+interface OlympiadSubmissionResult {
+    id: number;
+    user_id: number;
+    student: string;
+    region?: string | null;
+    score: number;
+    percentage: number;
+    time_taken: number;
+    status: string;
+    feedback?: string | null;
+    answers?: Record<string, string | number>;
+}
+
+interface OlympiadQuestionReview {
+    id: number;
+    title?: string;
+    text: string;
+    correct_answer: string;
+    points: number;
+    explanation?: string;
+}
+
+interface TeacherOlympiadDetail {
+    title: string;
+    questions?: OlympiadQuestionReview[];
+}
+
+interface OlympiadPrize {
+    id: number;
+    name: string;
+    condition?: string;
+}
+
+interface PaginatedResponse<T> {
+    results?: T[];
+}
+
+interface ConfirmWinnersResponse {
+    success?: boolean;
+    message?: string;
+}
+
 const TeacherOlympiadResultsPage = () => {
     const { id } = useParams();
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<OlympiadSubmissionResult[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedResult, setSelectedResult] = useState<any>(null);
+    const [selectedResult, setSelectedResult] = useState<OlympiadSubmissionResult | null>(null);
     const [gradingScore, setGradingScore] = useState<string>("");
     const [gradingComment, setGradingComment] = useState("");
     const [isGrading, setIsGrading] = useState(false);
-    const [olympiad, setOlympiad] = useState<any>(null);
-    const [prizes, setPrizes] = useState<any[]>([]);
-    const [selectedWinners, setSelectedWinners] = useState<Record<number, any>>({}); // {position: result}
+    const [olympiad, setOlympiad] = useState<TeacherOlympiadDetail | null>(null);
+    const [prizes, setPrizes] = useState<OlympiadPrize[]>([]);
+    const [selectedWinners, setSelectedWinners] = useState<Record<number, OlympiadSubmissionResult | null>>({}); // {position: result}
     const [isConfirming, setIsConfirming] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
-    const [reviewResult, setReviewResult] = useState<any>(null);
+    const [reviewResult, setReviewResult] = useState<OlympiadSubmissionResult | null>(null);
 
-    useEffect(() => {
-        fetchResults();
-        fetchOlympiadDetails();
-        fetchPrizes();
-    }, [id]);
-
-    const fetchOlympiadDetails = async () => {
+    const fetchOlympiadDetails = useCallback(async () => {
         try {
-            const res = await axios.get(`${API_URL}/olympiads/${id}/`, { headers: getAuthHeader() });
+            const res = await axios.get<TeacherOlympiadDetail>(`${API_URL}/olympiads/${id}/`, { headers: getAuthHeader() });
             setOlympiad(res.data);
         } catch (error) {
             console.error(error);
         }
-    };
+    }, [id]);
 
-    const fetchPrizes = async () => {
+    const fetchPrizes = useCallback(async () => {
         try {
-            const res = await axios.get(`${API_URL}/olympiad-prizes/?olympiad=${id}`, { headers: getAuthHeader() });
+            const res = await axios.get<PaginatedResponse<OlympiadPrize>>(`${API_URL}/olympiad-prizes/?olympiad=${id}`, { headers: getAuthHeader() });
             setPrizes(res.data.results || []);
         } catch (error) {
             console.error(error);
         }
-    };
+    }, [id]);
 
-    const fetchResults = async () => {
+    const fetchResults = useCallback(async () => {
         try {
-            const res = await axios.get(`${API_URL}/olympiads/${id}/submissions/`, { headers: getAuthHeader() });
+            const res = await axios.get<PaginatedResponse<OlympiadSubmissionResult>>(`${API_URL}/olympiads/${id}/submissions/`, { headers: getAuthHeader() });
             setResults(res.data.results || []);
         } catch (error) {
             console.error(error);
@@ -92,7 +128,13 @@ const TeacherOlympiadResultsPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        void fetchResults();
+        void fetchOlympiadDetails();
+        void fetchPrizes();
+    }, [fetchOlympiadDetails, fetchPrizes, fetchResults]);
 
     const handleGrade = async () => {
         if (!selectedResult || !gradingScore) return;
@@ -110,7 +152,7 @@ const TeacherOlympiadResultsPage = () => {
             );
             toast.success("Natija yangilandi");
             setSelectedResult(null);
-            fetchResults();
+            await fetchResults();
         } catch (error) {
             console.error(error);
             toast.error("Xatolik yuz berdi");
@@ -127,13 +169,13 @@ const TeacherOlympiadResultsPage = () => {
 
         setIsConfirming(true);
         try {
-            const winnersList = Object.entries(selectedWinners).map(([pos, res]) => ({
-                user_id: res.user_id,
+            const winnersList = Object.entries(selectedWinners).flatMap(([pos, result]) => result ? [{
+                user_id: result.user_id,
                 position: parseInt(pos),
                 prize_id: prizes.find(p => p.condition?.includes(pos))?.id
-            }));
+            }] : []);
 
-            const res = await axios.post(
+            const res = await axios.post<ConfirmWinnersResponse>(
                 `${API_URL}/olympiads/${id}/confirm_winners/`,
                 { winners: winnersList },
                 { headers: getAuthHeader() }
@@ -155,6 +197,8 @@ const TeacherOlympiadResultsPage = () => {
         r.student.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (r.region && r.region.toLowerCase().includes(searchQuery.toLowerCase()))
     );
+    const totalQuestionPoints = olympiad?.questions?.reduce((acc, q) => acc + q.points, 0) ?? 0;
+    const topCandidates = [...results].sort((a, b) => b.score - a.score).slice(0, 10);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -211,7 +255,7 @@ const TeacherOlympiadResultsPage = () => {
                                             }}
                                         >
                                             <option value="">Tanlang...</option>
-                                            {results.sort((a, b) => b.score - a.score).slice(0, 10).map(r => (
+                                            {topCandidates.map(r => (
                                                 <option key={r.user_id} value={r.user_id}>
                                                     {r.student} ({r.score} ball)
                                                 </option>
@@ -395,7 +439,7 @@ const TeacherOlympiadResultsPage = () => {
                                 </DialogDescription>
                             </div>
                             <div className="text-right px-4">
-                                <p className="text-sm font-bold text-primary">{reviewResult?.score} / {olympiad?.questions?.reduce((acc: number, q: any) => acc + q.points, 0)} ball</p>
+                                <p className="text-sm font-bold text-primary">{reviewResult?.score} / {totalQuestionPoints} ball</p>
                                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">{reviewResult?.percentage}% natija</p>
                             </div>
                         </div>
@@ -403,7 +447,7 @@ const TeacherOlympiadResultsPage = () => {
 
                     <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 custom-scrollbar">
                         <div className="space-y-6">
-                            {olympiad?.questions?.map((q: any, idx: number) => {
+                            {olympiad?.questions?.map((q, idx: number) => {
                                 const studentAnswer = reviewResult?.answers?.[q.id.toString()];
                                 // Normalized comparison
                                 const normalizedStudent = studentAnswer?.toString().trim().toLowerCase() || "";

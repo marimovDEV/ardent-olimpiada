@@ -16,15 +16,70 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
+type AnswerValue = string | number;
+
+interface OlympiadTestInfo {
+    title: string;
+    duration: string | number;
+    tab_switch_limit?: number;
+    disable_copy_paste?: boolean;
+    required_camera?: boolean;
+    required_full_screen?: boolean;
+    require_answer_to_proceed?: boolean;
+    cannot_go_back?: boolean;
+    end_date?: string | null;
+}
+
+interface OlympiadQuestion {
+    id: number;
+    text: string;
+    type: 'MCQ' | 'NUMERIC' | 'TEXT' | 'CODE';
+    options?: string[];
+    points: number;
+}
+
+interface OlympiadAttempt {
+    answers?: Record<string, AnswerValue>;
+    status?: string;
+    submitted_at?: string;
+    tab_switches_count?: number;
+}
+
+interface StartTestResponse {
+    attempt: OlympiadAttempt;
+}
+
+interface QuestionsResponse {
+    olympiad: OlympiadTestInfo;
+    questions?: OlympiadQuestion[];
+}
+
+interface SubmitResponse {
+    message?: string;
+}
+
+interface ErrorResponse {
+    error?: string;
+}
+
+const parseDuration = (dur: string | number) => {
+    if (typeof dur === 'number') return dur * 60;
+    if (typeof dur === 'string') {
+        const parts = dur.split(':').map(Number);
+        if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        if (parts.length === 2) return parts[0] * 60 + parts[1];
+    }
+    return 7200;
+};
 
 const OlympiadTestPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [olympiad, setOlympiad] = useState<any>(null);
-    const [questions, setQuestions] = useState<any[]>([]);
+    const [olympiad, setOlympiad] = useState<OlympiadTestInfo | null>(null);
+    const [questions, setQuestions] = useState<OlympiadQuestion[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState<Record<string, any>>({});
+    const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
     const [confirmedAnswers, setConfirmedAnswers] = useState<Record<string, boolean>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [timeLeft, setTimeLeft] = useState<number>(0);
@@ -37,7 +92,7 @@ const OlympiadTestPage = () => {
     const [stream, setStream] = useState<MediaStream | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    const answersRef = useRef<Record<string, any>>({});
+    const answersRef = useRef<Record<string, AnswerValue>>({});
     const tabSwitchesRef = useRef(0);
     const timeLeftRef = useRef(0);
 
@@ -55,15 +110,59 @@ const OlympiadTestPage = () => {
         }
     }, [isDarkMode]);
 
-    const parseDuration = (dur: string | number) => {
-        if (typeof dur === 'number') return dur * 60;
-        if (typeof dur === 'string') {
-            const parts = dur.split(':').map(Number);
-            if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-            if (parts.length === 2) return parts[0] * 60 + parts[1];
+    const finishTest = React.useCallback(async (reason: string = "manual") => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(err => console.error("Exit fullscreen failed:", err));
         }
-        return 7200; // Default 2 hours
-    };
+
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+
+        const token = localStorage.getItem('token');
+        const totalDuration = olympiad?.duration ? parseDuration(olympiad.duration) : 7200;
+        const timeTaken = totalDuration - timeLeftRef.current;
+
+        try {
+            const res = await fetch(`${API_BASE}/olympiads/${id}/submit/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    answers: answersRef.current,
+                    time_taken: timeTaken,
+                    tab_switches: tabSwitchesRef.current,
+                    reason
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json() as SubmitResponse;
+                if (reason === 'timeout') {
+                    toast.info("Vaqt tugadi! Javoblaringiz avtomatik saqlandi.");
+                } else if (reason === 'disqualified') {
+                    toast.error("Qoidabuzarlik uchun test yakunlandi.");
+                } else {
+                    toast.success(t(data.message) || t('olympiadTest.submitted'));
+                }
+                navigate(`/olympiad/${id}/result`);
+            } else {
+                const err = await res.json() as ErrorResponse;
+                toast.error(t(err.error) || "Submission failed");
+                navigate(`/olympiad/${id}/result`);
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Network error");
+            navigate(`/olympiad/${id}/result`);
+        }
+    }, [id, isSubmitting, navigate, olympiad?.duration, stream, t]);
 
     // Load Data
     useEffect(() => {
@@ -81,13 +180,13 @@ const OlympiadTestPage = () => {
                 });
 
                 if (!startRes.ok) {
-                    const err = await startRes.json();
+                    const err = await startRes.json() as ErrorResponse;
                     toast.error(t(err.error) || t('common.error'));
                     navigate('/olympiads');
                     return;
                 }
 
-                const attemptData = await startRes.json();
+                const attemptData = await startRes.json() as StartTestResponse;
                 const attempt = attemptData.attempt;
 
                 const qRes = await fetch(`${API_BASE}/olympiads/${id}/questions/`, {
@@ -95,7 +194,7 @@ const OlympiadTestPage = () => {
                 });
 
                 if (qRes.ok) {
-                    const data = await qRes.json();
+                    const data = await qRes.json() as QuestionsResponse;
                     setOlympiad(data.olympiad);
                     if (data.questions) setQuestions(data.questions);
 
@@ -112,7 +211,7 @@ const OlympiadTestPage = () => {
 
                     // LOGIC: Calculate remaining time
                     const durationSeconds = parseDuration(data.olympiad.duration);
-                    const startTime = new Date(attempt.submitted_at).getTime();
+                    const startTime = attempt.submitted_at ? new Date(attempt.submitted_at).getTime() : Date.now();
                     const now = new Date().getTime();
                     const elapsedSeconds = Math.floor((now - startTime) / 1000);
 
@@ -140,7 +239,7 @@ const OlympiadTestPage = () => {
                     }
 
                 } else {
-                    const errorData = await qRes.json();
+                    const errorData = await qRes.json() as ErrorResponse;
                     toast.error(t(errorData.error) || t('common.error'));
                     navigate('/olympiads');
                 }
@@ -175,18 +274,18 @@ const OlympiadTestPage = () => {
         };
         document.addEventListener('visibilitychange', handleVisibilityChange);
         return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-    }, [isStarted, isSubmitting]);
+    }, [finishTest, isStarted, isSubmitting, olympiad?.tab_switch_limit, t]);
 
     // Anti-Cheat: Disable Copy/Paste and Context Menu
     useEffect(() => {
         if (!isStarted || isSubmitting || !olympiad?.disable_copy_paste) return;
 
-        const handlePrevent = (e: any) => {
+        const handlePrevent = (e: ClipboardEvent) => {
             e.preventDefault();
             toast.warning(t('olympiadTest.warningNoCopy', "Nusxa ko'chirish taqiqlanadi!"));
         };
 
-        const handleContextMenu = (e: any) => {
+        const handleContextMenu = (e: MouseEvent) => {
             e.preventDefault();
         };
 
@@ -216,7 +315,7 @@ const OlympiadTestPage = () => {
             });
         }, 1000);
         return () => clearInterval(timer);
-    }, [isStarted, isSubmitting]); // Depend on isStarted to start counting down
+    }, [finishTest, isStarted, isSubmitting]); // Depend on isStarted to start counting down
 
     const startCamera = async () => {
         try {
@@ -250,7 +349,7 @@ const OlympiadTestPage = () => {
         }
     };
 
-    const handleAnswerChange = (questionId: number, value: any) => {
+    const handleAnswerChange = (questionId: number, value: AnswerValue) => {
         if (confirmedAnswers[questionId]) return;
         setAnswers(prev => ({ ...prev, [questionId]: value }));
     };
@@ -287,63 +386,6 @@ const OlympiadTestPage = () => {
             }
         } catch (err) {
             console.error('Failed to submit answer', err);
-        }
-    };
-
-    const finishTest = async (reason: string = "manual") => {
-        if (isSubmitting) return;
-        setIsSubmitting(true);
-
-        // Exit Fullscreen
-        if (document.fullscreenElement) {
-            document.exitFullscreen().catch(err => console.error("Exit fullscreen failed:", err));
-        }
-
-        // Stop Camera
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            setStream(null);
-        }
-
-        const token = localStorage.getItem('token');
-        const totalDuration = olympiad?.duration ? parseDuration(olympiad.duration) : 7200;
-        const timeTaken = totalDuration - timeLeftRef.current;
-
-        try {
-            const res = await fetch(`${API_BASE}/olympiads/${id}/submit/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    answers: answersRef.current,
-                    time_taken: timeTaken,
-                    tab_switches: tabSwitchesRef.current,
-                    reason: reason // Send reason for logging/status
-                })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                if (reason === 'timeout') {
-                    toast.info("Vaqt tugadi! Javoblaringiz avtomatik saqlandi.");
-                } else if (reason === 'disqualified') {
-                    toast.error("Qoidabuzarlik uchun test yakunlandi.");
-                } else {
-                    toast.success(t(data.message) || t('olympiadTest.submitted'));
-                }
-                navigate(`/olympiad/${id}/result`);
-            } else {
-                const err = await res.json();
-                // Even on error, navigate to results if it creates a result record (like disqualified)
-                toast.error(t(err.error) || "Submission failed");
-                navigate(`/olympiad/${id}/result`);
-            }
-        } catch (err) {
-            console.error(err);
-            toast.error("Network error");
-            navigate(`/olympiad/${id}/result`); // Force exit to avoid loop
         }
     };
 
