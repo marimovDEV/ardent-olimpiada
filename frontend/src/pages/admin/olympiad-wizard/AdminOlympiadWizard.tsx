@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,44 @@ import Step3Settings from "./steps/Step3Settings";
 import Step4Questions from "./steps/Step4Questions";
 import Step5Rewards from "./steps/Step5Rewards"; // New Step
 import Step5Preview from "./steps/Step5Preview";
+
+interface TechnicalConfig extends Record<string, unknown> {
+    internet_policy: string;
+}
+
+interface CertificateConfig extends Record<string, unknown> {
+    enabled: boolean;
+    threshold_percent: number;
+}
+
+interface OlympiadResponse extends Partial<OlympiadFormState> {
+    id: number;
+    result_time?: string | null;
+    subject_id?: number | null;
+    profession?: string | number | null;
+    course?: string | number | null;
+    max_participants?: number | "";
+    questions_count?: number;
+    participants_count?: number;
+    status_display?: string;
+    time_remaining?: string;
+    is_registered?: boolean;
+    is_completed?: boolean;
+    created_at?: string;
+    start_time?: string;
+}
+
+type OlympiadRequestPayload = Partial<OlympiadFormState> & Record<string, unknown> & {
+    result_time?: string | null;
+    questions_count?: number;
+    participants_count?: number;
+    status_display?: string;
+    time_remaining?: string;
+    is_registered?: boolean;
+    is_completed?: boolean;
+    created_at?: string;
+    start_time?: string;
+};
 
 export interface OlympiadFormState {
     id?: number;
@@ -68,11 +105,81 @@ export interface OlympiadFormState {
     xp_reward: number;
 
     // Extended Settings (New)
-    eligibility_grades: any;
-    eligibility_regions: any;
-    technical_config: any;
-    certificate_config: any;
+    eligibility_grades: number[];
+    eligibility_regions: string[];
+    technical_config: TechnicalConfig;
+    certificate_config: CertificateConfig;
 }
+
+const FORMDATA_EMPTY_FIELDS = ['start_date', 'end_date', 'result_time', 'max_participants', 'subject_id', 'profession', 'course', 'slug'] as const;
+const JSON_FIELDS = ['eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config'] as const;
+
+const normalizeOlympiadPayload = (data: OlympiadFormState): OlympiadRequestPayload => {
+    const payload: OlympiadRequestPayload = { ...data };
+
+    if (typeof payload.thumbnail === 'string' || !payload.thumbnail) delete payload.thumbnail;
+    if (!payload.slug) delete payload.slug;
+    if (!payload.registration_start) payload.registration_start = null;
+    if (!payload.registration_end) payload.registration_end = null;
+    if (!payload.start_date) payload.start_date = null;
+    if (!payload.end_date) payload.end_date = null;
+    if (!payload.result_time) payload.result_time = null;
+    if (!payload.subject_id) payload.subject_id = null;
+    if (!payload.profession) payload.profession = null;
+    if (!payload.course) payload.course = null;
+    if (payload.max_participants === "") payload.max_participants = null;
+    if (payload.duration === "") payload.duration = 60;
+    if (payload.price === "") payload.price = 0;
+    if (payload.discount_percent === "") payload.discount_percent = 0;
+    if (payload.max_attempts === "") payload.max_attempts = 1;
+    if (payload.tab_switch_limit === "") payload.tab_switch_limit = 3;
+    if (payload.time_limit_per_question === "") payload.time_limit_per_question = 0;
+    if (payload.xp_reward === "") payload.xp_reward = 50;
+
+    delete payload.questions_count;
+    delete payload.participants_count;
+    delete payload.status_display;
+    delete payload.time_remaining;
+    delete payload.is_registered;
+    delete payload.is_completed;
+    delete payload.created_at;
+    delete payload.start_time;
+    delete payload.prizes;
+
+    return payload;
+};
+
+const formatOlympiadError = (error: unknown, fallback: string) => {
+    if (axios.isAxiosError(error)) {
+        const errData = error.response?.data;
+
+        if (typeof errData === 'string' && errData) {
+            return errData;
+        }
+
+        if (typeof errData === 'object' && errData !== null) {
+            const detail = (errData as Record<string, unknown>).detail;
+            if (typeof detail === 'string' && detail) {
+                return detail;
+            }
+
+            const fields = Object.entries(errData as Record<string, unknown>)
+                .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : String(value)}`)
+                .join('; ');
+
+            if (fields) {
+                return fields;
+            }
+        }
+    }
+
+    if (error instanceof Error && error.message) {
+        return error.message;
+    }
+
+    return fallback;
+};
+
 const STEPS = [
     { id: 1, title: "Asosiy Ma'lumotlar" },
     { id: 2, title: "Tavsif va Qoidalar" },
@@ -141,59 +248,59 @@ const AdminOlympiadWizard = () => {
     });
 
     useEffect(() => {
-        if (isEdit) fetchOlympiad();
+        const loadOlympiad = async () => {
+            if (!id) return;
 
-        // Check for role
+            setLoading(true);
+            try {
+                const res = await axios.get<OlympiadResponse>(`${API_URL}/olympiads/${id}/`, { headers: getAuthHeader() });
+                const data = res.data;
+
+                setFormData({
+                    ...data,
+                    subject_id: data.subject_id || null,
+                    profession: data.profession || null,
+                    course: data.course || null,
+                    registration_start: data.registration_start ? data.registration_start.slice(0, 16) : "",
+                    registration_end: data.registration_end ? data.registration_end.slice(0, 16) : "",
+                    start_date: data.start_date ? data.start_date.slice(0, 16) : "",
+                    end_date: data.end_date ? data.end_date.slice(0, 16) : "",
+                    max_participants: data.max_participants || "",
+                    is_paid: !!data.is_paid,
+                    is_random: !!data.is_random,
+                    cannot_go_back: !!data.cannot_go_back,
+                    required_camera: !!data.required_camera,
+                    required_full_screen: !!data.required_full_screen,
+                    disable_copy_paste: !!data.disable_copy_paste,
+                    is_active: data.is_active !== false,
+                    eligibility_grades: data.eligibility_grades || [],
+                    eligibility_regions: data.eligibility_regions || [],
+                    technical_config: data.technical_config || { internet_policy: 'allow_resume' },
+                    certificate_config: data.certificate_config || { enabled: false, threshold_percent: 60 }
+                });
+            } catch (error) {
+                console.error(error);
+                toast.error("Ma'lumotlarni yuklashda xatolik");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isEdit) {
+            void loadOlympiad();
+        }
+
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const role = user.role || 'ADMIN';
         const root = role === 'TEACHER' ? '/teacher' : '/admin';
         setBaseRoute(root);
 
-        // Check for step param
         const params = new URLSearchParams(window.location.search);
         const stepParam = params.get('step');
         if (stepParam) {
             setCurrentStep(parseInt(stepParam));
         }
-    }, [id]);
-
-    const fetchOlympiad = async () => {
-        setLoading(true);
-        try {
-            const res = await axios.get(`${API_URL}/olympiads/${id}/`, { headers: getAuthHeader() });
-            const data = res.data;
-
-            setFormData({
-                ...data,
-                subject_id: data.subject_id || null,
-                profession: data.profession || null,
-                course: data.course || null,
-                registration_start: data.registration_start ? data.registration_start.slice(0, 16) : "",
-                registration_end: data.registration_end ? data.registration_end.slice(0, 16) : "",
-                start_date: data.start_date ? data.start_date.slice(0, 16) : "",
-                end_date: data.end_date ? data.end_date.slice(0, 16) : "",
-                max_participants: data.max_participants || "",
-                // Ensure boolean fields are always boolean (prevent uncontrolled Switch)
-                is_paid: !!data.is_paid,
-                is_random: !!data.is_random,
-                cannot_go_back: !!data.cannot_go_back,
-                required_camera: !!data.required_camera,
-                required_full_screen: !!data.required_full_screen,
-                disable_copy_paste: !!data.disable_copy_paste,
-                is_active: data.is_active !== false,
-                // Ensure new fields are handled
-                eligibility_grades: data.eligibility_grades || [],
-                eligibility_regions: data.eligibility_regions || [],
-                technical_config: data.technical_config || { internet_policy: 'allow_resume' },
-                certificate_config: data.certificate_config || { enabled: false, threshold_percent: 60 }
-            });
-        } catch (error) {
-            console.error(error);
-            toast.error("Ma'lumotlarni yuklashda xatolik");
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [id, isEdit]);
 
     const updateData = (data: Partial<OlympiadFormState>) => {
         setFormData(prev => ({ ...prev, ...data }));
@@ -221,8 +328,8 @@ const AdminOlympiadWizard = () => {
             if (!isEdit) {
                 setLoading(true);
                 try {
-                    let payload: any;
-                    let headers = { ...getAuthHeader() };
+                    let payload: FormData | OlympiadRequestPayload;
+                    const headers = { ...getAuthHeader() };
 
                     // Determine if we need FormData (for new file)
                     const isMultipart = formData.thumbnail instanceof File;
@@ -239,10 +346,10 @@ const AdminOlympiadWizard = () => {
                             }
                             const strVal = String(value);
                             if (strVal.trim() === "") {
-                                if (['start_date', 'end_date', 'result_time', 'max_participants', 'subject_id', 'profession', 'course', 'slug'].includes(key)) return;
+                                if (FORMDATA_EMPTY_FIELDS.includes(key as typeof FORMDATA_EMPTY_FIELDS[number])) return;
                             }
                             // Handle JSON fields for FormData (Initial creation needs this too if we populated them)
-                            if (['eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config'].includes(key)) {
+                            if (JSON_FIELDS.includes(key as typeof JSON_FIELDS[number])) {
                                 fd.append(key, JSON.stringify(value));
                                 return;
                             }
@@ -252,35 +359,7 @@ const AdminOlympiadWizard = () => {
                     } else {
                         // USE JSON (Safer for types)
                         headers['Content-Type'] = 'application/json';
-                        payload = { ...formData, status: 'DRAFT' };
-
-                        // Clean empty/null values for JSON
-                        if (!payload.slug) delete payload.slug;
-
-                        // Dates -> null if empty
-                        if (!payload.registration_start) payload.registration_start = null;
-                        if (!payload.registration_end) payload.registration_end = null;
-                        if (!payload.start_date) payload.start_date = null;
-                        if (!payload.end_date) payload.end_date = null;
-                        if (!payload.result_time) payload.result_time = null;
-
-                        // FKs -> null if empty
-                        if (!payload.subject_id) payload.subject_id = null;
-                        if (!payload.profession) payload.profession = null;
-                        if (!payload.course) payload.course = null;
-
-                        // Numeric strings -> null or default if empty
-                        if (payload.max_participants === "") payload.max_participants = null;
-
-                        if (payload.duration === "") payload.duration = 60;
-                        if (payload.price === "") payload.price = 0;
-                        if (payload.discount_percent === "") payload.discount_percent = 0;
-                        if (payload.max_attempts === "") payload.max_attempts = 1;
-                        if (payload.tab_switch_limit === "") payload.tab_switch_limit = 3;
-                        if (payload.time_limit_per_question === "") payload.time_limit_per_question = 0;
-                        if (payload.xp_reward === "") payload.xp_reward = 50;
-
-                        delete payload.thumbnail;
+                        payload = normalizeOlympiadPayload({ ...formData, status: 'DRAFT' });
                     }
 
                     const res = await axios.post(`${API_URL}/olympiads/`, payload, { headers });
@@ -291,9 +370,9 @@ const AdminOlympiadWizard = () => {
                     navigate(`${baseRoute}/olympiads/${res.data.id}/edit?step=2`, { replace: true });
                     return;
 
-                } catch (error: any) {
+                } catch (error: unknown) {
                     console.error("Save error:", error);
-                    const errMsg = error.response?.data ? JSON.stringify(error.response.data) : "Qoralamani saqlashda xatolik";
+                    const errMsg = formatOlympiadError(error, "Qoralamani saqlashda xatolik");
                     toast.error(`Xatolik: ${errMsg}`);
                     setLoading(false);
                     return;
@@ -368,41 +447,7 @@ const AdminOlympiadWizard = () => {
                 }
             } else {
                 // Use JSON for better type handling (no string coercion for booleans/numbers)
-                const payload: any = { ...formData };
-
-                // Remove thumbnail if it's a URL string (not a new file)
-                if (typeof payload.thumbnail === 'string') delete payload.thumbnail;
-                if (!payload.thumbnail) delete payload.thumbnail;
-
-                // Clean empty/null values for JSON
-                if (!payload.slug) delete payload.slug;
-                if (!payload.registration_start) payload.registration_start = null;
-                if (!payload.registration_end) payload.registration_end = null;
-                if (!payload.start_date) payload.start_date = null;
-                if (!payload.end_date) payload.end_date = null;
-                if (!payload.result_time) payload.result_time = null;
-                if (!payload.subject_id) payload.subject_id = null;
-                if (!payload.profession) payload.profession = null;
-                if (!payload.course) payload.course = null;
-                if (payload.max_participants === "") payload.max_participants = null;
-                if (payload.duration === "") payload.duration = 60;
-                if (payload.price === "") payload.price = 0;
-                if (payload.discount_percent === "") payload.discount_percent = 0;
-                if (payload.max_attempts === "") payload.max_attempts = 1;
-                if (payload.tab_switch_limit === "") payload.tab_switch_limit = 3;
-                if (payload.time_limit_per_question === "") payload.time_limit_per_question = 0;
-                if (payload.xp_reward === "") payload.xp_reward = 50;
-
-                // Remove read-only fields that backend doesn't accept on write
-                delete payload.questions_count;
-                delete payload.participants_count;
-                delete payload.status_display;
-                delete payload.time_remaining;
-                delete payload.is_registered;
-                delete payload.is_completed;
-                delete payload.created_at;
-                delete payload.start_time;
-                delete payload.prizes;
+                const payload = normalizeOlympiadPayload(formData);
 
                 if (isEdit) {
                     await axios.put(`${API_URL}/olympiads/${id}/`, payload, {
@@ -423,23 +468,9 @@ const AdminOlympiadWizard = () => {
                 navigate(`${baseRoute}/olympiads`);
             }
             return true;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            const errData = error.response?.data;
-            let msg = "Saqlashda xatolik yuz berdi";
-
-            if (errData) {
-                if (typeof errData === 'string') {
-                    msg = errData;
-                } else if (errData.detail) {
-                    msg = errData.detail;
-                } else {
-                    const fields = Object.keys(errData).map(key => `${key}: ${Array.isArray(errData[key]) ? errData[key].join(', ') : errData[key]}`).join('; ');
-                    msg = `Xatolik: ${fields}`;
-                }
-            }
-
-            toast.error(msg);
+            toast.error(formatOlympiadError(error, "Saqlashda xatolik yuz berdi"));
             return false;
         } finally {
             setLoading(false);
@@ -456,7 +487,7 @@ const AdminOlympiadWizard = () => {
                 navigate(`?step=${currentStep}`, { replace: true });
             }
         }
-    }, [currentStep, isEdit]);
+    }, [currentStep, isEdit, navigate]);
 
     return (
         <div className="container mx-auto py-8 max-w-5xl min-h-screen flex flex-col">

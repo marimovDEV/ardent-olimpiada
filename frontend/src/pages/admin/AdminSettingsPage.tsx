@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
@@ -92,6 +92,20 @@ interface Permission {
     category: string;
 }
 
+type PermissionGroups = Record<string, Permission[]>;
+
+const getAxiosErrorMessage = (error: unknown, fallback: string) => {
+    if (axios.isAxiosError(error)) {
+        const data = error.response?.data;
+        if (typeof data === "object" && data !== null) {
+            const record = data as Record<string, unknown>;
+            if (typeof record.detail === "string") return record.detail;
+            if (typeof record.error === "string") return record.error;
+        }
+    }
+    return fallback;
+};
+
 // Permissions will be localized using i18next keys perm_...
 
 const AdminSettingsPage = () => {
@@ -157,12 +171,7 @@ const AdminSettingsPage = () => {
     const [permissionsByCategory, setPermissionsByCategory] = useState<Record<string, Permission[]>>({});
     const [testingEmail, setTestingEmail] = useState(false);
 
-    useEffect(() => {
-        fetchAllSettings();
-        fetchPermissions();
-    }, []);
-
-    const fetchAllSettings = async () => {
+    const fetchAllSettings = useCallback(async () => {
         setLoading(true);
         try {
             const headers = getAuthHeader();
@@ -195,24 +204,29 @@ const AdminSettingsPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
 
-    const fetchPermissions = async () => {
+    const fetchPermissions = useCallback(async () => {
         try {
             const headers = getAuthHeader();
-            const response = await axios.get(`${API_URL}/settings/permissions/by_category/`, { headers });
+            const response = await axios.get<PermissionGroups>(`${API_URL}/settings/permissions/by_category/`, { headers });
             setPermissionsByCategory(response.data);
 
             // Flatten permissions for easier access
             const allPerms: Permission[] = [];
-            Object.values(response.data).forEach((perms: any) => {
+            Object.values(response.data).forEach((perms) => {
                 allPerms.push(...perms);
             });
             setPermissions(allPerms);
         } catch (error) {
             console.error("Error fetching permissions:", error);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        void fetchAllSettings();
+        void fetchPermissions();
+    }, [fetchAllSettings, fetchPermissions]);
 
     const savePlatformSettings = async () => {
         setSaving(true);
@@ -227,9 +241,9 @@ const AdminSettingsPage = () => {
             setPlatformSettings(response.data);
             toast.success(t('admin.platformSettingsSaved'));
             await fetchAllSettings();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || t('admin.saveError'));
+            toast.error(getAxiosErrorMessage(error, t('admin.saveError')));
         } finally {
             setSaving(false);
         }
@@ -248,9 +262,9 @@ const AdminSettingsPage = () => {
             setSecuritySettings(response.data);
             toast.success(t('admin.securitySettingsSaved'));
             await fetchAllSettings();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || t('admin.saveError'));
+            toast.error(getAxiosErrorMessage(error, t('admin.saveError')));
         } finally {
             setSaving(false);
         }
@@ -269,9 +283,9 @@ const AdminSettingsPage = () => {
             setNotificationSettings(response.data);
             toast.success(t('admin.notificationSettingsSaved'));
             await fetchAllSettings();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || t('admin.saveError'));
+            toast.error(getAxiosErrorMessage(error, t('admin.saveError')));
         } finally {
             setSaving(false);
         }
@@ -285,9 +299,9 @@ const AdminSettingsPage = () => {
             setCommissionSettings(response.data.data || response.data);
             toast.success(t('admin.commissionSettingsSaved') || "Komissiya miqdorlari saqlandi");
             await fetchAllSettings();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Save error:", error);
-            toast.error(error.response?.data?.detail || t('admin.saveError'));
+            toast.error(getAxiosErrorMessage(error, t('admin.saveError')));
         } finally {
             setSaving(false);
         }
@@ -306,9 +320,9 @@ const AdminSettingsPage = () => {
             setPlatformSettings(res.data);
             toast.success(t('admin.logoUploaded'));
             await fetchAllSettings();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Upload error:", error);
-            toast.error(error.response?.data?.error || t('admin.logoUploadError'));
+            toast.error(getAxiosErrorMessage(error, t('admin.logoUploadError')));
         }
     };
 
@@ -325,9 +339,9 @@ const AdminSettingsPage = () => {
             setPlatformSettings(res.data);
             toast.success(t('admin.faviconUploaded'));
             await fetchAllSettings();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Upload error:", error);
-            toast.error(error.response?.data?.error || t('admin.faviconUploadError'));
+            toast.error(getAxiosErrorMessage(error, t('admin.faviconUploadError')));
         }
     };
 
@@ -337,8 +351,8 @@ const AdminSettingsPage = () => {
             const headers = getAuthHeader();
             await axios.post(`${API_URL}/settings/notifications/test_email/`, {}, { headers });
             toast.success(t('admin.testEmailSent'));
-        } catch (error: any) {
-            toast.error(error.response?.data?.error || t('admin.emailSendError'));
+        } catch (error: unknown) {
+            toast.error(getAxiosErrorMessage(error, t('admin.emailSendError')));
         } finally {
             setTestingEmail(false);
         }

@@ -51,6 +51,106 @@ import {
 } from "@/components/ui/dialog";
 import api from "@/services/api";
 
+interface LessonContentData {
+    id?: number;
+    text_content: string;
+    resources_file: string | File | null;
+}
+
+interface LessonHomeworkData {
+    id?: number;
+    lesson?: number;
+    title: string;
+    description: string;
+    deadline: string | null;
+}
+
+interface LessonPracticeData {
+    id?: number;
+    lesson?: number;
+    type: string;
+    problem_text: string;
+    correct_answer: string;
+    points: number;
+}
+
+interface LessonTestData {
+    id?: number;
+    lesson?: number;
+    min_pass_score: number;
+    max_attempts: number;
+    questions: Array<Record<string, unknown>>;
+}
+
+interface CourseLesson {
+    id?: number;
+    module?: number | null;
+    title: string;
+    description: string;
+    video_url: string;
+    video_type: string;
+    video_duration: number;
+    pdf_url: string;
+    is_free: boolean;
+    order: number;
+    content: LessonContentData;
+    homework: LessonHomeworkData;
+    practice?: LessonPracticeData | null;
+    test?: LessonTestData | null;
+}
+
+interface CourseModule {
+    id: number;
+    title: string;
+    lessons?: CourseLesson[];
+}
+
+interface TeacherCourse {
+    id: number;
+    title: string;
+    subject?: string;
+    description?: string;
+    modules: CourseModule[];
+}
+
+interface LessonModalProps {
+    open: boolean;
+    onClose: () => void;
+    moduleId: number | null;
+    lesson: CourseLesson | null;
+    onSave: (data: CourseLesson) => void;
+    isSaving: boolean;
+}
+
+interface PracticeEditorProps {
+    open: boolean;
+    onClose: () => void;
+    data: LessonPracticeData | null;
+    onSave: (data: LessonPracticeData) => void;
+    isSaving: boolean;
+}
+
+interface TestEditorProps {
+    open: boolean;
+    onClose: () => void;
+    data: LessonTestData | null;
+    onSave: (data: LessonTestData) => void;
+    isSaving: boolean;
+}
+
+const createDefaultLesson = (): CourseLesson => ({
+    title: "",
+    description: "",
+    video_url: "",
+    video_type: "YOUTUBE",
+    video_duration: 0,
+    pdf_url: "",
+    is_free: false,
+    order: 0,
+    content: { text_content: "", resources_file: null },
+    homework: { title: "", description: "", deadline: null }
+});
+
 const TeacherCourseEditor = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -58,7 +158,7 @@ const TeacherCourseEditor = () => {
     const [activeTab, setActiveTab] = useState("curriculum");
 
     // Fetch Course Detailed Data (Modules + Lessons)
-    const { data: course, isLoading } = useQuery({
+    const { data: course, isLoading } = useQuery<TeacherCourse>({
         queryKey: ['teacher-course', id],
         queryFn: async () => {
             const res = await api.get(`/teacher/courses/${id}/`);
@@ -155,12 +255,12 @@ const TeacherCourseEditor = () => {
 };
 
 // --- Curriculum Manager Component ---
-const CurriculumManager = ({ courseId, modules }: { courseId: string, modules: any[] }) => {
+const CurriculumManager = ({ courseId, modules }: { courseId: string, modules: CourseModule[] }) => {
     const queryClient = useQueryClient();
     const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
     const [newModuleTitle, setNewModuleTitle] = useState("");
 
-    const [lessonModal, setLessonModal] = useState<{ open: boolean, moduleId: number | null, lesson: any | null }>({
+    const [lessonModal, setLessonModal] = useState<{ open: boolean, moduleId: number | null, lesson: CourseLesson | null }>({
         open: false,
         moduleId: null,
         lesson: null
@@ -185,7 +285,7 @@ const CurriculumManager = ({ courseId, modules }: { courseId: string, modules: a
     });
 
     const saveLessonMutation = useMutation({
-        mutationFn: (data: any) => {
+        mutationFn: (data: CourseLesson) => {
             if (data.id) return api.put(`/lessons/${data.id}/`, data);
             return api.post(`/lessons/`, { ...data, course: courseId });
         },
@@ -242,7 +342,7 @@ const CurriculumManager = ({ courseId, modules }: { courseId: string, modules: a
                         </div>
                         <AccordionContent className="px-6 py-4 space-y-3">
                             <div className="space-y-2">
-                                {module.lessons?.map((lesson: any, lIdx: number) => (
+                                {module.lessons?.map((lesson, lIdx: number) => (
                                     <div key={lesson.id} className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-background hover:border-primary/50 transition-colors group">
                                         <div className="flex items-center gap-3">
                                             <GripVertical className="w-3.5 h-3.5 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" />
@@ -317,27 +417,17 @@ const CurriculumManager = ({ courseId, modules }: { courseId: string, modules: a
 };
 
 // --- Lesson Modal Component ---
-const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any) => {
+const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: LessonModalProps) => {
     const queryClient = useQueryClient();
-    const [formData, setFormData] = useState<any>({
-        title: "",
-        description: "",
-        video_url: "",
-        video_type: "YOUTUBE",
-        video_duration: 0,
-        pdf_url: "",
-        is_free: false,
-        order: 0,
-        content: { text_content: "", resources_file: null },
-        homework: { title: "", description: "", deadline: null }
-    });
+    const [formData, setFormData] = useState<CourseLesson>(createDefaultLesson());
 
-    const [practiceEditor, setPracticeEditor] = useState<{ open: boolean, data: any }>({ open: false, data: null });
-    const [testEditor, setTestEditor] = useState<{ open: boolean, data: any }>({ open: false, data: null });
+    const [practiceEditor, setPracticeEditor] = useState<{ open: boolean, data: LessonPracticeData | null }>({ open: false, data: null });
+    const [testEditor, setTestEditor] = useState<{ open: boolean, data: LessonTestData | null }>({ open: false, data: null });
 
     const savePracticeMutation = useMutation({
-        mutationFn: (data: any) => {
+        mutationFn: (data: LessonPracticeData) => {
             if (data.id) return api.put(`/lesson-practices/${data.id}/`, data);
+            if (!lesson?.id) throw new Error("Dars hali saqlanmagan");
             return api.post(`/lesson-practices/`, { ...data, lesson: lesson.id });
         },
         onSuccess: () => {
@@ -348,8 +438,9 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
     });
 
     const saveTestMutation = useMutation({
-        mutationFn: (data: any) => {
+        mutationFn: (data: LessonTestData) => {
             if (data.id) return api.put(`/lesson-tests/${data.id}/`, data);
+            if (!lesson?.id) throw new Error("Dars hali saqlanmagan");
             return api.post(`/lesson-tests/`, { ...data, lesson: lesson.id });
         },
         onSuccess: () => {
@@ -360,8 +451,9 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
     });
 
     const saveContentMutation = useMutation({
-        mutationFn: (data: any) => {
+        mutationFn: (data: LessonContentData) => {
             if (data.id) return api.put(`/lesson-content/${data.id}/`, data);
+            if (!lesson?.id) throw new Error("Dars hali saqlanmagan");
             return api.post(`/lesson-content/`, { ...data, lesson: lesson.id });
         },
         onSuccess: () => {
@@ -371,8 +463,9 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
     });
 
     const saveHomeworkMutation = useMutation({
-        mutationFn: (data: any) => {
+        mutationFn: (data: LessonHomeworkData) => {
             if (data.id) return api.put(`/homeworks/${data.id}/`, data);
+            if (!lesson?.id) throw new Error("Dars hali saqlanmagan");
             return api.post(`/homeworks/`, { ...data, lesson: lesson.id });
         },
         onSuccess: () => {
@@ -389,12 +482,7 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                 homework: lesson.homework || { title: "", description: "", deadline: null }
             });
         }
-        else setFormData({
-            title: "", description: "", video_url: "", video_type: "YOUTUBE",
-            video_duration: 0, pdf_url: "", is_free: false, order: 0,
-            content: { text_content: "", resources_file: null },
-            homework: { title: "", description: "", deadline: null }
-        });
+        else setFormData(createDefaultLesson());
     }, [lesson, open]);
 
     return (
@@ -562,7 +650,7 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                     open={practiceEditor.open}
                     onClose={() => setPracticeEditor({ ...practiceEditor, open: false })}
                     data={practiceEditor.data}
-                    onSave={(data: any) => savePracticeMutation.mutate(data)}
+                    onSave={(data) => savePracticeMutation.mutate(data)}
                     isSaving={savePracticeMutation.isPending}
                 />
 
@@ -570,7 +658,7 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
                     open={testEditor.open}
                     onClose={() => setTestEditor({ ...testEditor, open: false })}
                     data={testEditor.data}
-                    onSave={(data: any) => saveTestMutation.mutate(data)}
+                    onSave={(data) => saveTestMutation.mutate(data)}
                     isSaving={saveTestMutation.isPending}
                 />
             </SheetContent>
@@ -579,8 +667,8 @@ const LessonModal = ({ open, onClose, moduleId, lesson, onSave, isSaving }: any)
 };
 
 // --- Practice Editor component ---
-const PracticeEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
-    const [formData, setFormData] = useState<any>(data);
+const PracticeEditor = ({ open, onClose, data, onSave, isSaving }: PracticeEditorProps) => {
+    const [formData, setFormData] = useState<LessonPracticeData | null>(data);
     useEffect(() => { setFormData(data); }, [data, open]);
 
     return (
@@ -593,11 +681,11 @@ const PracticeEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-sm font-bold">Turi</label>
-                            <Input value={formData?.type} onChange={(e) => setFormData({ ...formData, type: e.target.value })} placeholder="TEXT, CODE, etc" />
+                            <Input value={formData?.type} onChange={(e) => setFormData(prev => prev ? { ...prev, type: e.target.value } : prev)} placeholder="TEXT, CODE, etc" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-sm font-bold">XP (Ball)</label>
-                            <Input type="number" value={formData?.points} onChange={(e) => setFormData({ ...formData, points: parseInt(e.target.value) })} />
+                            <Input type="number" value={formData?.points} onChange={(e) => setFormData(prev => prev ? { ...prev, points: parseInt(e.target.value) } : prev)} />
                         </div>
                     </div>
                     <div className="space-y-2">
@@ -605,17 +693,17 @@ const PracticeEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
                         <Textarea
                             rows={5}
                             value={formData?.problem_text}
-                            onChange={(e) => setFormData({ ...formData, problem_text: e.target.value })}
+                            onChange={(e) => setFormData(prev => prev ? { ...prev, problem_text: e.target.value } : prev)}
                         />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-bold">To'g'ri javob</label>
-                        <Input value={formData?.correct_answer} onChange={(e) => setFormData({ ...formData, correct_answer: e.target.value })} />
+                        <Input value={formData?.correct_answer} onChange={(e) => setFormData(prev => prev ? { ...prev, correct_answer: e.target.value } : prev)} />
                     </div>
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>Bekor qilish</Button>
-                    <Button onClick={() => onSave(formData)} disabled={isSaving}>Saqlash</Button>
+                    <Button onClick={() => formData && onSave(formData)} disabled={isSaving || !formData}>Saqlash</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -623,8 +711,8 @@ const PracticeEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
 }
 
 // --- Test Editor component ---
-const TestEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
-    const [formData, setFormData] = useState<any>(data);
+const TestEditor = ({ open, onClose, data, onSave, isSaving }: TestEditorProps) => {
+    const [formData, setFormData] = useState<LessonTestData | null>(data);
     useEffect(() => { setFormData(data); }, [data, open]);
 
     return (
@@ -637,11 +725,11 @@ const TestEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-sm font-bold">O'tish balli (%)</label>
-                            <Input type="number" value={formData?.min_pass_score} onChange={(e) => setFormData({ ...formData, min_pass_score: parseInt(e.target.value) })} />
+                            <Input type="number" value={formData?.min_pass_score} onChange={(e) => setFormData(prev => prev ? { ...prev, min_pass_score: parseInt(e.target.value) } : prev)} />
                         </div>
                         <div className="space-y-2">
                             <label className="text-sm font-bold">Urinishlar soni</label>
-                            <Input type="number" value={formData?.max_attempts} onChange={(e) => setFormData({ ...formData, max_attempts: parseInt(e.target.value) })} />
+                            <Input type="number" value={formData?.max_attempts} onChange={(e) => setFormData(prev => prev ? { ...prev, max_attempts: parseInt(e.target.value) } : prev)} />
                         </div>
                     </div>
 
@@ -656,7 +744,7 @@ const TestEditor = ({ open, onClose, data, onSave, isSaving }: any) => {
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>Bekor qilish</Button>
-                    <Button onClick={() => onSave(formData)} disabled={isSaving}>Testni saqlash</Button>
+                    <Button onClick={() => formData && onSave(formData)} disabled={isSaving || !formData}>Testni saqlash</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

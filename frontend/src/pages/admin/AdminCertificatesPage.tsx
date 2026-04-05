@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -87,6 +87,59 @@ interface Certificate {
     };
 }
 
+interface VerifyCertificate {
+    user_name: string;
+    source: string;
+    grade: string;
+    issued_at: string;
+}
+
+interface VerifyResult {
+    success: boolean;
+    error?: string;
+    certificate?: VerifyCertificate;
+}
+
+interface UserOption {
+    id: number;
+    username: string;
+    first_name: string;
+    last_name: string;
+}
+
+interface CourseOption {
+    id: number;
+    title: string;
+}
+
+interface OlympiadOption {
+    id: number;
+    title: string;
+}
+
+type PaginatedResponse<T> = { count?: number; results?: T[] } | T[];
+
+const unwrapList = <T,>(data: PaginatedResponse<T>): T[] => {
+    if (Array.isArray(data)) return data;
+    return data.results || [];
+};
+
+const getCertificateErrorMessage = (error: unknown, fallback: string) => {
+    if (axios.isAxiosError(error)) {
+        const data = error.response?.data;
+        if (typeof data === "object" && data !== null) {
+            const record = data as Record<string, unknown>;
+            if (typeof record.error === "string") return record.error;
+            if (typeof record.detail === "string") return record.detail;
+
+            const firstField = Object.values(record).find((value) => Array.isArray(value) || typeof value === "string");
+            if (Array.isArray(firstField) && firstField.length > 0) return String(firstField[0]);
+            if (typeof firstField === "string") return firstField;
+        }
+    }
+    return fallback;
+};
+
 const AdminCertificatesPage = () => {
     const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [loading, setLoading] = useState(true);
@@ -111,13 +164,13 @@ const AdminCertificatesPage = () => {
     // Quick Verify Dialog
     const [quickVerifyOpen, setQuickVerifyOpen] = useState(false);
     const [verifyNumber, setVerifyNumber] = useState("");
-    const [verifyResult, setVerifyResult] = useState<any>(null);
+    const [verifyResult, setVerifyResult] = useState<VerifyResult | null>(null);
 
     // Create Certificate Dialog
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
-    const [users, setUsers] = useState<any[]>([]);
-    const [courses, setCourses] = useState<any[]>([]);
-    const [olympiads, setOlympiads] = useState<any[]>([]);
+    const [users, setUsers] = useState<UserOption[]>([]);
+    const [courses, setCourses] = useState<CourseOption[]>([]);
+    const [olympiads, setOlympiads] = useState<OlympiadOption[]>([]);
     const [newCert, setNewCert] = useState({
         user_id: "",
         cert_type: "COURSE",
@@ -133,24 +186,20 @@ const AdminCertificatesPage = () => {
     // Stats
     const [stats, setStats] = useState({ total: 0, thisMonth: 0, pending: 0 });
 
-    useEffect(() => {
-        fetchCertificates();
-    }, [statusFilter, typeFilter]);
-
-    const fetchCertificates = async () => {
+    const fetchCertificates = useCallback(async () => {
         setLoading(true);
         try {
             let url = `${API_URL}/certificates/?`;
             if (statusFilter !== "all") url += `status=${statusFilter}&`;
             if (typeFilter !== "all") url += `type=${typeFilter}&`;
 
-            const res = await axios.get(url, { headers: getAuthHeader() });
-            const data = res.data.results || res.data;
+            const res = await axios.get<PaginatedResponse<Certificate>>(url, { headers: getAuthHeader() });
+            const data = unwrapList(res.data);
             setCertificates(data);
 
             // Calculate stats
             setStats({
-                total: res.data.count || data.length,
+                total: Array.isArray(res.data) ? data.length : (res.data.count || data.length),
                 thisMonth: data.filter((c: Certificate) => {
                     const issued = new Date(c.issued_at);
                     const now = new Date();
@@ -164,7 +213,11 @@ const AdminCertificatesPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [statusFilter, t, typeFilter]);
+
+    useEffect(() => {
+        void fetchCertificates();
+    }, [fetchCertificates]);
 
     // Filter client-side for search
     const filteredCerts = certificates.filter(cert => {
@@ -216,8 +269,8 @@ const AdminCertificatesPage = () => {
             toast.success(t('admin.certificateRejected', { number: rejectingCert.cert_number }));
             setRejectDialogOpen(false);
             fetchCertificates();
-        } catch (error: any) {
-            toast.error(error.response?.data?.error || t('admin.certificates.rejectError'));
+        } catch (error: unknown) {
+            toast.error(getCertificateErrorMessage(error, t('admin.certificates.rejectError')));
         } finally {
             setActionLoading(false);
         }
@@ -258,9 +311,9 @@ const AdminCertificatesPage = () => {
             } else {
                 toast.error(t('admin.certificates.pdfNotFound'));
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.dismiss('pdf-loading');
-            toast.error(error.response?.data?.error || t('admin.certificates.pdfLoadError'));
+            toast.error(getCertificateErrorMessage(error, t('admin.certificates.pdfLoadError')));
         }
     };
 
@@ -286,10 +339,10 @@ const AdminCertificatesPage = () => {
         try {
             const res = await axios.get(`${API_URL}/certificates/verify/?number=${verifyNumber.toUpperCase()}`);
             setVerifyResult(res.data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             setVerifyResult({
                 success: false,
-                error: error.response?.data?.error || t('admin.certificates.certNotFoundOrError')
+                error: getCertificateErrorMessage(error, t('admin.certificates.certNotFoundOrError'))
             });
         } finally {
             setActionLoading(false);
@@ -301,13 +354,13 @@ const AdminCertificatesPage = () => {
         try {
             const headers = getAuthHeader();
             const [usersRes, coursesRes, olympiadsRes] = await Promise.all([
-                axios.get(`${API_URL}/users/?limit=100`, { headers }),
-                axios.get(`${API_URL}/courses/?limit=100`, { headers }),
-                axios.get(`${API_URL}/olympiads/?limit=100`, { headers })
+                axios.get<PaginatedResponse<UserOption>>(`${API_URL}/users/?limit=100`, { headers }),
+                axios.get<PaginatedResponse<CourseOption>>(`${API_URL}/courses/?limit=100`, { headers }),
+                axios.get<PaginatedResponse<OlympiadOption>>(`${API_URL}/olympiads/?limit=100`, { headers })
             ]);
-            setUsers(usersRes.data.results || usersRes.data);
-            setCourses(coursesRes.data.results || coursesRes.data);
-            setOlympiads(olympiadsRes.data.results || olympiadsRes.data);
+            setUsers(unwrapList(usersRes.data));
+            setCourses(unwrapList(coursesRes.data));
+            setOlympiads(unwrapList(olympiadsRes.data));
         } catch (error) {
             console.error("Data fetch error:", error);
             toast.error(t('admin.certificates.loadError') || t('admin.loadError'));
@@ -344,10 +397,8 @@ const AdminCertificatesPage = () => {
                 grade: "",
                 score: 0
             });
-        } catch (error: any) {
-            const errorMsg = error.response?.data?.error ||
-                (error.response?.data ? Object.values(error.response.data || {}).flat()[0] : null);
-            toast.error(errorMsg as string || t('admin.certificates.createError'));
+        } catch (error: unknown) {
+            toast.error(getCertificateErrorMessage(error, t('admin.certificates.createError')));
         } finally {
             setActionLoading(false);
         }

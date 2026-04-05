@@ -15,26 +15,84 @@ import LevelProgressModal from "@/components/dashboard/LevelProgressModal";
 import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState";
 import { API_URL, getAuthHeader, getImageUrl } from "@/services/api";
 
+interface DashboardRecommendedCourse {
+  id: number;
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  price: number;
+  level: string;
+  lessons_count: number;
+  students_count: number;
+  subject?: {
+    name: string;
+    icon: string;
+    color: string;
+  };
+}
+
+interface DashboardFeaturedSubject {
+  id: number;
+  name: string;
+  slug: string;
+  icon?: string;
+  color?: string;
+  courses_count: number;
+}
+
+interface DashboardFeaturedProfession {
+  id: number;
+  name: string;
+  description: string;
+  icon?: string;
+  color?: string;
+}
+
+type DashboardMission = Record<string, unknown>;
+
+type DashboardCalendarDay = Record<string, unknown>;
+
+interface DashboardLevel extends Record<string, unknown> {
+  current: number;
+  xp_current: number;
+  progress_percent: number;
+}
+
+interface DashboardHero extends Record<string, unknown> {
+  user_name: string;
+  balance: number;
+  ranking: number;
+  certificates_count: number;
+  streak_days?: number;
+}
+
+type DashboardTelegram = Record<string, unknown>;
+
+type DashboardSubjectStat = Record<string, unknown>;
+
+type DashboardActiveProfession = Record<string, unknown>;
+
+interface DashboardEnrolledCourse {
+  id: number;
+  title: string;
+  thumbnail?: string | null;
+  subject?: string | null;
+  progress?: number | null;
+}
+
 interface DashboardData {
   has_active_courses: boolean;
-  recommended_courses?: any[];
-  featured_subjects?: any[];
-  featured_professions?: any[];
-  mission: any;
-  calendar: any[];
-  level: any;
-  hero: {
-    user_name: string;
-    balance: number;
-    ranking: number;
-    certificates_count: number;
-    streak_days?: number;
-    [key: string]: any;
-  };
-  telegram: any;
-  subject_stats: any[];
-  active_profession: any;
-  enrolled_courses: any[];
+  recommended_courses?: DashboardRecommendedCourse[];
+  featured_subjects?: DashboardFeaturedSubject[];
+  featured_professions?: DashboardFeaturedProfession[];
+  mission: DashboardMission;
+  calendar: DashboardCalendarDay[];
+  level: DashboardLevel;
+  hero: DashboardHero;
+  telegram: DashboardTelegram;
+  subject_stats: DashboardSubjectStat[];
+  active_profession: DashboardActiveProfession;
+  enrolled_courses: DashboardEnrolledCourse[];
 }
 
 const Dashboard = () => {
@@ -67,11 +125,11 @@ const Dashboard = () => {
         const json = await res.json();
         setData(json);
       } else {
-        const errText = await res.text();
         setError(`Failed to load dashboard: ${res.status}`);
       }
-    } catch (e: any) {
-      setError(`Network error: ${e.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      setError(`Network error: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -211,7 +269,7 @@ const Dashboard = () => {
               </div>
 
               <div className="flex lg:grid lg:grid-cols-2 overflow-x-auto lg:overflow-visible gap-4 lg:gap-6 pb-4 lg:pb-0 snap-x snap-mandatory scrollbar-hide lg:scrollbar-default -mx-4 lg:mx-0 px-4 lg:px-0">
-                {data.enrolled_courses.slice(0, 4).map((course: any) => (
+                {data.enrolled_courses.slice(0, 4).map((course) => (
                   <Link
                     key={course.id}
                     to={`/course/${course.id}`}

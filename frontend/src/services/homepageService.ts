@@ -1,5 +1,8 @@
 import api, { getAuthHeader } from "./api";
 
+type QueryParams = Record<string, string | number | boolean | null | undefined>;
+type ServicePayload = FormData | Record<string, unknown>;
+
 // --- CMS Types ---
 
 export interface HomePageConfig {
@@ -209,11 +212,11 @@ export const homepageService = {
         return res.data;
     },
     // Main Public Pages
-    getPublicOlympiads: async (params?: any) => {
+    getPublicOlympiads: async (params?: QueryParams) => {
         const res = await api.get(`/olympiads/upcoming/`, { params });
         return res.data;
     },
-    getPublicCourses: async (params?: any) => {
+    getPublicCourses: async (params?: QueryParams) => {
         const res = await api.get(`/courses/`, {
             params: { is_active: true, status: 'APPROVED', ...params }
         });
@@ -231,12 +234,12 @@ export const homepageService = {
         const res = await api.get(`/homepage/get_config/`);
         return res.data;
     },
-    updateConfig: async (data: any) => {
+    updateConfig: async (data: ServicePayload) => {
         return api.post(`/homepage/update_config/`, data, { headers: getAuthHeader() }); // Using POST for update based on backend implementation
     },
 
     // Stats Management
-    createStat: async (data: any) => {
+    createStat: async (data: ServicePayload) => {
         return api.post(`/home-stats/`, data, { headers: getAuthHeader() });
     },
     deleteStat: async (id: number) => {
@@ -248,7 +251,7 @@ export const homepageService = {
         const res = await api.get(`/home-steps/`);
         return res.data;
     },
-    createStep: async (data: any) => {
+    createStep: async (data: ServicePayload) => {
         return api.post(`/home-steps/`, data, { headers: getAuthHeader() });
     },
     deleteStep: async (id: number) => {
@@ -260,7 +263,7 @@ export const homepageService = {
         const res = await api.get(`/home-advantages/`);
         return res.data;
     },
-    createAdvantage: async (data: any) => {
+    createAdvantage: async (data: ServicePayload) => {
         return api.post(`/home-advantages/`, data, { headers: getAuthHeader() });
     },
     deleteAdvantage: async (id: number) => {
@@ -272,7 +275,7 @@ export const homepageService = {
         const res = await api.get(`/banners/`);
         return res.data;
     },
-    createBanner: async (data: any) => {
+    createBanner: async (data: ServicePayload) => {
         return api.post(`/banners/`, data, { headers: getAuthHeader() });
     },
     deleteBanner: async (id: number) => {
@@ -281,7 +284,7 @@ export const homepageService = {
 
     // Testimonials Management
     // getTestimonials already exists (public), but we use standard endpoint for admin lists too
-    createTestimonial: async (data: any) => {
+    createTestimonial: async (data: ServicePayload) => {
         return api.post(`/testimonials/`, data, { headers: getAuthHeader() });
     },
     deleteTestimonial: async (id: number) => {
@@ -293,10 +296,10 @@ export const homepageService = {
         const res = await api.get(`/free-course-section/`);
         return res.data;
     },
-    createFreeCourseSection: async (data: any) => {
+    createFreeCourseSection: async (data: ServicePayload) => {
         return api.post(`/free-course-section/`, data, { headers: getAuthHeader() });
     },
-    updateFreeCourseSection: async (id: number, data: any) => {
+    updateFreeCourseSection: async (id: number, data: ServicePayload) => {
         return api.patch(`/free-course-section/${id}/`, data, { headers: getAuthHeader() });
     },
     deleteFreeCourseSection: async (id: number) => {
@@ -308,10 +311,10 @@ export const homepageService = {
         const res = await api.get(`/free-course-cards/`);
         return res.data;
     },
-    createFreeCourseLessonCard: async (data: any) => {
+    createFreeCourseLessonCard: async (data: ServicePayload) => {
         return api.post(`/free-course-cards/`, data, { headers: getAuthHeader() });
     },
-    updateFreeCourseLessonCard: async (id: number, data: any) => {
+    updateFreeCourseLessonCard: async (id: number, data: ServicePayload) => {
         return api.patch(`/free-course-cards/${id}/`, data, { headers: getAuthHeader() });
     },
     deleteFreeCourseLessonCard: async (id: number) => {
