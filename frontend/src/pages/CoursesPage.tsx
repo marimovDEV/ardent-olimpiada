@@ -28,13 +28,12 @@ interface Course {
   language: string;
   lessons_count: number;
   duration: string;
-  enrolled_count: number;
+  students_count: number;
   rating: number;
   thumbnail: string;
   is_free: boolean;
   price: number;
   description: string;
-  is_published: boolean;
   teacher_name?: string;
   is_enrolled?: boolean;
 }
@@ -84,7 +83,15 @@ const CoursesPage = () => {
           courseList = data.results;
         }
 
-        setCourses(courseList.filter(c => c.is_published !== false));
+        // Backend /api/courses/ allaqachon is_active=True bo'yicha filtrlaydi.
+        // DIQQAT: lekin status (DRAFT/PENDING/APPROVED) bo'yicha filtrlamaydi,
+        // ya'ni tasdiqlanmagan kurslar ham ommaviy ro'yxatga tushadi.
+        // Avval bu yerda `c.is_published !== false` filtri turardi, biroq API
+        // `is_published` maydonini yubormaydi — undefined !== false doim true,
+        // ya'ni filtr hech narsa qilmasdi. O'lik kod sifatida olib tashlandi.
+        // To'g'ri tuzatish backend'da: CourseViewSet.get_queryset ichida oddiy
+        // foydalanuvchi uchun status='APPROVED' sharti qo'shilishi kerak.
+        setCourses(courseList);
       }
     } catch (err) {
       console.error('Error fetching courses:', err);

@@ -39,6 +39,7 @@ export interface Lesson {
     pdf_url: string | null;
     order: number;
     is_free: boolean;
+    xp_amount: number;
     progress: LessonProgress | null;
     is_locked: boolean;
     practice: Practice | null;

@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 
 import { getLucideIcon } from "@/lib/icon-utils";
-import { memo } from "react";
+
 
 const ProfessionCard = memo(({ prof, t }: { prof: any; t: any }) => {
     return (

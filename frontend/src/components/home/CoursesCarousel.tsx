@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight, Star, Clock } from "lucide-react";
 import axios from "axios";
 import { API_URL } from "@/services/api";
+import { homepageService } from "@/services/homepageService";
 import {
     Carousel,
     CarouselContent,

@@ -7,15 +7,30 @@ type ServicePayload = FormData | Record<string, unknown>;
 
 export interface HomePageConfig {
     id: number;
-    title_uz: string;
-    title_ru: string;
-    subtitle_uz: string;
-    subtitle_ru: string;
-    button_text_uz: string;
-    button_text_ru: string;
-    button_link: string;
-    background_image: string | null;
-    is_active: boolean;
+    // Hero bloki — backend HomePageConfigSerializer bilan bir xil nomlar.
+    // Eski `title_uz` / `subtitle_uz` / `button_link` / `background_image`
+    // maydonlari API'da yo'q edi, olib tashlandi.
+    hero_title: string;
+    hero_subtitle: string;
+    hero_button_text: string;
+    hero_button_link: string;
+    hero_image: string | null;
+    // CTA bloki
+    cta_title: string;
+    cta_subtitle: string;
+    cta_button_text: string;
+    cta_button_link: string;
+    // Teaser bloki
+    teaser_title_uz: string;
+    teaser_title_ru: string;
+    teaser_subtitle_uz: string;
+    teaser_subtitle_ru: string;
+    teaser_image: string | null;
+    teaser_button_text_uz: string;
+    teaser_button_text_ru: string;
+    teaser_button_link: string;
+    updated_at: string;
+    // Bo'limlarni ko'rsatish/yashirish
     show_stats: boolean;
     show_olympiads: boolean;
     show_courses: boolean;
@@ -26,14 +41,6 @@ export interface HomePageConfig {
     show_steps: boolean;
     show_cta: boolean;
     show_faq: boolean;
-    teaser_title_uz: string;
-    teaser_title_ru: string;
-    teaser_subtitle_uz: string;
-    teaser_subtitle_ru: string;
-    teaser_image: string | null;
-    teaser_button_text_uz: string;
-    teaser_button_text_ru: string;
-    teaser_button_link: string;
 }
 
 export interface StatsConfig {

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { getBaseUrl } from "@/services/api";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";

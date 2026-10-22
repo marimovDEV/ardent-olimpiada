@@ -41,6 +41,8 @@ interface OlympiadQuestion {
 interface OlympiadAttempt {
     answers?: Record<string, AnswerValue>;
     status?: string;
+    /** Imtihon boshlangan payt — server belgilaydi. Taymer shundan hisoblanadi. */
+    started_at?: string;
     submitted_at?: string;
     tab_switches_count?: number;
 }
@@ -211,7 +213,12 @@ const OlympiadTestPage = () => {
 
                     // LOGIC: Calculate remaining time
                     const durationSeconds = parseDuration(data.olympiad.duration);
-                    const startTime = attempt.submitted_at ? new Date(attempt.submitted_at).getTime() : Date.now();
+                    // started_at — serverdagi haqiqiy boshlanish vaqti.
+                    // Eski yozuvlarda u bo'lmasligi mumkin, shunda submitted_at'ga
+                    // qaytamiz (auto_now_add bo'lgani uchun IN_PROGRESS qator uchun
+                    // u yaratilish vaqtiga teng).
+                    const startedAtRaw = attempt.started_at || attempt.submitted_at;
+                    const startTime = startedAtRaw ? new Date(startedAtRaw).getTime() : Date.now();
                     const now = new Date().getTime();
                     const elapsedSeconds = Math.floor((now - startTime) / 1000);
 

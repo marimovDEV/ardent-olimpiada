@@ -1,7 +1,7 @@
 import { API_URL as API_BASE, getImageUrl } from "@/services/api";
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Play, Clock, BookOpen, Loader2 } from "lucide-react";
+import { Play, Clock, BookOpen, Loader2, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 

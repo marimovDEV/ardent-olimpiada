@@ -96,6 +96,7 @@ interface Lesson {
     required_lesson: number | null;
     video_duration: number;
     min_watch_percent: number;
+    xp_amount: number;
 }
 
 interface Module {

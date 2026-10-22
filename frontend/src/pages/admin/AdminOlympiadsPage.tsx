@@ -50,6 +50,7 @@ interface Olympiad {
     id: number;
     title: string;
     description: string;
+    thumbnail: string | null;
     subject: string;
     level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
     registration_start: string;
