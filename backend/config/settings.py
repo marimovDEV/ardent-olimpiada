@@ -2,19 +2,43 @@
 Django settings for config project - Olimpiada Platform
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load .env file
+load_dotenv(BASE_DIR / '.env')
 
-# Quick-start development settings - unsuitable for production
-SECRET_KEY = 'django-insecure-olimpiada-platform-secret-key-change-in-production'
+# DEBUG: .env da DEBUG=True bo'lmasa, har qanday holatda False
+DEBUG = os.environ.get('DEBUG', 'False').strip().lower() == 'true'
 
-DEBUG = True
+# SECRET_KEY: kodda fallback YO'Q. Production'da .env majburiy.
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-local-dev-only-do-not-use-in-production'
+    else:
+        raise ImproperlyConfigured(
+            "SECRET_KEY .env da ko'rsatilmagan. Production'da bu majburiy."
+        )
 
-ALLOWED_HOSTS = ['test.api.ardentsoft.uz', 'api.hogwords.uz', 'hogwords.uz', 'www.hogwords.uz', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = [
+    'test.api.ardentsoft.uz',
+    'api.hogwords.uz', 'hogwords.uz', 'www.hogwords.uz',
+    'api.hogwarts.uz', 'hogwarts.uz', 'www.hogwarts.uz',
+]
+if DEBUG:
+    # Development'da har qanday host — telefon/planshet lokal serverga LAN IP
+    # orqali kirishi uchun (Wi-Fi almashganda IP o'zgaradi, qotirib bo'lmaydi).
+    # Production'ga bu ta'sir qilmaydi: DEBUG=False bo'lsa yuqoridagi aniq
+    # ro'yxat amal qiladi.
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -67,13 +91,29 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database - SQLite
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database
+# POSTGRES_DB berilgan bo'lsa PostgreSQL, aks holda SQLite (lokal dev).
+# Olimpiada/imtihon bir vaqtda ko'p yozish qiladi — SQLite bunda
+# "database is locked" beradi, shuning uchun production PostgreSQL bo'lishi kerak.
+if os.environ.get('POSTGRES_DB'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ['POSTGRES_DB'],
+            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            'CONN_MAX_AGE': int(os.environ.get('POSTGRES_CONN_MAX_AGE', '60')),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Custom User Model
@@ -123,7 +163,13 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 # Security Settings
-# X_FRAME_OPTIONS = 'SAMEORIGIN'
+# Quyidagilar faqat production'da (DEBUG=False) yoqiladi, aks holda
+# lokal http://localhost da login ishlamay qoladi.
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    X_FRAME_OPTIONS = 'DENY'
+
 
 
 # REST Framework Settings
@@ -184,10 +230,20 @@ MIN_PAYOUT_AMOUNT = 100000  # Minimum withdrawal amount (100k so'm)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
-SECURE_SSL_REDIRECT = True # Enable in production with SSL
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# HTTPS majburlash va HSTS — development'da O'CHIQ bo'lishi shart. Ilgari
+# bu yerda SECURE_SSL_REDIRECT = True qotirilgan edi, shuning uchun lokal
+# http://... so'rovlar https'ga 301 bo'lib ketardi: telefon/emulyatordan
+# lokal serverga ulanish ishlamasdi va testlar @override_settings talab
+# qilardi. Production'da default yoqilgan, env orqali o'chirish mumkin.
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 0
+else:
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').strip().lower() == 'true'
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
+    if SECURE_HSTS_SECONDS:
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_PRELOAD = True
 
 # Proxy Configuration (Fix for Mixed Content / localhost URLs)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -202,7 +258,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://api.hogwords.uz",
     "https://hogwords.uz",
     "https://www.hogwords.uz",
+    "https://api.hogwarts.uz",
+    "https://hogwarts.uz",
+    "https://www.hogwarts.uz",
 ]
 
 
-# USE_X_FORWARDED_PORT = True
+# ESKIZ SMS API Config - .env dan olinadi, kodda fallback YO'Q
+ESKIZ_EMAIL = os.environ.get('ESKIZ_EMAIL')
+ESKIZ_PASSWORD = os.environ.get('ESKIZ_PASSWORD')
