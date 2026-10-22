@@ -64,21 +64,35 @@ class OlympiadService:
                 if olympiad.max_attempts > 1:
                     # Allow re-take by deleting old result (satisfies unique_together)
                     attempt.delete()
-                    attempt = TestResult.objects.create(user=user, olympiad=olympiad, status='IN_PROGRESS')
+                    attempt = TestResult.objects.create(
+                        user=user, olympiad=olympiad, status='IN_PROGRESS',
+                        started_at=timezone.now(),
+                    )
                 else:
                     raise ValidationError("error.already_submitted")
             else:
                 # IN_PROGRESS: check if timer expired and reset if needed
                 duration_minutes = olympiad.duration if isinstance(olympiad.duration, (int, float)) else 120
                 duration_seconds = duration_minutes * 60
-                elapsed = (timezone.now() - attempt.submitted_at).total_seconds()
+                # started_at — haqiqiy boshlanish vaqti. Eski yozuvlarda u yo'q,
+                # shunda submitted_at'ga qaytamiz (u auto_now_add bo'lgani uchun
+                # IN_PROGRESS qator uchun yaratilish vaqtiga teng).
+                reference = attempt.started_at or attempt.submitted_at
+                elapsed = (timezone.now() - reference).total_seconds()
                 if elapsed > duration_seconds:
                     # Timer expired — delete old and create fresh attempt
                     attempt.delete()
-                    attempt = TestResult.objects.create(user=user, olympiad=olympiad, status='IN_PROGRESS')
+                    attempt = TestResult.objects.create(
+                        user=user, olympiad=olympiad, status='IN_PROGRESS',
+                        started_at=timezone.now(),
+                    )
         else:
-            attempt = TestResult.objects.create(user=user, olympiad=olympiad, status='IN_PROGRESS')
-            
+            attempt = TestResult.objects.create(
+                user=user, olympiad=olympiad, status='IN_PROGRESS',
+                started_at=timezone.now(),
+            )
+
+
         return attempt
 
     @staticmethod

@@ -6,7 +6,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 import pandas as pd
 import json
 import os
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
@@ -70,7 +70,7 @@ from .services.email_service import EmailService
 from .bot_service import BotService
 from .services.certificate_service import CertificateService
 from .services.reward_service import RewardService
-
+from .services.sms_service import EskizSMSService
 
 
 # ============= TELEGRAM AUTH VIEWS =============
@@ -121,26 +121,21 @@ def send_verification_code(request):
         expires_at=timezone.now() + timedelta(minutes=10)
     )
     
-    # Format message for Telegram
+    # Format message for SMS
     formatted_phone = format_phone_number(phone)
     if request_type == 'recover':
-        title = "🔐 <b>Parolni tiklash</b>"
+        title = "HOGWARTS: Parolni tiklash."
     else:
-        title = "🔐 <b>Yangi ro'yxatdan o'tish</b>"
+        title = "HOGWARTS: Yangi ro'yxatdan o'tish."
 
-    message = f"""
-{title}
-
-Sizning tasdiqlash kodingiz: <code>{code}</code>
-
-Kod 10 daqiqa davomida amal qiladi.
-"""
+    message = f"{title}\nSizning tasdiqlash kodingiz: {code}\nKod 10 daqiqa davomida amal qiladi."
     
-    # Send via Telegram (Fallback to admin if no SMS integration yet, or if register flow)
-    # Ideally should be SMS. For now we send to Admin to debug/test or if user is implementing SMS later.
-    # But wait, looking at existing code, it probably meant to send to Admin for manual verify or debug.
-    # Let's send to Admin so it works.
-    TelegramService.send_to_admin(message)
+    # Send via Eskiz SMS
+    sms_sent = EskizSMSService.send_sms(phone, message)
+    
+    if not sms_sent:
+        # Fallback to Telegram Admin in case SMS fails
+        TelegramService.send_to_admin(f"SMS yuborishda xatolik ({phone}):\n{message}")
     
     return Response({
         'success': True,
@@ -169,27 +164,29 @@ def forgot_password(request):
     VerificationCode.objects.create(
         phone=phone,
         code=code,
-        expires_at=timezone.now() + timedelta(minutes=1)
+        expires_at=timezone.now() + timedelta(minutes=10)
     )
     
-    message = f"""
+    sms_message = f"HOGWARTS: Parolni tiklash.\nSizning tasdiqlash kodingiz: {code}\nKod 10 daqiqa davomida amal qiladi."
+    sms_sent = EskizSMSService.send_sms(phone, sms_message)
+    
+    if not sms_sent:
+        # Fallback to Telegram if SMS service fails
+        tg_message = f"""
 🔐 <b>Parolni tiklash</b>
 
 👤 <b>User:</b> {user.first_name} {user.last_name}
 📱 <b>Telefon:</b> {phone}
 🔢 <b>Tasdiqlash kodi:</b> <code>{code}</code>
 
-Kod 1 daqiqa davomida amal qiladi.
+Kod 10 daqiqa davomida amal qiladi.
 """
-    # Send to User if they have Telegram linked, otherwise to Admin
-    if user.telegram_id:
-        success = TelegramService.send_message(user.telegram_id, message)
-        if not success:
-             TelegramService.send_to_admin(message + "\n\n⚠️ Could not send to user. Sent to Admin.")
-    else:
-        TelegramService.send_to_admin(message + "\n\n⚠️ User has no Telegram ID. Sent to Admin.")
+        if user.telegram_id:
+            TelegramService.send_message(user.telegram_id, tg_message)
+        else:
+            TelegramService.send_to_admin(tg_message + "\n\n⚠️ SMS yuborishda xatolik bo'lganligi sababli adminga yuborildi.")
     
-    return Response({'success': True, 'message': 'Kod yuborildi'})
+    return Response({'success': True, 'message': 'Tasdiqlash kodi yuborildi'})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -530,12 +527,18 @@ def login(request):
     if serializer.is_valid():
         email = serializer.validated_data.get('email')
         username = serializer.validated_data.get('username')
+        phone = serializer.validated_data.get('phone')
         password = serializer.validated_data['password']
         
         user = None
         
         if not email and username:
             email = username
+        # Mobil ilova telefonni `phone` da yuboradi. Pastdagi izlash mantiqi
+        # `email` o'zgaruvchisidagi raqamni telefon deb taniydi, shuning uchun
+        # shunga o'tkazamiz.
+        if not email and phone:
+            email = phone
 
         # Try fetch by email or username
         # Try fetch by email, username OR phone
@@ -1690,7 +1693,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         olympiad = self.get_object()
         
         total_registrations = olympiad.registrations.count()
-        results = TestResult.objects.filter(olympiad=olympiad)
+        results = TestResult.objects.filter(olympiad=olympiad).exclude(status='IN_PROGRESS')
         total_submissions = results.count()
         total_paid = olympiad.registrations.filter(is_paid=True).count()
         total_disqualified = results.filter(status='DISQUALIFIED').count()
@@ -1722,19 +1725,22 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         now = timezone.now()
         
         # Online users = users who updated their result in the last 5 minutes
+        # Hozir imtihon yechayotganlar: started_at belgilangan va davomiylik
+        # oynasidan chiqib ketmagan IN_PROGRESS urinishlar. (Ilgari bu yerda
+        # barcha natijalar sanalardigan mock turardi.)
+        window_start = now - timedelta(minutes=(olympiad.duration or 0) + 1)
         online_count = TestResult.objects.filter(
             olympiad=olympiad,
-            # We assume updating results frequently or check updated_at
-            # Since TestResult doesn't have updated_at in snippet, checking submitted_at might be wrong
-            # Let's check for 'COMPLETED' or if there's an ongoing signal
-        ).count() # Placeholder count
+            status='IN_PROGRESS',
+            started_at__gte=window_start,
+        ).count()
         
         # Score distribution
         distribution = {
-            '0-20%': TestResult.objects.filter(olympiad=olympiad, percentage__lt=20).count(),
-            '20-50%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=20, percentage__lt=50).count(),
-            '50-80%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=50, percentage__lt=80).count(),
-            '80-100%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=80).count(),
+            '0-20%': TestResult.objects.filter(olympiad=olympiad, percentage__lt=20).exclude(status='IN_PROGRESS').count(),
+            '20-50%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=20, percentage__lt=50).exclude(status='IN_PROGRESS').count(),
+            '50-80%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=50, percentage__lt=80).exclude(status='IN_PROGRESS').count(),
+            '80-100%': TestResult.objects.filter(olympiad=olympiad, percentage__gte=80).exclude(status='IN_PROGRESS').count(),
         }
         
         return Response({
@@ -1774,9 +1780,23 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         })
     
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy', 'add_question', 'import_questions', 'submissions', 'grade_result']:
+        """Har bir action o'z @action(permission_classes=...) ruxsatini saqlaydi.
+
+        Ilgari bu metod ro'yxatda bo'lmagan HAR QANDAY action'ni [AllowAny()]
+        ga tushirardi va @action ichida yozilgan ruxsatlarni butunlay bekor
+        qilardi — natijada 24 ta action anonim ochiq edi: get_questions to'g'ri
+        javoblarni, ranking telefon raqamlarini qaytarardi, force_start va
+        publish_results'ni esa istalgan kishi POST qila olardi.
+
+        super().get_permissions() self.permission_classes'ni o'qiydi, DRF esa
+        uni har bir action uchun @action initkwargs'idan to'g'ri o'rnatadi.
+        Ruxsat e'lon qilmagan action'lar klass darajasidagi AllowAny'da qoladi
+        (list, retrieve, winners, results_with_winners — ommaviy sahifalar
+        uchun kerak).
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAuthenticated(), IsTeacherOrAdmin()]
-        return [AllowAny()]
+        return super().get_permissions()
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -1948,10 +1968,25 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         else:
             questions = questions.order_by('order')
 
+        # Imtihon boshlanish vaqtini SERVER belgilaydi. get_or_create bo'lgani
+        # uchun savollarni qayta so'rash (ilovani o'chirib qayta ochish ham)
+        # soatni noldan boshlamaydi.
+        attempt, _created = TestResult.objects.get_or_create(
+            user=user,
+            olympiad=olympiad,
+            defaults={'status': 'IN_PROGRESS', 'started_at': timezone.now()},
+        )
+        if attempt.started_at is None:
+            # started_at joriy qilinishidan oldin ochilgan urinishlar uchun
+            attempt.started_at = timezone.now()
+            attempt.save(update_fields=['started_at'])
+
         return Response({
             'success': True,
             'questions': QuestionSerializer(questions, many=True).data,
             'duration': olympiad.duration,
+            'started_at': attempt.started_at,
+            'server_time': timezone.now(),
             'olympiad': {
                 'id': olympiad.id,
                 'title': olympiad.title,
@@ -2086,10 +2121,29 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 'error': 'error.already_submitted'
             }, status=status.HTTP_400_BAD_REQUEST)
         
+        # Sarflangan vaqtni SERVER hisoblaydi. Mijoz yuborgan time_taken
+        # ishonchsiz: uni o'quvchi xohlagancha o'zgartirishi mumkin.
+        # started_at questions endpoint'ida belgilangan.
+        if result and result.started_at:
+            time_taken = int((timezone.now() - result.started_at).total_seconds())
+        
         # Anti-Cheat Validation
         status_result = 'COMPLETED'
         if olympiad.tab_switch_limit > 0 and tab_switches > olympiad.tab_switch_limit:
             status_result = 'DISQUALIFIED'
+        
+        # Muddatdan oshib topshirilgan ish avtomatik rad etilmaydi — internet
+        # uzilishi yoki ilovaning qotib qolishi ham shu ko'rinishni beradi.
+        # O'qituvchi ko'rib chiqishi uchun CHECKING holatiga qo'yiladi.
+        overtime_reason = None
+        if status_result == 'COMPLETED' and result and result.started_at:
+            allowed_seconds = (olympiad.duration or 0) * 60 + 60  # +1 daqiqa zapas
+            if allowed_seconds > 60 and time_taken > allowed_seconds:
+                status_result = 'CHECKING'
+                overtime_reason = (
+                    f"Muddatdan oshib topshirilgan: {time_taken} sekund "
+                    f"(ruxsat etilgan {allowed_seconds})."
+                )
         
         # Calculate score
         all_questions = {q.id: q for q in olympiad.questions.all()}
@@ -2118,6 +2172,8 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             result.time_taken = time_taken
             result.tab_switches_count = tab_switches
             result.status = status_result
+            if overtime_reason:
+                result.disqualified_reason = overtime_reason
             result.save()
         else:
             result = TestResult.objects.create(
@@ -2164,7 +2220,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         ).select_related('user')
         
         avg_score = completed_results.aggregate(models.Avg('score'))['score__avg'] or 0
-        participants_count = TestResult.objects.filter(olympiad=olympiad).count()
+        participants_count = TestResult.objects.filter(olympiad=olympiad).exclude(status='IN_PROGRESS').count()
         
         # 2. Personal Result
         my_result_full = None
@@ -2237,7 +2293,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         
         # Calculate some stats
         avg_score = completed_results.aggregate(models.Avg('score'))['score__avg'] or 0
-        participants_count = TestResult.objects.filter(olympiad=olympiad).count()
+        participants_count = TestResult.objects.filter(olympiad=olympiad).exclude(status='IN_PROGRESS').count()
         best_time = completed_results.aggregate(models.Min('time_taken'))['time_taken__min'] or 0
         regions_count = completed_results.values('user__region').distinct().count()
 
@@ -2270,7 +2326,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         leaderboard_data = []
         # Queryset Logic
         if is_staff:
-            qs = TestResult.objects.filter(olympiad=olympiad).select_related('user').order_by('-score', 'time_taken')
+            qs = TestResult.objects.filter(olympiad=olympiad).exclude(status='IN_PROGRESS').select_related('user').order_by('-score', 'time_taken')
         else:
             if is_results_open:
                 qs = completed_results.order_by('-score', 'time_taken')[:100]
@@ -2397,7 +2453,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
     def submissions(self, request, pk=None):
         """List all submissions for teacher/admin"""
         olympiad = self.get_object()
-        results = TestResult.objects.filter(olympiad=olympiad).select_related('user').order_by('-submitted_at')
+        results = TestResult.objects.filter(olympiad=olympiad).exclude(status='IN_PROGRESS').select_related('user').order_by('-submitted_at')
         
         data = []
         for res in results:
@@ -2482,7 +2538,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         """Get detailed KPIs for admin"""
         olympiad = self.get_object()
         registrations = olympiad.registrations.all()
-        results = olympiad.results.all()
+        results = olympiad.results.all().exclude(status='IN_PROGRESS')
         
         # Calculations
         reg_count = registrations.count()
@@ -2576,7 +2632,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         
         for olym in olympiads:
             # Get top 3 winners
-            results = olym.results.all().select_related('user').order_by('-score', 'time_taken')[:3]
+            results = olym.results.all().exclude(status='IN_PROGRESS').select_related('user').order_by('-score', 'time_taken')[:3]
             
             winners_data = []
             for idx, res in enumerate(results):
@@ -2618,13 +2674,19 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_404_NOT_FOUND)
     
     
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def add_question(self, request, pk=None):
-        """Add question to olympiad (Admin only)"""
-        if request.user.role != 'ADMIN':
-            return Response({'error': 'Admin huquqi talab qilinadi'}, status=status.HTTP_403_FORBIDDEN)
-        
+        """Olimpiadaga savol qo'shish — admin yoki olimpiadaning o'qituvchisi."""
         olympiad = self.get_object()
+
+        # O'qituvchi faqat o'zining olimpiadasiga savol qo'shadi.
+        is_admin = request.user.role == 'ADMIN' or request.user.is_staff
+        if not is_admin and olympiad.teacher_id != request.user.id:
+            return Response(
+                {'error': "Faqat o'zingizning olimpiadangizga savol qo'sha olasiz"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         serializer = QuestionAdminSerializer(data=request.data)
         if serializer.is_valid():
             question = serializer.save(olympiad=olympiad)
@@ -2658,9 +2720,17 @@ class OlympiadViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def import_questions(self, request, pk=None):
-        """Import questions from Excel/CSV/Word"""
+        """Excel/CSV/Word'dan savollarni import qilish."""
         olympiad = self.get_object()
-        
+
+        # O'qituvchi faqat o'zining olimpiadasiga import qiladi.
+        is_admin = request.user.role == 'ADMIN' or request.user.is_staff
+        if not is_admin and olympiad.teacher_id != request.user.id:
+            return Response(
+                {'error': "Faqat o'zingizning olimpiadangizga savol import qila olasiz"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         if 'file' not in request.FILES:
             return Response({'error': 'File not provided'}, status=400)
             
@@ -5141,7 +5211,7 @@ class HomePageViewSet(viewsets.ViewSet):
         data = []
         for o in completed:
             # Get top 3 results
-            top_results = TestResult.objects.filter(olympiad=o).order_by('-score')[:3]
+            top_results = TestResult.objects.filter(olympiad=o).exclude(status='IN_PROGRESS').order_by('-score')[:3]
             winners = []
             for i, r in enumerate(top_results):
                 winners.append({
@@ -6281,27 +6351,56 @@ def upcoming_olympiads(request):
 
 class QuestionViewSet(viewsets.ModelViewSet):
     """
-    Question API for Admins (CRUD)
+    Savol CRUD — admin va o'qituvchilar uchun.
+
+    Olimpiada ustasi (AdminOlympiadWizard / Step4Questions) savollarni aynan shu
+    endpoint orqali qo'shadi va o'qituvchi ham xuddi shu ustadan foydalanadi
+    (/teacher/olympiads/new). Ilgali bu yerda DRF'ning IsAdminUser'i turardi —
+    u role'ga emas, is_staff'ga qaraydi, shuning uchun hech bir o'qituvchi savol
+    qo'sha olmasdi (403), is_staff bo'lmagan ADMIN ham.
+
+    O'qituvchi faqat o'ziga tegishli olimpiadaning savollarini ko'radi va
+    o'zgartiradi.
     """
     queryset = Question.objects.all()
     serializer_class = QuestionAdminSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    
-    def get_queryset(self):
-        return super().get_queryset()
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
 
-    def create(self, request, *args, **kwargs):
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            return Response({
-                'success': False,
-                'error': str(e),
-                'detail': traceback.format_exc(),
-                'request_data': self.request.data  # Return payload for debugging
-            }, status=status.HTTP_400_BAD_REQUEST)
+    def _is_admin(self):
+        user = self.request.user
+        return user.role == 'ADMIN' or user.is_staff
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self._is_admin():
+            return qs
+        # Question.olympiad null bo'lishi mumkin (dars testlari) — ular
+        # o'qituvchiga bu endpoint orqali ko'rinmaydi.
+        return qs.filter(olympiad__teacher=self.request.user)
+
+    def _assert_can_write(self, serializer):
+        """O'qituvchi savolni boshqa birovning olimpiadasiga joylay olmasin."""
+        if self._is_admin():
+            return
+        olympiad = serializer.validated_data.get('olympiad')
+        if olympiad is None:
+            # partial update'da olympiad yuborilmasa, mavjud qiymat qoladi;
+            # get_queryset allaqachon faqat o'z savollarini beradi.
+            if serializer.instance is not None:
+                return
+            raise PermissionDenied("Savol uchun olimpiada ko'rsatilmagan.")
+        if olympiad.teacher_id != self.request.user.id:
+            raise PermissionDenied(
+                "Faqat o'zingizning olimpiadangizga savol qo'sha olasiz."
+            )
+
+    def perform_create(self, serializer):
+        self._assert_can_write(serializer)
+        serializer.save()
+
+    def perform_update(self, serializer):
+        self._assert_can_write(serializer)
+        serializer.save()
 
 
 class PayoutViewSet(viewsets.ModelViewSet):

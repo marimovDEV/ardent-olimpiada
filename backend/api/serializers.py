@@ -288,6 +288,9 @@ class UserRegisterSerializer_OLD(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=False)
     email = serializers.CharField(required=False)
+    # Mobil ilova identifikatorni `phone` maydonida yuboradi. Bu yerda
+    # e'lon qilinmasa DRF uni jimgina tashlab yuboradi va login 401 bo'ladi.
+    phone = serializers.CharField(required=False)
     password = serializers.CharField()
 
 
@@ -478,7 +481,7 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = ['id', 'course', 'module', 'title', 'description', 'video_url', 'pdf_url', 
                   'video_duration', 'duration', 'order', 'is_free', 'is_locked', 'min_watch_percent', 
-                  'required_lesson', 'test', 'teacher', 'created_at']
+                  'required_lesson', 'test', 'teacher', 'xp_amount', 'created_at']
         read_only_fields = ['id', 'created_at']
 
     def update(self, instance, validated_data):
@@ -1235,7 +1238,7 @@ class TestResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestResult
         fields = ['id', 'user', 'olympiad', 'answers', 'score', 
-                  'percentage', 'time_taken', 'submitted_at', 'status', 'disqualified_reason', 'feedback', 'correct_answers', 'total_questions']
+                  'percentage', 'time_taken', 'started_at', 'submitted_at', 'status', 'disqualified_reason', 'feedback', 'correct_answers', 'total_questions']
 
     def get_correct_answers(self, obj):
         # For now return score as proxy for correct count
