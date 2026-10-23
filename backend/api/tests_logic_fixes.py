@@ -715,3 +715,56 @@ class PendingBalanceReleaseTest(TestCase):
         self.wallet.refresh_from_db()
         self.assertEqual(released, 0)
         self.assertEqual(self.wallet.pending_balance, Decimal('70000'))
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class CertificateIssuanceTest(TestCase):
+    """Sertifikat raqami va yaratish sharti."""
+
+    def setUp(self):
+        self.teacher = User.objects.create_user(username='ci_teacher', password='x', role='TEACHER')
+        self.student = User.objects.create_user(username='ci_student', password='x', role='STUDENT')
+
+    def _finish_course(self, certificate_enabled):
+        course = Course.objects.create(
+            title='Kurs', teacher=self.teacher, price=0,
+            is_certificate_enabled=certificate_enabled,
+        )
+        module = Module.objects.create(course=course, title='Modul', order=1)
+        lesson = Lesson.objects.create(course=course, module=module, title='Dars', order=1)
+        Enrollment.objects.create(user=self.student, course=course)
+        LearningService.update_lesson_progress(
+            self.student, lesson.id, 'VIDEO_COMPLETE', {'position': 10}
+        )
+        return course
+
+    def test_certificate_is_issued_when_enabled(self):
+        from api.models import Certificate
+
+        course = self._finish_course(True)
+
+        self.assertEqual(Certificate.objects.filter(user=self.student, course=course).count(), 1)
+
+    def test_no_certificate_when_disabled(self):
+        """Ilgari signal `is_certificate_enabled` ni tekshirmagani uchun
+        o'chirilgan kursda ham sertifikat yaratilardi."""
+        from api.models import Certificate
+
+        course = self._finish_course(False)
+
+        self.assertFalse(Certificate.objects.filter(user=self.student, course=course).exists())
+
+    def test_cert_numbers_stay_unique_at_scale(self):
+        """Ilgari raqam CRT-1000..9999 oralig'idan olinardi: 9000 tadan
+        keyin `while True` bo'sh raqam topmay abadiy aylanib qolardi."""
+        from api.models import Certificate
+
+        numbers = set()
+        for index in range(60):
+            cert = Certificate.objects.create(
+                user=self.student, grade='100%', score=100, cert_type='DIPLOMA'
+            )
+            numbers.add(cert.cert_number)
+
+        self.assertEqual(len(numbers), 60)
+        self.assertTrue(all(len(n) <= 32 for n in numbers))

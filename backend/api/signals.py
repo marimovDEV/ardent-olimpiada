@@ -40,6 +40,12 @@ def create_course_certificate(enrollment):
     Create a certificate when course is 100% completed
     Called from Enrollment progress update
     """
+    # Kursda sertifikat o'chirilgan bo'lsa, yaratmaymiz. LearningService
+    # bu bayroqni tekshirardi, bu signal esa yo'q — natijada o'qituvchi
+    # sertifikatni o'chirib qo'ygan kursda ham sertifikat paydo bo'lardi.
+    if not enrollment.course or not enrollment.course.is_certificate_enabled:
+        return None
+
     # Check if certificate already exists
     if Certificate.objects.filter(
         user=enrollment.user,

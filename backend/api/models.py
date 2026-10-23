@@ -966,7 +966,8 @@ class Certificate(models.Model):
     ]
     
     # Core fields
-    cert_number = models.CharField(max_length=20, unique=True, blank=True)
+    # CRT-2026-A1B2C3D4 formatiga joy bo'lishi uchun 32 belgi.
+    cert_number = models.CharField(max_length=32, unique=True, blank=True)
     cert_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='COURSE')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificates')
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
@@ -995,19 +996,35 @@ class Certificate(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.cert_number:
-            # Generate unique cert number: CRT-XXXX
+            # Raqamlar oralig'i CRT-1000..9999 edi, ya'ni jami 9000 ta.
+            # Shuncha sertifikat berilgandan keyin `while True` hech qachon
+            # bo'sh raqam topmay, ABADIY aylanib qolardi (so'rov muzlaydi).
+            # Bundan tashqari to'qnashuv ehtimoli allaqachon ~1000-chi
+            # sertifikatda 50% ga yetadi.
+            #
+            # Endi: yil + 8 belgi, cheklangan urinish va oxirida uuid.
             import random
-            while True:
-                num = f"CRT-{random.randint(1000, 9999)}"
+            import string
+            import uuid
+            from django.utils import timezone
+
+            year = timezone.now().year
+            alphabet = string.ascii_uppercase + string.digits
+            for _ in range(10):
+                num = f"CRT-{year}-{''.join(random.choices(alphabet, k=8))}"
                 if not Certificate.objects.filter(cert_number=num).exists():
                     self.cert_number = num
                     break
+            else:
+                # Amalda bu yerga kelmaydi, lekin tsikl cheksiz bo'lmasligi shart.
+                self.cert_number = f"CRT-{uuid.uuid4().hex[:14].upper()}"
         
         # Check if status is becoming VERIFIED
         was_verified = False
         if self.pk:
-            old_self = Certificate.objects.get(pk=self.pk)
-            was_verified = old_self.status == 'VERIFIED'
+            # `.get()` yozuv o'chirilgan bo'lsa DoesNotExist bilan tushadi.
+            old_self = Certificate.objects.filter(pk=self.pk).first()
+            was_verified = bool(old_self and old_self.status == 'VERIFIED')
         
         super().save(*args, **kwargs)
 

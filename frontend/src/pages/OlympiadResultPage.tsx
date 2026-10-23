@@ -127,17 +127,32 @@ const OlympiadResultPage = () => {
                         </p>
                     </div>
 
-                    <Card className="p-8 border-2 border-primary/20 bg-card/50 backdrop-blur">
-                        <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">
-                            {t('olympiadResult.resultsIn', 'Natijalar chiqishiga qoldi:')}
-                        </div>
-                        <div className="text-5xl font-black tabular-nums text-primary tracking-tight">
-                            {timeLeft || "..."}
-                        </div>
-                        <div className="mt-4 text-xs text-muted-foreground">
-                            {new Date(result.result_time).toLocaleString()} da e'lon qilinadi
-                        </div>
-                    </Card>
+                    {/* Sanoqni faqat `result_time` belgilangan bo'lsa ko'rsatamiz.
+                        Aks holda `new Date(null)` "1970-yil 1-yanvar" chiqarardi
+                        va sanoq "..." da qotib qolardi. Ko'pchilik olimpiadada
+                        bu maydon bo'sh — natija o'qituvchi e'lon qilganda chiqadi. */}
+                    {result.result_time ? (
+                        <Card className="p-8 border-2 border-primary/20 bg-card/50 backdrop-blur">
+                            <div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">
+                                {t('olympiadResult.resultsIn', 'Natijalar chiqishiga qoldi:')}
+                            </div>
+                            <div className="text-5xl font-black tabular-nums text-primary tracking-tight">
+                                {timeLeft || "..."}
+                            </div>
+                            <div className="mt-4 text-xs text-muted-foreground">
+                                {new Date(result.result_time).toLocaleString()} da e'lon qilinadi
+                            </div>
+                        </Card>
+                    ) : (
+                        <Card className="p-8 border-2 border-primary/20 bg-card/50 backdrop-blur">
+                            <div className="text-sm text-muted-foreground">
+                                {t(
+                                    'olympiadResult.waitingNoTime',
+                                    "Natijalar o'qituvchi tekshirib bo'lgach e'lon qilinadi. Bu sahifaga keyinroq qaytib kiring."
+                                )}
+                            </div>
+                        </Card>
+                    )}
 
                     <Button variant="outline" size="lg" className="w-full h-12 font-bold" asChild>
                         <Link to="/olympiads">

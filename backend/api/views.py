@@ -154,7 +154,10 @@ def forgot_password(request):
     if not phone:
         return Response({'success': False, 'error': 'Telefon raqam kiritilishi shart'}, status=400)
     
-    user = User.objects.filter(phone=phone).first()
+    # `.order_by('id')` shart: User modelida standart tartib yo'q, ya'ni
+    # tartibsiz `.first()` har safar boshqa yozuvni qaytarishi mumkin.
+    # Kod yuborilgan va parol tiklanadigan foydalanuvchi bir xil bo'lishi kerak.
+    user = User.objects.filter(phone=phone).order_by('id').first()
     if not user:
         return Response({'success': False, 'error': 'Bunday foydalanuvchi topilmadi'}, status=404)
     
@@ -252,19 +255,24 @@ def reset_password(request):
     if not verification:
          return Response({'success': False, 'error': 'Kod tasdiqlanmagan yoki muddati tugagan'}, status=400)
 
-    try:
-        user = User.objects.get(phone=phone)
-        if len(new_password) < 8:
-             return Response({'success': False, 'error': 'Parol kamida 8 ta belgidan iborat bo\'lishi kerak'}, status=400)
-        
-        user.password = make_password(new_password)
-        user.save()
-        
-        verification.delete()
-        
-        return Response({'success': True, 'message': 'Parol muvaffaqiyatli o\'zgartirildi'})
-    except User.DoesNotExist:
+    # `phone` User modelida unique EMAS. `.get()` ishlatilsa, bir xil
+    # raqamli ikki yozuv bo'lib qolgan zahoti MultipleObjectsReturned
+    # bilan 500 beradi. `forgot_password` ham `.filter().first()` dan
+    # foydalanadi — ikkisi bir xil foydalanuvchini topishi uchun shu
+    # yerda ham xuddi shunday qilamiz.
+    user = User.objects.filter(phone=phone).order_by('id').first()
+    if not user:
         return Response({'success': False, 'error': 'Foydalanuvchi topilmadi'}, status=404)
+
+    if len(new_password) < 8:
+        return Response({'success': False, 'error': 'Parol kamida 8 ta belgidan iborat bo\'lishi kerak'}, status=400)
+
+    user.password = make_password(new_password)
+    user.save(update_fields=['password'])
+
+    verification.delete()
+
+    return Response({'success': True, 'message': 'Parol muvaffaqiyatli o\'zgartirildi'})
 
 
 

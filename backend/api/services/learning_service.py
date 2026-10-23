@@ -354,8 +354,6 @@ class LearningService:
             
             # Create certificate if not already exists AND it's enabled for course
             if course.is_certificate_enabled and not Certificate.objects.filter(user=user, course=course).exists():
-                from api.utils import generate_unique_id
-                cert_number = generate_unique_id('CRT')
                 
                 # Calculate average score for certificate
                 from django.db.models import Avg
@@ -365,10 +363,15 @@ class LearningService:
                     test_score__isnull=False
                 ).aggregate(avg=Avg('test_score'))['avg'] or 0
 
+                # `cert_number` ni bermaymiz: `generate_unique_id` nomiga
+                # qaramay yakkaligini TEKSHIRMAYDI, shunchaki 6 xonali
+                # tasodifiy son qaytaradi — unique maydonda bu ertami-kechmi
+                # IntegrityError beradi. Modelning `save()` metodi
+                # to'qnashuvni tekshirib yasaydi.
                 Certificate.objects.create(
-                    cert_number=cert_number,
                     user=user,
                     course=course,
+                    cert_type='COURSE',
                     grade=f"{int(avg_score)}%",
                     score=int(avg_score),
                     status='PENDING' 
