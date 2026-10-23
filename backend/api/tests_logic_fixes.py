@@ -32,13 +32,13 @@ from api.services.olympiad_service import OlympiadService
 
 @override_settings(SECURE_SSL_REDIRECT=False)
 class OlympiadRetakeTest(TestCase):
-    """max_attempts > 1 bo'lganda qayta topshirish ishlashi kerak.
+    """Qayta topshirishni O'QITUVCHI beradi.
 
-    Ilgari: TestResult da urinish hisoblagichi yo'q edi. max_attempts = 1
-    bo'lsa o'quvchi umuman qayta topshira olmasdi, max_attempts > 1 bo'lsa
-    esa CHEKSIZ marta topshirardi va har safar oldingi natija yo'q bo'lardi.
-    Bundan tashqari `started_at` qayta boshlanmagani uchun ikkinchi
-    urinishga vaqt qolmasdi.
+    Ilgari ikki xato bor edi. Birinchisi: TestResult da urinish
+    hisoblagichi yo'q edi, shuning uchun `max_attempts=1` da o'quvchi
+    umuman qayta topshira olmasdi, `>1` da esa CHEKSIZ marta topshirardi
+    va har safar oldingi natija yo'qolardi. Ikkinchisi: qarorni
+    olimpiada sozlamasi hal qilardi — endi uni o'qituvchi hal qiladi.
     """
 
     def setUp(self):
@@ -46,13 +46,20 @@ class OlympiadRetakeTest(TestCase):
         self.student = User.objects.create_user(
             username='retake_student', password='x', role='STUDENT'
         )
+        self.teacher = User.objects.create_user(
+            username='retake_teacher', password='x', role='TEACHER'
+        )
+        self.other_teacher = User.objects.create_user(
+            username='retake_other_teacher', password='x', role='TEACHER'
+        )
         self.olympiad = Olympiad.objects.create(
             title="Qayta topshirish testi",
             start_date=timezone.now() - datetime.timedelta(minutes=5),
             end_date=timezone.now() + datetime.timedelta(days=1),
             status='ONGOING',
             duration=60,
-            max_attempts=2,
+            teacher=self.teacher,
+            max_attempts=1,
         )
         self.q1 = Question.objects.create(
             olympiad=self.olympiad, text="2+2=?", type='MCQ',
@@ -61,6 +68,8 @@ class OlympiadRetakeTest(TestCase):
         OlympiadRegistration.objects.create(
             user=self.student, olympiad=self.olympiad, is_paid=True
         )
+
+    def _as_student(self):
         self.client.force_authenticate(user=self.student)
 
     def _questions(self):
@@ -73,20 +82,92 @@ class OlympiadRetakeTest(TestCase):
             format='json',
         )
 
-    def test_second_attempt_is_allowed_when_max_attempts_is_two(self):
+    def _grant(self, by=None, reason=''):
+        self.client.force_authenticate(user=by or self.teacher)
+        payload = {'user_id': self.student.id}
+        if reason:
+            payload['reason'] = reason
+        return self.client.post(
+            f'/api/olympiads/{self.olympiad.id}/grant_retake/', payload, format='json'
+        )
+
+    def _first_attempt(self, answer="0"):
+        self._as_student()
         self._questions()
-        self._submit("0")          # xato javob
+        self._submit(answer)
+
+    # ---------- ruxsatsiz ----------
+
+    def test_student_cannot_retake_without_permission(self):
+        """Sukut bo'yicha qayta topshirish YO'Q."""
+        self._first_attempt()
+
+        response = self._questions()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['error'], 'error.already_submitted')
+
+    def test_high_max_attempts_does_not_grant_a_retake_by_itself(self):
+        """`max_attempts` olimpiada sozlamasi, ruxsat emas.
+
+        Ilgari `max_attempts > 1` o'quvchiga cheksiz qayta topshirish
+        huquqini berardi.
+        """
+        self.olympiad.max_attempts = 5
+        self.olympiad.save(update_fields=['max_attempts'])
+        self._first_attempt()
+
+        response = self._questions()
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_student_cannot_grant_a_retake_to_themselves(self):
+        self._first_attempt()
+        self.client.force_authenticate(user=self.student)
+
+        response = self.client.post(
+            f'/api/olympiads/{self.olympiad.id}/grant_retake/',
+            {'user_id': self.student.id}, format='json',
+        )
+
+        self.assertIn(response.status_code, (403, 404))
+
+    def test_another_teacher_cannot_grant_a_retake(self):
+        """Faqat olimpiadani boshqaradigan odam ruxsat beradi."""
+        self._first_attempt()
+
+        response = self._grant(by=self.other_teacher)
+
+        self.assertEqual(response.status_code, 403)
+
+    # ---------- ruxsat berilgandan keyin ----------
+
+    def test_teacher_can_grant_a_retake(self):
+        self._first_attempt()
+
+        response = self._grant(reason='Internet uzilib qoldi')
+
+        self.assertEqual(response.status_code, 200, response.data)
+        result = TestResult.objects.get(user=self.student, olympiad=self.olympiad)
+        self.assertTrue(result.retake_granted)
+        self.assertEqual(result.retake_granted_by, self.teacher)
+        self.assertEqual(result.retake_reason, 'Internet uzilib qoldi')
+
+    def test_granted_student_can_start_a_new_attempt(self):
+        self._first_attempt()
+        self._grant()
+        self._as_student()
 
         response = self._questions()
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['attempt_number'], 2)
-        self.assertEqual(response.data['attempts_left'], 0)
 
-    def test_third_attempt_is_rejected(self):
-        """Chegara haqiqatan ushlanadi."""
-        self._questions()
-        self._submit("0")
+    def test_one_grant_allows_exactly_one_retake(self):
+        """Ruxsat sarflanadi — bir marta ruxsat, bir marta urinish."""
+        self._first_attempt()
+        self._grant()
+        self._as_student()
         self._questions()
         self._submit("1")
 
@@ -97,11 +178,14 @@ class OlympiadRetakeTest(TestCase):
 
     def test_new_attempt_restarts_the_timer(self):
         """Ilgari started_at o'zgarmasdi, ya'ni 2-urinishga vaqt qolmasdi."""
+        self._as_student()
         self._questions()
         attempt = TestResult.objects.get(user=self.student, olympiad=self.olympiad)
         attempt.started_at = timezone.now() - datetime.timedelta(minutes=50)
         attempt.save(update_fields=['started_at'])
         self._submit("0")
+        self._grant()
+        self._as_student()
 
         self._questions()
 
@@ -110,8 +194,9 @@ class OlympiadRetakeTest(TestCase):
         self.assertLess(elapsed, 60)
 
     def test_previous_attempt_is_archived_not_destroyed(self):
-        self._questions()
-        self._submit("0")
+        self._first_attempt()
+        self._grant()
+        self._as_student()
         self._questions()
         self._submit("1")
 
@@ -122,11 +207,14 @@ class OlympiadRetakeTest(TestCase):
 
     def test_xp_is_awarded_only_for_the_first_attempt(self):
         """Ilgari har topshirishda XP berilgani uchun cheksiz XP yig'ish mumkin edi."""
+        self._as_student()
         self._questions()
         self._submit("1")
         self.student.refresh_from_db()
         xp_after_first = self.student.xp
 
+        self._grant()
+        self._as_student()
         self._questions()
         self._submit("1")
 
@@ -140,13 +228,72 @@ class OlympiadRetakeTest(TestCase):
         qaytadan boshlaydi. Aks holda o'quvchi submit ni takrorlab,
         bir xil taymer ostida ballini yaxshilab olardi.
         """
-        self._questions()
-        self._submit("0")
+        self._first_attempt()
+        self._grant()
+        self._as_student()
 
         response = self._submit("1")
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['error'], 'error.already_submitted')
+
+    def test_teacher_can_grant_a_retake_to_a_disqualified_student(self):
+        """Diskvalifikatsiya qarorini o'qituvchi bekor qila oladi.
+
+        Tab almashish hisoblagichi internet uzilishidan ham oshib ketadi,
+        shuning uchun qaror odamda bo'lishi kerak.
+        """
+        self._as_student()
+        self._questions()
+        self.client.post(
+            f'/api/olympiads/{self.olympiad.id}/submit/',
+            {'answers': {str(self.q1.id): "0"}, 'time_taken': 30, 'tab_switches': 99},
+            format='json',
+        )
+        result = TestResult.objects.get(user=self.student, olympiad=self.olympiad)
+        self.assertEqual(result.status, 'DISQUALIFIED')
+
+        self._grant(reason='Internet uzilgani aniqlandi')
+        self._as_student()
+        response = self._questions()
+
+        self.assertEqual(response.status_code, 200)
+        result.refresh_from_db()
+        self.assertEqual(result.status, 'IN_PROGRESS')
+        self.assertIsNone(result.disqualified_reason)
+
+    def test_teacher_can_revoke_a_mistaken_grant(self):
+        self._first_attempt()
+        self._grant()
+
+        response = self.client.post(
+            f'/api/olympiads/{self.olympiad.id}/revoke_retake/',
+            {'user_id': self.student.id}, format='json',
+        )
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self._as_student()
+        self.assertEqual(self._questions().status_code, 400)
+
+    def test_grant_is_rejected_while_the_student_is_still_taking_the_exam(self):
+        self._as_student()
+        self._questions()
+
+        response = self._grant()
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_student_is_notified_about_the_grant(self):
+        from api.models import Notification
+
+        self._first_attempt()
+        self._grant(reason='Texnik nosozlik')
+
+        self.assertTrue(
+            Notification.objects.filter(
+                user=self.student, notification_type='OLYMPIAD'
+            ).exists()
+        )
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)

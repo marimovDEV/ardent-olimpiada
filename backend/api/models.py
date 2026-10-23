@@ -887,6 +887,20 @@ class TestResult(models.Model):
     # `previous_attempts` ichida arxivlanadi — o'qituvchi tarixni ko'rishi uchun.
     attempt_number = models.IntegerField(default=1)
     previous_attempts = models.JSONField(default=list, blank=True)
+    # Qayta topshirish ruxsatini O'QITUVCHI beradi. Avtomatik emas:
+    # `max_attempts` o'z-o'zidan yangi urinish ochmaydi, chunki o'quvchi
+    # o'zi xohlagancha qayta topshirishi olimpiadaning ma'nosini buzadi.
+    # Bu bayroq bir martalik — yangi urinish ochilganda sarflanadi.
+    retake_granted = models.BooleanField(
+        default=False,
+        help_text="O'qituvchi bu o'quvchiga bir marta qayta topshirishga ruxsat berdi",
+    )
+    retake_granted_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='granted_retakes',
+    )
+    retake_granted_at = models.DateTimeField(null=True, blank=True)
+    retake_reason = models.TextField(blank=True, null=True, help_text="O'qituvchi ko'rsatgan sabab")
     feedback = models.TextField(blank=True, null=True, help_text="Teacher's feedback for the student")
     submitted_at = models.DateTimeField(auto_now_add=True)
     
@@ -899,18 +913,22 @@ class TestResult(models.Model):
 
     @property
     def attempts_left(self):
-        """Yana necha marta topshirishi mumkin."""
-        return max(0, (self.olympiad.max_attempts or 1) - self.attempt_number)
+        """Yana necha marta topshirishi mumkin.
+
+        Faqat o'qituvchi bergan ruxsat hisoblanadi. `max_attempts` bu
+        yerda ishlatilmaydi: u olimpiada sozlamasi bo'lsa-da, o'quvchiga
+        o'z-o'zidan qayta topshirish huquqini bermaydi.
+        """
+        return 1 if self.retake_granted else 0
 
     def can_retake(self):
         """Tugallangan urinishdan keyin yangi urinish ochish mumkinmi.
 
-        DISQUALIFIED yozuv qayta urinish huquqini bermaydi: aks holda
-        cheklovni buzgan o'quvchi shunchaki yangidan boshlab ketardi.
+        Yagona shart — o'qituvchining ruxsati. Diskvalifikatsiya qilingan
+        o'quvchiga ham ruxsat berish mumkin: qaror o'qituvchida, chunki
+        tab almashish hisoblagichi internet uzilishidan ham oshib ketadi.
         """
-        if self.status == 'DISQUALIFIED':
-            return False
-        return self.attempts_left > 0
+        return self.retake_granted
 
     def open_new_attempt(self):
         """Joriy natijani arxivlab, yangi urinishni noldan ochadi.
@@ -944,10 +962,37 @@ class TestResult(models.Model):
         self.status = 'IN_PROGRESS'
         self.disqualified_reason = None
         self.started_at = timezone.now()
+        # Ruxsat SARFLANADI: bitta ruxsat — bitta qayta urinish. Aks holda
+        # bir marta ruxsat olgan o'quvchi cheksiz topshirib ketardi.
+        self.retake_granted = False
         self.save(update_fields=[
             'previous_attempts', 'attempt_number', 'answers', 'score',
             'percentage', 'time_taken', 'tab_switches_count', 'status',
-            'disqualified_reason', 'started_at',
+            'disqualified_reason', 'started_at', 'retake_granted',
+        ])
+        return self
+
+    def grant_retake(self, teacher, reason=''):
+        """O'qituvchi bir marta qayta topshirishga ruxsat beradi."""
+        from django.utils import timezone
+
+        self.retake_granted = True
+        self.retake_granted_by = teacher
+        self.retake_granted_at = timezone.now()
+        self.retake_reason = reason or ''
+        self.save(update_fields=[
+            'retake_granted', 'retake_granted_by', 'retake_granted_at', 'retake_reason',
+        ])
+        return self
+
+    def revoke_retake(self):
+        """Xato berilgan ruxsatni bekor qiladi (urinish boshlanmagan bo'lsa)."""
+        self.retake_granted = False
+        self.retake_granted_by = None
+        self.retake_granted_at = None
+        self.retake_reason = ''
+        self.save(update_fields=[
+            'retake_granted', 'retake_granted_by', 'retake_granted_at', 'retake_reason',
         ])
         return self
 

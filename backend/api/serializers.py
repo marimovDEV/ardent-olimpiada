@@ -1071,6 +1071,7 @@ class OlympiadSerializer(serializers.ModelSerializer):
     time_remaining = serializers.SerializerMethodField()
     is_registered = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
+    retake_granted = serializers.SerializerMethodField()
     prizes = OlympiadPrizeSerializer(many=True, read_only=True)
     start_time = serializers.SerializerMethodField()
     revenue = serializers.SerializerMethodField()
@@ -1086,7 +1087,7 @@ class OlympiadSerializer(serializers.ModelSerializer):
                   'max_participants', 'status', 'status_display', 'is_active', 
                   'grade_range', 'level', 'difficulty', 'format',
                   'max_attempts', 'tab_switch_limit', 'is_random', 'cannot_go_back', 'required_camera', 'required_full_screen', 'disable_copy_paste',
-                  'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'created_at',
+                  'questions_count', 'xp_reward', 'participants_count', 'time_remaining', 'is_registered', 'is_completed', 'retake_granted', 'created_at',
                   'eligibility_grades', 'eligibility_regions', 'technical_config', 'certificate_config', 'start_time', 'revenue',
                   'is_paid_creation', 'creation_fee_paid', 'checker', 'moderator',
                   'reward_strategy', 'auto_reward', 'reward_distribution_status']
@@ -1167,11 +1168,26 @@ class OlympiadSerializer(serializers.ModelSerializer):
             return TestResult.objects.filter(user=user, olympiad=obj, status='COMPLETED').exists()
         return False
 
+    def get_retake_granted(self, obj):
+        """O'qituvchi bu o'quvchiga qayta topshirishga ruxsat berganmi.
+
+        Mijoz shu bo'yicha "Qayta topshirish" tugmasini ko'rsatadi —
+        aks holda o'quvchi ruxsat berilganini bilmaydi.
+        """
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
+        if user and user.is_authenticated:
+            return TestResult.objects.filter(
+                user=user, olympiad=obj, retake_granted=True
+            ).exists()
+        return False
+
 
 class OlympiadDetailSerializer(serializers.ModelSerializer):
     questions = serializers.SerializerMethodField()
     is_registered = serializers.SerializerMethodField()
     is_completed = serializers.SerializerMethodField()
+    retake_granted = serializers.SerializerMethodField()
     total_score = serializers.SerializerMethodField()
     start_time = serializers.SerializerMethodField()
     revenue = serializers.SerializerMethodField()
@@ -1181,7 +1197,7 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'slug', 'description', 'subject', 'subject_id', 'thumbnail',
                   'registration_start', 'registration_end', 'start_date', 'end_date', 'duration', 'price', 'status', 'questions',
                   'rules', 'prizes', 'evaluation_criteria', 'max_attempts', 'tab_switch_limit', 'disable_copy_paste',
-                  'is_registered', 'is_completed', 'total_score', 'start_time', 'revenue']
+                  'is_registered', 'is_completed', 'retake_granted', 'total_score', 'start_time', 'revenue']
 
     def get_start_time(self, obj):
         return obj.start_date
@@ -1218,6 +1234,14 @@ class OlympiadDetailSerializer(serializers.ModelSerializer):
             return TestResult.objects.filter(user=user, olympiad=obj, status='COMPLETED').exists()
         return False
 
+    def get_retake_granted(self, obj):
+        user = self.context.get('request').user if self.context.get('request') else None
+        if user and user.is_authenticated:
+            return TestResult.objects.filter(
+                user=user, olympiad=obj, retake_granted=True
+            ).exists()
+        return False
+
     def get_total_score(self, obj):
         return sum(q.points for q in obj.questions.all())
 
@@ -1250,10 +1274,23 @@ class TestResultSerializer(serializers.ModelSerializer):
     correct_answers = serializers.SerializerMethodField()
     total_questions = serializers.SerializerMethodField()
     
+    # Qayta topshirish ruxsatini mijoz ko'rishi kerak: o'quvchiga "Qayta
+    # topshirish" tugmasini ko'rsatish uchun, o'qituvchiga esa kimga
+    # ruxsat berilganini ko'rsatish uchun.
+    retake_granted_by_name = serializers.SerializerMethodField()
+
     class Meta:
         model = TestResult
         fields = ['id', 'user', 'olympiad', 'answers', 'score', 
-                  'percentage', 'time_taken', 'started_at', 'submitted_at', 'status', 'disqualified_reason', 'feedback', 'correct_answers', 'total_questions']
+                  'percentage', 'time_taken', 'started_at', 'submitted_at', 'status', 'disqualified_reason', 'feedback', 'correct_answers', 'total_questions',
+                  'attempt_number', 'previous_attempts',
+                  'retake_granted', 'retake_granted_at', 'retake_reason', 'retake_granted_by_name']
+        read_only_fields = ['retake_granted', 'retake_granted_at', 'retake_reason']
+
+    def get_retake_granted_by_name(self, obj):
+        if not obj.retake_granted_by:
+            return None
+        return obj.retake_granted_by.get_full_name() or obj.retake_granted_by.username
 
     def get_correct_answers(self, obj):
         # For now return score as proxy for correct count

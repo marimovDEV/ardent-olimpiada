@@ -2603,7 +2603,13 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 'submitted_at': res.submitted_at,
                 'region': res.user.region,
                 'answers': res.answers,
-                'feedback': res.feedback
+                'feedback': res.feedback,
+                # O'qituvchi kimga qayta topshirishga ruxsat berganini
+                # va kim nechanchi urinishda turganini ko'rishi kerak.
+                'attempt_number': res.attempt_number,
+                'attempts_count': len(res.previous_attempts or []) + 1,
+                'retake_granted': res.retake_granted,
+                'retake_reason': res.retake_reason or '',
             })
         
         return Response({
@@ -2808,6 +2814,123 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_404_NOT_FOUND)
     
     
+    def _can_manage_olympiad(self, user, olympiad):
+        """Bu olimpiadani boshqarish huquqi bormi.
+
+        Admin, olimpiadaning o'qituvchisi, tekshiruvchisi yoki moderatori.
+        """
+        if user.role == 'ADMIN' or user.is_staff:
+            return True
+        return user.id in (olympiad.teacher_id, olympiad.checker_id, olympiad.moderator_id)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def grant_retake(self, request, pk=None):
+        """O'qituvchi bitta o'quvchiga qayta topshirishga ruxsat beradi.
+
+        Qayta topshirish AVTOMATIK emas: `max_attempts` o'zi yangi urinish
+        ochmaydi. Ruxsatni faqat olimpiadani boshqaradigan odam beradi va
+        u bir martalik — o'quvchi imtihonni qayta boshlaganda sarflanadi.
+        """
+        olympiad = self.get_object()
+
+        if not self._can_manage_olympiad(request.user, olympiad):
+            return Response(
+                {'success': False, 'error': "Faqat o'z olimpiadangizda ruxsat bera olasiz"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response(
+                {'success': False, 'error': 'user_id talab qilinadi'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        reason = (request.data.get('reason') or '').strip()
+
+        try:
+            result = TestResult.objects.select_related('user').get(
+                olympiad=olympiad, user_id=user_id
+            )
+        except TestResult.DoesNotExist:
+            return Response(
+                {'success': False, 'error': 'Bu o\'quvchi hali imtihon topshirmagan'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if result.status == 'IN_PROGRESS':
+            return Response(
+                {'success': False, 'error': 'O\'quvchi hozir imtihon topshirayapti'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if result.retake_granted:
+            return Response(
+                {'success': False, 'error': 'Ruxsat allaqachon berilgan'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        result.grant_retake(request.user, reason)
+
+        # O'quvchiga xabar beramiz — aks holda ruxsat berilganini bilmaydi.
+        try:
+            NotificationService.create_notification(
+                user=result.user,
+                title='Qayta topshirishga ruxsat berildi',
+                message=(
+                    f"O'qituvchi sizga \"{olympiad.title}\" olimpiadasini qayta "
+                    f"topshirishga ruxsat berdi."
+                    + (f" Sabab: {reason}" if reason else '')
+                ),
+                notification_type='OLYMPIAD',
+                channel='ALL',
+                link=f'/olympiad/{olympiad.id}',
+            )
+        except Exception as e:
+            print(f"Retake notification error: {e}")
+
+        return Response({
+            'success': True,
+            'message': f"{result.user.get_full_name() or result.user.username} ga qayta topshirishga ruxsat berildi",
+            'result': TestResultSerializer(result).data,
+        })
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
+    def revoke_retake(self, request, pk=None):
+        """Xato berilgan qayta topshirish ruxsatini bekor qiladi."""
+        olympiad = self.get_object()
+
+        if not self._can_manage_olympiad(request.user, olympiad):
+            return Response(
+                {'success': False, 'error': "Faqat o'z olimpiadangizda ruxsatni bekor qila olasiz"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response(
+                {'success': False, 'error': 'user_id talab qilinadi'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            result = TestResult.objects.get(olympiad=olympiad, user_id=user_id)
+        except TestResult.DoesNotExist:
+            return Response(
+                {'success': False, 'error': 'Natija topilmadi'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not result.retake_granted:
+            return Response(
+                {'success': False, 'error': 'Ruxsat berilmagan'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        result.revoke_retake()
+
+        return Response({'success': True, 'message': 'Ruxsat bekor qilindi'})
+
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated, IsTeacherOrAdmin])
     def add_question(self, request, pk=None):
         """Olimpiadaga savol qo'shish — admin yoki olimpiadaning o'qituvchisi."""
