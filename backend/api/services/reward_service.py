@@ -1,4 +1,4 @@
-from django.db import transaction
+from django.db import models, transaction
 from django.utils import timezone
 from decimal import Decimal
 import logging
@@ -44,10 +44,16 @@ class RewardService:
         return rankings
 
     @classmethod
-    @transaction.atomic
     def distribute_rewards(cls, olympiad_id):
         """
         Main runner for distributing rewards for a finished olympiad.
+
+        Ilgari butun metod `@transaction.atomic` edi, lekin xato SHU
+        metod ichida tutilardi — ya'ni tranzaksiya rollback bo'lmasdi
+        va yarim tarqatilgan sovrinlar bazada qolib ketardi, status
+        esa 'FAILED' bo'lardi. Endi tarqatish ichki atomic blokda:
+        xato chiqsa u blokdan chiqib ketadi va hammasi qaytariladi,
+        status esa blokdan TASHQARIDA yoziladi.
         """
         try:
             olympiad = Olympiad.objects.get(id=olympiad_id)
@@ -56,76 +62,111 @@ class RewardService:
                 logger.warning(f"Rewards already distributed for Olympiad {olympiad_id}")
                 return False
 
-            olympiad.reward_distribution_status = 'IN_PROGRESS'
-            olympiad.save()
+            Olympiad.objects.filter(pk=olympiad.pk).update(reward_distribution_status='IN_PROGRESS')
 
             rankings = cls.calculate_rankings(olympiad)
             prizes = olympiad.prizes.all()
 
             if not prizes.exists():
                 logger.info(f"No prizes defined for Olympiad {olympiad_id}")
-                olympiad.reward_distribution_status = 'COMPLETED'
-                olympiad.save()
+                Olympiad.objects.filter(pk=olympiad.pk).update(reward_distribution_status='COMPLETED')
                 return True
 
             distributed_count = 0
 
-            # Determine distribution logic based on strategy
-            if olympiad.reward_strategy == 'TOP_N':
-                for rank in rankings:
-                    # Find prizes for this position
-                    pos_prizes = prizes.filter(target_value=rank['position'])
-                    for prize in pos_prizes:
-                        cls.award_prize(rank['user'], prize, olympiad, rank['position'])
-                        distributed_count += 1
-            
-            elif olympiad.reward_strategy == 'THRESHOLD':
-                for rank in rankings:
-                    # Find prizes where person's score percentage >= target_value
-                    # e.g. prize target_value=90 means 90% and above
-                    eligible_prizes = prizes.filter(target_value__lte=rank['result'].percentage)
-                    for prize in eligible_prizes:
-                        cls.award_prize(rank['user'], prize, olympiad, rank['position'])
-                        distributed_count += 1
+            with transaction.atomic():
+                # Determine distribution logic based on strategy
+                if olympiad.reward_strategy == 'TOP_N':
+                    for rank in rankings:
+                        # Find prizes for this position
+                        pos_prizes = prizes.filter(target_value=rank['position'])
+                        for prize in pos_prizes:
+                            cls.award_prize(rank['user'], prize, olympiad, rank['position'])
+                            distributed_count += 1
 
-            olympiad.reward_distribution_status = 'COMPLETED'
-            olympiad.save()
-            
+                elif olympiad.reward_strategy == 'THRESHOLD':
+                    for rank in rankings:
+                        # Find prizes where person's score percentage >= target_value
+                        # e.g. prize target_value=90 means 90% and above
+                        eligible_prizes = prizes.filter(target_value__lte=rank['result'].percentage)
+                        for prize in eligible_prizes:
+                            cls.award_prize(rank['user'], prize, olympiad, rank['position'])
+                            distributed_count += 1
+
+            Olympiad.objects.filter(pk=olympiad.pk).update(reward_distribution_status='COMPLETED')
+
             logger.info(f"Successfully distributed {distributed_count} rewards for Olympiad {olympiad_id}")
             return True
 
+        except Olympiad.DoesNotExist:
+            logger.error(f"Olympiad {olympiad_id} not found")
+            return False
         except Exception as e:
             logger.error(f"Error distributing rewards for Olympiad {olympiad_id}: {e}")
-            if 'olympiad' in locals():
-                olympiad.reward_distribution_status = 'FAILED'
-                olympiad.save()
+            Olympiad.objects.filter(pk=olympiad_id).update(reward_distribution_status='FAILED')
             return False
+
+    @staticmethod
+    def _already_awarded(user, prize, olympiad):
+        """Shu sovrin shu o'quvchiga allaqachon berilganmi.
+
+        Coin va XP berish IDEMPOTENT emasdi: `distribute_rewards` xatoda
+        statusni 'FAILED' qilib qo'yadi, 'COMPLETED' esa emas — ya'ni
+        qayta chaqirilsa birinchi marta ulgurgan o'quvchilarga pul va XP
+        IKKINCHI marta berilardi. Faqat fizik sovrin tekshirilardi.
+        """
+        from ..models import ActivityLog
+
+        marker = f"[prize:{prize.id}]"
+        if prize.prize_type == 'COIN':
+            return Transaction.objects.filter(
+                user=user,
+                transaction_type='OLYMPIAD_REWARD',
+                description__contains=marker,
+            ).exists()
+        if prize.prize_type == 'XP':
+            return ActivityLog.objects.filter(
+                user=user,
+                activity_type='OLYMPIAD_WIN',
+                description__contains=marker,
+            ).exists()
+        return WinnerPrize.objects.filter(olympiad=olympiad, student=user).exists()
 
     @classmethod
     def award_prize(cls, user, prize, olympiad, position):
         """
         Award a specific prize to a user.
         """
+        if cls._already_awarded(user, prize, olympiad):
+            return
+
         if prize.prize_type == 'COIN':
-            cls._award_coin(user, prize.amount, olympiad)
+            cls._award_coin(user, prize, olympiad)
         elif prize.prize_type == 'XP':
-            cls._award_xp(user, int(prize.amount), olympiad)
+            cls._award_xp(user, prize, olympiad)
         elif prize.prize_type == 'PHYSICAL':
             cls._award_physical(user, prize, olympiad, position)
 
     @staticmethod
-    def _award_coin(user, amount, olympiad):
+    def _award_coin(user, prize, olympiad):
         """Add balance and record transaction"""
-        amount = Decimal(str(amount))
-        user.balance += amount
-        user.save()
+        amount = Decimal(str(prize.amount))
+        if amount <= 0:
+            return
+
+        # F() bilan: bir vaqtda ketgan boshqa yozuv balansni bosib
+        # ketmasligi uchun. `user.save()` (update_fields'siz) butun qatorni
+        # qayta yozardi.
+        User.objects.filter(pk=user.pk).update(balance=models.F('balance') + amount)
+        user.refresh_from_db(fields=['balance'])
 
         Transaction.objects.create(
             user=user,
             transaction_type='OLYMPIAD_REWARD',
             amount=amount,
             status='SUCCESS',
-            description=f"Reward for {olympiad.title}"
+            # `[prize:<id>]` — takroriy berishdan saqlaydigan belgi.
+            description=f"Reward for {olympiad.title} [prize:{prize.id}]"
         )
         
         # Notify via Telegram if possible
@@ -134,11 +175,20 @@ class RewardService:
             BotService.send_message(user.telegram_id, text)
 
     @staticmethod
-    def _award_xp(user, amount, olympiad):
+    def _award_xp(user, prize, olympiad):
         """Add XP to user"""
-        user.xp += amount
-        # Simple level up logic if needed, but assuming user model handles it or it's simple
-        user.save()
+        amount = int(prize.amount)
+        if amount <= 0:
+            return
+
+        # `user.xp += amount; user.save()` DARAJANI qayta hisoblamasdi va
+        # ActivityLog ham yozmasdi — ya'ni 400 XP olgan o'quvchi eski
+        # darajasida qolib ketardi. `add_xp` ikkisini ham bajaradi.
+        user.add_xp(
+            amount,
+            'OLYMPIAD_WIN',
+            f"Olimpiada sovrini: {olympiad.title} [prize:{prize.id}]",
+        )
         
         # Notify via Telegram if possible
         if user.telegram_id:

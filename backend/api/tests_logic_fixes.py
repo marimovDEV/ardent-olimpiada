@@ -768,3 +768,66 @@ class CertificateIssuanceTest(TestCase):
 
         self.assertEqual(len(numbers), 60)
         self.assertTrue(all(len(n) <= 32 for n in numbers))
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class RewardDistributionTest(TestCase):
+    """Sovrin tarqatish bir marta bo'lishi va darajani yangilashi kerak."""
+
+    def setUp(self):
+        from api.models import OlympiadPrize
+
+        self.student = User.objects.create_user(
+            username='rw_student', password='x', role='STUDENT', balance=Decimal('0')
+        )
+        self.olympiad = Olympiad.objects.create(
+            title='Sovrin testi',
+            start_date=timezone.now() - datetime.timedelta(days=2),
+            end_date=timezone.now() - datetime.timedelta(days=1),
+            status='CHECKING', duration=60,
+            reward_strategy='TOP_N',
+        )
+        q = Question.objects.create(
+            olympiad=self.olympiad, text='q', type='MCQ',
+            options=['a', 'b'], correct_answer='1', points=10, order=1,
+        )
+        TestResult.objects.create(
+            user=self.student, olympiad=self.olympiad, score=10, percentage=100,
+            status='COMPLETED', answers={str(q.id): '1'},
+        )
+        self.coin_prize = OlympiadPrize.objects.create(
+            olympiad=self.olympiad, name='1-o\'rin coin', prize_type='COIN',
+            amount=Decimal('50000'), target_value=1,
+        )
+        self.xp_prize = OlympiadPrize.objects.create(
+            olympiad=self.olympiad, name='1-o\'rin XP', prize_type='XP',
+            amount=Decimal('1500'), target_value=1,
+        )
+
+    def test_rewards_are_distributed_once(self):
+        """Ilgari coin va XP idempotent emasdi: xatodan keyin qayta
+        chaqirilganda ikki marta berilardi."""
+        from api.services.reward_service import RewardService
+
+        RewardService.distribute_rewards(self.olympiad.id)
+
+        # Statusni 'FAILED' qilib, qayta chaqiramiz — xatodan keyingi holat.
+        Olympiad.objects.filter(pk=self.olympiad.pk).update(
+            reward_distribution_status='FAILED'
+        )
+        RewardService.distribute_rewards(self.olympiad.id)
+
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.balance, Decimal('50000'))
+        self.assertEqual(self.student.xp, 1500)
+
+    def test_xp_reward_updates_the_level(self):
+        """Ilgari `user.xp += amount; user.save()` ishlatilgani uchun
+        daraja qayta hisoblanmasdi."""
+        from api.services.reward_service import RewardService
+
+        RewardService.distribute_rewards(self.olympiad.id)
+
+        self.student.refresh_from_db()
+        self.assertEqual(self.student.xp, 1500)
+        self.assertEqual(self.student.level, 4)   # 500 XP = 1 daraja

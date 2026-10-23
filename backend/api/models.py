@@ -1265,10 +1265,17 @@ class UserStreak(models.Model):
 
 class ActivityLog(models.Model):
     """Log of user activities for streak calculation"""
+    # Olimpiada statuslaridagi kabi muammo bu yerda ham bor edi: kod
+    # 'TEST_COMPLETE', 'MODULE_COMPLETE' va 'OLYMPIAD_WIN' yozadi, lekin
+    # ular ro'yxatda yo'q edi — admin panelida tur nomi bo'sh ko'rinardi
+    # va `get_activity_type_display()` xom qiymatni qaytarardi.
     ACTIVITY_TYPES = [
         ('LESSON_COMPLETE', 'Lesson Completed'),
+        ('MODULE_COMPLETE', 'Module Completed'),
+        ('TEST_COMPLETE', 'Test Completed'),
         ('TEST_PASS', 'Test Passed'),
         ('OLYMPIAD_PARTICIPATION', 'Olympiad Participation'),
+        ('OLYMPIAD_WIN', 'Olympiad Win'),
         ('DAILY_LOGIN', 'Daily Login'), # Optional, maybe doesn't count for streak
         ('COURSE_ENROLL', 'Course Enrollment'),
     ]
