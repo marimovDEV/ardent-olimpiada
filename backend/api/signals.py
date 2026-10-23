@@ -48,15 +48,19 @@ def create_course_certificate(enrollment):
         return None
     
     # Calculate final grade
-    from .models import LessonProgress, QuizAttempt
+    # `QuizAttempt` degan model loyihada YO'Q — bu import ImportError
+    # berardi, ya'ni kurs 100% ga yetgan paytdagi har qanday so'rov
+    # (dars tugatish, progress yangilash) qulab tushardi va sertifikat
+    # hech qachon yaratilmasdi. Baholar `LessonProgress.test_score` da.
+    from .models import LessonProgress
     from django.db.models import Avg
-    
-    # Average quiz score
-    avg_score = QuizAttempt.objects.filter(
+
+    avg_score = LessonProgress.objects.filter(
         user=enrollment.user,
-        quiz__lesson__module__course=enrollment.course
-    ).aggregate(avg=Avg('score'))['avg'] or 0
-    
+        lesson__course=enrollment.course,
+        test_score__isnull=False,
+    ).aggregate(avg=Avg('test_score'))['avg'] or 0
+
     grade = f"{int(avg_score)}%"
     
     # Create certificate (pending by default)

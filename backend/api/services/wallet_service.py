@@ -63,33 +63,65 @@ class WalletService:
         """
         Cron job: Move pending balance to available balance
         after PENDING_BALANCE_DAYS have passed
-        
-        Returns: Number of wallets updated
+
+        Returns: Number of transactions released
+
+        Ilgari bu metod har chaqirilganda AYNAN O'SHA eski tranzaksiyalarni
+        qaytadan ko'rib chiqardi — "allaqachon o'tkazilgan" degan belgi yo'q
+        edi. Natijada ikkinchi chaqiruvda yangi (hali muddati yetmagan)
+        pending pul eski tranzaksiya hisobiga muddatidan oldin ochilib
+        ketardi, ya'ni 7 kunlik ushlab turish ishlamasdi.
+
+        Shuningdek `o'tkazilgan summa` o'qituvchining UMUMIY ulushi emas,
+        sotuv summasi edi (`trans.amount`) — endi `teacher_earnings` dan
+        olinadi.
         """
         pending_days = getattr(settings, 'PENDING_BALANCE_DAYS', 7)
         cutoff_date = timezone.now() - timedelta(days=pending_days)
-        
-        # Find transactions that are old enough
-        old_transactions = Transaction.objects.filter(
+
+        # DIQQAT: `.exclude(metadata__released=True)` ishlatib bo'lmaydi.
+        # Kalit yo'q qatorlarda taqqoslash SQL NULL beradi, NOT NULL ham
+        # NULL — ya'ni hali ochilmagan tranzaksiyalar ham ro'yxatdan
+        # chiqib ketardi va hech narsa o'tkazilmasdi. `has_key` aniq
+        # ishlaydi, chunki biz belgini faqat True qilib qo'yamiz.
+        old_transactions = Transaction.objects.select_for_update().filter(
             transaction_type='COURSE_SALE',
             status='SUCCESS',
-            created_at__lte=cutoff_date
-        ).select_related('user', 'user__teacher_wallet')
-        
-        updated_count = 0
-        
+            created_at__lte=cutoff_date,
+        ).exclude(metadata__has_key='released').select_related('user')
+
+        released_count = 0
+
         for trans in old_transactions:
-            if hasattr(trans.user, 'teacher_wallet'):
-                wallet = trans.user.teacher_wallet
-                
-                # Move from pending to available
-                if wallet.pending_balance >= trans.amount:
-                    wallet.pending_balance -= trans.amount
-                    wallet.balance += trans.amount
-                    wallet.save()
-                    updated_count += 1
-        
-        return updated_count
+            wallet = getattr(trans.user, 'teacher_wallet', None)
+            if wallet is None:
+                continue
+
+            # O'qituvchiga tegishli ulush. Eski yozuvlarda u 0 bo'lishi
+            # mumkin, shunda butun summani olamiz.
+            share = trans.teacher_earnings or trans.amount
+            if share <= 0:
+                continue
+
+            # Pending dan ko'proq o'tkazib yubormaymiz.
+            share = min(share, wallet.pending_balance)
+            if share <= 0:
+                continue
+
+            wallet.pending_balance -= share
+            wallet.balance += share
+            wallet.save(update_fields=['pending_balance', 'balance'])
+
+            # Takroriy o'tkazishdan saqlaydigan belgi.
+            metadata = dict(trans.metadata or {})
+            metadata['released'] = True
+            metadata['released_at'] = timezone.now().isoformat()
+            trans.metadata = metadata
+            trans.save(update_fields=['metadata'])
+
+            released_count += 1
+
+        return released_count
     
     @staticmethod
     @transaction.atomic

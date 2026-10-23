@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.db.models import Count, Sum, Avg, Max, Q, Min, F
-from django.db import models
+from django.db import models, transaction
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import default_storage
 from django_filters.rest_framework import DjangoFilterBackend
@@ -1177,6 +1177,11 @@ class CourseViewSet(viewsets.ModelViewSet):
             current_lesson=first_lesson
         )
         
+        # students_count ni QO'LDA oshirmaymiz: signals.py dagi
+        # post_save(Enrollment) uni enrollments.count() dan qayta
+        # hisoblaydi. Ikkisi birga ishlagani uchun har bir yozilish
+        # o'quvchilar sonini IKKI marta oshirardi.
+        
         # Add XP
         user.add_xp(50, 'COURSE_ENROLL', f"Kursga yozildi: {course.title}")
         
@@ -1190,101 +1195,121 @@ class CourseViewSet(viewsets.ModelViewSet):
     def buy(self, request, pk=None):
         """Purchase a course using AC balance"""
         course = self.get_object()
-        user = request.user
-        
-        # 1. Check if already enrolled
-        if Enrollment.objects.filter(user=user, course=course).exists():
-            return Response({'error': 'Siz allaqachon ushbu kursga yozilgansiz'}, status=status.HTTP_400_BAD_REQUEST)
-            
-        # 2. Check balance
-        if user.balance < course.price:
-            return Response({'error': 'Mablag\' yetarli emas', 'requires_balance': float(course.price - user.balance)}, status=status.HTTP_402_PAYMENT_REQUIRED)
-            
-        # 3. Deduct balance & Create Payment record
-        user.balance -= course.price
-        user.save(update_fields=['balance'])
-        
-        payment = Payment.objects.create(
-            user=user,
-            type='COURSE',
-            reference_id=str(course.id),
-            amount=course.price,
-            status='COMPLETED',
-            payment_method='BALANCE'
-        )
 
-        # 4. Revenue Split Logic
-        if course.teacher and course.price > 0:
-            from .models import CommissionSettings, TeacherWallet, Transaction
-            
-            # Dynamic commission based on teacher type
-            settings = CommissionSettings.load()
-            teacher_type = 'NORMAL'
-            if hasattr(course.teacher, 'teacher_profile'):
-                teacher_type = course.teacher.teacher_profile.teacher_type
-                
-            platform_percent = settings.default_commission
-            if teacher_type == 'VIP':
-                platform_percent = settings.vip_commission
-            elif teacher_type == 'INTERNAL':
-                platform_percent = settings.internal_commission
-                
-            platform_share = (course.price * platform_percent) / 100
-            teacher_share = course.price - platform_share
-            
-            # Update Teacher Wallet
-            wallet, created = TeacherWallet.objects.get_or_create(teacher=course.teacher)
-            wallet.pending_balance += teacher_share
-            wallet.total_earned += teacher_share
-            wallet.save()
-            
-            # Create Transaction for Teacher (Income)
-            Transaction.objects.create(
-                transaction_type='COURSE_SALE',
-                user=course.teacher,
-                course=course,
+        # Pul ishtirok etadigan amal — hammasi bitta tranzaksiyada bo'lishi
+        # shart. Aks holda oxirgi qadam (masalan Enrollment) xato bersa,
+        # o'quvchi hisobidan pul yechilgan, kurs esa berilmagan holat qoladi.
+        with transaction.atomic():
+            # Balansni o'qishdan oldin foydalanuvchi qatorini qulflaymiz:
+            # bir vaqtda kelgan ikkita so'rov bir xil balansni ko'rib,
+            # ikkalasi ham xarid qilib yuborishi mumkin edi.
+            user = User.objects.select_for_update().get(pk=request.user.pk)
+
+            # 1. Check if already enrolled
+            if Enrollment.objects.filter(user=user, course=course).exists():
+                return Response({'error': 'Siz allaqachon ushbu kursga yozilgansiz'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # 2. Check balance
+            if user.balance < course.price:
+                return Response({'error': 'Mablag\' yetarli emas', 'requires_balance': float(course.price - user.balance)}, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+            # 3. Deduct balance & Create Payment record
+            user.balance -= course.price
+            user.save(update_fields=['balance'])
+
+            payment = Payment.objects.create(
+                user=user,
+                type='COURSE',
+                reference_id=str(course.id),
                 amount=course.price,
-                teacher_earnings=teacher_share,
-                platform_commission=platform_share,
-                status='SUCCESS',
-                description=f"Kurs sotuvi: {course.title} ({100-platform_percent}% ulush)",
-                metadata={'purchase_id': payment.id, 'student_id': user.id}
+                status='COMPLETED',
+                # Maydon nomi `method`. `payment_method` Payout modelida,
+                # bu yerda u TypeError bergan — ya'ni balans yechilgandan
+                # keyin so'rov 500 bilan tushib, pul qaytmay qolgan.
+                method='BALANCE',
+                completed_at=timezone.now(),
             )
+
+            # 4. Revenue Split Logic
+            if course.teacher and course.price > 0:
+                from .models import CommissionSettings, TeacherWallet, Transaction
             
-            # Create Transaction for Platform (optional, for tracking)
-            admin_user = User.objects.filter(role='ADMIN').first()
-            if admin_user:
+                # Dynamic commission based on teacher type
+                settings = CommissionSettings.load()
+                teacher_type = 'NORMAL'
+                if hasattr(course.teacher, 'teacher_profile'):
+                    teacher_type = course.teacher.teacher_profile.teacher_type
+                
+                platform_percent = settings.default_commission
+                if teacher_type == 'VIP':
+                    platform_percent = settings.vip_commission
+                elif teacher_type == 'INTERNAL':
+                    platform_percent = settings.internal_commission
+                
+                # CommissionSettings yangi yaratilganda maydon qiymati hali
+                # float (30.0) bo'lib turadi — bazadan qayta o'qilmaganicha
+                # Decimal ga aylanmaydi. `Decimal * float` esa TypeError
+                # beradi, ya'ni toza o'rnatishdagi BIRINCHI xarid balans
+                # yechilgandan keyin 500 bilan tushib ketardi.
+                platform_percent = Decimal(str(platform_percent))
+                platform_share = (course.price * platform_percent) / 100
+                teacher_share = course.price - platform_share
+            
+                # Update Teacher Wallet
+                wallet, created = TeacherWallet.objects.get_or_create(teacher=course.teacher)
+                wallet.pending_balance += teacher_share
+                wallet.total_earned += teacher_share
+                wallet.save()
+            
+                # Create Transaction for Teacher (Income)
                 Transaction.objects.create(
-                    transaction_type='COMMISSION',
-                    user=admin_user,
+                    transaction_type='COURSE_SALE',
+                    user=course.teacher,
                     course=course,
                     amount=course.price,
-                    teacher_earnings=0,
+                    teacher_earnings=teacher_share,
                     platform_commission=platform_share,
                     status='SUCCESS',
-                    description=f"Platforma komissiyasi: {course.title} ({platform_percent}%)",
-                    metadata={'purchase_id': payment.id}
+                    description=f"Kurs sotuvi: {course.title} ({100-platform_percent}% ulush)",
+                    metadata={'purchase_id': payment.id, 'student_id': user.id}
                 )
+            
+                # Create Transaction for Platform (optional, for tracking)
+                admin_user = User.objects.filter(role='ADMIN').first()
+                if admin_user:
+                    Transaction.objects.create(
+                        transaction_type='COMMISSION',
+                        user=admin_user,
+                        course=course,
+                        amount=course.price,
+                        teacher_earnings=0,
+                        platform_commission=platform_share,
+                        status='SUCCESS',
+                        description=f"Platforma komissiyasi: {course.title} ({platform_percent}%)",
+                        metadata={'purchase_id': payment.id}
+                    )
         
-        # 5. Enroll
-        first_lesson = course.lessons.all().order_by('module__order', 'order').first()
-        enrollment = Enrollment.objects.create(
-            user=user, 
-            course=course,
-            current_lesson=first_lesson
-        )
+            # 5. Enroll
+            first_lesson = course.lessons.all().order_by('module__order', 'order').first()
+            enrollment = Enrollment.objects.create(
+                user=user, 
+                course=course,
+                current_lesson=first_lesson
+            )
         
-        course.students_count += 1
-        course.save(update_fields=['students_count'])
+            # students_count ni QO'LDA oshirmaymiz: signals.py dagi
+            # post_save(Enrollment) uni enrollments.count() dan qayta
+            # hisoblaydi. Ikkisi birga ishlagani uchun har bir yozilish
+            # o'quvchilar sonini IKKI marta oshirardi.
         
-        # Initial XP for buying
-        user.add_xp(50, 'COURSE_ENROLL', f"Kurs sotib olindi: {course.title}")
+            # Initial XP for buying
+            user.add_xp(50, 'COURSE_ENROLL', f"Kurs sotib olindi: {course.title}")
         
-        return Response({
-            'success': True,
-            'message': 'Kurs muvaffaqiyatli sotib olindi',
-            'enrollment': EnrollmentSerializer(enrollment).data
-        })
+            return Response({
+                'success': True,
+                'message': 'Kurs muvaffaqiyatli sotib olindi',
+                'enrollment': EnrollmentSerializer(enrollment).data
+            })
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def my_courses(self, request):
@@ -1422,11 +1447,34 @@ class LessonViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()]
 
     def get_queryset(self):
-        # Admins see all, others see none unless through filtered access 
-        # (Though LearningService handles the heavy lifting)
-        if self.request.user.role == 'ADMIN':
+        # Ilgari bu metod admin bo'lmaganlarga `Lesson.objects.none()`
+        # qaytarardi. `get_object()` esa aynan shu queryset bo'yicha
+        # izlagani uchun o'quvchi — kursga YOZILGAN bo'lsa ham — darsni
+        # ochganda 404 olardi ("Dars topilmadi"). Pastdagi `retrieve`
+        # ichidagi "Guest/Student check" bo'limi hech qachon ishga
+        # tushmasdi. Mobil ilova ham `GET /lessons/<id>/` dan foydalanadi.
+        #
+        # Shuning uchun queryset ko'rish HUQUQI bo'yicha chegaralanadi,
+        # qulf (is_locked) tekshiruvi esa `retrieve` da qoladi.
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return Lesson.objects.none()
+
+        if user.role == 'ADMIN' or user.is_staff:
             return Lesson.objects.all()
-        return Lesson.objects.none()
+
+        if user.role == 'TEACHER':
+            return Lesson.objects.filter(
+                Q(course__teacher=user)
+                | Q(teacher=user)
+                | Q(course__enrollments__user=user)
+            ).distinct()
+
+        # O'quvchi: yozilgan kurslari va bepul darslar.
+        return Lesson.objects.filter(
+            Q(course__enrollments__user=user) | Q(is_free=True)
+        ).distinct()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -1512,10 +1560,23 @@ class ModuleViewSet(viewsets.ModelViewSet):
             return Module.objects.all()
         return Module.objects.filter(course__teacher=user)
 
+def _assert_owns_lesson(user, lesson):
+    """O'qituvchi faqat O'Z kursining darsiga biriktirishi mumkin.
+
+    Ilgari bu tekshiruv yo'q edi: `get_queryset` faqat ro'yxat va
+    o'zgartirishni chegaralardi, yaratish (POST) esa istalgan darsga
+    ruxsat berardi.
+    """
+    if user.role == 'ADMIN' or user.is_staff:
+        return
+    if lesson is None or lesson.course.teacher_id != user.id:
+        raise PermissionDenied("Siz faqat o'z kursingizdagi darslarga qo'shishingiz mumkin.")
+
+
 class LessonPracticeViewSet(viewsets.ModelViewSet):
     queryset = LessonPractice.objects.all()
     serializer_class = TeacherLessonPracticeSerializer
-    permission_classes = [IsAuthenticated, HasCourseAccess]
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin, HasCourseAccess]
 
     def get_queryset(self):
         user = self.request.user
@@ -1523,16 +1584,24 @@ class LessonPracticeViewSet(viewsets.ModelViewSet):
             return LessonPractice.objects.all()
         return LessonPractice.objects.filter(lesson__course__teacher=user)
 
+    def perform_create(self, serializer):
+        _assert_owns_lesson(self.request.user, serializer.validated_data.get('lesson'))
+        serializer.save()
+
 class LessonTestViewSet(viewsets.ModelViewSet):
     queryset = LessonTest.objects.all()
     serializer_class = TeacherLessonTestSerializer
-    permission_classes = [IsAuthenticated, HasCourseAccess]
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin, HasCourseAccess]
 
     def get_queryset(self):
         user = self.request.user
         if user.role == 'ADMIN':
             return LessonTest.objects.all()
         return LessonTest.objects.filter(lesson__course__teacher=user)
+
+    def perform_create(self, serializer):
+        _assert_owns_lesson(self.request.user, serializer.validated_data.get('lesson'))
+        serializer.save()
 
 
 # ============= OLYMPIAD VIEWS =============
@@ -1655,7 +1724,7 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         status_counts = Olympiad.objects.values('status').annotate(count=Count('id'))
         stats_dict = {
             'ACTIVE': Olympiad.objects.filter(status='ONGOING').count(),
-            'UPCOMING': Olympiad.objects.filter(status='UPCOMING').count(),
+            'UPCOMING': Olympiad.objects.filter(status__in=Olympiad.UPCOMING_STATUSES).count(),
             'COMPLETED': Olympiad.objects.filter(status='COMPLETED').count(),
             'REGISTRATION_OPEN': Olympiad.objects.filter(status='REGISTRATION_OPEN').count(),
         }
@@ -1872,13 +1941,65 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         olympiad = self.get_object()
         user = request.user
         
-        # Check status
-        if olympiad.status == 'COMPLETED':
+        # Status tekshiruvi. Ilgari faqat `== 'COMPLETED'` qaralardi, lekin
+        # 'COMPLETED' STATUS_CHOICES da yo'q edi — ya'ni shart hech qachon
+        # bajarilmasdi va o'quvchi qoralama (DRAFT) yoki allaqachon
+        # yakunlangan olimpiadaga ham ro'yxatdan o'tib ketardi.
+        if olympiad.status not in Olympiad.REGISTRABLE_STATUSES:
+            return Response({
+                'success': False,
+                'error': 'Bu olimpiadaga hozir ro\'yxatdan o\'tish mumkin emas'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if not olympiad.is_active:
+            return Response({
+                'success': False,
+                'error': 'Olimpiada faol emas'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        now = timezone.now()
+
+        # Ro'yxatdan o'tish oynasi. Bu sanalar modelda bor, lekin hech qayerda
+        # tekshirilmasdi — ya'ni "ro'yxat 1-oktabrda yopiladi" degan sozlama
+        # hech qanday ma'noga ega emasdi.
+        if olympiad.registration_start and now < olympiad.registration_start:
+            return Response({
+                'success': False,
+                'error': 'Ro\'yxatga olish hali boshlanmagan',
+                'registration_start': olympiad.registration_start
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        if olympiad.registration_end and now > olympiad.registration_end:
+            return Response({
+                'success': False,
+                'error': 'Ro\'yxatdan o\'tish muddati tugagan',
+                'registration_end': olympiad.registration_end
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Olimpiada tugagandan keyin ro'yxatdan o'tishning ma'nosi yo'q.
+        if olympiad.end_date and now > olympiad.end_date:
             return Response({
                 'success': False,
                 'error': 'Olimpiada tugagan'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
+        # Sinf chegarasi. `eligibility_grades` modelda saqlanadi, lekin
+        # hech qayerda qo'llanilmasdi: 11-sinf o'quvchisi "5-6 sinf"
+        # olimpiadasiga bemalol yozilib ketardi.
+        allowed_grades = olympiad.eligibility_grades or []
+        if allowed_grades:
+            allowed = {str(g).strip() for g in allowed_grades}
+            if not user.grade:
+                return Response({
+                    'success': False,
+                    'error': 'Profilingizda sinf ko\'rsatilmagan. Iltimos, sinfingizni kiriting.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            if str(user.grade).strip() not in allowed:
+                return Response({
+                    'success': False,
+                    'error': f'Bu olimpiada {", ".join(sorted(allowed))}-sinflar uchun'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
         # Check if already registered
         if OlympiadRegistration.objects.filter(user=user, olympiad=olympiad).exists():
             return Response({
@@ -1938,9 +2059,10 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 'error': 'error.not_registered'
             }, status=status.HTTP_403_FORBIDDEN)
         
-        # Check if already submitted
+        # Tugallangan urinish bormi — va yana urinish huquqi qolganmi.
         attempt = TestResult.objects.filter(user=user, olympiad=olympiad).first()
-        if attempt and attempt.status == 'COMPLETED' and olympiad.max_attempts <= 1:
+        finished_statuses = ('COMPLETED', 'DISQUALIFIED', 'CHECKING')
+        if attempt and attempt.status in finished_statuses and not attempt.can_retake():
             return Response({
                 'success': False,
                 'error': 'error.already_submitted'
@@ -1976,7 +2098,13 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             olympiad=olympiad,
             defaults={'status': 'IN_PROGRESS', 'started_at': timezone.now()},
         )
-        if attempt.started_at is None:
+        if attempt.status in finished_statuses:
+            # Yuqoridagi tekshiruv o'tdi, ya'ni urinish huquqi bor —
+            # yangi urinishni ochamiz. Taymer ham shu yerda qaytadan
+            # boshlanadi; ilgari started_at o'zgarmasdan qolgani uchun
+            # ikkinchi urinishga umuman vaqt tegmay qolardi.
+            attempt.open_new_attempt()
+        elif attempt.started_at is None:
             # started_at joriy qilinishidan oldin ochilgan urinishlar uchun
             attempt.started_at = timezone.now()
             attempt.save(update_fields=['started_at'])
@@ -1987,6 +2115,8 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             'duration': olympiad.duration,
             'started_at': attempt.started_at,
             'server_time': timezone.now(),
+            'attempt_number': attempt.attempt_number,
+            'attempts_left': attempt.attempts_left,
             'olympiad': {
                 'id': olympiad.id,
                 'title': olympiad.title,
@@ -2115,7 +2245,10 @@ class OlympiadViewSet(viewsets.ModelViewSet):
         # Check existing result
         result = TestResult.objects.filter(user=user, olympiad=olympiad).first()
         
-        if result and result.status == 'COMPLETED' and olympiad.max_attempts <= 1:
+        # Tugallangan urinishni ikkinchi marta topshirib bo'lmaydi. Yangi
+        # urinish faqat `questions` endpoint'i orqali ochiladi (u taymerni
+        # ham qayta boshlaydi), shuning uchun bu yerda shartsiz rad etamiz.
+        if result and result.status in ('COMPLETED', 'DISQUALIFIED', 'CHECKING'):
             return Response({
                 'success': False,
                 'error': 'error.already_submitted'
@@ -2145,24 +2278,9 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                     f"(ruxsat etilgan {allowed_seconds})."
                 )
         
-        # Calculate score
-        all_questions = {q.id: q for q in olympiad.questions.all()}
-        score = 0
-        
-        for q_id_str, user_ans in answers.items():
-            try:
-                q_id = int(q_id_str)
-                if q_id in all_questions:
-                    q = all_questions[q_id]
-                    # Comparison logic
-                    if str(user_ans).strip() == str(q.correct_answer).strip():
-                        score += q.points
-            except (ValueError, TypeError):
-                continue
-                
-        # Calculate percentage
-        total_points = sum(q.points for q in all_questions.values())
-        percentage = round((score / total_points * 100), 2) if total_points > 0 else 0
+        # Baholash bitta umumiy funksiyada — `finish` endpoint'i ham shuni
+        # ishlatadi, shunda ikki yo'l bir xil ball chiqaradi.
+        score, total_points, percentage = OlympiadService.score_answers(olympiad, answers)
         
         # Update or Save result
         if result:
@@ -2187,8 +2305,10 @@ class OlympiadViewSet(viewsets.ModelViewSet):
                 status=status_result
             )
         
-        # Award XP (only if not disqualified and logic permits)
-        if status_result == 'COMPLETED':
+        # XP faqat BIRINCHI tugallangan urinish uchun beriladi. Aks holda
+        # max_attempts > 1 bo'lgan olimpiadada o'quvchi qayta-qayta topshirib
+        # cheksiz XP yig'ib olardi.
+        if status_result == 'COMPLETED' and not result.previous_attempts:
             xp_gained = int(score * 2) # Base XP for questions
             if percentage >= 70: # Bonus for good result
                 xp_gained += 20
@@ -2236,9 +2356,15 @@ class OlympiadViewSet(viewsets.ModelViewSet):
             pass
 
         # 3. Result Time Logic
+        # Reyting faqat natijalar E'LON QILINGANDAN keyin ko'rinadi.
+        # Ilgari bu yerda `is_results_open = True` turardi va faqat
+        # `result_time` tekshirilardi — u esa ko'pincha bo'sh. Natijada
+        # imtihon DAVOM ETAYOTGAN paytda birinchi topshirgan o'quvchi
+        # top-5 reytingni va o'rtacha ballni ko'rib olardi.
         now = timezone.now()
-        is_results_open = True
-        if olympiad.result_time and now < olympiad.result_time:
+        is_staff = user.is_authenticated and user.role in ['ADMIN', 'TEACHER']
+        is_results_open = is_staff or olympiad.status == 'PUBLISHED'
+        if olympiad.result_time and now < olympiad.result_time and not is_staff:
             is_results_open = False
         
         if not is_results_open:
@@ -3753,8 +3879,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
                     course=course,
                     defaults={'current_lesson': first_lesson}
                 )
-                course.students_count += 1
-                course.save(update_fields=['students_count'])
+                # students_count ni QO'LDA oshirmaymiz: signals.py dagi
+                # post_save(Enrollment) uni enrollments.count() dan qayta
+                # hisoblaydi. Ikkisi birga ishlagani uchun har bir yozilish
+                # o'quvchilar sonini IKKI marta oshirardi.
             except Course.DoesNotExist:
                 pass
         elif payment.type == 'OLYMPIAD':
@@ -3839,8 +3967,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
                 course=item,
                 current_lesson=first_lesson
             )
-            item.students_count += 1
-            item.save(update_fields=['students_count'])
+            # students_count ni QO'LDA oshirmaymiz: signals.py dagi
+            # post_save(Enrollment) uni enrollments.count() dan qayta
+            # hisoblaydi. Ikkisi birga ishlagani uchun har bir yozilish
+            # o'quvchilar sonini IKKI marta oshirardi.
             
         elif payment_type == 'OLYMPIAD':
             OlympiadRegistration.objects.create(
@@ -4314,7 +4444,7 @@ def admin_stats(request):
     # Olympiad stats
     total_olympiads = Olympiad.objects.count()
     active_olympiads = Olympiad.objects.filter(status='ACTIVE').count()
-    upcoming_olympiads = Olympiad.objects.filter(status='UPCOMING').count()
+    upcoming_olympiads = Olympiad.objects.filter(status__in=Olympiad.UPCOMING_STATUSES).count()
     total_participants = OlympiadRegistration.objects.count()
     
     # Certificate stats
@@ -4641,7 +4771,7 @@ def telegram_webhook(request):
                 if registrations:
                     resp = "🏆 <b>Sizning olimpiadalaringiz:</b>\n\n"
                     for reg in registrations:
-                        status_emoji = "⏳" if reg.olympiad.status == 'UPCOMING' else "🚀"
+                        status_emoji = "⏳" if reg.olympiad.status in Olympiad.UPCOMING_STATUSES else "🚀"
                         resp += f"{status_emoji} <b>{reg.olympiad.title}</b>\n"
                         resp += f"📅 {reg.olympiad.start_date.strftime('%d.%m %H:%M')}\n\n"
                     BotService.send_message(chat_id, resp)
@@ -5035,7 +5165,7 @@ class GamificationViewSet(viewsets.ViewSet):
         # Filter subjects that have at least one course OR at least one olympiad
         all_subjects = Subject.objects.filter(is_active=True).annotate(
             courses_count=Count('courses', filter=Q(courses__is_active=True)),
-            olympiads_count=Count('olympiads_api', filter=Q(olympiads_api__is_active=True, olympiads_api__status__in=['UPCOMING', 'ONGOING']))
+            olympiads_count=Count('olympiads_api', filter=Q(olympiads_api__is_active=True, olympiads_api__status__in=Olympiad.ACTIVE_STATUSES))
         ).filter(Q(courses_count__gt=0) | Q(olympiads_count__gt=0))
         
         for subj in all_subjects:
@@ -5243,7 +5373,7 @@ class HomePageViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='upcoming-olympiads')
     def upcoming_olympiads(self, request):
         """Get upcoming and ongoing olympiads for homepage"""
-        olympiads = Olympiad.objects.filter(status__in=['UPCOMING', 'ONGOING'], is_active=True).order_by('start_date')[:6]
+        olympiads = Olympiad.objects.filter(status__in=Olympiad.ACTIVE_STATUSES, is_active=True).order_by('start_date')[:6]
         return Response(OlympiadSerializer(olympiads, many=True, context={'request': request}).data)
 
     @action(detail=False, methods=['get'], url_path='featured-courses')
@@ -5482,7 +5612,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Subject.objects.all().annotate(
             active_courses_count=Count('courses', filter=Q(courses__is_active=True)),
-            active_olympiads_count=Count('olympiads_api', filter=Q(olympiads_api__is_active=True, olympiads_api__status__in=['UPCOMING', 'ONGOING']))
+            active_olympiads_count=Count('olympiads_api', filter=Q(olympiads_api__is_active=True, olympiads_api__status__in=Olympiad.ACTIVE_STATUSES))
         )
         # Only show active subjects for non-admin users
         if not (self.request.user.is_authenticated and self.request.user.role == 'ADMIN'):
@@ -6090,7 +6220,7 @@ class AdminDashboardViewSet(viewsets.ViewSet):
             'total_users': User.objects.count(),
             'teachers_count': User.objects.filter(role='TEACHER').count(),
             'active_courses': Course.objects.filter(status='APPROVED').count(),
-            'active_olympiads': Olympiad.objects.filter(status__in=['UPCOMING', 'ONGOING']).count(),
+            'active_olympiads': Olympiad.objects.filter(status__in=Olympiad.ACTIVE_STATUSES).count(),
             'revenue_today': float(Payment.objects.filter(status='COMPLETED', completed_at__gte=today).aggregate(sum=Sum('amount'))['sum'] or 0),
             'revenue_month': float(Payment.objects.filter(status='COMPLETED', completed_at__gte=month_start).aggregate(sum=Sum('amount'))['sum'] or 0),
             'new_users_today': User.objects.filter(date_joined__gte=today).count(),
@@ -6276,7 +6406,7 @@ def public_statistics(request):
         total_users = User.objects.filter(is_active=True).count()
         active_courses = Course.objects.filter(status='APPROVED', is_active=True).count()
         active_olympiads = Olympiad.objects.filter(
-            Q(status='UPCOMING') | Q(status='ONGOING')
+            Q(status__in=Olympiad.ACTIVE_STATUSES)
         ).count()
         certificates_issued = Certificate.objects.count()
         
@@ -6334,7 +6464,7 @@ def upcoming_olympiads(request):
     """
     try:
         olympiads = Olympiad.objects.filter(
-            status__in=['UPCOMING', 'ONGOING', 'PUBLISHED'],
+            status__in=Olympiad.ACTIVE_STATUSES + ['PUBLISHED'],
             is_active=True
         ).select_related('subject_id').order_by('start_date')[:8]
         

@@ -392,12 +392,18 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
 
 class HomeworkSubmissionSerializer(serializers.ModelSerializer):
-    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    # `full_name` User modelida yo'q; `get_full_name()` ishlatamiz.
+    student_name = serializers.SerializerMethodField()
     file_url = serializers.SerializerMethodField()
     
     class Meta:
         model = HomeworkSubmission
         fields = ['id', 'student', 'student_name', 'homework', 'file_url', 'grade', 'feedback', 'status', 'submitted_at']
+
+    def get_student_name(self, obj):
+        if not obj.student:
+            return None
+        return obj.student.get_full_name() or obj.student.username
 
     def get_file_url(self, obj):
         request = self.context.get('request')
@@ -747,14 +753,20 @@ class SubjectDetailSerializer(serializers.ModelSerializer):
         from django.utils import timezone
         now = timezone.now()
         # Include UPCOMING and ONGOING olympiads that are active
+        # Avval statusni yangilaymiz, KEYIN filtrlaymiz. Ilgari tartib
+        # teskari edi: filtr allaqachon UPCOMING/ONGOING bo'lganlarni
+        # tanlab, keyin refresh qilardi — ya'ni refresh hech qachon
+        # olimpiadani bu ro'yxatga KIRITOLMASDI.
+        from api.models import Olympiad
+        for o in obj.olympiads_api.filter(is_active=True).exclude(
+            status__in=['DRAFT', 'PENDING', 'CANCELED']
+        ):
+            o.refresh_status()
+
         olympiads = obj.olympiads_api.filter(
             is_active=True, 
-            status__in=['UPCOMING', 'ONGOING']
+            status__in=Olympiad.ACTIVE_STATUSES
         ).order_by('status', 'start_date')[:6]
-        
-        # Refresh status for each to be sure
-        for o in olympiads:
-            o.refresh_status()
             
         return [{
             'id': o.id,
@@ -870,7 +882,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_teacher_name(self, obj):
         if obj.teacher:
-            return obj.teacher.full_name or obj.teacher.get_full_name() or obj.teacher.username
+            # `full_name` User modelida YO'Q maydon — bu chaqiruv
+            # AttributeError berardi, ya'ni o'qituvchisi bor har qanday
+            # kurs/yozilish serializatsiyasi 500 bilan tushardi.
+            return obj.teacher.get_full_name() or obj.teacher.username
         return None
 
     def get_teacher_avatar(self, obj):

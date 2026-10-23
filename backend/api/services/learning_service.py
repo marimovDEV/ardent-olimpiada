@@ -6,7 +6,7 @@ from api.models import (
 )
 from api.utils import generate_unique_id
 from rest_framework.exceptions import ValidationError
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 class LearningService:
     @staticmethod
@@ -36,6 +36,16 @@ class LearningService:
             to_attr='my_progress'
         )
 
+        # O'quvchiga faqat NASHR QILINGAN darslar ko'rinishi kerak.
+        # Ilgari filtr yo'q edi, shuning uchun o'qituvchining qoralama
+        # darslari ham ro'yxatga chiqib ketardi — va kurs progressi
+        # nashr qilinganlardan sanalgani uchun foizlar ham mos kelmasdi.
+        is_course_owner = (
+            user.is_authenticated
+            and (user.role == 'ADMIN' or user.is_staff or Course.objects.filter(
+                id=course_id, teacher=user
+            ).exists())
+        )
         modules = Module.objects.filter(course_id=course_id).prefetch_related(
             progress_prefetch
         ).order_by('order')
@@ -47,6 +57,13 @@ class LearningService:
         flat_lessons = []
         for m in modules:
             for l in m.lessons.all():
+                # Nashr qilinmagan darsni o'quvchiga ko'rsatmaymiz.
+                # Filtrni Python tomonida qilamiz, chunki yuqoridagi
+                # `lessons__user_progress` prefetch'i `m.lessons.all()` ga
+                # bog'langan — alohida Prefetch qo'shilsa, progress
+                # ma'lumoti darslarga ulanmay qolardi.
+                if not l.is_published and not is_course_owner:
+                    continue
                 # Attach module info for convenience
                 l.module_title = m.title
                 
@@ -158,23 +175,46 @@ class LearningService:
             try:
                 test = lesson.test
                 answers = data.get('answers', {}) # {question_id: value}
+
+                # Urinishlar chegarasi. `LessonTest.max_attempts` modelda
+                # bor edi, lekin hech qayerda tekshirilmasdi — o'quvchi
+                # o'tguncha cheksiz marta topshirardi.
+                max_attempts = test.max_attempts or 0
+                if max_attempts > 0 and progress.test_attempts >= max_attempts:
+                    raise ValidationError(
+                        f"Urinishlar tugadi ({max_attempts} martadan ko'p topshirib bo'lmaydi)."
+                    )
+
+                # Baholash OlympiadService bilan bitta mantiqda: savol
+                # ballini hisobga olamiz (ilgari har bir savol 1 ball deb
+                # sanalardi, ya'ni `points` maydoni e'tiborsiz qolardi) va
+                # "A" variantini (indeks 0) ham to'g'ri deb qabul qilamiz.
+                from api.services.olympiad_service import OlympiadService
+
                 score = 0
-                total_q = test.questions.count()
-                
+                total_points = 0
                 for q in test.questions.all():
-                    user_val = answers.get(str(q.id))
-                    if str(user_val) == str(q.correct_answer):
-                        score += 1
-                
-                percentage = round((score / total_q * 100), 2) if total_q > 0 else 0
-                progress.test_score = int(percentage)
+                    total_points += q.points
+                    if OlympiadService.is_answer_correct(q, answers.get(str(q.id))):
+                        score += q.points
+
+                percentage = round((score / total_points * 100), 2) if total_points > 0 else 0
                 progress.test_attempts += 1
+                # ENG YAXSHI natijani saqlaymiz. Ilgari oxirgi urinish
+                # yozilardi: 90% olgan o'quvchi qiziqish uchun qayta
+                # topshirib 30% olsa, bali tushib ketardi.
+                if progress.test_score is None or int(percentage) > progress.test_score:
+                    progress.test_score = int(percentage)
             except LessonTest.DoesNotExist:
                 pass
 
+        # Avval shu chaqiruvda o'zgargan maydonlarni saqlaymiz, keyin
+        # darsning yakunlanganini tekshiramiz: tekshiruv bazadan o'qiydi.
+        progress.save()
+
         # Check if lesson is now fully complete
         LearningService._check_and_finalize_lesson(user, lesson, progress)
-        
+
         progress.save()
         return progress
 
@@ -201,7 +241,14 @@ class LearningService:
             if not progress.is_completed:
                 progress.is_completed = True
                 progress.completed_at = timezone.now()
-                
+                # DARHOL saqlaymiz. Pastdagi `update_enrollment_stats`
+                # tugallangan darslarni BAZADAN sanaydi, shuning uchun
+                # joriy dars saqlanmagan bo'lsa hisobga tushmaydi —
+                # ilgari kurs progressi doim bitta darsga orqada qolardi
+                # va oxirgi darsni tugatgan o'quvchi 100% ga yetmagani
+                # uchun sertifikat olmasdi.
+                progress.save(update_fields=['is_completed', 'completed_at'])
+
                 # Update Streak
                 from api.streak_service import StreakService
                 StreakService.record_activity(user, 'LESSON_COMPLETE', f"Completed lesson: {lesson.title}")
@@ -233,8 +280,19 @@ class LearningService:
             # For simplicity, we can log it. 
             # Better: add a ModuleCompletion model or just check ActivityLog
             from api.models import ActivityLog
-            if not ActivityLog.objects.filter(user=user, activity_type='MODULE_COMPLETE', description__contains=f"Module ID: {module.id}").exists():
-                user.add_xp(module.xp_reward, 'MODULE_COMPLETE', f"Modul yakunlandi: {module.title} (Module ID: {module.id})")
+            # `__contains="Module ID: 1"` "Module ID: 12" ga ham mos keladi,
+            # shuning uchun 12-modul mukofotlangandan keyin 1-modul uchun
+            # XP berilmay qolardi. Marker oxiriga `]` qo'yib aniq moslik
+            # qilamiz.
+            marker = f"[Module ID: {module.id}]"
+            legacy_marker = f"Module ID: {module.id})"
+            already_rewarded = ActivityLog.objects.filter(
+                user=user, activity_type='MODULE_COMPLETE'
+            ).filter(
+                Q(description__contains=marker) | Q(description__endswith=legacy_marker)
+            ).exists()
+            if not already_rewarded:
+                user.add_xp(module.xp_reward, 'MODULE_COMPLETE', f"Modul yakunlandi: {module.title} {marker}")
 
     @staticmethod
     def update_enrollment_stats(user, course):

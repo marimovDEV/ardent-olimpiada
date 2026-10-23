@@ -555,16 +555,35 @@ class Enrollment(models.Model):
 
 
 class Olympiad(models.Model):
+    # Diqqat: bu ro'yxat kodda ISHLATILADIGAN barcha statuslarni qamrashi shart.
+    # Ilgari `UPCOMING`, `COMPLETED`, `PAUSED`, `CANCELED` ro'yxatda yo'q edi,
+    # lekin `refresh_status()` ularni bazaga yozardi va o'nlab so'rov
+    # `status='UPCOMING'` bo'yicha filtrlardi. Natijada bosh sahifadagi
+    # "tez kunda" ro'yxatlari, fan sahifasidagi olimpiadalar va boshqaruv
+    # paneli hisoblari doim bo'sh chiqardi.
     STATUS_CHOICES = [
         ('DRAFT', 'Qoralama'),
         ('PENDING', 'Kutilmoqda'),
         ('APPROVED', 'Tasdiqlangan'),
         ('REGISTRATION_OPEN', 'Ro\'yxatga olish boshlandi'),
         ('REGISTRATION_CLOSED', 'Ro\'yxatdan o\'tish tugadi'),
+        ('UPCOMING', 'Tez kunda boshlanadi'),
         ('ONGOING', 'Olimpiada boshladi'),
+        ('PAUSED', 'To\'xtatib turilgan'),
+        ('CANCELED', 'Bekor qilingan'),
         ('CHECKING', 'Tekshirilmoqda'),
         ('PUBLISHED', 'Natijalar e\'lon qilindi'),
+        ('COMPLETED', 'Yakunlangan'),
     ]
+
+    # "Hali boshlanmagan, lekin ko'rsatishga arzigulik" statuslar. So'rovlarda
+    # qo'lda ['UPCOMING', 'ONGOING'] deb yozish o'rniga shundan foydalanamiz:
+    # admin panelidan REGISTRATION_OPEN qilib qo'yilgan olimpiada ham
+    # ro'yxatlarga tushishi kerak.
+    UPCOMING_STATUSES = ['APPROVED', 'REGISTRATION_OPEN', 'REGISTRATION_CLOSED', 'UPCOMING']
+    ACTIVE_STATUSES = UPCOMING_STATUSES + ['ONGOING']
+    # Ro'yxatdan o'tish mumkin bo'lgan statuslar.
+    REGISTRABLE_STATUSES = ['APPROVED', 'REGISTRATION_OPEN', 'UPCOMING', 'ONGOING']
 
     LEVEL_CHOICES = [
         ('BEGINNER', 'Boshlang\'ich'),
@@ -666,8 +685,11 @@ class Olympiad(models.Model):
         from django.utils import timezone
         now = timezone.now()
         
-        # Only auto-refresh if status is in a "trackable" state
-        if self.status in ['PAUSED', 'CANCELED', 'PUBLISHED', 'COMPLETED', 'DRAFT']:
+        # Only auto-refresh if status is in a "trackable" state.
+        # PENDING ham ro'yxatda: u admin tasdig'ini kutayotgan olimpiada.
+        # Ilgari u yo'q edi, shuning uchun tasdiqlanmagan olimpiada sana
+        # kelganda o'z-o'zidan ONGOING bo'lib, moderatsiyani chetlab o'tardi.
+        if self.status in ['PAUSED', 'CANCELED', 'PUBLISHED', 'COMPLETED', 'DRAFT', 'PENDING']:
             return self.status
 
         # If dates are missing, we cannot auto-refresh accurately
@@ -859,6 +881,12 @@ class TestResult(models.Model):
     # Mijozdagi taymerga ishonmaslik uchun: time_taken shundan hisoblanadi va
     # muddatdan oshgan topshirish shu asosda aniqlanadi.
     started_at = models.DateTimeField(null=True, blank=True)
+    # Nechanchi urinish ketayotgani. unique_together ['user', 'olympiad'] bo'lgani
+    # uchun har bir o'quvchiga bitta qator to'g'ri keladi, shuning uchun urinishni
+    # alohida qator bilan emas, hisoblagich bilan yuritamiz. Oldingi urinishlar
+    # `previous_attempts` ichida arxivlanadi — o'qituvchi tarixni ko'rishi uchun.
+    attempt_number = models.IntegerField(default=1)
+    previous_attempts = models.JSONField(default=list, blank=True)
     feedback = models.TextField(blank=True, null=True, help_text="Teacher's feedback for the student")
     submitted_at = models.DateTimeField(auto_now_add=True)
     
@@ -868,6 +896,60 @@ class TestResult(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.olympiad.title}: {self.score}"
+
+    @property
+    def attempts_left(self):
+        """Yana necha marta topshirishi mumkin."""
+        return max(0, (self.olympiad.max_attempts or 1) - self.attempt_number)
+
+    def can_retake(self):
+        """Tugallangan urinishdan keyin yangi urinish ochish mumkinmi.
+
+        DISQUALIFIED yozuv qayta urinish huquqini bermaydi: aks holda
+        cheklovni buzgan o'quvchi shunchaki yangidan boshlab ketardi.
+        """
+        if self.status == 'DISQUALIFIED':
+            return False
+        return self.attempts_left > 0
+
+    def open_new_attempt(self):
+        """Joriy natijani arxivlab, yangi urinishni noldan ochadi.
+
+        Tozalanadigan narsalar: javoblar, ball, taymer. `attempt_number`
+        oshadi — shu bilan max_attempts chegarasi haqiqatan ushlanadi
+        (ilgari hisoblagich yo'q edi, ya'ni max_attempts > 1 bo'lsa
+        o'quvchi cheksiz marta topshirar edi).
+        """
+        from django.utils import timezone
+
+        history = list(self.previous_attempts or [])
+        history.append({
+            'attempt': self.attempt_number,
+            'score': self.score,
+            'percentage': float(self.percentage or 0),
+            'time_taken': self.time_taken,
+            'status': self.status,
+            'answers': self.answers,
+            'tab_switches_count': self.tab_switches_count,
+            'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None,
+        })
+
+        self.previous_attempts = history
+        self.attempt_number += 1
+        self.answers = {}
+        self.score = 0
+        self.percentage = 0
+        self.time_taken = 0
+        self.tab_switches_count = 0
+        self.status = 'IN_PROGRESS'
+        self.disqualified_reason = None
+        self.started_at = timezone.now()
+        self.save(update_fields=[
+            'previous_attempts', 'attempt_number', 'answers', 'score',
+            'percentage', 'time_taken', 'tab_switches_count', 'status',
+            'disqualified_reason', 'started_at',
+        ])
+        return self
 
 
 class Certificate(models.Model):

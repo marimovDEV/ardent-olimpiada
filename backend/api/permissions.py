@@ -55,6 +55,34 @@ class HasCourseAccess(permissions.BasePermission):
     """
     Checks if the user has access to a course (purchased, teacher, or admin).
     """
+    def has_permission(self, request, view):
+        """Obyektsiz amallar (list, create) uchun tekshiruv.
+
+        Bu metod ilgari yo'q edi. DRF `has_object_permission` ni faqat
+        `get_object()` chaqirilganda ishlatadi, shuning uchun POST
+        (create) hech qanday tekshiruvdan o'tmasdi: oddiy o'quvchi
+        `/api/lesson-tests/` ga POST qilib, ISTALGAN darsga test
+        qo'shib yuborishi mumkin edi.
+        """
+        user = request.user
+        if not user or not user.is_authenticated:
+            return False
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Detal amallar (`/<id>/...`) `get_object()` ni chaqiradi, ya'ni
+        # pastdagi `has_object_permission` ularni tekshiradi. O'quvchining
+        # `complete_video` / `submit_test` kabi POST amallari aynan shunday,
+        # shuning uchun ularga to'sqinlik qilmaymiz.
+        if getattr(view, 'detail', False):
+            return True
+
+        # Qolgani — obyektsiz yaratish (POST /lesson-tests/ kabi). Bu yo'lda
+        # hech qanday obyekt tekshiruvi bo'lmaydi, shuning uchun faqat
+        # o'qituvchi va adminga ruxsat beramiz.
+        return user.role in ['ADMIN', 'TEACHER'] or user.is_staff
+
     def has_object_permission(self, request, view, obj):
         user = request.user
         if not user or not user.is_authenticated:
@@ -84,7 +112,16 @@ class HasCourseAccess(permissions.BasePermission):
             
         if not course:
             return True # Fallback if no course context
-            
+
+        # Bepul (tanishtiruv) dars hammaga ochiq. Modelda `is_free` bor va
+        # LearningService uni qulfdan chiqaradi, lekin bu tekshiruv faqat
+        # yozilganlarni o'tkazardi — ya'ni "bepul dars" amalda yopiq edi.
+        if getattr(obj, 'is_free', False):
+            return True
+        lesson = getattr(obj, 'lesson', None)
+        if lesson is not None and getattr(lesson, 'is_free', False):
+            return True
+
         # Teachers see their own courses
         if user.role == 'TEACHER' and course.teacher == user:
             return True
