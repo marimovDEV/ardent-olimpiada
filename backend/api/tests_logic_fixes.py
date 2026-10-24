@@ -13,6 +13,7 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from api.models import (
+    BotConfig,
     Course,
     Enrollment,
     Lesson,
@@ -978,3 +979,70 @@ class RewardDistributionTest(TestCase):
         self.student.refresh_from_db()
         self.assertEqual(self.student.xp, 1500)
         self.assertEqual(self.student.level, 4)   # 500 XP = 1 daraja
+
+
+class TelegramWebhookSecretTest(TestCase):
+    """Webhook butun internetga ochiq edi.
+
+    `/api/bot/webhook/` ga hech qanday tekshiruvsiz POST qilish mumkin
+    edi. Eng og'rig'i — `/start <linking_token>` ni qalbakilashtirib,
+    boshqa odamning hisobiga o'z Telegram ID'sini bog'lab olish.
+    """
+
+    def setUp(self):
+        self.client = APIClient()
+        self.url = '/api/bot/webhook/'
+        self.secret = 'test-maxfiy-soz'
+        self.config = BotConfig.objects.create(
+            bot_token='123:FAKE',
+            is_active=True,
+            webhook_secret=self.secret,
+        )
+        self.victim = User.objects.create_user(
+            username='webhook_victim', password='x', role='STUDENT'
+        )
+        self.victim.telegram_linking_token = 'LINKME123'
+        self.victim.save(update_fields=['telegram_linking_token'])
+
+    def _update(self):
+        return {
+            'message': {
+                'chat': {'id': 999000111},
+                'text': '/start LINKME123',
+            }
+        }
+
+    def test_request_without_the_secret_is_rejected(self):
+        resp = self.client.post(self.url, self._update(), format='json')
+        self.assertEqual(resp.status_code, 403)
+
+    def test_request_with_a_wrong_secret_is_rejected(self):
+        resp = self.client.post(
+            self.url, self._update(), format='json',
+            HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN='boshqa-soz',
+        )
+        self.assertEqual(resp.status_code, 403)
+
+    def test_a_forged_request_cannot_steal_an_account(self):
+        """Eng muhim tekshiruv: qalbaki so'rov hisobni o'g'irlamasligi."""
+        self.client.post(self.url, self._update(), format='json')
+        self.victim.refresh_from_db()
+        self.assertIsNone(self.victim.telegram_id)
+        # Bog'lash tokeni ham sarflanmasligi kerak.
+        self.assertEqual(self.victim.telegram_linking_token, 'LINKME123')
+
+    def test_telegram_with_the_right_secret_is_let_through(self):
+        resp = self.client.post(
+            self.url, self._update(), format='json',
+            HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN=self.secret,
+        )
+        self.assertNotEqual(resp.status_code, 403)
+        self.victim.refresh_from_db()
+        self.assertEqual(self.victim.telegram_id, 999000111)
+
+    def test_an_unconfigured_secret_keeps_the_old_behaviour(self):
+        """Maxfiy so'z sozlanmagan bo'lsa eski ishlash buzilmasin."""
+        self.config.webhook_secret = ''
+        self.config.save(update_fields=['webhook_secret'])
+        resp = self.client.post(self.url, self._update(), format='json')
+        self.assertNotEqual(resp.status_code, 403)

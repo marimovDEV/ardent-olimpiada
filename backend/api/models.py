@@ -1222,6 +1222,17 @@ class BotConfig(models.Model):
     admin_chat_id = models.CharField(max_length=500, default="0", help_text="Comma separated admin chat IDs")
     humo_bot_url = models.CharField(max_length=255, default="https://t.me/ardentsoft_olimpiada_bot", blank=True, null=True)
     click_merchant_id = models.CharField(max_length=50, blank=True, null=True)
+    webhook_secret = models.CharField(
+        max_length=128,
+        blank=True,
+        default='',
+        help_text=(
+            "Telegram setWebhook'ga beriladigan maxfiy so'z. Telegram uni har bir "
+            "so'rovda `X-Telegram-Bot-Api-Secret-Token` sarlavhasida qaytaradi, "
+            "shu bilan webhook'ga faqat Telegram murojaat qilayotganini bilamiz. "
+            "Bo'sh bo'lsa tekshiruv o'tkazib yuboriladi (eski sozlamalar uchun)."
+        ),
+    )
     is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
 

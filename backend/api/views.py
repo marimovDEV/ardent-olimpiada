@@ -17,6 +17,7 @@ from django.core.files.storage import default_storage
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 import random
+import secrets
 import string
 from datetime import timedelta
 from decimal import Decimal
@@ -4822,9 +4823,34 @@ def telegram_webhook(request):
     """
     Webhook endpoint for Telegram Bot
     This will process updates and handle user linking
+
+    Bu endpoint `AllowAny` bo'lishi SHART — unga Telegram serveri murojaat
+    qiladi, uning hisobi yo'q. Lekin shu sababli u butun internetga ochiq
+    edi va hech qanday tekshiruvi yo'q edi: istalgan odam bu manzilga
+    o'zi yasagan "update" yuborib, masalan `/start <linking_token>` ni
+    qalbakilashtirib, BOSHQA odamning hisobiga o'z Telegram ID'sini
+    bog'lab olishi mumkin edi.
+
+    Yechim — Telegram'ning `secret_token` imkoniyati: `setWebhook` da
+    maxfiy so'z beramiz, Telegram esa har bir so'rovda uni
+    `X-Telegram-Bot-Api-Secret-Token` sarlavhasida qaytaradi. Boshqa
+    hech kim bu so'zni bilmaydi.
     """
     from .bot_service import BotService
-    
+
+    config = BotService.get_config()
+    expected_secret = (getattr(config, 'webhook_secret', '') or '') if config else ''
+    if expected_secret:
+        sent_secret = request.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
+        # `compare_digest` — vaqt bo'yicha hujumdan saqlaydi.
+        if not secrets.compare_digest(sent_secret, expected_secret):
+            # Ataylab 403 qaytaramiz, 200 emas: Telegram har doim to'g'ri
+            # so'zni yuboradi, shuning uchun bu javobni faqat qalbaki
+            # so'rov ko'radi. Agar maxfiy so'z xato sozlangan bo'lsa,
+            # `getWebhookInfo` buni `last_error_message` da ko'rsatadi —
+            # jim 200 qaytarsak, xato umuman ko'rinmas edi.
+            return Response({'ok': False}, status=status.HTTP_403_FORBIDDEN)
+
     update = request.data
     
     def show_main_menu(chat_id, text="Nima bilan yordam bera olaman?"):
